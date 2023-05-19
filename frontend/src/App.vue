@@ -1,30 +1,43 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
+<script>
+import Navbar from "./components/layout/navbar.vue";
+import Footer from "./components/layout/footer.vue";
+import Sidebar from "./components/layout/sidebar.vue";
+import { reactive, defineComponent } from "vue";
+export default {
+  components: {
+    Footer,
+    Navbar,
+    Sidebar,
+  },
+  setup() {
+    const data = reactive({
+      activeMenuResponsive: false,
+    });
+    const updateMenuResponsive = (value) => {
+      console.log("Received event from child component:", value);
+    }
+    return {
+      data,
+      updateMenuResponsive
+    };
+  },
+};
 </script>
 
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xl-2 d-none d-xl-block">
+        <Sidebar @updateMenuResponsive="updateMenuResponsive" />
+      </div>
+      <div class="col-xl-10 col-sm-12">
+        <Navbar />
+        <RouterView></RouterView>
+        <Footer />
+      </div>
+    </div>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+<style scoped></style>
+
