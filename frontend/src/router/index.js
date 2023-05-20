@@ -15,9 +15,9 @@ const routes = [
   },
   // Activity 
   {
-    path: '/activity',
-    name: 'Activity',
-    component: () => import('../views/activity/index.vue'),
+    path: '/event',
+    name: 'Event',
+    component: () => import('../views/event/index.vue'),
   },
   // Employee 
   {

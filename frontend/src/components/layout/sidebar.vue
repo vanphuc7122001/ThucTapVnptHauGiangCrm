@@ -32,8 +32,8 @@ export default {
         },
         {
           id: 3,
-          icon: "sprint",
-          name: "Activity",
+          icon: "event",
+          name: "Event",
           role: [],
           children: [],
         },
@@ -167,6 +167,7 @@ export default {
   width: 90%;
   cursor: pointer;
   border-radius: 5px;
+  color: blue;
 }
 .none-border-nav-item {
   width: 90%;
