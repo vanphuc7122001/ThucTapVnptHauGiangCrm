@@ -2,12 +2,14 @@
 import Navbar from "./components/layout/navbar.vue";
 import Footer from "./components/layout/footer.vue";
 import Sidebar from "./components/layout/sidebar.vue";
+import Login from "./login.vue";
 import { reactive, defineComponent } from "vue";
 export default {
   components: {
     Footer,
     Navbar,
     Sidebar,
+    Login,
   },
   setup() {
     const data = reactive({

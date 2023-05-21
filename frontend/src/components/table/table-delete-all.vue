@@ -27,7 +27,15 @@ export default {
       default: false,
     },
   },
-  setup(props, ntx) {},
+  setup(props, ntx) {
+    const data = reactive({
+        a: true,
+        items_new: props.items,
+    });
+    return {
+        data,
+    }
+  },
 };
 </script>
 
@@ -46,7 +54,7 @@ export default {
     </thead>
     <tbody>
       <tr v-for="(item, index) in items">
-        <td><input type="checkbox" name="" id="" /></td>
+        <td><input :checked="item.delete" v-model="data.items_new[index].delete" type="checkbox" name="" id="" /></td>
         <td>{{ index + 1 }}</td>
         <td v-for="(label, index1) in labels">{{ item[label] }}</td>
         <td v-if="activeAction == true">
@@ -89,7 +97,7 @@ export default {
 #view,
 #edit,
 #delete {
-  font-size: 18px;
+  font-size: 13px;
   cursor: pointer;
   border: 1px solid var(--gray);
   border-radius: 4px;

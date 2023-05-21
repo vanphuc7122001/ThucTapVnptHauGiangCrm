@@ -48,14 +48,14 @@ export default {
 </script>
 
 <template>
-  <div class="d-flex justify-content-between align-items-center mx-3 mt-2">
+  <div class="d-flex justify-content-between align-items-center mt-2">
     <p>
       Showing {{ totalRow == 0 ? 0 : startRow }} to
       {{ endRow > totalRow ? totalRow : endRow }} of {{ totalRow }} entries
     </p>
     <ul class="pagination">
       <li @click="updatePrevPage(currentPage)" class="page-item">
-        <a class="page-link text-blue" href="#">Previous</a>
+        <a class="page-link text-dark" href="#">Previous</a>
       </li>
       <li
         @click="updateCurrentPage(value)"
@@ -70,7 +70,7 @@ export default {
         >
       </li>
       <li @click="updateNextPage(currentPage)" class="page-item">
-        <a class="page-link text-blue" href="#">Next</a>
+        <a class="page-link text-dark" href="#">Next</a>
       </li>
     </ul>
   </div>

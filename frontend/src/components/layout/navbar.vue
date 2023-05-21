@@ -53,8 +53,8 @@ export default {
         <div
           class="d-xl-flex d-none flex-column align-items-center justify-content-center ml-2"
         >
-          <span class="font-size-13">Trần Tuấn Duy</span>
-          <span class="italic-text font-size-13">Nhân viên</span>
+          <span class="font-size-13">Keyone</span>
+          <span class="italic-text font-size-13">Employee</span>
         </div>
       </div>
     </div>
