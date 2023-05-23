@@ -6,7 +6,9 @@ import Select from "../../components/form/select.vue";
 import Search from "../../components/form/search.vue";
 import DeleteAll from "../../components/form/delete-all.vue";
 import Add from "./add.vue";
+import Edit from "./edit.vue";
 import { reactive, computed } from "vue";
+import { useRouter } from "vue-router";
 export default {
   components: {
     Table,
@@ -15,40 +17,41 @@ export default {
     Select,
     Search,
     Add,
-    DeleteAll
+    DeleteAll,
+    Edit,
   },
   setup(ctx) {
     const data = reactive({
       items: [
         {
+          _id: "1",
           name: "Tran Tuan Duy",
-          birthday: "xx/xx/2001",
-          address: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
+          content: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
         },
         {
+          _id: "2",
           name: "Nguyen Lan Anh",
-          birthday: "xx/xx/2001",
-          address: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
+          content: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
         },
         {
+          _id: "3",
           name: "Nguyen Thi Thanh Truc",
-          birthday: "xx/xx/2001",
-          address: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
+          content: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
         },
         {
+          _id: "4",
           name: "Nguyen Ngoc Van Anh",
-          birthday: "xx/xx/2001",
-          address: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
+          content: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
         },
         {
+          _id: "5",
           name: "Truong Thiet Long",
-          birthday: "xx/xx/2001",
-          address: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
+          content: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
         },
         {
+          _id: "6",
           name: "Dang Van Phuc",
-          birthday: "xx/xx/2001",
-          address: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
+          content: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
         },
       ],
       entryValue: 5,
@@ -59,6 +62,16 @@ export default {
       currentPage: 1,
       searchText: "",
       activeMenu: 1,
+      itemAdd: {
+        name: "",
+        content: "",
+      },
+      activeEdit: false,
+      editValue: {
+        _id: "",
+        name: "",
+        content: "",
+      },
     });
 
     // computed
@@ -94,7 +107,6 @@ export default {
       } else data.numberOfPages = setNumberOfPages.value;
       data.startRow = (data.currentPage - 1) * data.entryValue + 1;
       data.endRow = data.currentPage * data.entryValue;
-      console.log(data);
       return filtered.value.filter((item, index) => {
         return (
           index + 1 > (data.currentPage - 1) * data.entryValue &&
@@ -102,9 +114,35 @@ export default {
         );
       });
     });
+
+    // methods
+    const create = () => {
+      console.log("creating");
+    };
+    const update = (item) => {
+      console.log("updating", item);
+    };
+    const deleteOne = (_id) => {
+      console.log("deleting", _id);
+    };
+    const edit = () => {
+      console.log("edit");
+    };
+
+    const router = useRouter();
+
+    const view = (_id) => {
+      console.log("view", _id);
+      router.push({ name: "Event.view", params: { id: _id } });
+    };
     return {
       data,
       setPages,
+      create,
+      update,
+      deleteOne,
+      edit,
+      view,
     };
   },
 };
@@ -166,21 +204,38 @@ export default {
         />
       </div>
       <div class="d-flex align-items-start">
-        <button type="button" class="btn btn-danger mr-3" data-toggle="modal" data-target="#model-delete-all">
+        <button
+          type="button"
+          class="btn btn-danger mr-3"
+          data-toggle="modal"
+          data-target="#model-delete-all"
+        >
           <span id="delete-all" class="mx-2">Delete All</span>
         </button>
         <DeleteAll :items="data.items" />
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#model-add">
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-toggle="modal"
+          data-target="#model-add"
+        >
           <span id="add" class="mx-2">Add</span>
         </button>
-        <Add />
+        <Add :item="data.itemAdd" @create="create" />
       </div>
     </div>
-    <!-- Table -->
+    <!-- Table -->{{ data.itemAdd }}
     <Table
-      :items="setPages" 
-      :fields="['Name', 'Birthday', 'Address']"
-      :labels="['name', 'birthday', 'address']"
+      :items="setPages"
+      :fields="['Name', 'Content']"
+      :labels="['name', 'content']"
+      @delete="(value) => deleteOne(value)"
+      @edit="
+        (value, value1) => (
+          (data.editValue = value), (data.activeEdit = value1)
+        )
+      "
+      @view="(value) => view(value)"
     />
     <!-- Pagination -->
     <Pagination
@@ -188,10 +243,17 @@ export default {
       :totalRow="data.totalRow"
       :startRow="data.startRow"
       :endRow="data.endRow"
-      v-model:currentPage="data.currentPage"
+      :currentPage="data.currentPage"
+      @update:currentPage="(value) => (data.currentPage = value)"
       class="mx-3"
     />
   </div>
+  {{ data.editValue }}
+  <Edit
+    :item="data.editValue"
+    :class="[data.activeEdit ? 'show-modal' : 'd-none']"
+    @cancel="data.activeEdit = false"
+  />
 </template>
 
 <style scoped>
@@ -221,5 +283,12 @@ export default {
 #add,
 #delete-all {
   font-size: 14px;
+}
+.show-modal {
+  display: block;
+  opacity: 1;
+  background-color: var(--dark);
+  /* pointer-events: auto; */
+  z-index: 1;
 }
 </style>

@@ -50,9 +50,9 @@ export default {
         <td>{{ index + 1 }}</td>
         <td v-for="(label, index1) in labels">{{ item[label] }}</td>
         <td v-if="activeAction == true">
-          <span id="view" class="material-symbols-outlined"> visibility </span>
-          <span id="edit" class="material-symbols-outlined mx-2"> edit </span>
-          <span id="delete" class="material-symbols-outlined"> delete </span>
+          <span id="view" class="material-symbols-outlined" @click="$emit('view', item._id)"> visibility </span>
+          <span id="edit" class="material-symbols-outlined mx-2" @click="$emit('edit', item, true)"> edit </span>
+          <span id="delete" class="material-symbols-outlined" @click="$emit('delete', item._id)"> delete </span>
         </td>
       </tr>
     </tbody>

@@ -8,15 +8,14 @@ export default {
     },
   },
   setup(props, ctx) {
-    const data = reactive({
-    });
-    const create = () => {
+    const data = reactive({});
+    const update = () => {
       if (props.item.name.length > 0 && props.item.content.length > 0) {
-        ctx.emit("create");
+        ctx.emit("update");
       }
     };
     return {
-      create,
+      update,
     };
   },
 };
@@ -24,20 +23,20 @@ export default {
 
 <template>
   <!-- The Modal -->
-  <div class="modal" id="model-add">
+  <div class="modal" id="model-edit">
     <div class="modal-dialog">
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title" style="font-size: 15px">Add A New Event</h4>
-          <button type="button" class="close" data-dismiss="modal">
+          <h4 class="modal-title" style="font-size: 15px">Edit A Event</h4>
+          <button @click="$emit('cancel')" type="button" class="close" data-dismiss="modal">
             &times;
           </button>
         </div>
 
         <!-- Modal body -->
         <div class="modal-body">
-          <form action="/action_page.php" class="was-validated">
+          <form class="was-validated">
             <div class="form-group">
               <label for="name">Name(<span style="color: red">*</span>):</label>
               <input
@@ -61,13 +60,14 @@ export default {
                 v-model="item.content"
               ></textarea>
             </div>
-            <button type="button"
-              class="btn btn-primary px-3 py-2"
+            <button
+              type="button"
+              class="btn btn-warning px-3 py-2"
               style="font-size: 14px"
               @click="create"
-              id="add"
+              id="edit"
             >
-              <span>Add</span>
+              <span>Edit</span>
             </button>
           </form>
         </div>
@@ -76,4 +76,10 @@ export default {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.show-modal {
+  display: block;
+  opacity: 1;
+  pointer-events: auto;
+}
+</style>
