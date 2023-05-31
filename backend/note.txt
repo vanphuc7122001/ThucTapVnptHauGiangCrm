@@ -26,3 +26,6 @@ Khi phát triển ứng dụng backend bằng Nodejs, Express và Mysql. Chúng 
         npm i cors
     13. morgan là một gói middleware trong Node.js được sử dụng để ghi lại nhật ký (log) các yêu cầu HTTP đến máy chủ web. Nó cung cấp một cách đơn giản để ghi lại thông tin về yêu cầu, ví dụ như địa chỉ IP, phương thức, URL, mã trạng thái và thời gian phản hồi.
         npm i morgan
+    14. Kỹ thuật "encryption with decryption" bao gồm việc sử dụng một khóa (key) để mã hoá dữ liệu thành một định dạng mã hóa (cipher). Sau đó, khóa này được sử dụng để giải mã dữ liệu và hiển thị nó khi cần thiết. Kỹ thuật này thường được sử dụng cho việc mã hoá dữ liệu nhạy cảm và đảm bảo tính bảo mật. Module này là của nodejs
+
+    

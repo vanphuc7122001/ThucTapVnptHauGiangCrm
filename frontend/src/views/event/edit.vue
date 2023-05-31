@@ -28,7 +28,7 @@ export default {
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title" style="font-size: 15px">Edit A Event</h4>
+          <h4 class="modal-title" style="font-size: 15px">Sửa sự kiện</h4>
           <button @click="$emit('cancel')" type="button" class="close" data-dismiss="modal">
             &times;
           </button>
@@ -38,7 +38,7 @@ export default {
         <div class="modal-body">
           <form class="was-validated">
             <div class="form-group">
-              <label for="name">Name(<span style="color: red">*</span>):</label>
+              <label for="name">Tên(<span style="color: red">*</span>):</label>
               <input
                 type="text"
                 class="form-control"
@@ -50,7 +50,7 @@ export default {
             </div>
             <div class="form-group">
               <label for="content"
-                >Content(<span style="color: red">*</span>):</label
+                >Nội dung(<span style="color: red">*</span>):</label
               >
               <textarea
                 id="content"
@@ -60,6 +60,19 @@ export default {
                 v-model="item.content"
               ></textarea>
             </div>
+            <div class="form-group">
+              <label for="duration"
+                >Thời gian diễn ra(<span style="color: red">*</span>):</label
+              >
+              <input
+                type="date"
+                class="form-control"
+                id="duration"
+                name="duration"
+                v-model="item.duration"
+                required
+              />
+            </div>
             <button
               type="button"
               class="btn btn-warning px-3 py-2"
@@ -67,7 +80,7 @@ export default {
               @click="create"
               id="edit"
             >
-              <span>Edit</span>
+              <span>Cập nhật</span>
             </button>
           </form>
         </div>

@@ -19,6 +19,7 @@ export default {
         {
           id: 1,
           icon: "dashboard_customize",
+          name_icon: "Thống kê",
           name: "Dashboard",
           role: [],
           children: [],
@@ -26,6 +27,7 @@ export default {
         {
           id: 2,
           icon: "connect_without_contact",
+          name_icon: "Khách hàng",
           name: "Customer",
           role: [],
           children: [],
@@ -33,6 +35,7 @@ export default {
         {
           id: 3,
           icon: "event",
+          name_icon: "Sự kiện",
           name: "Event",
           role: [],
           children: [],
@@ -40,48 +43,39 @@ export default {
         {
           id: 4,
           icon: "badge",
+          name_icon: "Nhân viên",
           name: "Employee",
           role: [],
           children: [],
         },
         {
           id: 5,
-          icon: "apartment",
-          name: "Unit",
-          role: [],
-          children: [],
-        },
-        {
-          id: 6,
           icon: "assignment",
+          name_icon: "Phân công",
           name: "Assignment",
           role: [],
           children: [],
         },
         {
-          id: 7,
-          icon: "acute",
-          name: "Appointment",
-          role: [],
-          children: [],
-        },
-        {
-          id: 8,
+          id: 6,
           icon: "account_circle",
+          name_icon: "Tài khoản",
           name: "Account",
           role: [],
           children: [],
         },
         {
-          id: 9,
+          id: 7,
           icon: "report",
+          name_icon: "Báo cáo",
           name: "Report",
           role: [],
           children: [],
         },
         {
-          id: 10,
+          id: 8,
           icon: "settings",
+          name_icon: "Cài đặt",
           name: "Setting",
           role: [],
           children: [],
@@ -129,7 +123,7 @@ export default {
                 {{ sidebarTask.icon }}
               </span>
               <span class="d-flex align-items-center" style="font-size: 15px;">{{
-                sidebarTask.name
+                sidebarTask.name_icon
               }}</span>
             </div>
           </router-link>
@@ -183,25 +177,4 @@ export default {
   border: none;
 }
 
-::-webkit-scrollbar {
-  width: 5px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 5px grey;
-  border-radius: 10px;
-  display: none;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: rgb(234 179 8);
-  border-radius: 10px;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #b30000;
-}
 </style>

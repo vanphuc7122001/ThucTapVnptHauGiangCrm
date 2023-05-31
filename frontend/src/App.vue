@@ -15,25 +15,31 @@ export default {
     const data = reactive({
       activeMenuResponsive: false,
     });
-    const updateMenuResponsive = (value) => {
-      console.log("Received event from child component:", value);
-    }
+    const updateMenuResponsive = () => {
+      console.log("Received event from child component:");
+    };
     return {
       data,
-      updateMenuResponsive
+      updateMenuResponsive,
     };
   },
 };
 </script>
 
 <template>
+  <!-- <Login /> -->
   <div class="container-fluid">
-    <div class="row">
-      <div class="col-xl-2 d-none d-xl-block">
-        <Sidebar @updateMenuResponsive="updateMenuResponsive" />
+    <div class="row position-relative">
+      <div
+        class="z-index-3"
+        :class="[
+          data.activeMenuResponsive ? 'd-block' : 'col-xl-2 d-none d-xl-block',
+        ]"
+      >
+        <Sidebar />
       </div>
-      <div class="col-xl-10 col-sm-12">
-        <Navbar />
+      <div class="col-xl-10 col-sm-12 z-index-2">
+        <Navbar @showMenu="data.activeMenuResponsive = true" />
         <RouterView></RouterView>
         <Footer />
       </div>
@@ -42,4 +48,3 @@ export default {
 </template>
 
 <style scoped></style>
-

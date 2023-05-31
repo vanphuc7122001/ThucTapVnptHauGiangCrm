@@ -1,12 +1,15 @@
 <script>
-import { defineEmits } from "vue";
+import { defineEmits, inject } from "vue";
 
 export default {
-  setup() {
-    const emit = defineEmits(["updateMenuResponsive"]);
+  props: {
+
+  },
+  setup(props, ctx) {
+    const emit = inject('emit');
     const updateMenuResponsive = () => {
       console.log('starting')
-      emit("updateMenuResponsive", "true");
+      ctx.emit("updateMenuResponsive", "true");
     };
     return {
       updateMenuResponsive,
@@ -21,7 +24,7 @@ export default {
   >
     <a class="text-dark h5 my-auto d-none d-xl-block">PERSONAL CRM SYSTEM</a>
     <a class="d-xl-none d-sm-block text-dark h5 my-auto"
-      ><span class="material-symbols-outlined cursor-pointer" @click="updateMenuResponsive()"> menu </span></a
+      ><span class="material-symbols-outlined cursor-pointer" @click="$emit('showMenu')"> menu </span></a
     >
     <div class="d-flex align-content-center justify-content-between">
       <a class="text-dark d-flex align-items-center"

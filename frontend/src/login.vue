@@ -1,20 +1,22 @@
 <template>
-    <div class="container">
-      <div class="row justify-content-center align-items-center vh-100">
+    <div class="container-fluid">
+      <div class="row justify-content-center align-items-center vh-100" style="background-image: url(https://www.ebillity.com/wp-content/uploads/2019/08/CRM.jpg); background-repeat: no-repeat; background-size: 100%;">
         <div class="col-lg-4">
-          <div class="card shadow">
+          <div class="card shadow bg-bray">
             <div class="card-body p-5">
-              <h5 class="card-title text-center mb-4">Đăng nhập</h5>
+              <h5 class="card-title text-center mb-4">
+                <img src="./assets/images/logo.png" alt="" style="width: 200px;">
+              </h5>
               <form @submit.prevent="login">
                 <div class="mb-3">
-                  <label for="email" class="form-label">Email</label>
+                  <label for="email" class="form-label">User Name</label>
                   <input v-model="email" type="email" class="form-control" id="email" required>
                 </div>
                 <div class="mb-3">
-                  <label for="password" class="form-label">Mật khẩu</label>
+                  <label for="password" class="form-label">Password</label>
                   <input v-model="password" type="password" class="form-control" id="password" required>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
               </form>
             </div>
           </div>

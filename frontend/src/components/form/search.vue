@@ -2,7 +2,7 @@
   <input
     type="text"
     class="form-control"
-    placeholder="Search"
+    placeholder="Tìm kiếm"
     @input="$emit('update:searchText', $event.target.value)"
   />
 </template>
