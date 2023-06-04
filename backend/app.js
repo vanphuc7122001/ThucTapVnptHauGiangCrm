@@ -17,6 +17,18 @@ app.get('/', (req, res, next) => {
     })
 });
 
+// handles before https methods
+const convertToLowercase = (req, res, next) => {
+    for (let key in req.body) {
+        if (typeof req.body[key] === 'string') {
+            req.body[key] = req.body[key].toLowerCase();
+        }
+    }
+    next();
+};
+
+app.use(convertToLowercase);
+
 // initialize router
 const customerRouter = require('./app/routes/customer.route');
 const customer_typesRouter = require('./app/routes/customer_types.route');
@@ -37,7 +49,10 @@ const AppointmentRouter = require('./app/routes/appointment.route');
 const StatusRouter = require('./app/routes/status.route');
 const TaskRouter = require('./app/routes/task.route');
 const LogRouter = require('./app/routes/log.route');
-
+const Customer_EventRouter = require('./app/routes/customer_event.route');
+const Customer_HabitRouter = require('./app/routes/customer_habit.route');
+const Employee_TaskRouter = require('./app/routes/employee_task.route');
+const Role_PermissionRouter = require('./app/routes/role_permission.route');
 
 // use router
 app.use('/customers', customerRouter);
@@ -59,7 +74,10 @@ app.use('/appointments', AppointmentRouter);
 app.use('/statuss', StatusRouter);
 app.use('/tasks', TaskRouter);
 app.use('/logs', LogRouter);
-
+app.use('/customer_events', Customer_EventRouter);
+app.use('/customer_habits', Customer_HabitRouter);
+app.use('/employee_tasks', Employee_TaskRouter);
+app.use('/role_permissions', Role_PermissionRouter);
 
 // check errors
 app.use((req, res, next) => {
