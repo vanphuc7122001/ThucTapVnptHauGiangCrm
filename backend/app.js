@@ -50,24 +50,24 @@ const TaskRouter = require('./app/routes/task.route');
 const LogRouter = require('./app/routes/log.route');
 
 // use router
-app.use('/customers', customerRouter);
-app.use('/customer_types', customer_typesRouter);
-app.use('/customer_works', customer_workRouter);
-app.use('/company_KHs', Company_KHRouter);
-app.use('/events', EventRouter);
-app.use('/habits', HabitRouter);
-app.use('/positions', PositionRouter);
-app.use('/center_VNPTHGs', Center_VNPTHGRouter);
-app.use('/departments', DepartmentRouter);
-app.use('/units', UnitRouter);
-app.use('/permissions', PermissionRouter);
-app.use('/roles', RoleRouter);
-app.use('/cycles', CycleRouter);
-app.use('/employees', EmployeeRouter);
-app.use('/accounts', AccountRouter);
-app.use('/appointments', AppointmentRouter);
-app.use('/tasks', TaskRouter);
-app.use('/logs', LogRouter);
+app.use('/api/customers', customerRouter);
+app.use('/api/customer_types', customer_typesRouter);
+app.use('/api/customer_works', customer_workRouter);
+app.use('/api/company_KHs', Company_KHRouter);
+app.use('/api/events', EventRouter);
+app.use('/api/habits', HabitRouter);
+app.use('/api/positions', PositionRouter);
+app.use('/api/center_VNPTHGs', Center_VNPTHGRouter);
+app.use('/api/departments', DepartmentRouter);
+app.use('/api/units', UnitRouter);
+app.use('/api/permissions', PermissionRouter);
+app.use('/api/roles', RoleRouter);
+app.use('/api/cycles', CycleRouter);
+app.use('/api/employees', EmployeeRouter);
+app.use('/api/accounts', AccountRouter);
+app.use('/api/appointments', AppointmentRouter);
+app.use('/api/tasks', TaskRouter);
+app.use('/api/logs', LogRouter);
 
 // check errors
 app.use((req, res, next) => {

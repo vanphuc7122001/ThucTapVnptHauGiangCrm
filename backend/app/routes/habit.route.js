@@ -1,17 +1,17 @@
 const express = require('express');
-const customers = require('../controllers/customer.controller');
+const habits = require('../controllers/habit.controller');
 
 const router = express.Router();
 
 router.route('/')
-    .post(customers.create)
-    .get(customers.findAll)
-    .delete(customers.deleteAll)
+    .post(habits.create)
+    .get(habits.findAll)
+    .delete(habits.deleteAll)
 
 router.route('/:id')
-    .put(customers.update)
-    .get(customers.findOne)
-    .delete(customers.deleteOne)
+    .put(habits.update)
+    .get(habits.findOne)
+    .delete(habits.deleteOne)
 
 module.exports = router;
 

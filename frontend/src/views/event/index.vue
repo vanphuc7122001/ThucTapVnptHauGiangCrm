@@ -8,10 +8,16 @@ import DeleteAll from "../../components/form/delete-all.vue";
 import Add from "./add.vue";
 import Edit from "./edit.vue";
 import View from "./view.vue";
-import { reactive, computed, watch, ref } from "vue";
+import { reactive, computed, watch, ref, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
 import { test } from "../../assets/common.js";
 import { toString, _filter } from "../../assets/js/pagination.js";
+
+// services
+
+import Event from "../../services/event.service";
+import { getAll } from "../../assets/js/common.http";
+import { alert_success } from "../../assets/js/common.alert";
 export default {
   components: {
     Table,
@@ -22,7 +28,7 @@ export default {
     Add,
     DeleteAll,
     Edit,
-    View
+    View,
   },
   setup(ctx) {
     const data = reactive({
@@ -77,7 +83,8 @@ export default {
         content: "",
         duration: "2023-05-12",
       },
-      a: 2,
+
+      itemss: [],
     });
     const filtered = computed(() => {
       if (!data.searchText) {
@@ -106,6 +113,20 @@ export default {
       });
     });
 
+    // routers
+    const router = useRouter();
+
+    const view = (_id) => {
+      console.log("view", _id);
+      router.push({ name: "Event.view", params: { id: _id } });
+    };
+
+    // watch
+    const activeMenu = ref(1);
+    watch(activeMenu, (newValue, oldValue) => {
+      router.push({ name: "Habit" });
+    });
+
     // methods
     const create = () => {
       console.log("creating");
@@ -120,25 +141,27 @@ export default {
       console.log("edit");
     };
 
-    const router = useRouter();
+    // handle http methods
+    // const getAll = async () => {
+    //   try {
+    //     console.log("start");
+    //     const documents = await Event.getAll();
+    //     console.log("end");
+    //     return documents;
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // };
 
-    const view = (_id) => {
-      console.log("view", _id);
-      router.push({ name: "Event.view", params: { id: _id } });
-    };
-
-    // watch
-    const activeMenu = ref(1);
-    watch(activeMenu, (newValue, oldValue) => {
-      router.push({ name: "Habit" });
+    // Hàm callback được gọi trước khi component được mount (load)
+    onBeforeMount(async () => {
+      alert_success(`<a style="color: red;">abc</a>`, 'cdf');
+      console.log("Component is about to be mounted");
+      data.itemss = await getAll(Event);
+      console.log("event", data.itemss[0].name);
+      // Thực hiện các tác vụ khác tại đây
     });
 
-    const test1 = () => {
-      console.log("starting");
-      data.a = test(data.a);
-      console.log(data.a);
-    };
-    test1();
     return {
       data,
       setPages,
@@ -148,7 +171,6 @@ export default {
       deleteOne,
       edit,
       view,
-      test1,
     };
   },
 };

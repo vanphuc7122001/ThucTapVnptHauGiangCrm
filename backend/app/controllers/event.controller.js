@@ -123,9 +123,9 @@ exports.update = async (req, res, next) => {
 
         if (events.length == 0) {
             const document = await Event.update({
-                time_duration: req.body.time_duration,
-                content: req.body.content,
-                name: req.body.name,
+                time_duration: time_duration,
+                content: content,
+                name: name,
             }, { where: { _id: req.params.id }, returning: true, });
             return res.send({
                 error: false,

@@ -231,6 +231,11 @@ const Habit = sequelize.define('Habit', {
     name: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: 'Tên thói quen không được bỏ trống.',
+            },
+        },
         get() {
             return getDecrypt('name', this);
         },
@@ -428,19 +433,29 @@ const Account = sequelize.define('Account', {
 
 const Appointment = sequelize.define('Appointment', {
     _id: setPrimary,
-    date: {
+    date_time: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: 'Ngày hẹn không được bỏ trống.',
+            },
+        },
         get() {
-            return getDecrypt('date', this);
+            return getDecrypt('date_time', this);
         },
         set(value) {
-            setEncrypt(value, 'date', this);
+            setEncrypt(value, 'date_time', this);
         },
     },
     content: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: 'Nội dung cuộc hẹn không được bỏ trống.',
+            },
+        },
         get() {
             return getDecrypt('content', this);
         },
