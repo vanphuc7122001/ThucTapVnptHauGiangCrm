@@ -7,9 +7,9 @@ export const http_getAll = async (objService) => {
     }
 }
 
-export const http_getOne = async (objService) => {
+export const http_getOne = async (objService, id) => {
     try {
-        const document = await objService.get();
+        const document = await objService.get(id);
         return document;
     } catch (error) {
         console.log(error);

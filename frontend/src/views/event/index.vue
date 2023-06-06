@@ -16,8 +16,17 @@ import { toString, _filter } from "../../assets/js/pagination.js";
 // services
 
 import Event from "../../services/event.service";
-import { http_getAll, http_create, http_getOne } from "../../assets/js/common.http";
-import { alert_success, alert_error } from "../../assets/js/common.alert";
+import {
+  http_getAll,
+  http_create,
+  http_getOne,
+  http_deleteOne,
+} from "../../assets/js/common.http";
+import {
+  alert_success,
+  alert_error,
+  alert_delete,
+} from "../../assets/js/common.alert";
 export default {
   components: {
     Table,
@@ -136,8 +145,27 @@ export default {
       console.log("updating", item);
     };
     const deleteOne = async (_id) => {
-      const event = await http_getOne(Event)
+      const event = await http_getOne(Event, _id);
+      console.log("deleting", event);
+      const isConfirmed = await alert_delete(
+        `Xoá sự kiện`,
+        `Bạn có chắc chắn muốn xoá sự kiện ${event.name} lúc ${formatDateTime(
+          event.time_duration
+        )} không ?`
+      );
+      console.log(isConfirmed);
+      if (isConfirmed == true) {
+        const result = await http_deleteOne(Event, _id);
+        alert_success(
+          `Xoá sự kiện`,
+          `Bạn đã xoá thành công sự kiện ${result.document.name} lúc ${formatDateTime(
+            result.document.time_duration
+          )}.`
+        );
+        refresh();
+      }
     };
+
     const edit = () => {
       console.log("edit");
     };
