@@ -10,7 +10,7 @@ import Edit from "./edit.vue";
 import View from "./view.vue";
 import { reactive, computed, watch, ref, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
-import { test } from "../../assets/common.js";
+import { formatDateTime } from "../../assets/js/common.js";
 import { toString, _filter } from "../../assets/js/pagination.js";
 
 // services
@@ -146,6 +146,8 @@ export default {
 
     // Hàm callback được gọi trước khi component được mount (load)
     onBeforeMount(async () => {
+      const b = formatDateTime("2023-06-08T10:08");
+      console.log("b", b);
       const a = await alert_delete();
       console.log("abc", a);
       console.log("Component is about to be mounted");

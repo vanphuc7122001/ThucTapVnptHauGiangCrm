@@ -24,6 +24,7 @@ export default {
 
 <template>
   <!-- The Modal -->
+  {{ item }}
   <div class="modal" id="model-add">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -66,7 +67,7 @@ export default {
                 >Thời gian diễn ra(<span style="color: red">*</span>):</label
               >
               <input
-                type="date"
+                type="datetime-local"
                 class="form-control"
                 id="duration"
                 name="duration"
