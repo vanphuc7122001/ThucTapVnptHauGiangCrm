@@ -16,8 +16,8 @@ import { toString, _filter } from "../../assets/js/pagination.js";
 // services
 
 import Event from "../../services/event.service";
-import { getAll } from "../../assets/js/common.http";
-import { alert_delete } from "../../assets/js/common.alert";
+import { http_getAll, http_create, http_getOne } from "../../assets/js/common.http";
+import { alert_success, alert_error } from "../../assets/js/common.alert";
 export default {
   components: {
     Table,
@@ -34,34 +34,9 @@ export default {
     const data = reactive({
       items: [
         {
-          _id: "1",
-          name: "sinh nhật",
-          content: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
-          duration: "15/5/2023",
-        },
-        {
-          _id: "2",
-          name: "sinh nhật",
-          content: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
-          duration: "15/5/2023",
-        },
-        {
-          _id: "3",
-          name: "sinh nhật",
-          content: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
-          duration: "15/5/2023",
-        },
-        {
-          _id: "4",
-          name: "sinh nhật",
-          content: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
-          duration: "15/5/2023",
-        },
-        {
-          _id: "5",
-          name: "sinh nhật",
-          content: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
-          duration: "15/5/2023",
+          _id: 1,
+          name: "abc",
+          duration: "abc",
         },
       ],
       entryValue: 5,
@@ -74,7 +49,7 @@ export default {
       itemAdd: {
         name: "",
         content: "",
-        duration: "",
+        time_duration: "",
       },
       activeEdit: false,
       editValue: {
@@ -83,35 +58,47 @@ export default {
         content: "",
         duration: "2023-05-12",
       },
-
-      itemss: [],
-      a: 0,
+    });
+    const toString = computed(() => {
+      console.log("Starting search");
+      return data.items.map((value, index) => {
+        return [value.name].join("").toLocaleLowerCase();
+      });
+    });
+    const filter = computed(() => {
+      return data.items.filter((value, index) => {
+        return toString.value[index].includes(
+          data.searchText.toLocaleLowerCase()
+        );
+      });
     });
     const filtered = computed(() => {
       if (!data.searchText) {
         data.totalRow = data.items.length;
         return data.items;
       } else {
-        data.totalRow = _filter(data.items, data.searchText).length;
-        return _filter(data.items, data.searchText);
+        data.totalRow = filter.value.length;
+        return filter.value;
       }
     });
     const setNumberOfPages = computed(() => {
       return Math.ceil(filtered.value.length / data.entryValue);
     });
     const setPages = computed(() => {
-      if (setNumberOfPages.value == 0 || data.entryValue == "All") {
-        data.entryValue = data.items.length;
-        data.numberOfPages = 1;
-      } else data.numberOfPages = setNumberOfPages.value;
-      data.startRow = (data.currentPage - 1) * data.entryValue + 1;
-      data.endRow = data.currentPage * data.entryValue;
-      return filtered.value.filter((item, index) => {
-        return (
-          index + 1 > (data.currentPage - 1) * data.entryValue &&
-          index + 1 <= data.currentPage * data.entryValue
-        );
-      });
+      if (data.items.length > 0) {
+        if (setNumberOfPages.value == 0 || data.entryValue == "All") {
+          data.entryValue = data.items.length;
+          data.numberOfPages = 1;
+        } else data.numberOfPages = setNumberOfPages.value;
+        data.startRow = (data.currentPage - 1) * data.entryValue + 1;
+        data.endRow = data.currentPage * data.entryValue;
+        return filtered.value.filter((item, index) => {
+          return (
+            index + 1 > (data.currentPage - 1) * data.entryValue &&
+            index + 1 <= data.currentPage * data.entryValue
+          );
+        });
+      } else return data.items.value;
     });
 
     // routers
@@ -129,31 +116,42 @@ export default {
     });
 
     // methods
-    const create = () => {
-      console.log("creating");
+    const create = async () => {
+      console.log(data.itemAdd);
+      const result = await http_create(Event, data.itemAdd);
+      console.log("result", result);
+      if (!result.error) {
+        alert_success(
+          `Thêm sự kiện`,
+          `Sự kiện ${result.document.name} lúc ${formatDateTime(
+            result.document.time_duration
+          )} đã được tạo thành công.`
+        );
+        refresh();
+      } else if (result.error) {
+        alert_error(`Thêm sự kiện`, `${result.msg}`);
+      }
     };
     const update = (item) => {
       console.log("updating", item);
     };
-    const deleteOne = (_id) => {
-      console.log("deleting", _id);
+    const deleteOne = async (_id) => {
+      const event = await http_getOne(Event)
     };
     const edit = () => {
       console.log("edit");
+    };
+
+    const refresh = async () => {
+      data.items = await http_getAll(Event);
     };
 
     // handle http methods
 
     // Hàm callback được gọi trước khi component được mount (load)
     onBeforeMount(async () => {
-      const b = formatDateTime("2023-06-08T10:08");
-      console.log("b", b);
-      const a = await alert_delete();
-      console.log("abc", a);
-      console.log("Component is about to be mounted");
-      data.itemss = await getAll(Event);
-      console.log("event", data.itemss[0].name);
-      // Thực hiện các tác vụ khác tại đây
+      refresh();
+      console.log(data.items);
     });
 
     return {
@@ -171,6 +169,7 @@ export default {
 </script>
 
 <template>
+  {{ data.itemAdd }}
   <div class="border-box d-flex flex-column ml-2">
     <!-- Menu -->
     <div class="d-flex menu my-3 mx-3 justify-content-end">
@@ -259,7 +258,7 @@ export default {
         >
           <span id="delete-all" class="mx-2">Xoá</span>
         </button>
-        <DeleteAll :items="data.items" />
+        <!-- <DeleteAll :items="data.items" /> -->
         <button
           type="button"
           class="btn btn-primary"
@@ -274,8 +273,8 @@ export default {
     <!-- Table -->
     <Table
       :items="setPages"
-      :fields="['Tên', 'Nội dung', 'Thời gian']"
-      :labels="['name', 'content', 'duration']"
+      :fields="['Tên sự kiện', 'Nội dung sự kiện', 'Thời gian diễn ra']"
+      :labels="['name', 'content', 'time_duration']"
       @delete="(value) => deleteOne(value)"
       @edit="
         (value, value1) => (

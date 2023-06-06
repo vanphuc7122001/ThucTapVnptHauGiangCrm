@@ -8,12 +8,9 @@ export default {
     },
   },
   setup(props, ctx) {
-    const data = reactive({
-    });
+    const data = reactive({});
     const create = () => {
-      if (props.item.name.length > 0 && props.item.content.length > 0) {
-        ctx.emit("create");
-      }
+      ctx.emit("create");
     };
     return {
       create,
@@ -24,7 +21,6 @@ export default {
 
 <template>
   <!-- The Modal -->
-  {{ item }}
   <div class="modal" id="model-add">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -38,9 +34,9 @@ export default {
 
         <!-- Modal body -->
         <div class="modal-body">
-          <form action="/action_page.php" class="was-validated">
+          <form action="" class="was-validated">
             <div class="form-group">
-              <label for="name">Tên(<span style="color: red">*</span>):</label>
+              <label for="name">Tên sự kiện(<span style="color: red">*</span>):</label>
               <input
                 type="text"
                 class="form-control"
@@ -52,7 +48,7 @@ export default {
             </div>
             <div class="form-group">
               <label for="content"
-                >Nội dung(<span style="color: red">*</span>):</label
+                >Nội dung sự kiện(<span style="color: red">*</span>):</label
               >
               <textarea
                 id="content"
@@ -64,18 +60,19 @@ export default {
             </div>
             <div class="form-group">
               <label for="content"
-                >Thời gian diễn ra(<span style="color: red">*</span>):</label
+                >Thời gian diễn ra sự kiện(<span style="color: red">*</span>):</label
               >
               <input
                 type="datetime-local"
                 class="form-control"
-                id="duration"
-                name="duration"
-                v-model="item.duration"
+                id="time_duration"
+                name="time_duration"
+                v-model="item.time_duration"
                 required
               />
             </div>
-            <button type="button"
+            <button
+              type="button"
               class="btn btn-primary px-3 py-2"
               style="font-size: 14px"
               @click="create"
@@ -90,4 +87,6 @@ export default {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+
+</style>

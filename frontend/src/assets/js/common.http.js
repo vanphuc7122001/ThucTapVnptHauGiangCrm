@@ -1,4 +1,4 @@
-export const getAll = async (objService) => {
+export const http_getAll = async (objService) => {
     try {
         const documents = await objService.getAll();
         return documents;
@@ -7,7 +7,7 @@ export const getAll = async (objService) => {
     }
 }
 
-export const getOne = async (objService) => {
+export const http_getOne = async (objService) => {
     try {
         const document = await objService.get();
         return document;
@@ -16,7 +16,7 @@ export const getOne = async (objService) => {
     }
 }
 
-export const deleteOne = async (objService, id) => {
+export const http_deleteOne = async (objService, id) => {
     try {
         const document = await objService.delete(id);
         return document;
@@ -25,7 +25,7 @@ export const deleteOne = async (objService, id) => {
     }
 }
 
-export const create = async (objService, data) => {
+export const http_create = async (objService, data) => {
     try {
         const document = await objService.create(data);
         return document;
@@ -34,7 +34,7 @@ export const create = async (objService, data) => {
     }
 }
 
-export const update = async (objService, id, data) => {
+export const http_update = async (objService, id, data) => {
     try {
         const document = await objService.update(id, data);
         return document;

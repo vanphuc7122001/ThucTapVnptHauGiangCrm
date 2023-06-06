@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 
 // checked
 exports.create = async (req, res, next) => {
+    console.log(req.body);
     if (Object.keys(req.body).length === 3) {
         const { content, time_duration, name } = req.body;
         const events = await Event.findAll();
@@ -24,11 +25,10 @@ exports.create = async (req, res, next) => {
             });
             return res.send({
                 error: false,
-                msg: `Bạn đã tạo thành công sự kiện ${document.name} trong ngày ${document.time_duration}`,
+                msg: `Bạn đã tạo thành công sự kiện ${document.name} trong ngày ${document.time_duration}.`,
                 document: document,
             })
         } catch (error) {
-            console.log(error.errors[0].message);
             return res.send({
                 error: true,
                 msg: error.errors[0].message
