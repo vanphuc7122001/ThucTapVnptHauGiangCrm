@@ -17,7 +17,7 @@ import { toString, _filter } from "../../assets/js/pagination.js";
 
 import Event from "../../services/event.service";
 import { getAll } from "../../assets/js/common.http";
-import { alert_success } from "../../assets/js/common.alert";
+import { alert_delete } from "../../assets/js/common.alert";
 export default {
   components: {
     Table,
@@ -85,6 +85,7 @@ export default {
       },
 
       itemss: [],
+      a: 0,
     });
     const filtered = computed(() => {
       if (!data.searchText) {
@@ -142,20 +143,11 @@ export default {
     };
 
     // handle http methods
-    // const getAll = async () => {
-    //   try {
-    //     console.log("start");
-    //     const documents = await Event.getAll();
-    //     console.log("end");
-    //     return documents;
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // };
 
     // Hàm callback được gọi trước khi component được mount (load)
     onBeforeMount(async () => {
-      alert_success(`<a style="color: red;">abc</a>`, 'cdf');
+      const a = await alert_delete();
+      console.log("abc", a);
       console.log("Component is about to be mounted");
       data.itemss = await getAll(Event);
       console.log("event", data.itemss[0].name);
@@ -177,7 +169,6 @@ export default {
 </script>
 
 <template>
-  {{ data.a }}
   <div class="border-box d-flex flex-column ml-2">
     <!-- Menu -->
     <div class="d-flex menu my-3 mx-3 justify-content-end">
