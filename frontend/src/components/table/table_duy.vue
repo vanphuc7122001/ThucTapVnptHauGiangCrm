@@ -72,7 +72,7 @@ export default {
             <span
               id="edit"
               class="material-symbols-outlined d-flex align-items-center justify-content-center"
-              @click="$emit('edit', item, true)"
+              @click="$emit('edit', item, true)" 
             >
               edit
             </span>

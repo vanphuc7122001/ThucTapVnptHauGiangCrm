@@ -34,7 +34,3 @@ export const formatDateTime = (value) => {
 //     return `${hours} giờ ${minutes} phút, ngày ${day}-${month}-${year}`;
 // }
 
-
-
-
-

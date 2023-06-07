@@ -21,6 +21,7 @@ import {
   http_create,
   http_getOne,
   http_deleteOne,
+  http_update,
 } from "../../assets/js/common.http";
 import {
   alert_success,
@@ -61,12 +62,7 @@ export default {
         time_duration: "",
       },
       activeEdit: false,
-      editValue: {
-        _id: "",
-        name: "",
-        content: "",
-        duration: "2023-05-12",
-      },
+      editValue: {},
     });
     const toString = computed(() => {
       console.log("Starting search");
@@ -158,20 +154,31 @@ export default {
         const result = await http_deleteOne(Event, _id);
         alert_success(
           `Xoá sự kiện`,
-          `Bạn đã xoá thành công sự kiện ${result.document.name} lúc ${formatDateTime(
-            result.document.time_duration
-          )}.`
+          `Bạn đã xoá thành công sự kiện ${
+            result.document.name
+          } lúc ${formatDateTime(result.document.time_duration)}.`
         );
         refresh();
       }
     };
 
-    const edit = () => {
-      console.log("edit");
+    const edit = async (editValue) => {
+      console.log(editValue);
+      const result = await http_update(Event, editValue._id, editValue);
+      if (!result.error) {
+        alert_success(`Sửa sự kiện`, `${result.msg}`);
+        refresh();
+      } else if (result.error) {
+        alert_error(`Sửa sự kiện`, `${result.msg}`);
+      }
     };
 
     const refresh = async () => {
       data.items = await http_getAll(Event);
+      for (const value of data.items) {
+        value.time_duration_format = formatDateTime(value.time_duration);
+      }
+      console.log(data.items);
     };
 
     // handle http methods
@@ -197,7 +204,6 @@ export default {
 </script>
 
 <template>
-  {{ data.itemAdd }}
   <div class="border-box d-flex flex-column ml-2">
     <!-- Menu -->
     <div class="d-flex menu my-3 mx-3 justify-content-end">
@@ -302,11 +308,14 @@ export default {
     <Table
       :items="setPages"
       :fields="['Tên sự kiện', 'Nội dung sự kiện', 'Thời gian diễn ra']"
-      :labels="['name', 'content', 'time_duration']"
+      :labels="['name', 'content', 'time_duration_format']"
       @delete="(value) => deleteOne(value)"
       @edit="
         (value, value1) => (
-          (data.editValue = value), (data.activeEdit = value1)
+          (data.editValue = value),
+          (data.activeEdit = value1),
+          (data.editValue.time_duration =
+            data.editValue.time_duration.toUpperCase())
         )
       "
       @view="(value) => view(value)"
@@ -326,6 +335,7 @@ export default {
     :item="data.editValue"
     :class="[data.activeEdit ? 'show-modal' : 'd-none']"
     @cancel="data.activeEdit = false"
+    @edit="edit(data.editValue)"
   />
   <View />
 </template>

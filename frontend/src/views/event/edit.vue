@@ -65,11 +65,11 @@ export default {
                 >Thời gian diễn ra(<span style="color: red">*</span>):</label
               >
               <input
-                type="date"
+                type="datetime-local"
                 class="form-control"
                 id="duration"
                 name="duration"
-                v-model="item.duration"
+                v-model="item.time_duration"
                 required
               />
             </div>
@@ -77,7 +77,7 @@ export default {
               type="button"
               class="btn btn-warning px-3 py-2"
               style="font-size: 14px"
-              @click="create"
+              @click="$emit('edit')"
               id="edit"
             >
               <span>Cập nhật</span>

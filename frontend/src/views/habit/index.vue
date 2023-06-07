@@ -1,14 +1,15 @@
 <script>
-import Table from "../../components/table/table_duy.vue";
-import Pagination from "../../components/table/pagination_duy.vue";
-import Dropdown from "../../components/form/dropdown.vue";
-import Select from "../../components/form/select.vue";
-import Search from "../../components/form/search.vue";
-import DeleteAll from "../../components/form/delete-all.vue";
+// import Table from "../../components/table/table_duy.vue";
+// import Pagination from "../../components/table/pagination_duy.vue";
+// import Dropdown from "../../components/form/dropdown.vue";
+// import Select from "../../components/form/select.vue";
+// import Search from "../../components/form/search.vue";
+// import DeleteAll from "../../components/form/delete-all.vue";
 import Add from "./add.vue";
 import Edit from "./edit.vue";
-import { reactive, computed, watch, ref } from "vue";
-import { useRouter } from "vue-router";
+// import { reactive, computed, watch, ref } from "vue";
+// import { useRouter } from "vue-router";
+import commonImport from "../common/import.js";
 export default {
   components: {
     Table,
@@ -22,38 +23,7 @@ export default {
   },
   setup(ctx) {
     const data = reactive({
-      items: [
-        {
-          _id: "1",
-          name: "Tran Tuan Duy",
-          content: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
-        },
-        {
-          _id: "2",
-          name: "Nguyen Lan Anh",
-          content: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
-        },
-        {
-          _id: "3",
-          name: "Nguyen Thi Thanh Truc",
-          content: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
-        },
-        {
-          _id: "4",
-          name: "Nguyen Ngoc Van Anh",
-          content: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
-        },
-        {
-          _id: "5",
-          name: "Truong Thiet Long",
-          content: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
-        },
-        {
-          _id: "6",
-          name: "Dang Van Phuc",
-          content: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
-        },
-      ],
+      items: [],
       entryValue: 5,
       numberOfPages: 1,
       totalRow: 0,
@@ -63,14 +33,9 @@ export default {
       searchText: "",
       itemAdd: {
         name: "",
-        content: "",
       },
       activeEdit: false,
-      editValue: {
-        _id: "",
-        name: "",
-        content: "",
-      },
+      editValue: {},
     });
 
     // computed
@@ -233,8 +198,8 @@ export default {
     <!-- Table -->
     <Table
       :items="setPages"
-      :fields="['Tên', 'Nội dung']"
-      :labels="['name', 'content']"
+      :fields="['Tên thói quen']"
+      :labels="['name']"
       @delete="(value) => deleteOne(value)"
       @edit="
         (value, value1) => (
