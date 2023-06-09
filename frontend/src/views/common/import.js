@@ -4,6 +4,7 @@ import Dropdown from "../../components/form/dropdown.vue";
 import Select from "../../components/form/select.vue";
 import Search from "../../components/form/search.vue";
 import DeleteAll from "../../components/form/delete-all.vue";
+import Select_Advanced from "../../components/form/select_advanced.vue";
 import { reactive, computed, watch, ref, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
 import { formatDateTime, formatDate } from "../../assets/js/common.js";
@@ -55,6 +56,7 @@ export {
     Select,
     Search,
     DeleteAll,
+    Select_Advanced,
     // compositions
     reactive,
     computed,

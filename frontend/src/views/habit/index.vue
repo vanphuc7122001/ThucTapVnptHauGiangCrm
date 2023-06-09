@@ -1,14 +1,6 @@
 <script>
-// import Table from "../../components/table/table_duy.vue";
-// import Pagination from "../../components/table/pagination_duy.vue";
-// import Dropdown from "../../components/form/dropdown.vue";
-// import Select from "../../components/form/select.vue";
-// import Search from "../../components/form/search.vue";
-// import DeleteAll from "../../components/form/delete-all.vue";
 import Add from "./add.vue";
 import Edit from "./edit.vue";
-// import { reactive, computed, watch, ref } from "vue";
-// import { useRouter } from "vue-router";
 import {
   // components
   Table,
@@ -115,39 +107,77 @@ export default {
       return Math.ceil(filtered.value.length / data.entryValue);
     });
     const setPages = computed(() => {
-      if (setNumberOfPages.value == 0 || data.entryValue == "All") {
-        data.entryValue = data.items.length;
-        data.numberOfPages = 1;
-      } else data.numberOfPages = setNumberOfPages.value;
-      data.startRow = (data.currentPage - 1) * data.entryValue + 1;
-      data.endRow = data.currentPage * data.entryValue;
-      return filtered.value.filter((item, index) => {
-        return (
-          index + 1 > (data.currentPage - 1) * data.entryValue &&
-          index + 1 <= data.currentPage * data.entryValue
-        );
-      });
+      console.log("data.items", data.items);
+      console.log(data.items.length);
+      console.log(data.numberOfPages);
+      if (data.items.length > 0) {
+        if (setNumberOfPages.value == 0 || data.entryValue == "All") {
+          data.entryValue = data.items.length;
+          data.numberOfPages = 1;
+        } else data.numberOfPages = setNumberOfPages.value;
+        data.startRow = (data.currentPage - 1) * data.entryValue + 1;
+        data.endRow = data.currentPage * data.entryValue;
+        return filtered.value.filter((item, index) => {
+          return (
+            index + 1 > (data.currentPage - 1) * data.entryValue &&
+            index + 1 <= data.currentPage * data.entryValue
+          );
+        });
+      } else return data.items.value;
     });
 
     // methods
-    const create = () => {
-      console.log("creating");
+    const create = async () => {
+      const result = await http_create(Habit, data.itemAdd);
+      if (!result.error) {
+        alert_success(
+          `Thêm thói quen khách hàng`,
+          `Thói quen ${result.document.name} đã được tạo thành công.`
+        );
+        refresh();
+      } else if (result.error) {
+        alert_error(`Thêm thói quen khách hàng`, `${result.msg}`);
+      }
     };
     const update = (item) => {
       console.log("updating", item);
     };
-    const deleteOne = (_id) => {
-      console.log("deleting", _id);
+    const deleteOne = async (_id) => {
+      const habit = await http_getOne(Habit, _id);
+      console.log("deleting", habit);
+      const isConfirmed = await alert_delete(
+        `Xoá thói quen`,
+        `Bạn có chắc chắn muốn xoá thói quen ${habit.name} không ?`
+      );
+      console.log(isConfirmed);
+      if (isConfirmed == true) {
+        const result = await http_deleteOne(Habit, _id);
+        alert_success(
+          `Xoá thói quen`,
+          `Bạn đã xoá thành công thói quen ${result.document.name}.`
+        );
+        refresh();
+      }
     };
-    const edit = () => {
-      console.log("edit");
+    const edit = async (editValue) => {
+      console.log(editValue);
+      const result = await http_update(Habit, editValue._id, editValue);
+      if (!result.error) {
+        alert_success(`Sửa sự kiện`, `${result.msg}`);
+        refresh();
+      } else if (result.error) {
+        alert_error(`Sửa sự kiện`, `${result.msg}`);
+      }
     };
 
     const router = useRouter();
-
     const view = (_id) => {
       console.log("view", _id);
       router.push({ name: "Event.view", params: { id: _id } });
+    };
+
+    const refresh = async () => {
+      data.items = await http_getAll(Habit);
     };
 
     // watch
@@ -155,6 +185,12 @@ export default {
     watch(activeMenu, (newValue, oldValue) => {
       router.push({ name: "Event" });
     });
+
+    // Hàm callback được gọi trước khi component được mount (load)
+    onBeforeMount(async () => {
+      await refresh();
+    });
+
     return {
       data,
       setPages,
@@ -233,7 +269,7 @@ export default {
         >
           <span id="delete-all" class="mx-2">Xoá</span>
         </button>
-        <DeleteAll :items="data.items" />
+        <!-- <DeleteAll :items="data.items" /> -->
         <button
           type="button"
           class="btn btn-primary"
@@ -273,6 +309,7 @@ export default {
     :item="data.editValue"
     :class="[data.activeEdit ? 'show-modal' : 'd-none']"
     @cancel="data.activeEdit = false"
+    @edit="edit(data.editValue)"
   />
 </template>
 
@@ -305,10 +342,10 @@ export default {
   font-size: 14px;
 }
 .show-modal {
-  display: block;
+  /* display: block;
   opacity: 1;
   background-color: var(--dark);
-  /* pointer-events: auto; */
-  z-index: 1;
+  pointer-events: auto;
+  z-index: 1; */
 }
 </style>

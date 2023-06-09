@@ -1,33 +1,60 @@
 <script>
-import Table from "../../components/table/table_duy.vue";
-import Pagination from "../../components/table/pagination_duy.vue";
-import Dropdown from "../../components/form/dropdown.vue";
-import Select from "../../components/form/select.vue";
-import Search from "../../components/form/search.vue";
-import DeleteAll from "../../components/form/delete-all.vue";
 import Add from "./add.vue";
 import Edit from "./edit.vue";
 import View from "./view.vue";
-import { reactive, computed, watch, ref, onBeforeMount } from "vue";
-import { useRouter } from "vue-router";
-import { formatDateTime } from "../../assets/js/common.js";
-import { toString, _filter } from "../../assets/js/pagination.js";
-
-// services
-
-import Event from "../../services/event.service";
 import {
+  // components
+  Table,
+  Pagination,
+  Dropdown,
+  Select,
+  Search,
+  DeleteAll,
+  Select_Advanced,
+  // compositions
+  reactive,
+  computed,
+  watch,
+  ref,
+  onBeforeMount,
+  // router
+  useRouter,
+  // format date or datetime
+  formatDateTime,
+  formatDate,
+  // service
+  Event,
+  Habit,
+  Account,
+  Appointment,
+  Center_VNPT,
+  Company_KH,
+  Customer_Types,
+  Customer_Work,
+  Customer,
+  Cycle,
+  Department,
+  Employee,
+  Log,
+  Permission,
+  Position,
+  Role,
+  Task,
+  Unit,
+  // http service
   http_getAll,
   http_create,
   http_getOne,
   http_deleteOne,
   http_update,
-} from "../../assets/js/common.http";
-import {
+  // alert
   alert_success,
   alert_error,
   alert_delete,
-} from "../../assets/js/common.alert";
+  alert_warning,
+  alert_info,
+} from "../common/import.js";
+
 export default {
   components: {
     Table,
@@ -39,16 +66,11 @@ export default {
     DeleteAll,
     Edit,
     View,
+    Select_Advanced,
   },
   setup(ctx) {
     const data = reactive({
-      items: [
-        {
-          _id: 1,
-          name: "abc",
-          duration: "abc",
-        },
-      ],
+      items: [],
       entryValue: 5,
       numberOfPages: 1,
       totalRow: 0,
@@ -63,6 +85,17 @@ export default {
       },
       activeEdit: false,
       editValue: {},
+      searchSelect: "",
+      optionSelect: [
+        {
+          _id: 1,
+          name: "1",
+        },
+        {
+          _id: 2,
+          name: "2",
+        },
+      ],
     });
     const toString = computed(() => {
       console.log("Starting search");
@@ -109,11 +142,6 @@ export default {
     // routers
     const router = useRouter();
 
-    const view = (_id) => {
-      console.log("view", _id);
-      router.push({ name: "Event.view", params: { id: _id } });
-    };
-
     // watch
     const activeMenu = ref(1);
     watch(activeMenu, (newValue, oldValue) => {
@@ -122,9 +150,7 @@ export default {
 
     // methods
     const create = async () => {
-      console.log(data.itemAdd);
       const result = await http_create(Event, data.itemAdd);
-      console.log("result", result);
       if (!result.error) {
         alert_success(
           `Thêm sự kiện`,
@@ -173,12 +199,26 @@ export default {
       }
     };
 
+    const view = (_id) => {
+      console.log("view", _id);
+      router.push({ name: "Event.view", params: { id: _id } });
+    };
+
     const refresh = async () => {
+      console.log('met moi qau')
       data.items = await http_getAll(Event);
+      data.items.push({
+        _id: 'other',
+        name: 'other',
+      })
       for (const value of data.items) {
         value.time_duration_format = formatDateTime(value.time_duration);
       }
       console.log(data.items);
+    };
+
+    const delete_a = async (objectData) => {
+      console.log("delete_a", objectData);
     };
 
     // handle http methods
@@ -198,6 +238,8 @@ export default {
       deleteOne,
       edit,
       view,
+      delete_a,
+      refresh,
     };
   },
 };
@@ -205,6 +247,7 @@ export default {
 
 <template>
   <div class="border-box d-flex flex-column ml-2">
+    {{ data.searchSelect }}
     <!-- Menu -->
     <div class="d-flex menu my-3 mx-3 justify-content-end">
       <a
@@ -236,14 +279,34 @@ export default {
             ]"
           />
         </div>
-        <input
-          style=""
-          class="input px-2 form-group w-100 ml-3"
-          type="date"
-          name=""
-          id=""
-        />
-        <div class="form-group"></div>
+        <div class="d-flex">
+          <input
+            style=""
+            class="input px-2 form-group w-100 ml-3"
+            type="date"
+            name=""
+            id=""
+          />
+        </div>
+
+        <div class="form-group ml-3">
+          <Select_Advanced
+            :options="data.items"
+            style="width: 300px; height: 100%"
+            @searchSelect="
+              async (value) => (
+                await refresh(),
+                (data.items = data.items.filter((value1, index) => {
+                  console.log(value1, value);
+                  return value1.name.includes(value) || value.length == 0;
+                })),
+                console.log('searchSlect', value.length)
+              )
+            "
+            @delete="(value) => console.log('delete', value)"
+            @choosed="(value) => console.log('choosed', value)"
+          />
+        </div>
       </div>
     </div>
     <!-- Search -->

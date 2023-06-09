@@ -50,7 +50,7 @@ export default {
 <template>
   <div class="d-flex justify-content-between align-items-center mt-2">
     <p>
-      Hiển thị {{ totalRow == 0 ? 0 : startRow }} đển
+      Hiển thị từ {{ totalRow == 0 ? 0 : startRow }} đển
       {{ endRow > totalRow ? totalRow : endRow }} của {{ totalRow }} bản ghi
     </p>
     <ul class="pagination">

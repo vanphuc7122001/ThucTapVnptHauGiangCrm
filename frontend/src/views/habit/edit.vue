@@ -38,7 +38,7 @@ export default {
         <div class="modal-body">
           <form class="was-validated">
             <div class="form-group">
-              <label for="name">Tên(<span style="color: red">*</span>):</label>
+              <label for="name">Tên thói quen(<span style="color: red">*</span>):</label>
               <input
                 type="text"
                 class="form-control"
@@ -48,23 +48,11 @@ export default {
                 required
               />
             </div>
-            <div class="form-group">
-              <label for="content"
-                >Nội dụng(<span style="color: red">*</span>):</label
-              >
-              <textarea
-                id="content"
-                required
-                class="form-control"
-                rows="5"
-                v-model="item.content"
-              ></textarea>
-            </div>
             <button
               type="button"
               class="btn btn-warning px-3 py-2"
               style="font-size: 14px"
-              @click="create"
+              @click="$emit('edit')"
               id="edit"
             >
               <span>Cập nhật</span>
@@ -78,8 +66,8 @@ export default {
 
 <style scoped>
 .show-modal {
-  display: block;
+  /* display: block;
   opacity: 1;
-  pointer-events: auto;
+  pointer-events: auto; */
 }
 </style>
