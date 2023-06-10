@@ -611,91 +611,211 @@ const Log = sequelize.define('Log', {
 //one-to-many relationships
 
 // checked
-Customer_Types.hasMany(Customer, { foreignKey: 'customerTypesId' });
-Customer.belongsTo(Customer_Types, { foreignKey: 'customerTypesId' });
+Customer_Types.hasMany(Customer, {
+    foreignKey: 'customerTypesId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+Customer.belongsTo(Customer_Types, {
+    foreignKey: 'customerTypesId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
 
 // checked
-Customer.hasMany(Customer_Work, { foreignKey: 'customerId' });
-Customer_Work.belongsTo(Customer, { foreignKey: 'customerId' });
+Customer.hasMany(Customer_Work, {
+    foreignKey: 'customerId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+Customer_Work.belongsTo(Customer, {
+    foreignKey: 'customerId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
 
 // checked
-Customer.hasMany(Task, { foreignKey: 'customerId' });
-Task.belongsTo(Customer, { foreignKey: 'customerId' });
+Customer.hasMany(Task, {
+    foreignKey: 'customerId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+Task.belongsTo(Customer, {
+    foreignKey: 'customerId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
 
 // checked
-Company_KH.hasMany(Customer_Work, { foreignKey: 'companyId' });
-Customer_Work.belongsTo(Company_KH, { foreignKey: 'companyId' });
+Company_KH.hasMany(Customer_Work, {
+    foreignKey: 'companyId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+Customer_Work.belongsTo(Company_KH, {
+    foreignKey: 'companyId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
 
 // checked
-Cycle.hasMany(Task, { foreignKey: 'cycleId' });
-Task.belongsTo(Cycle, { foreignKey: 'cycleId' });
+Cycle.hasMany(Task, {
+    foreignKey: 'cycleId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+Task.belongsTo(Cycle, {
+    foreignKey: 'cycleId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
 
 // checked
-Employee.hasMany(Task, { foreignKey: 'leaderId' });
-Task.belongsTo(Employee, { foreignKey: 'leaderId' });
+Employee.hasMany(Task, {
+    foreignKey: 'leaderId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+Task.belongsTo(Employee, {
+    foreignKey: 'leaderId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
 
 // checked
-Task.hasMany(Appointment, { foreignKey: 'taskId' });
-Appointment.belongsTo(Task, { foreignKey: 'taskId' });
+Task.hasMany(Appointment, {
+    foreignKey: 'taskId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+Appointment.belongsTo(Task, {
+    foreignKey: 'taskId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
 
 // checked
-Position.hasMany(Employee, { foreignKey: 'postionId' });
-Employee.belongsTo(Position, { foreignKey: 'postionId' });
+Position.hasMany(Employee, {
+    foreignKey: 'postionId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+Employee.belongsTo(Position, {
+    foreignKey: 'postionId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
 
 // checked
-Unit.hasMany(Employee, { foreignKey: 'unitId' });
-Employee.belongsTo(Unit, { foreignKey: 'unitId' });
+Unit.hasMany(Employee, {
+    foreignKey: 'unitId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+Employee.belongsTo(Unit, {
+    foreignKey: 'unitId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
 
 // checked
-Department.hasMany(Unit, { foreignKey: 'departmentId' });
-Unit.belongsTo(Department, { foreignKey: 'departmentId' });
+Department.hasMany(Unit, {
+    foreignKey: 'departmentId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+Unit.belongsTo(Department, {
+    foreignKey: 'departmentId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
 
 // checked
-Center_VNPTHG.hasMany(Department, { foreignKey: 'centerVNPTHGId' });
-Department.belongsTo(Center_VNPTHG, { foreignKey: 'centerVNPTHGId' });
+Center_VNPTHG.hasMany(Department, {
+    foreignKey: 'centerVNPTHGId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+Department.belongsTo(Center_VNPTHG, {
+    foreignKey: 'centerVNPTHGId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
 
 // checked
-Role.hasMany(Account, { foreignKey: 'roleId' });
-Account.belongsTo(Role, { foreignKey: 'roleId' });
+Role.hasMany(Account, {
+    foreignKey: 'roleId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+Account.belongsTo(Role, {
+    foreignKey: 'roleId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
 
 // many-to-many relationship
 
 // checked
 const Customer_Event = sequelize.define('Customer_Event', {});
-Customer.belongsToMany(Event, { through: Customer_Event });
-Event.belongsToMany(Customer, { through: Customer_Event });
+Customer.belongsToMany(Event, {
+    through: Customer_Event, onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+Event.belongsToMany(Customer, {
+    through: Customer_Event, onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
 
 // checked
 const Customer_Habit = sequelize.define('Customer_Habit', {});
-Customer.belongsToMany(Habit, { through: Customer_Habit });
-Habit.belongsToMany(Customer, { through: Customer_Habit });
+Customer.belongsToMany(Habit, {
+    through: Customer_Habit, onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+Habit.belongsToMany(Customer, {
+    through: Customer_Habit, onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
 
 // checked
 const Employee_Task = sequelize.define('Employee_Task', {});
-Employee.belongsToMany(Task, { through: Employee_Task });
-Task.belongsToMany(Employee, { through: Employee_Task });
+Employee.belongsToMany(Task, {
+    through: Employee_Task, onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+Task.belongsToMany(Employee, {
+    through: Employee_Task, onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
 
 // checked
 const Role_Permission = sequelize.define('Role_Permission', {});
-Role.belongsToMany(Permission, { through: Role_Permission });
-Permission.belongsToMany(Role, { through: Role_Permission });
+Role.belongsToMany(Permission, {
+    through: Role_Permission, onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+Permission.belongsToMany(Role, {
+    through: Role_Permission, onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
 
 // one-to-one relationship
 // checked
-Employee.hasOne(Account);
-Account.belongsTo(Employee);
+Employee.hasOne(Account, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+Account.belongsTo(Employee, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
 
 // checked
-Appointment.hasOne(Status_App);
-Status_App.belongsTo(Appointment);
+Appointment.hasOne(Status_App, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+Status_App.belongsTo(Appointment, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
 
 // checked
-Task.hasOne(Status_Task);
-Status_Task.belongsTo(Task);
+Task.hasOne(Status_Task, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+Status_Task.belongsTo(Task, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
 
 // checked
-Task.hasOne(FeedBack_Task);
-FeedBack_Task.belongsTo(Task);
+Task.hasOne(FeedBack_Task, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+FeedBack_Task.belongsTo(Task, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
 
 // Sync the model with the database
 Customer_Types.sync();

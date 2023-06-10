@@ -107,9 +107,6 @@ export default {
       return Math.ceil(filtered.value.length / data.entryValue);
     });
     const setPages = computed(() => {
-      console.log("data.items", data.items);
-      console.log(data.items.length);
-      console.log(data.numberOfPages);
       if (data.items.length > 0) {
         if (setNumberOfPages.value == 0 || data.entryValue == "All") {
           data.entryValue = data.items.length;
@@ -139,8 +136,14 @@ export default {
         alert_error(`Thêm thói quen khách hàng`, `${result.msg}`);
       }
     };
-    const update = (item) => {
-      console.log("updating", item);
+    const update = async (item) => {
+      const result = await http_update(Habit, editValue._id, editValue);
+      if (!result.error) {
+        alert_success(`Sửa thói quen`, `${result.msg}`);
+        refresh();
+      } else if (result.error) {
+        alert_error(`Sửa thói quen`, `${result.msg}`);
+      }
     };
     const deleteOne = async (_id) => {
       const habit = await http_getOne(Habit, _id);

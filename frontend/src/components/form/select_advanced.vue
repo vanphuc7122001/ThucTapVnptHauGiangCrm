@@ -122,6 +122,4 @@ input {
   width: 100%;
 }
 
-.select-option:hover {
-}
 </style>

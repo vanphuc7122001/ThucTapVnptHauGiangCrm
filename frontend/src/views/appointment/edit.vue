@@ -1,11 +1,73 @@
 <script>
 import { reactive } from "vue";
+import {
+  // components
+  Table,
+  Pagination,
+  Dropdown,
+  Select,
+  Search,
+  DeleteAll,
+  Select_Advanced,
+  // compositions
+  reactive,
+  computed,
+  watch,
+  ref,
+  onBeforeMount,
+  // router
+  useRouter,
+  // format date or datetime
+  formatDateTime,
+  formatDate,
+  // service
+  Event,
+  Habit,
+  Account,
+  Appointment,
+  Center_VNPT,
+  Company_KH,
+  Customer_Types,
+  Customer_Work,
+  Customer,
+  Cycle,
+  Department,
+  Employee,
+  Log,
+  Permission,
+  Position,
+  Role,
+  Task,
+  Unit,
+  // http service
+  http_getAll,
+  http_create,
+  http_getOne,
+  http_deleteOne,
+  http_update,
+  // alert
+  alert_success,
+  alert_error,
+  alert_delete,
+  alert_warning,
+  alert_info,
+} from "../common/import.js";
 export default {
   props: {
     item: {
       type: Object,
       default: {},
     },
+  },
+  components: {
+    Table,
+    Pagination,
+    Dropdown,
+    Select,
+    Search,
+    Add,
+    DeleteAll,
+    Edit,
   },
   setup(props, ctx) {
     const data = reactive({});
@@ -40,31 +102,8 @@ export default {
         </div>
 
         <!-- Modal body -->
-        <div class="modal-body" style="overflow: auto; max-height: 700px;">
-          <form class="was-validated">
-            <div class="form-group">
-              <label for="name">Ngày(<span style="color: red">*</span>):</label>
-              <input
-                type="date"
-                class="form-control"
-                id="name"
-                name="name"
-                v-model="item.date"
-                required
-              />
-            </div>
-            <div class="form-group">
-              <label for="content"
-                >Nội dung(<span style="color: red">*</span>):</label
-              >
-              <textarea
-                id="content"
-                required
-                class="form-control"
-                rows="5"
-                v-model="item.content"
-              ></textarea>
-            </div>
+        <div class="modal-body" style="overflow: auto; max-height: 700px">
+          <form action="/action_page.php" class="was-validated">
             <div class="form-group">
               <label for="name"
                 >Khách hàng(<span style="color: red">*</span>):</label
@@ -74,7 +113,6 @@ export default {
                 class="form-control"
                 id="name"
                 name="name"
-                v-model="item.customer"
                 required
               />
             </div>
@@ -87,29 +125,60 @@ export default {
                 class="form-control"
                 id="name"
                 name="name"
-                v-model="item.employee"
                 required
               />
             </div>
             <div class="form-group">
               <label for="name"
-                >Trạng thái(<span style="color: red">*</span>):</label
+                >Ngày hẹn(<span style="color: red">*</span>):</label
               >
               <input
-                type="text"
+                type="datetime-local"
                 class="form-control"
                 id="name"
                 name="name"
-                v-model="item.status"
+                v-model="item.date_time"
                 required
               />
             </div>
             <div class="form-group">
-              <label for="name"
-                >Lý do(<span style="color: red">*</span>):</label
+              <label for="content"
+                >Nội dung lịch hẹn(<span style="color: red">*</span>):</label
               >
               <textarea
                 id="content"
+                required
+                class="form-control"
+                rows="5"
+                v-model="item.content"
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="name"
+                >Trạng thái cuộc hẹn(<span style="color: red">*</span>):</label
+              >
+              <Select
+                class="d-flex justify-content-start"
+                :options="[
+                  {
+                    value: 'true',
+                    name: 'Thành công',
+                  },
+                  {
+                    value: 'false',
+                    name: 'Thất bại',
+                  },
+                ]"
+                @update:entryValue="(value) => (data.statusId = value)"
+                :entryValue="`Thành công`"
+              />
+            </div>
+            <div class="form-group">
+              <label for="content"
+                >Lý do(<span style="color: red">*</span>):</label
+              >
+              <textarea
+                id="reason"
                 required
                 class="form-control"
                 rows="5"
@@ -118,10 +187,10 @@ export default {
             </div>
             <button
               type="button"
-              class="btn btn-warning px-3 py-2"
+              class="btn btn-primary px-3 py-2"
               style="font-size: 14px"
               @click="create"
-              id="edit"
+              id="add"
             >
               <span>Cập nhật</span>
             </button>

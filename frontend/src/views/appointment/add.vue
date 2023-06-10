@@ -34,33 +34,9 @@ export default {
             &times;
           </button>
         </div>
-
         <!-- Modal body -->
         <div class="modal-body">
           <form action="/action_page.php" class="was-validated">
-            <div class="form-group">
-              <label for="name">Ngày(<span style="color: red">*</span>):</label>
-              <input
-                type="date"
-                class="form-control"
-                id="name"
-                name="name"
-                v-model="item.date"
-                required
-              />
-            </div>
-            <div class="form-group">
-              <label for="content"
-                >Nội dung(<span style="color: red">*</span>):</label
-              >
-              <textarea
-                id="content"
-                required
-                class="form-control"
-                rows="5"
-                v-model="item.content"
-              ></textarea>
-            </div>
             <div class="form-group">
               <label for="name">Khách hàng(<span style="color: red">*</span>):</label>
               <input
@@ -68,7 +44,6 @@ export default {
                 class="form-control"
                 id="name"
                 name="name"
-                v-model="item.customer"
                 required
               />
             </div>
@@ -79,9 +54,31 @@ export default {
                 class="form-control"
                 id="name"
                 name="name"
-                v-model="item.employee"
                 required
               />
+            </div>
+            <div class="form-group">
+              <label for="name">Ngày hẹn(<span style="color: red">*</span>):</label>
+              <input
+                type="datetime-local"
+                class="form-control"
+                id="name"
+                name="name"
+                v-model="item.date_time"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="content"
+                >Nội dung lịch hẹn(<span style="color: red">*</span>):</label
+              >
+              <textarea
+                id="content"
+                required
+                class="form-control"
+                rows="5"
+                v-model="item.content"
+              ></textarea>
             </div>
             <button type="button"
               class="btn btn-primary px-3 py-2"

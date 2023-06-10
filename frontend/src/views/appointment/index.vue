@@ -1,14 +1,58 @@
 <script>
-import Table from "../../components/table/table-appointment.vue";
-import Pagination from "../../components/table/pagination_duy.vue";
-import Dropdown from "../../components/form/dropdown.vue";
-import Select from "../../components/form/select.vue";
-import Search from "../../components/form/search.vue";
-import DeleteAll from "../../components/form/delete-all.vue";
 import Add from "./add.vue";
 import Edit from "./edit.vue";
-import { reactive, computed, watch, ref } from "vue";
-import { useRouter } from "vue-router";
+import {
+  // components
+  Table,
+  Pagination,
+  Dropdown,
+  Select,
+  Search,
+  DeleteAll,
+  Select_Advanced,
+  // compositions
+  reactive,
+  computed,
+  watch,
+  ref,
+  onBeforeMount,
+  // router
+  useRouter,
+  // format date or datetime
+  formatDateTime,
+  formatDate,
+  // service
+  Event,
+  Habit,
+  Account,
+  Appointment,
+  Center_VNPT,
+  Company_KH,
+  Customer_Types,
+  Customer_Work,
+  Customer,
+  Cycle,
+  Department,
+  Employee,
+  Log,
+  Permission,
+  Position,
+  Role,
+  Task,
+  Unit,
+  // http service
+  http_getAll,
+  http_create,
+  http_getOne,
+  http_deleteOne,
+  http_update,
+  // alert
+  alert_success,
+  alert_error,
+  alert_delete,
+  alert_warning,
+  alert_info,
+} from "../common/import.js";
 export default {
   components: {
     Table,
@@ -20,64 +64,18 @@ export default {
     DeleteAll,
     Edit,
   },
-  setup(ctx) {
+  props: {
+    taskObject: {
+      type: Object,
+      default: {
+        customer: "",
+        employee: "",
+      },
+    },
+  },
+  setup(ctx, props) {
     const data = reactive({
-      items: [
-        {
-          _id: "1",
-          date: "2023-05-11",
-          content: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
-          customer: 'Dang Huyen Trang',
-          employee: 'Lai Thanh Cong',
-          status: false,
-          reason: 'no biet',
-        },
-        {
-          _id: "2",
-          date: "2023-05-11",
-          content: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
-          customer: 'Dang Huyen Trang',
-          employee: 'Lai Thanh Cong',
-          status: false,
-          reason: 'no biet',
-        },
-        {
-          _id: "3",
-          date: "2023-05-11",
-          content: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
-          customer: 'Dang Huyen Trang',
-          employee: 'Lai Thanh Cong',
-          status: false,
-          reason: 'no biet',
-        },
-        {
-          _id: "4",
-          date: "2023-05-11",
-          content: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
-          customer: 'Dang Huyen Trang',
-          employee: 'Lai Thanh Cong',
-          status: false,
-          reason: 'no biet',
-        },
-        {
-          _id: "5",
-          date: "2023-05-11",
-          content: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
-          customer: 'Dang Huyen Trang',
-          employee: 'Lai Thanh Cong',
-          status: false,
-          reason: 'no biet',
-        },
-        {
-          _id: "6",
-          date: "2023-05-11",
-          content: "abc, def, xxxxxxxxxxxxxxxxxxxxxxxxx",
-          customer: 'Dang Huyen Trang',
-          employee: 'Lai Thanh Cong',
-          status: false,
-          reason: 'no biet',
-        },
-      ],
+      items: [],
       entryValue: 5,
       numberOfPages: 1,
       totalRow: 0,
@@ -86,20 +84,15 @@ export default {
       currentPage: 1,
       searchText: "",
       itemAdd: {
-        _id: "",
-        date: "",
+        date_time: "",
         content: "",
-        customer: "",
-        employee: "",
+        taskId: "",
+        statusId: "",
+        reason: "",
+        ...props.taskObject,
       },
       activeEdit: false,
-      editValue: {
-        _id: "",
-        date: "",
-        content: "",
-        customer: "",
-        employee: "",
-      },
+      editValue: {},
     });
 
     // computed
@@ -129,32 +122,68 @@ export default {
       return Math.ceil(filtered.value.length / data.entryValue);
     });
     const setPages = computed(() => {
-      if (setNumberOfPages.value == 0 || data.entryValue == "All") {
-        data.entryValue = data.items.length;
-        data.numberOfPages = 1;
-      } else data.numberOfPages = setNumberOfPages.value;
-      data.startRow = (data.currentPage - 1) * data.entryValue + 1;
-      data.endRow = data.currentPage * data.entryValue;
-      return filtered.value.filter((item, index) => {
-        return (
-          index + 1 > (data.currentPage - 1) * data.entryValue &&
-          index + 1 <= data.currentPage * data.entryValue
-        );
-      });
+      if (data.items.length > 0) {
+        if (setNumberOfPages.value == 0 || data.entryValue == "All") {
+          data.entryValue = data.items.length;
+          data.numberOfPages = 1;
+        } else data.numberOfPages = setNumberOfPages.value;
+        data.startRow = (data.currentPage - 1) * data.entryValue + 1;
+        data.endRow = data.currentPage * data.entryValue;
+        return filtered.value.filter((item, index) => {
+          return (
+            index + 1 > (data.currentPage - 1) * data.entryValue &&
+            index + 1 <= data.currentPage * data.entryValue
+          );
+        });
+      } else return data.items.value;
     });
 
     // methods
-    const create = () => {
-      console.log("creating");
+    const create = async () => {
+      const result = await http_create(Appointment, data.itemAdd);
+      if (!result.error) {
+        alert_success(
+          `Thêm lịch hẹn`,
+          `Lịch hẹn ${result.document.name} lúc ${formatDateTime(
+            result.document.date_time
+          )} đã được tạo thành công.`
+        );
+        refresh();
+      } else if (result.error) {
+        alert_error(`Thêm lịch hẹn`, `${result.msg}`);
+      }
     };
     const update = (item) => {
       console.log("updating", item);
     };
-    const deleteOne = (_id) => {
-      console.log("deleting", _id);
+    const deleteOne = async (_id) => {
+      const appointment = await http_getOne(Appointment, _id);
+      const isConfirmed = await alert_delete(
+        `Xoá lịch hẹn`,
+        `Bạn có chắc chắn muốn xoá lịch ${
+          appointment.name
+        } lúc ${formatDateTime(appointment.date_time)} không ?`
+      );
+      if (isConfirmed == true) {
+        const result = await http_deleteOne(Appointment, _id);
+        alert_success(
+          `Xoá lịch hẹn`,
+          `Bạn đã xoá thành công lịch hẹn ${
+            result.document.name
+          } lúc ${formatDateTime(result.document.date_time)}.`
+        );
+        refresh();
+      }
     };
-    const edit = () => {
-      console.log("edit");
+
+    const edit = async (editValue) => {
+      const result = await http_update(Appointment, editValue._id, editValue);
+      if (!result.error) {
+        alert_success(`Sửa lịch hẹn`, `${result.msg}`);
+        refresh();
+      } else if (result.error) {
+        alert_error(`Sửa lịch hẹn`, `${result.msg}`);
+      }
     };
 
     const router = useRouter();
@@ -163,6 +192,20 @@ export default {
       console.log("view", _id);
       router.push({ name: "Event.view", params: { id: _id } });
     };
+
+    const refresh = async () => {
+      data.items = await http_getAll(Appointment);
+      for (const value of data.items) {
+        value.date_time_format = formatDateTime(value.date_time);
+      }
+      console.log(data.items);
+    };
+
+    // Hàm callback được gọi trước khi component được mount (load)
+    onBeforeMount(async () => {
+      refresh();
+      console.log(data.items);
+    });
 
     // watch
     return {
@@ -228,7 +271,7 @@ export default {
         >
           <span id="delete-all" class="mx-2">Xoá</span>
         </button>
-        <DeleteAll :items="data.items" />
+        <!-- <DeleteAll :items="data.items" /> -->
         <button
           type="button"
           class="btn btn-primary"
@@ -243,12 +286,15 @@ export default {
     <!-- Table -->
     <Table
       :items="setPages"
-      :fields="['Ngày', 'Nội dung cuộc hẹn', 'Khách hàng', 'Nhân viên', 'Trạng thái', 'Lý do']"
-      :labels="['date', 'content', 'customer', 'employee', 'status', 'reason']"
+      :fields="['Thời gian hẹn', 'Nội dung cuộc hẹn']"
+      :labels="['date_time_format', 'content']"
       @delete="(value) => deleteOne(value)"
       @edit="
         (value, value1) => (
-          (data.editValue = value), (data.activeEdit = value1)
+          (data.editValue = value),
+          (data.activeEdit = value1),
+          (data.editValue.time_duration =
+            data.editValue.date_time.toUpperCase())
         )
       "
       @view="(value) => view(value)"
@@ -268,6 +314,7 @@ export default {
     :item="data.editValue"
     :class="[data.activeEdit ? 'show-modal' : 'd-none']"
     @cancel="data.activeEdit = false"
+    @edit="edit(data.editValue)"
   />
 </template>
 

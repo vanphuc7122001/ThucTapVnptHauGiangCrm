@@ -169,8 +169,14 @@ export default {
         alert_error(`Thêm sự kiện`, `${result.msg}`);
       }
     };
-    const update = (item) => {
-      console.log("updating", item);
+    const update = async (item) => {
+      const result = await http_update(Event, editValue._id, editValue);
+      if (!result.error) {
+        alert_success(`Sửa sự kiện`, `${result.msg}`);
+        refresh();
+      } else if (result.error) {
+        alert_error(`Sửa sự kiện`, `${result.msg}`);
+      }
     };
     const deleteOne = async (_id) => {
       const event = await http_getOne(Event, _id);
@@ -211,12 +217,7 @@ export default {
     };
 
     const refresh = async () => {
-      console.log("met moi qau");
       data.items = await http_getAll(Event);
-      data.items.push({
-        _id: "other",
-        name: "other",
-      });
       for (const value of data.items) {
         value.time_duration_format = formatDateTime(value.time_duration);
       }
@@ -253,7 +254,6 @@ export default {
 
 <template>
   <div class="border-box d-flex flex-column ml-2">
-    {{ data.searchSelect }}
     <!-- Menu -->
     <div class="d-flex menu my-3 mx-3 justify-content-end">
       <a
@@ -285,35 +285,18 @@ export default {
             ]"
           />
         </div>
-        <div class="d-flex">
+        <div class="d-flex form-group w-100">
           <input
             style=""
-            class="input px-2 form-group w-100 ml-3"
+            class="input px-2 w-100 ml-3"
             type="date"
             name=""
             id=""
           />
         </div>
 
-        <div class="form-group ml-3">
-          <Select_Advanced
-            :modelValue="`abc`"
-            :options="data.items"
-            style="width: 300px; height: 100%"
-            @searchSelect="
-              async (value) => (
-                await refresh(),
-                (data.items = data.items.filter((value1, index) => {
-                  console.log(value1, value);
-                  return value1.name.includes(value) || value.length == 0;
-                })),
-                console.log('searchSlect', value.length)
-              )
-            "
-            @delete="(value) => console.log('delete', value)"
-            @chose="(value) => console.log('choosed', value)"
-          />
-        </div>
+        <!-- <div class="form-group ml-3">
+        </div> -->
       </div>
     </div>
     <!-- Search -->
@@ -372,16 +355,6 @@ export default {
           <span id="add" class="mx-2">Thêm</span>
         </button>
         <Add :item="data.itemAdd" @create="create" />
-        <button
-          type="button"
-          class="btn btn-primary"
-          data-toggle="modal"
-          data-target="#model-form-wizard"
-        >
-          <span class="mx-2">model-form-wizard</span>
-        </button>
-        {{ data.test }}
-        <FormWizard :item="data.test" />
       </div>
     </div>
     <!-- Table -->
