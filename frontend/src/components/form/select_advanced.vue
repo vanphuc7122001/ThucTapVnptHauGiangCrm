@@ -14,7 +14,10 @@
       type="text"
       class="px-2"
       v-model="searchText"
-      @input="(activeSelect = true), $emit('searchSelect', searchText.toLocaleLowerCase())"
+      @input="
+        (activeSelect = true),
+          $emit('searchSelect', searchText.toLocaleLowerCase())
+      "
       @focus="activeSelect = true"
     />
     <!-- options -->
@@ -34,7 +37,7 @@
               $emit('chose', option._id),
               (activeSelect = false),
               (modelValue = option.name),
-              (searchText = modelValue)
+              (searchText = modelValue),
             ]
           "
           class="mr-2"
@@ -44,12 +47,8 @@
           >{{ option.name }}</span
         >
         <span
-        v-if="option._id != 'other'"
-          @click="
-            [
-              $emit('delete', option),
-            ]
-          "
+          v-if="option._id != 'other'"
+          @click="[$emit('delete', option)]"
           class="material-symbols-outlined"
           style="font-size: 15px; cursor: pointer"
           onmouseover="this.style.color='red';"
@@ -75,14 +74,19 @@ export default {
       default: `false`,
     },
   },
+  watch: {
+    modelValue() {
+      this.searchText = this.modelValue;
+    },
+  },
   data() {
     return {
       activeSelect: false,
-      searchText: "",
+      searchText: this.modelValue,
     };
   },
   mounted() {
-    this.searchText = this.modelValue;
+    // this.searchText = this.modelValue;
   },
 };
 </script>
