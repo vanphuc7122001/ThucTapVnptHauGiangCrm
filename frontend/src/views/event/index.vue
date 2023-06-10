@@ -2,6 +2,7 @@
 import Add from "./add.vue";
 import Edit from "./edit.vue";
 import View from "./view.vue";
+import FormWizard from "../../components/form/form-wizard.vue";
 import {
   // components
   Table,
@@ -67,6 +68,7 @@ export default {
     Edit,
     View,
     Select_Advanced,
+    FormWizard,
   },
   setup(ctx) {
     const data = reactive({
@@ -96,6 +98,10 @@ export default {
           name: "2",
         },
       ],
+      test: {
+        a: "",
+        b: "",
+      }
     });
     const toString = computed(() => {
       console.log("Starting search");
@@ -205,12 +211,12 @@ export default {
     };
 
     const refresh = async () => {
-      console.log('met moi qau')
+      console.log("met moi qau");
       data.items = await http_getAll(Event);
       data.items.push({
-        _id: 'other',
-        name: 'other',
-      })
+        _id: "other",
+        name: "other",
+      });
       for (const value of data.items) {
         value.time_duration_format = formatDateTime(value.time_duration);
       }
@@ -291,6 +297,7 @@ export default {
 
         <div class="form-group ml-3">
           <Select_Advanced
+            :modelValue="`abc`"
             :options="data.items"
             style="width: 300px; height: 100%"
             @searchSelect="
@@ -304,7 +311,7 @@ export default {
               )
             "
             @delete="(value) => console.log('delete', value)"
-            @choosed="(value) => console.log('choosed', value)"
+            @chose="(value) => console.log('choosed', value)"
           />
         </div>
       </div>
@@ -365,6 +372,16 @@ export default {
           <span id="add" class="mx-2">Thêm</span>
         </button>
         <Add :item="data.itemAdd" @create="create" />
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-toggle="modal"
+          data-target="#model-form-wizard"
+        >
+          <span class="mx-2">model-form-wizard</span>
+        </button>
+        {{ data.test }}
+        <FormWizard :item="data.test" />
       </div>
     </div>
     <!-- Table -->
