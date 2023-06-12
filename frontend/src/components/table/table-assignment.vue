@@ -54,7 +54,9 @@ export default {
         <td>{{ item.Customer.name }}</td>
         <td>{{ item.Employee.name }}</td>
         <td>{{ item.Cycle.name }}</td>
-        <td v-for="(label, index1) in labels" :key="index1">{{ item[label] }}</td>
+        <td v-for="(label, index1) in labels" :key="index1">
+          {{ item[label] }}
+        </td>
         <td>{{ item.Status_Task.status }}</td>
         <td v-if="activeAction == true">
           <button
@@ -91,13 +93,20 @@ export default {
           >
             delete
           </span>
-          <span
-            id="appointment"
-            class="material-symbols-outlined ml-2"
-            @click="$emit('appointment', item._id)"
+          <button
+            type="button"
+            class="mx-2"
+            data-toggle="modal"
+            data-target="#modal-addAppointment"
           >
-            schedule
-          </span>
+            <span
+              id="appointment"
+              class="material-symbols-outlined d-flex align-items-center justify-content-center"
+              @click="$emit('appointment', item._id, item)"
+            >
+              schedule
+            </span>
+          </button>
         </td>
       </tr>
     </tbody>

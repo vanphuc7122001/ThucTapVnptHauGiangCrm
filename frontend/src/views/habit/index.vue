@@ -183,10 +183,8 @@ export default {
       try {
         const result = await http_getOne(Habit, _id);
         return result;
-      } catch (error) {
-        
-      }
-    }
+      } catch (error) {}
+    };
 
     const refresh = async () => {
       data.items = await http_getAll(Habit);
@@ -212,7 +210,7 @@ export default {
       deleteOne,
       edit,
       view,
-      getOne
+      getOne,
     };
   },
 };
@@ -283,15 +281,15 @@ export default {
           <span id="delete-all" class="mx-2">Xoá</span>
         </button>
         <!-- <DeleteAll :items="data.items" /> -->
-        <button
+        <!-- <button
           type="button"
           class="btn btn-primary"
           data-toggle="modal"
           data-target="#model-add"
         >
           <span id="add" class="mx-2">Thêm</span>
-        </button>
-        <Add :item="data.itemAdd" @create="create" />
+        </button> -->
+        <!-- <Add :item="data.itemAdd" @create="create" /> -->
       </div>
     </div>
     <!-- Table -->

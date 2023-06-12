@@ -17,6 +17,7 @@ import Task from "../../services/task.service";
 import Cycle from "../../services/cycle.service";
 import Employee from "../../services/employee.service";
 import Customer from "../../services/customer.service";
+import AddAppointment from "../appointment/add.vue";
 import {
   http_getAll,
   http_create,
@@ -41,6 +42,7 @@ export default {
     DeleteAll,
     Edit,
     View,
+    AddAppointment,
   },
   setup(ctx) {
     const data = reactive({
@@ -92,6 +94,8 @@ export default {
       addcycle: {},
       cus: [],
       employee: [],
+      taskId: "",
+      taskObject: {},
     });
 
     const cycles = reactive({ cycle: [] });
@@ -143,6 +147,7 @@ export default {
       //await refresh();
       console.log("new task");
       data.items = await http_getAll(Task);
+      refresh();
     };
 
     // const update = async (item) => {
@@ -209,7 +214,7 @@ export default {
     };
 
     const appointment = (_id) => {
-      router.push({ name: "Assignment.appointment", params: { id: _id } });
+      // router.push({ name: "Assignment.appointment", params: { id: _id } });
     };
 
     const refresh = async () => {
@@ -364,7 +369,9 @@ export default {
         )
       "
       @view="(value) => view(value)"
-      @appointment="(value) => appointment(value)"
+      @appointment="
+        (value, value1) => ((data.taskId = value), (data.taskObject = value1))
+      "
     />
     <!-- Pagination -->
     <Pagination
@@ -385,6 +392,11 @@ export default {
     :cus="data.cus"
     :employee="data.employee"
     @edit="edit(data.editValue)"
+  />
+  <AddAppointment
+    v-if="data.taskId.length > 0"
+    :taskId="data.taskId"
+    :task="data.taskObject"
   />
   <View />
 </template>

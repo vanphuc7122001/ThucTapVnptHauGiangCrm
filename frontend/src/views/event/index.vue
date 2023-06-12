@@ -1,7 +1,9 @@
 <script>
 import Add from "./add.vue";
+import AddAppointment from "../appointment/add.vue";
 import Edit from "./edit.vue";
 import View from "./view.vue";
+import setEvent from "./setEvent.vue";
 import FormWizard from "../../components/form/form-wizard.vue";
 import {
   // components
@@ -69,6 +71,8 @@ export default {
     View,
     Select_Advanced,
     FormWizard,
+    setEvent,
+    AddAppointment,
   },
   setup(ctx) {
     const data = reactive({
@@ -101,7 +105,9 @@ export default {
       test: {
         a: "",
         b: "",
-      }
+      },
+      eventValue: {},
+      showSetEvent: false,
     });
     const toString = computed(() => {
       console.log("Starting search");
@@ -178,6 +184,22 @@ export default {
         alert_error(`Sửa sự kiện`, `${result.msg}`);
       }
     };
+
+    const setEvent = () => {
+      data.eventValue = {};
+      data.showSetEvent = false;
+      for (let value of data.items) {
+        if (value.checked == true) {
+          data.eventValue = value;
+          data.showSetEvent = true;
+          break;
+        }
+      }
+      if (data.showSetEvent == false) {
+        alert_warning(`Thêm khách hàng áp dụng sự kiện`, `Vui lòng chọn sự kiện.`);
+      }
+    };
+
     const deleteOne = async (_id) => {
       const event = await http_getOne(Event, _id);
       console.log("deleting", event);
@@ -220,15 +242,16 @@ export default {
       try {
         const result = await http_getOne(Event, _id);
         return result;
-      } catch (error) {
-        
-      }
-    }
+      } catch (error) {}
+    };
 
     const refresh = async () => {
       data.items = await http_getAll(Event);
       for (const value of data.items) {
         value.time_duration_format = formatDateTime(value.time_duration);
+      }
+      for (let value of data.items) {
+        value.checked = false;
       }
       console.log(data.items);
     };
@@ -257,6 +280,7 @@ export default {
       delete_a,
       refresh,
       getOne,
+      setEvent,
     };
   },
 };
@@ -365,6 +389,16 @@ export default {
           <span id="add" class="mx-2">Thêm</span>
         </button>
         <Add :item="data.itemAdd" @create="create" />
+        <button
+          type="button"
+          class="btn btn-secondary ml-3"
+          data-toggle="modal"
+          data-target="#model-setEvent"
+          @click="setEvent()"
+        >
+          <span id="add" class="mx-2">Áp dụng</span>
+        </button>
+        <setEvent v-if="data.showSetEvent" :item="data.eventValue" />
       </div>
     </div>
     <!-- Table -->

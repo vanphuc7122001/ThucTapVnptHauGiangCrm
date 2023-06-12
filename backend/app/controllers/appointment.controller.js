@@ -1,12 +1,12 @@
-const { Appointment } = require('../models/index.model.js');
+const { Appointment, Status_App } = require('../models/index.model.js');
 const { DataTypes, Op } = require('sequelize');
 const createError = require('http-errors');
 const { v4: uuidv4 } = require('uuid');
 
 // checked
 exports.create = async (req, res, next) => {
-    if (Object.keys(req.body).length === 2) {
-        const { date_time, content } = req.body;
+    if (Object.keys(req.body).length === 3) {
+        const { date_time, content, taskId } = req.body;
         const appointments = await Appointment.findAll();
         for (let value of appointments) {
             if (value.date_time == date_time && value.taskId == taskId) {
@@ -22,6 +22,11 @@ exports.create = async (req, res, next) => {
                 content: content,
                 taskId: taskId,
             });
+            const status_task = await Status_App.create({
+                AppointmentId: document._id,
+                status: 'false',
+                reason: 'no',
+            })
             return res.send({
                 error: false,
                 msg: `Bạn đã tạo thành công cuộc hẹn ${document.content} lúc ${document.date_time}.`,
@@ -116,7 +121,7 @@ exports.update = async (req, res, next) => {
 
         appointments = appointments.filter(
             (value, index) => {
-                return value.date_time == date_time && value.taskId == taskId ;
+                return value.date_time == date_time && value.taskId == taskId;
             }
         )
 
@@ -143,7 +148,6 @@ exports.update = async (req, res, next) => {
         )
     }
 }
-
 
 
 

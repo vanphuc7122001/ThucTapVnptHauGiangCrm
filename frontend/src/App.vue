@@ -26,12 +26,12 @@ export default {
     };
     
     onBeforeMount(() =>{
-      const token = localStorage.getItem("token");
-      if(token){
-        checkLogin.value = true
-      }else{
-        checkLogin.value = false
-      }
+      // const token = localStorage.getItem("token");
+      // if(token){
+      //   checkLogin.value = true
+      // }else{
+      //   checkLogin.value = false
+      // }
     })
     return {
       data,
@@ -45,8 +45,9 @@ export default {
 
 <template>
   <!-- <Login /> -->
+  <!-- v-if="checkLogin" -->
   <div>
-    <div class="container-fluid" v-if="checkLogin">
+    <div class="container-fluid">
       <div class="row position-relative">
         <div
           class="z-index-3"
@@ -63,9 +64,9 @@ export default {
         </div>
       </div>
     </div>
-    <div v-else>
+    <!-- <div v-else>
      <RouterView></RouterView>
-    </div>
+    </div> -->
   </div>
 </template>
 

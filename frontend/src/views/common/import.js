@@ -31,6 +31,8 @@ import Role from "../../services/role.service";
 import Task from "../../services/task.service";
 import Unit from "../../services/unit.service";
 import Role_Permission from "../../services/role_permission.service";
+import Customer_Event from "../../services/customer_event.service";
+import Customer_Habit from "../../services/customer_habit.service";
 
 // http methods
 import {
@@ -92,6 +94,8 @@ export {
     Task,
     Unit,
     Role_Permission,
+    Customer_Event,
+    Customer_Habit,
     // http service
     http_getAll,
     http_create,

@@ -1,27 +1,56 @@
 <script>
-import { reactive } from "vue";
 import {
-  http_getAll,
-  http_create,
-  http_deleteOne,
-  alert_success,
-  alert_error,
-  alert_delete,
-  alert_warning,
+  // components
+  Table,
   Pagination,
   Dropdown,
   Select,
   Search,
-  Select_Advanced,
   DeleteAll,
-  Company_KH,
-  Customer_Work,
-  Customer,
+  Select_Advanced,
+  // compositions
+  reactive,
+  computed,
+  watch,
+  ref,
+  onBeforeMount,
+  // router
+  useRouter,
+  // format date or datetime
   formatDateTime,
   formatDate,
+  // service
+  Event,
   Habit,
-  Customer_Habit,
-} from "../common/import";
+  Account,
+  Appointment,
+  Center_VNPT,
+  Company_KH,
+  Customer_Types,
+  Customer_Work,
+  Customer,
+  Cycle,
+  Department,
+  Employee,
+  Log,
+  Permission,
+  Position,
+  Role,
+  Task,
+  Unit,
+  // http service
+  http_getAll,
+  http_create,
+  http_getOne,
+  http_deleteOne,
+  http_update,
+  // alert
+  alert_success,
+  alert_error,
+  alert_delete,
+  alert_warning,
+  alert_info,
+} from "../common/import.js";
 export default {
   props: {
     item: {
@@ -29,30 +58,19 @@ export default {
       default: {},
     },
   },
+  components: {
+    Select_Advanced,
+  },
   setup(props, ctx) {
     const data = reactive({
-      itemAdd: {
-        name: "",
-      },
+      customerList: [],
     });
-    const create = async () => {
-      console.log('starting');
-      const result = await http_create(Habit, data.itemAdd);
-      if (!result.error) {
-        const result1 = await http_create(Customer_Habit, {
-          customerId: props.item.Customer._id,
-          habitId: result.document._id,
-        });
-        if (result1.error == false) {
-          alert_success(
-            `Thêm thói quen khách hàng`,
-            `Thói quen ${result.document.name} đã được tạo thành công.`
-          );
-        }
-      } else if (result.error) {
-        alert_error(`Thêm thói quen khách hàng`, `${result.msg}`);
-      }
+    const create = () => {
+      ctx.emit("create");
     };
+    onBeforeMount(async () => {
+      data.customerList = await http_getAll(Customer);
+    });
     return {
       create,
       data,
@@ -63,14 +81,13 @@ export default {
 
 <template>
   <!-- The Modal -->
-  <div class="modal" id="model-addHabit">
+  <div class="modal" id="model-setEvent">
     <div class="modal-dialog">
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
           <h4 class="modal-title" style="font-size: 15px">
-            Thêm thói quen cho khách hàng
-            <span style="color: blue">{{ item.Customer.name }}</span>
+            Thêm khách hàng áp dụng sự kiện
           </h4>
           <button type="button" class="close" data-dismiss="modal">
             &times;
@@ -79,18 +96,18 @@ export default {
 
         <!-- Modal body -->
         <div class="modal-body">
-          <form action="/action_page.php" class="was-validated">
+          <form action="" class="was-validated">
             <div class="form-group">
               <label for="name"
-                >Tên thói quen(<span style="color: red">*</span>):</label
+                >Tên sự kiện(<span style="color: red">*</span>):</label
               >
               <input
                 type="text"
                 class="form-control"
                 id="name"
                 name="name"
-                v-model="data.itemAdd.name"
-                required
+                v-model="item.name"
+                disabled
               />
             </div>
             <button
