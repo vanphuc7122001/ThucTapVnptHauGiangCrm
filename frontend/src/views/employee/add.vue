@@ -78,8 +78,8 @@ export default {
         title: "Thông tin tài khoản nhân viên",
         content: `<h3> Xin chào công ty chúng tôi xin cung cấp cho bạn
         tên tài khoản và mã tài khoản của bạn </h3>
-        <h4> Mã tài khoản: ${data.item.user_name} </h4>
-        <h4> Mã tài khoản: ${data.item.password} </h4>
+        <h4> Tên tài khoản: ${data.item.user_name} </h4>
+        <h4> Mật Khẩu: ${data.item.password} </h4>
         `,
         mail: data.item.email,
       });
@@ -90,7 +90,6 @@ export default {
       data.item.postionId = selectedOptionPosition.value;
       data.item.checkUser = true;
       const account = await http_create(Account, data.item);
-      await mailService.sendmail(dataMail);
       if (account.user_name == true) {
         console.log("item", data.item);
         const result = await http_create(Employee, data.item);
@@ -99,6 +98,7 @@ export default {
         if (!result.error) {
           data.item.EmployeeId = result.document._id;
           const account = await http_create(Account, data.item);
+          await mailService.sendmail(dataMail);
           alert_success(
             `Thêm nhân viên`,
             `Nhân viên "${result.document.name}" đã được tạo thành công.`

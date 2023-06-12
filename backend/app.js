@@ -58,7 +58,7 @@ const Customer_EventRouter = require('./app/routes/customer_event.route');
 const Customer_HabitRouter = require('./app/routes/customer_habit.route');
 const Task_EmployeeRouter = require('./app/routes/task_employee.route');
 const MailRouter = require("./app/routes/mail.route");
-
+const LoginRouter = require('./app/routes/login.route');
 
 // use router
 app.use('/api/customers', customerRouter);
@@ -84,7 +84,7 @@ app.use('/api/customer_events', Customer_EventRouter);
 app.use('/api/customer_habits', Customer_HabitRouter);
 app.use('/api/task_employees', Task_EmployeeRouter);
 app.use("/api/mail", MailRouter);
-
+app.use('/api/login', LoginRouter);
 // check errors
 app.use((req, res, next) => {
     return next(

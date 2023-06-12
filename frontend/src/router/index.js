@@ -147,6 +147,11 @@ const routes = [
     name: 'Setting',
     component: () => import('../views/setting/index.vue'),
   },
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('../../src/login.vue')
+  }
 ];
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
