@@ -195,11 +195,16 @@ export default {
 
     const refresh = async () => {
       data.items = await http_getAll(Appointment);
-      for (const value of data.items) {
-        value.date_time_format = formatDateTime(value.date_time);
-      }
-      console.log(data.items);
     };
+
+    const getOne = async (_id) => {
+      try {
+        const result = await http_getOne(Appointment, _id);
+        return result;
+      } catch (error) {
+        
+      }
+    }
 
     // Hàm callback được gọi trước khi component được mount (load)
     onBeforeMount(async () => {
@@ -216,6 +221,7 @@ export default {
       deleteOne,
       edit,
       view,
+      getOne
     };
   },
 };
@@ -290,8 +296,8 @@ export default {
       :labels="['date_time_format', 'content']"
       @delete="(value) => deleteOne(value)"
       @edit="
-        (value, value1) => (
-          (data.editValue = value),
+        async (value, value1) => (
+          (data.editValue = await getOne(value._id)),
           (data.activeEdit = value1),
           (data.editValue.time_duration =
             data.editValue.date_time.toUpperCase())

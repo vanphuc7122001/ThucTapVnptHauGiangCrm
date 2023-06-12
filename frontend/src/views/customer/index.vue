@@ -74,30 +74,47 @@ export default {
           name: "",
         },
         Company_KH: {
-          name: ""
+          name: "",
         },
         Events: [
           {
             name: "",
             content: "",
-            time_duration: ""
-          }
+            time_duration: "",
+          },
         ],
         Habits: [
           {
-            name: ""
-          }
+            name: "",
+          },
         ],
-        current_workplace: '',
+        current_workplace: "",
         work_history: "",
         current_position: "",
-        work_temp: ''
-      }
+        work_temp: "",
+      },
+      customerTypeValue: "",
     });
 
     const reFresh = async () => {
       const rs = await http_getAll(Customer_Work);
       data.items = rs.documents;
+
+      if (data.custypeTypeValue.length != 0) {
+        data.items = data.items.filter(
+          (value, index) => {
+            return value.name == 'vip';
+          }
+        )
+      }
+
+      if (data.custypeTypeValue.length != 0) {
+        data.items = data.items.filter(
+          (value, index) => {
+            return value.name == 'vip';
+          }
+        )
+      }
     };
 
     onBeforeMount(() => {
@@ -108,7 +125,7 @@ export default {
     const toString = computed(() => {
       console.log("Starting search");
       return data.items.map((value, index) => {
-        return [value.Customer.name].join("").toLocaleLowerCase();
+        return [value.Customer.name, value.Customer.phone].join("").toLocaleLowerCase();
       });
     });
     const filter = computed(() => {
@@ -156,7 +173,6 @@ export default {
       console.log("deleting", _id);
     };
 
-
     // watch
     const activeMenu = ref(1);
 
@@ -188,7 +204,7 @@ export default {
 
     const refresh_customer = () => {
       reFresh();
-    }
+    };
 
     const view = (item) => {
       data.viewValue = {
@@ -207,33 +223,31 @@ export default {
         },
         Company_KH: {
           _id: item.Company_KH._id,
-          name: item.Company_KH.name
+          name: item.Company_KH.name,
         },
         Events: [
-          ...item.Customer.Events
+          ...item.Customer.Events,
 
           // {name: item.Customer.Events[0].name,
           // content: item.Customer.Events[0].content,
           // time_duration: item.Customer.Events[0].time_duration}
-        ]
-        ,
+        ],
         Habits: {
-          ...item.Customer.Habits
+          ...item.Customer.Habits,
         },
         _id: item._id,
         current_workplace: item.current_workplace,
         work_history: item.work_history,
         current_position: item.current_position,
-        work_temp: item.work_temp
-
+        work_temp: item.work_temp,
       };
-    }
+    };
 
-  //   formatDateTime,
-  // formatDate,
+    //   formatDateTime,
+    // formatDate,
     const edit = (item, isCheck) => {
       console.log(item.Customer);
-       data.viewValue = {
+      data.viewValue = {
         Customer: {
           _id: item.Customer._id,
           name: item.Customer.name,
@@ -249,21 +263,19 @@ export default {
         },
         Company_KH: {
           _id: item.Company_KH._id,
-          name: item.Company_KH.name
+          name: item.Company_KH.name,
         },
         _id: item._id,
         current_workplace: item.current_workplace,
         work_history: item.work_history,
         current_position: item.current_position,
         work_temp: item.work_temp,
-      }
+      };
 
-
-      data.activeEdit = isCheck
-      console.log('Edit data', data.viewValue);
-      console.log('Check edit', data.activeEdit)
+      data.activeEdit = isCheck;
+      console.log("Edit data", data.viewValue);
+      console.log("Check edit", data.activeEdit);
     };
-
 
     return {
       data,
@@ -274,7 +286,7 @@ export default {
       edit,
       handleDelete,
       refresh_customer,
-      view
+      view,
     };
   },
 };
@@ -282,14 +294,21 @@ export default {
 
 <template>
   <div class="border-box d-flex flex-column ml-2">
-
     <!-- Menu -->
     <div class="d-flex menu my-3 mx-3 justify-content-end">
-      <router-link to="/customer" @click="activeMenu = 1" :class="[activeMenu == 1 ? 'active-menu' : 'none-active-menu']"
-        href="#">Khách hàng
+      <router-link
+        to="/customer"
+        @click="activeMenu = 1"
+        :class="[activeMenu == 1 ? 'active-menu' : 'none-active-menu']"
+        href="#"
+        >Khách hàng
       </router-link>
-      <router-link to="customer_types" @click="activeMenu = 2"
-        :class="[activeMenu == 2 ? 'active-menu' : 'none-active-menu']" href="#">Loại khách hàng
+      <router-link
+        to="customer_types"
+        @click="activeMenu = 2"
+        :class="[activeMenu == 2 ? 'active-menu' : 'none-active-menu']"
+        href="#"
+        >Loại khách hàng
       </router-link>
     </div>
     <!-- Filter -->
@@ -301,7 +320,10 @@ export default {
           <Select :title="`Loại khách hàng`" :entryValue="`Loại khách hàng`" />
         </div>
         <div class="form-group w-100 ml-3">
-          <Select :title="`Trạng thái chăm sóc`" :entryValue="`Trạng thái chăm sóc`" />
+          <Select
+            :title="`Trạng thái chăm sóc`"
+            :entryValue="`Trạng thái chăm sóc`"
+          />
         </div>
         <div class="form-group"></div>
       </div>
@@ -310,58 +332,92 @@ export default {
     <div class="border-hr mb-3"></div>
     <div class="d-flex justify-content-between mx-3 mb-3">
       <div class="d-flex justify-content-start">
-        <Select class="d-flex justify-content-start" :options="[
-          {
-            name: 5,
-            value: 5,
-          },
-          {
-            name: 10,
-            value: 10,
-          },
-          {
-            name: 20,
-            value: 20,
-          },
-          {
-            name: 30,
-            value: 30,
-          },
-          {
-            name: 'All',
-            value: 'All',
-          },
-        ]" @update:entryValue="(value) => (data.entryValue = value)" :entryValue="data.entryValue" />
-        <Search class="ml-3" style="width: 300px" @update:searchText="(value) => (data.searchText = value)" />
+        <Select
+          class="d-flex justify-content-start"
+          :options="[
+            {
+              name: 5,
+              value: 5,
+            },
+            {
+              name: 10,
+              value: 10,
+            },
+            {
+              name: 20,
+              value: 20,
+            },
+            {
+              name: 30,
+              value: 30,
+            },
+            {
+              name: 'All',
+              value: 'All',
+            },
+          ]"
+          @update:entryValue="(value) => (data.entryValue = value)"
+          :entryValue="data.entryValue"
+        />
+        <Search
+          class="ml-3"
+          style="width: 300px"
+          @update:searchText="(value) => (data.searchText = value)"
+        />
       </div>
       <div class="d-flex align-items-start">
-        <button type="button" class="btn btn-danger mr-3" data-toggle="modal" data-target="#model-delete-all">
+        <button
+          type="button"
+          class="btn btn-danger mr-3"
+          data-toggle="modal"
+          data-target="#model-delete-all"
+        >
           <span id="delete-all" class="mx-2">Xoá</span>
         </button>
         <!-- <DeleteAll :items="data.items" /> -->
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#model-add">
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-toggle="modal"
+          data-target="#model-add"
+        >
           <span id="add" class="mx-2">Thêm</span>
         </button>
         <Add @refresh_customer="refresh_customer" />
       </div>
     </div>
     <!-- Table -->
-    <Table :items="setPages" :fields="[
-      'Tên',
-      'Email',
-      'Sdt',
-      'Công việc',
-      'Công ty',
-      'Loại khách hàng',
-    ]" @delete="handleDelete" @edit="edit" @view="view" />
+    <Table
+      :items="setPages"
+      :fields="[
+        'Tên',
+        'Email',
+        'Sdt',
+        'Công việc',
+        'Công ty',
+        'Loại khách hàng',
+      ]"
+      @delete="handleDelete"
+      @edit="edit"
+      @view="view"
+    />
     <!-- Pagination -->
-    <Pagination :numberOfPages="data.numberOfPages" :totalRow="data.totalRow" :startRow="data.startRow"
-      :endRow="data.endRow" :currentPage="data.currentPage" @update:currentPage="(value) => (data.currentPage = value)"
-      class="mx-3" />
-    <Edit :item="data.viewValue" :class="[data.activeEdit ? 'show-modal' : 'd-none']" @cancel="data.activeEdit = false" @refresh_customer="refresh_customer"/>
+    <Pagination
+      :numberOfPages="data.numberOfPages"
+      :totalRow="data.totalRow"
+      :startRow="data.startRow"
+      :endRow="data.endRow"
+      :currentPage="data.currentPage"
+      @update:currentPage="(value) => (data.currentPage = value)"
+      class="mx-3"
+    />
+    <Edit
+      :item="data.viewValue"
+      :class="[data.activeEdit ? 'show-modal' : 'd-none']"
+      @cancel="data.activeEdit = false"
+      @refresh_customer="refresh_customer"
+    />
     <View :item="data.viewValue" />
-
-
   </div>
 </template>
 

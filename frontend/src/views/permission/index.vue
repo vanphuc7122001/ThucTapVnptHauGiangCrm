@@ -1,6 +1,7 @@
 <script>
 import Add from "./add.vue";
 import Edit from "./edit.vue";
+import FormWizard from "../../components/form/form-wizard.vue";
 import {
   // components
   Table,
@@ -9,6 +10,7 @@ import {
   Select,
   Search,
   DeleteAll,
+  Select_Advanced,
   // compositions
   reactive,
   computed,
@@ -52,6 +54,7 @@ import {
   alert_warning,
   alert_info,
 } from "../common/import.js";
+
 export default {
   components: {
     Table,
@@ -62,6 +65,8 @@ export default {
     Add,
     DeleteAll,
     Edit,
+    Select_Advanced,
+    FormWizard,
   },
   setup(ctx) {
     const data = reactive({
@@ -78,9 +83,22 @@ export default {
       },
       activeEdit: false,
       editValue: {},
+      searchSelect: "",
+      optionSelect: [
+        {
+          _id: 1,
+          name: "1",
+        },
+        {
+          _id: 2,
+          name: "2",
+        },
+      ],
+      test: {
+        a: "",
+        b: "",
+      },
     });
-
-    // computed
     const toString = computed(() => {
       console.log("Starting search");
       return data.items.map((value, index) => {
@@ -123,48 +141,34 @@ export default {
       } else return data.items.value;
     });
 
+    // routers
+    const router = useRouter();
+
+    // watch
+    const activeMenu = ref(3);
+    watch(activeMenu, (newValue, oldValue) => {
+      if (activeMenu.value == 1) {
+        router.push({ name: "Account" });
+      } else if (activeMenu.value == 2) {
+        router.push({ name: "Role" });
+      }
+    });
+
     // methods
     const create = async () => {
-      const result = await http_create(Habit, data.itemAdd);
+      const result = await http_create(Permission, data.itemAdd);
       if (!result.error) {
         alert_success(
-          `Thêm thói quen khách hàng`,
-          `Thói quen ${result.document.name} đã được tạo thành công.`
+          `Thêm quyền`,
+          `Quyền ${result.document.name} đã được tạo thành công.`
         );
         refresh();
       } else if (result.error) {
-        alert_error(`Thêm thói quen khách hàng`, `${result.msg}`);
+        alert_error(`Thêm quyền`, `${result.msg}`);
       }
     };
     const update = async (item) => {
-      const result = await http_update(Habit, editValue._id, editValue);
-      if (!result.error) {
-        alert_success(`Sửa thói quen`, `${result.msg}`);
-        refresh();
-      } else if (result.error) {
-        alert_error(`Sửa thói quen`, `${result.msg}`);
-      }
-    };
-    const deleteOne = async (_id) => {
-      const habit = await http_getOne(Habit, _id);
-      console.log("deleting", habit);
-      const isConfirmed = await alert_delete(
-        `Xoá thói quen`,
-        `Bạn có chắc chắn muốn xoá thói quen ${habit.name} không ?`
-      );
-      console.log(isConfirmed);
-      if (isConfirmed == true) {
-        const result = await http_deleteOne(Habit, _id);
-        alert_success(
-          `Xoá thói quen`,
-          `Bạn đã xoá thành công thói quen ${result.document.name}.`
-        );
-        refresh();
-      }
-    };
-    const edit = async (editValue) => {
-      console.log(editValue);
-      const result = await http_update(Habit, editValue._id, editValue);
+      const result = await http_update(Event, editValue._id, editValue);
       if (!result.error) {
         alert_success(`Sửa sự kiện`, `${result.msg}`);
         refresh();
@@ -172,35 +176,65 @@ export default {
         alert_error(`Sửa sự kiện`, `${result.msg}`);
       }
     };
+    const deleteOne = async (_id, data) => {
+    //   const event = await http_getOne(Permission, _id);
+    //   console.log("deleting", event);
+      const isConfirmed = await alert_delete(
+        `Xoá sự kiện`,
+        `Bạn có chắc chắn muốn xoá quyền ${data.name} không ?`
+      );
+      console.log(isConfirmed);
+      if (isConfirmed == true) {
+        const result = await http_deleteOne(Permission, _id);
+        alert_success(
+          `Xoá quyền`,
+          `Bạn đã xoá thành công quyền ${
+            result.document.name
+          }.`
+        );
+        refresh();
+      }
+    };
 
-    const router = useRouter();
+    const edit = async (editValue) => {
+      console.log(editValue);
+      const result = await http_update(Permission, editValue._id, editValue);
+      if (!result.error) {
+        alert_success(`Sửa quyền`, `${result.msg}`);
+        refresh();
+      } else if (result.error) {
+        alert_error(`Sửa quyền`, `${result.msg}`);
+      }
+    };
+
     const view = (_id) => {
       console.log("view", _id);
       router.push({ name: "Event.view", params: { id: _id } });
     };
 
+    const refresh = async () => {
+      data.items = await http_getAll(Permission);
+    };
+
+    const delete_a = async (objectData) => {
+      console.log("delete_a", objectData);
+    };
+
     const getOne = async (_id) => {
       try {
-        const result = await http_getOne(Habit, _id);
+        const result = await http_getOne(Permission, _id);
         return result;
       } catch (error) {
         
       }
     }
 
-    const refresh = async () => {
-      data.items = await http_getAll(Habit);
-    };
-
-    // watch
-    const activeMenu = ref(2);
-    watch(activeMenu, (newValue, oldValue) => {
-      router.push({ name: "Event" });
-    });
+    // handle http methods
 
     // Hàm callback được gọi trước khi component được mount (load)
     onBeforeMount(async () => {
-      await refresh();
+      refresh();
+      console.log(data.items);
     });
 
     return {
@@ -212,7 +246,9 @@ export default {
       deleteOne,
       edit,
       view,
-      getOne
+      delete_a,
+      refresh,
+      getOne,
     };
   },
 };
@@ -226,16 +262,23 @@ export default {
         @click="activeMenu = 1"
         :class="[activeMenu == 1 ? 'active-menu' : 'none-active-menu']"
         href="#"
-        >Sự kiện</a
+        >Tài khoản</a
       >
       <a
         @click="activeMenu = 2"
         :class="[activeMenu == 2 ? 'active-menu' : 'none-active-menu']"
         href="#"
-        >Thói quen</a
+        >Vai trò</a
+      >
+      <a
+        @click="activeMenu = 3"
+        :class="[activeMenu == 3 ? 'active-menu' : 'none-active-menu']"
+        href="#"
+        >Quyền</a
       >
     </div>
     <!-- Filter -->
+    <!-- <div class="border-hr mb-3"></div> -->
     <!-- Search -->
     <div class="border-hr mb-3"></div>
     <div class="d-flex justify-content-between mx-3 mb-3">
@@ -297,12 +340,14 @@ export default {
     <!-- Table -->
     <Table
       :items="setPages"
-      :fields="['Tên thói quen']"
+      :fields="['Tên quyền']"
       :labels="['name']"
-      @delete="(value) => deleteOne(value)"
+      :showActionList="[false, true, true]"
+      @delete="(value, value1) => deleteOne(value, value1)"
       @edit="
         async (value, value1) => (
-          (data.editValue = await getOne(value._id)), (data.activeEdit = value1)
+          (data.editValue = await getOne(value._id)),
+          (data.activeEdit = value1)
         )
       "
       @view="(value) => view(value)"
@@ -354,11 +399,9 @@ export default {
 #delete-all {
   font-size: 14px;
 }
-.show-modal {
-  /* display: block;
-  opacity: 1;
-  background-color: var(--dark);
-  pointer-events: auto;
-  z-index: 1; */
+.input {
+  background-color: inherit;
+  border: 1px solid var(--gray);
+  border-radius: 5px;
 }
 </style>

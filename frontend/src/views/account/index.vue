@@ -1,27 +1,302 @@
+<script>
+import Add from "./add.vue";
+import FormWizard from "../../components/form/form-wizard.vue";
+import {
+  // components
+  Table,
+  Pagination,
+  Dropdown,
+  Select,
+  Search,
+  DeleteAll,
+  Select_Advanced,
+  // compositions
+  reactive,
+  computed,
+  watch,
+  ref,
+  onBeforeMount,
+  // router
+  useRouter,
+  // format date or datetime
+  formatDateTime,
+  formatDate,
+  // service
+  Event,
+  Habit,
+  Account,
+  Appointment,
+  Center_VNPT,
+  Company_KH,
+  Customer_Types,
+  Customer_Work,
+  Customer,
+  Cycle,
+  Department,
+  Employee,
+  Log,
+  Permission,
+  Position,
+  Role,
+  Task,
+  Unit,
+  // http service
+  http_getAll,
+  http_create,
+  http_getOne,
+  http_deleteOne,
+  http_update,
+  // alert
+  alert_success,
+  alert_error,
+  alert_delete,
+  alert_warning,
+  alert_info,
+} from "../common/import.js";
+
+export default {
+  components: {
+    Table,
+    Pagination,
+    Dropdown,
+    Select,
+    Search,
+    Add,
+    Select_Advanced,
+    FormWizard,
+  },
+  setup(ctx) {
+    const data = reactive({
+      items: [],
+      entryValue: 5,
+      numberOfPages: 1,
+      totalRow: 0,
+      startRow: 0,
+      endRow: 0,
+      currentPage: 1,
+      searchText: "",
+      itemAdd: {
+        name: "",
+        content: "",
+        time_duration: "",
+      },
+      activeEdit: false,
+      editValue: {},
+      searchSelect: "",
+      optionSelect: [
+        {
+          _id: 1,
+          name: "1",
+        },
+        {
+          _id: 2,
+          name: "2",
+        },
+      ],
+      test: {
+        a: "",
+        b: "",
+      },
+    });
+    const toString = computed(() => {
+      console.log("Starting search");
+      return data.items.map((value, index) => {
+        return [value.name].join("").toLocaleLowerCase();
+      });
+    });
+    const filter = computed(() => {
+      return data.items.filter((value, index) => {
+        return toString.value[index].includes(
+          data.searchText.toLocaleLowerCase()
+        );
+      });
+    });
+    const filtered = computed(() => {
+      if (!data.searchText) {
+        data.totalRow = data.items.length;
+        return data.items;
+      } else {
+        data.totalRow = filter.value.length;
+        return filter.value;
+      }
+    });
+    const setNumberOfPages = computed(() => {
+      return Math.ceil(filtered.value.length / data.entryValue);
+    });
+    const setPages = computed(() => {
+      if (data.items.length > 0) {
+        if (setNumberOfPages.value == 0 || data.entryValue == "All") {
+          data.entryValue = data.items.length;
+          data.numberOfPages = 1;
+        } else data.numberOfPages = setNumberOfPages.value;
+        data.startRow = (data.currentPage - 1) * data.entryValue + 1;
+        data.endRow = data.currentPage * data.entryValue;
+        return filtered.value.filter((item, index) => {
+          return (
+            index + 1 > (data.currentPage - 1) * data.entryValue &&
+            index + 1 <= data.currentPage * data.entryValue
+          );
+        });
+      } else return data.items.value;
+    });
+
+    // routers
+    const router = useRouter();
+
+    // watch
+    const activeMenu = ref(1);
+    watch(activeMenu, (newValue, oldValue) => {
+      if (activeMenu.value == 2) {
+        router.push({ name: "Role" });
+      } else if (activeMenu.value == 3) {
+        router.push({ name: "Permission" });
+      }
+    });
+
+    // methods
+    const create = async () => {
+      const result = await http_create(Event, data.itemAdd);
+      if (!result.error) {
+        alert_success(
+          `Thêm sự kiện`,
+          `Sự kiện ${result.document.name} lúc ${formatDateTime(
+            result.document.time_duration
+          )} đã được tạo thành công.`
+        );
+        refresh();
+      } else if (result.error) {
+        alert_error(`Thêm sự kiện`, `${result.msg}`);
+      }
+    };
+    const update = async (item) => {
+      const result = await http_update(Event, editValue._id, editValue);
+      if (!result.error) {
+        alert_success(`Sửa sự kiện`, `${result.msg}`);
+        refresh();
+      } else if (result.error) {
+        alert_error(`Sửa sự kiện`, `${result.msg}`);
+      }
+    };
+
+    const deleteOne = async (_id) => {
+      const account = await http_getOne(Account, _id);
+      console.log("deleting", account);
+      const isConfirmed = await alert_delete(
+        `Xoá tài khoản`,
+        `Bạn có chắc chắn muốn xoá tài khoản ${account.user_name} không ?`
+      );
+      console.log(isConfirmed);
+      if (isConfirmed == true) {
+        const result = await http_deleteOne(Account, _id);
+        alert_success(
+          `Xoá tài khoản`,
+          `Bạn đã xoá thành công tài khoản ${
+            result.document.user_name
+          }.`
+        );
+        refresh();
+      }
+    };
+
+    const edit = async (editValue) => {
+      console.log(editValue);
+      const result = await http_update(Event, editValue._id, editValue);
+      if (!result.error) {
+        alert_success(`Sửa sự kiện`, `${result.msg}`);
+        refresh();
+      } else if (result.error) {
+        alert_error(`Sửa sự kiện`, `${result.msg}`);
+      }
+    };
+
+    const view = (_id) => {
+      console.log("view", _id);
+      router.push({ name: "Event.view", params: { id: _id } });
+    };
+
+    const refresh = async () => {
+      data.items = await http_getAll(Account);
+      data.items = data.items.map((value, index) => {
+        return {
+          _id: value._id,
+          user_name: value.user_name,
+          employee: value.Employee.name,
+          role: value.Role.name,
+        };
+      });
+    };
+
+    const delete_a = async (objectData) => {
+      console.log("delete_a", objectData);
+    };
+
+    // handle http methods
+
+    // Hàm callback được gọi trước khi component được mount (load)
+    onBeforeMount(async () => {
+      refresh();
+      console.log(data.items);
+    });
+
+    return {
+      data,
+      setPages,
+      activeMenu,
+      create,
+      update,
+      deleteOne,
+      edit,
+      view,
+      delete_a,
+      refresh,
+    };
+  },
+};
+</script>
+
 <template>
   <div class="border-box d-flex flex-column ml-2">
     <!-- Menu -->
     <div class="d-flex menu my-3 mx-3 justify-content-end">
       <a
-        @click="data.activeMenu = 1"
-        :class="[data.activeMenu == 1 ? 'active-menu' : 'none-active-menu']"
-        href="./account"
-        >Tài Khoản</a
+        @click="activeMenu = 1"
+        :class="[activeMenu == 1 ? 'active-menu' : 'none-active-menu']"
+        href="#"
+        >Tài khoản</a
       >
       <a
-        @click="data.activeMenu = 2"
-        :class="[data.activeMenu == 2 ? 'active-menu' : 'none-active-menu']"
-        href="./rolelist"
-        >Chức Vụ</a
+        @click="activeMenu = 2"
+        :class="[activeMenu == 2 ? 'active-menu' : 'none-active-menu']"
+        href="#"
+        >Vai trò</a
       >
       <a
-        @click="data.activeMenu = 3"
-        :class="[data.activeMenu == 3 ? 'active-menu' : 'none-active-menu']"
-        href="./permissionlist"
-        >Phân Quyền</a
+        @click="activeMenu = 3"
+        :class="[activeMenu == 3 ? 'active-menu' : 'none-active-menu']"
+        href="#"
+        >Quyền</a
       >
     </div>
     <!-- Filter -->
+    <div class="border-hr mb-3"></div>
+    <div class="d-flex flex-column">
+      <span class="mx-3 mb-3 h6">Lọc tài khoản</span>
+      <div class="d-flex mx-3">
+        <div class="form-group w-100">
+          <Select
+            :title="`Vai trò tài khoản`"
+            :entryValue="`Vai trò tài khoản`"
+            :options="[
+              { name: '1 tuần', value: '1 tuần' },
+              { name: '1 tháng', value: '1 tháng' },
+              { name: '1 năm', value: '1 năm' },
+            ]"
+          />
+        </div>
+        <!-- <div class="form-group ml-3">
+        </div> -->
+      </div>
+    </div>
     <!-- Search -->
     <div class="border-hr mb-3"></div>
     <div class="d-flex justify-content-between mx-3 mb-3">
@@ -66,41 +341,33 @@
           data-toggle="modal"
           data-target="#model-delete-all"
         >
-          <span id="delete-all" class="mx-2">Xóa Tất Cả</span>
+          <span id="delete-all" class="mx-2">Xoá</span>
         </button>
-        <DeleteAll :items="data.items" />
+        <!-- <DeleteAll :items="data.items" /> -->
         <button
           type="button"
           class="btn btn-primary"
           data-toggle="modal"
-          data-target="#model-addaccount"
+          data-target="#model-add"
         >
-          <span id="addaccount" class="mx-2">Thêm</span>
+          <span id="add" class="mx-2">Thêm</span>
         </button>
-        <AddAccount :item="data.itemAdd" @create="create" />
+        <Add :item="data.itemAdd" @create="create" />
       </div>
     </div>
-    <!-- Table{{ data.itemAdd }} -->
+    <!-- Table -->
     <Table
       :items="setPages"
-      :fields="[
-        'Họ Tên',
-        'Tên Đăng Nhập',
-        'Email',
-        'Ngày Sinh',
-        'Ngày Đăng Ký',
-      ]"
-      :labels="[
-        'fullname',
-        'username',
-        'email',
-        'birthday',
-        'registrationdate',
-      ]"
+      :fields="['Tên nhân viên', 'Tên tài khoản', 'Vai trò tài khoản', 'Quyền']"
+      :labels="['employee', 'user_name', 'role', 'content']"
+      :showActionList="[false, false, true]"
       @delete="(value) => deleteOne(value)"
       @edit="
         (value, value1) => (
-          (data.editValue = value), (data.activeEdit = value1)
+          (data.editValue = value),
+          (data.activeEdit = value1),
+          (data.editValue.time_duration =
+            data.editValue.time_duration.toUpperCase())
         )
       "
       @view="(value) => view(value)"
@@ -115,235 +382,8 @@
       @update:currentPage="(value) => (data.currentPage = value)"
       class="mx-3"
     />
-  <Edit
-    :item="data.editValue"
-    :class="[data.activeEdit ? 'show-modal' : 'd-none']"
-    @cancel="data.activeEdit = false"
-  />
   </div>
 </template>
-<script>
-import Table from "../../components/table/table_duy.vue";
-import Pagination from "../../components/table/pagination_duy.vue";
-// import Dropdown from "../../components/form/dropdown.vue";
-import Select from "../../components/form/select.vue";
-import Search from "../../components/form/search.vue";
-import DeleteAll from "../../components/form/dlt_all_account.vue";
-import AddAccount from "./modal/AddAccount.vue";
-import Edit from "./modal/EditAccount.vue";
-import { reactive, computed } from "vue";
-import { useRouter } from "vue-router";
-export default {
-  components: {
-    Table,
-    Pagination,
-    // Dropdown,
-    Select,
-    Search,
-    AddAccount,
-    DeleteAll,
-    Edit,
-  },
-  setup(ctx) {
-    const data = reactive({
-      items: [
-        {
-          _id: "1",
-          fullname: "Trương Thiết Long",
-          username: "ttlong315",
-          email: "ttlong315@gmail.com",
-          birthday: "20/02/2001",
-          registrationdate: "20/05/2023",
-        },
-        {
-          _id: "2",
-          fullname: "Trần Tuyết Mỹ",
-          username: "meimey113",
-          email: "meimei113@gmail.com",
-          birthday: "11/03/2002",
-          registrationdate: "20/05/2023",
-        },
-        {
-          _id: "3",
-          fullname: "Giang Văn Mít",
-          username: "janeSmith",
-          email: "janesmith@example.com",
-          birthday: "15/04/2004",
-          registrationdate: "18/05/2023",
-        },
-        {
-          _id: "4",
-          fullname: "Nguyễn Thị Vân Anh",
-          username: "vanh13",
-          email: "vanh@gmail.com",
-          birthday: "12/04/2002",
-          registrationdate: "21/05/2023",
-        },
-        {
-          _id: "5",
-          fullname: "Trần An Đông",
-          username: "adong",
-          email: "dong@gmail.com",
-          birthday: "12/02/2001",
-          registrationdate: "21/05/2023",
-        },
-        {
-          _id: "6",
-          fullname: "Nguyễn Hải Yến",
-          username: "hyen",
-          email: "yen@gmail.com",
-          birthday: "09/02/2001",
-          registrationdate: "21/05/2023",
-        },
-        {
-          _id: "7",
-          fullname: "Nguyễn Trung Tín",
-          username: "ttin",
-          email: "tin@gmail.com",
-          birthday: "02/01/2001",
-          registrationdate: "21/05/2023",
-        },
-        {
-          _id: "8",
-          fullname: "Nguyễn Thị Hương",
-          username: "huong.nguyen",
-          email: "huong.nguyen@gmail.com",
-          birthday: "15/07/1995",
-          registrationdate: "10/04/2023",
-        },
-        {
-          _id: "9",
-          fullname: "Phạm Văn Đức",
-          username: "duc.pham",
-          email: "duc.pham@gmail.com",
-          birthday: "03/11/1988",
-          registrationdate: "05/01/2023",
-        },
-        {
-          _id: "10",
-          fullname: "Trần Minh An",
-          username: "minhantran",
-          email: "minhantran@gmail.com",
-          birthday: "27/09/1990",
-          registrationdate: "15/03/2023",
-        },
-        {
-          _id: "11",
-          fullname: "Lê Thị Kim Anh",
-          username: "kimanh.le",
-          email: "kimanh.le@gmail.com",
-          birthday: "09/12/1985",
-          registrationdate: "22/02/2023",
-        },
-        {
-          _id: "12",
-          fullname: "Võ Hoàng Nam",
-          username: "nam.vo",
-          email: "nam.vo@gmail.com",
-          birthday: "01/06/1992",
-          registrationdate: "19/04/2023",
-        },
-        // Add more items as needed
-      ],
-      entryValue: 5,
-      numberOfPages: 1,
-      totalRow: 0,
-      startRow: 0,
-      endRow: 0,
-      currentPage: 1,
-      searchText: "",
-      activeMenu: 1,
-      itemAdd: {
-        fullname: "",
-        username: "",
-        email: "",
-        birthday: "",
-        registrationdate: "",
-      },
-      activeEdit: false,
-      editValue: {
-        _id: "",
-        fullname: "",
-        username: "",
-        email: "",
-        birthday: "",
-        registrationdate: "",
-      },
-    });
-
-    // computed
-    const toString = computed(() => {
-      console.log("Starting search");
-      return data.items.map((value, index) => {
-        return [value.fullname].join("").toLocaleLowerCase();
-      });
-    });
-    const filter = computed(() => {
-      return data.items.filter((value, index) => {
-        return toString.value[index].includes(
-          data.searchText.toLocaleLowerCase()
-        );
-      });
-    });
-    const filtered = computed(() => {
-      if (!data.searchText) {
-        data.totalRow = data.items.length;
-        return data.items;
-      } else {
-        data.totalRow = filter.value.length;
-        return filter.value;
-      }
-    });
-    const setNumberOfPages = computed(() => {
-      return Math.ceil(filtered.value.length / data.entryValue);
-    });
-    const setPages = computed(() => {
-      if (setNumberOfPages.value == 0 || data.entryValue == "All") {
-        data.entryValue = data.items.length;
-        data.numberOfPages = 1;
-      } else data.numberOfPages = setNumberOfPages.value;
-      data.startRow = (data.currentPage - 1) * data.entryValue + 1;
-      data.endRow = data.currentPage * data.entryValue;
-      return filtered.value.filter((item, index) => {
-        return (
-          index + 1 > (data.currentPage - 1) * data.entryValue &&
-          index + 1 <= data.currentPage * data.entryValue
-        );
-      });
-    });
-
-    // methods
-    const create = () => {
-      console.log("creating");
-    };
-    const update = (item) => {
-      console.log("updating", item);
-    };
-    const deleteOne = (_id) => {
-      console.log("deleting", _id);
-    };
-    const edit = () => {
-      console.log("edit");
-    };
-
-    const router = useRouter();
-
-    const view = (_id) => {
-      console.log("view", _id);
-      router.push({ name: "AccountList.view", params: { id: _id } });
-    };
-    return {
-      data,
-      setPages,
-      create,
-      update,
-      deleteOne,
-      edit,
-      view,
-    };
-  },
-};
-</script>
 
 <style scoped>
 .border-box {
@@ -373,11 +413,10 @@ export default {
 #delete-all {
   font-size: 14px;
 }
-.show-modal {
-  display: block;
-  opacity: 1;
-  background-color: var(--dark);
-  /* pointer-events: auto; */
-  z-index: 1;
+.input {
+  background-color: inherit;
+  border: 1px solid var(--gray);
+  border-radius: 5px;
 }
 </style>
+

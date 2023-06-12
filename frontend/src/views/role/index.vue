@@ -1,6 +1,8 @@
 <script>
 import Add from "./add.vue";
 import Edit from "./edit.vue";
+import FormWizard from "../../components/form/form-wizard.vue";
+import SetPermission from "./setPermission.vue";
 import {
   // components
   Table,
@@ -9,6 +11,7 @@ import {
   Select,
   Search,
   DeleteAll,
+  Select_Advanced,
   // compositions
   reactive,
   computed,
@@ -52,6 +55,7 @@ import {
   alert_warning,
   alert_info,
 } from "../common/import.js";
+
 export default {
   components: {
     Table,
@@ -62,6 +66,9 @@ export default {
     Add,
     DeleteAll,
     Edit,
+    Select_Advanced,
+    FormWizard,
+    SetPermission,
   },
   setup(ctx) {
     const data = reactive({
@@ -78,9 +85,24 @@ export default {
       },
       activeEdit: false,
       editValue: {},
+      searchSelect: "",
+      optionSelect: [
+        {
+          _id: 1,
+          name: "1",
+        },
+        {
+          _id: 2,
+          name: "2",
+        },
+      ],
+      test: {
+        a: "",
+        b: "",
+      },
+      roleValue: {},
+      showSetPermission: false,
     });
-
-    // computed
     const toString = computed(() => {
       console.log("Starting search");
       return data.items.map((value, index) => {
@@ -123,84 +145,115 @@ export default {
       } else return data.items.value;
     });
 
+    // routers
+    const router = useRouter();
+
+    // watch
+    const activeMenu = ref(2);
+    watch(activeMenu, (newValue, oldValue) => {
+      if (activeMenu.value == 1) {
+        router.push({ name: "Account" });
+      } else if (activeMenu.value == 3) {
+        router.push({ name: "Permission" });
+      }
+    });
+
     // methods
     const create = async () => {
-      const result = await http_create(Habit, data.itemAdd);
+      const result = await http_create(Role, data.itemAdd);
       if (!result.error) {
         alert_success(
-          `Thêm thói quen khách hàng`,
-          `Thói quen ${result.document.name} đã được tạo thành công.`
+          `Thêm vai trò`,
+          `Vai trò ${result.document.name} đã được tạo thành công.`
         );
         refresh();
       } else if (result.error) {
-        alert_error(`Thêm thói quen khách hàng`, `${result.msg}`);
-      }
-    };
-    const update = async (item) => {
-      const result = await http_update(Habit, editValue._id, editValue);
-      if (!result.error) {
-        alert_success(`Sửa thói quen`, `${result.msg}`);
-        refresh();
-      } else if (result.error) {
-        alert_error(`Sửa thói quen`, `${result.msg}`);
-      }
-    };
-    const deleteOne = async (_id) => {
-      const habit = await http_getOne(Habit, _id);
-      console.log("deleting", habit);
-      const isConfirmed = await alert_delete(
-        `Xoá thói quen`,
-        `Bạn có chắc chắn muốn xoá thói quen ${habit.name} không ?`
-      );
-      console.log(isConfirmed);
-      if (isConfirmed == true) {
-        const result = await http_deleteOne(Habit, _id);
-        alert_success(
-          `Xoá thói quen`,
-          `Bạn đã xoá thành công thói quen ${result.document.name}.`
-        );
-        refresh();
-      }
-    };
-    const edit = async (editValue) => {
-      console.log(editValue);
-      const result = await http_update(Habit, editValue._id, editValue);
-      if (!result.error) {
-        alert_success(`Sửa sự kiện`, `${result.msg}`);
-        refresh();
-      } else if (result.error) {
-        alert_error(`Sửa sự kiện`, `${result.msg}`);
+        alert_error(`Thêm vai trò`, `${result.msg}`);
       }
     };
 
-    const router = useRouter();
+    const setPermission = () => {
+      data.roleValue = {};
+      data.showSetPermission = false;
+      for (let value of data.items) {
+        if (value.checked == true) {
+          data.roleValue = value;
+          data.showSetPermission = true;
+          break;
+        }
+      }
+      if (data.showSetPermission == false) {
+        alert_warning(`Tạo quyền thao tác`, `Vui lòng chọn vai trò.`)
+      }
+    };
+
+    const update = async (item) => {
+      const result = await http_update(Role, editValue._id, editValue);
+      if (!result.error) {
+        alert_success(`Sửa vai trò`, `${result.msg}`);
+        refresh();
+      } else if (result.error) {
+        alert_error(`Sửa vai trò`, `${result.msg}`);
+      }
+    };
+    const deleteOne = async (_id) => {
+      const event = await http_getOne(Role, _id);
+      console.log("deleting", event);
+      const isConfirmed = await alert_delete(
+        `Xoá vai trò`,
+        `Bạn có chắc chắn muốn xoá vai trò ${event.name} không ?`
+      );
+      console.log(isConfirmed);
+      if (isConfirmed == true) {
+        const result = await http_deleteOne(Role, _id);
+        alert_success(
+          `Xoá vai trò`,
+          `Bạn đã xoá thành công vài trò${result.document.name}.`
+        );
+        refresh();
+      }
+    };
+
+    const edit = async (editValue) => {
+      const data = await http_getOne(Role, editValue._id);
+      const result = await http_update(Role, editValue._id, editValue);
+      if (!result.error) {
+        alert_success(`Sửa vai trò`, `${result.msg}`);
+        refresh();
+      } else if (result.error) {
+        alert_error(`Sửa vai trò`, `${result.msg}`);
+      }
+    };
+
+    const getOne = async (_id) => {
+      try {
+        const result = await http_getOne(Role, _id);
+        return result;
+      } catch (error) {}
+    };
+
     const view = (_id) => {
       console.log("view", _id);
       router.push({ name: "Event.view", params: { id: _id } });
     };
 
-    const getOne = async (_id) => {
-      try {
-        const result = await http_getOne(Habit, _id);
-        return result;
-      } catch (error) {
-        
-      }
-    }
-
     const refresh = async () => {
-      data.items = await http_getAll(Habit);
+      data.items = await http_getAll(Role);
+      for (let value of data.items) {
+        value.checked = false;
+      }
     };
 
-    // watch
-    const activeMenu = ref(2);
-    watch(activeMenu, (newValue, oldValue) => {
-      router.push({ name: "Event" });
-    });
+    const delete_a = async (objectData) => {
+      console.log("delete_a", objectData);
+    };
+
+    // handle http methods
 
     // Hàm callback được gọi trước khi component được mount (load)
     onBeforeMount(async () => {
-      await refresh();
+      refresh();
+      console.log(data.items);
     });
 
     return {
@@ -212,7 +265,10 @@ export default {
       deleteOne,
       edit,
       view,
-      getOne
+      delete_a,
+      refresh,
+      getOne,
+      setPermission,
     };
   },
 };
@@ -226,16 +282,23 @@ export default {
         @click="activeMenu = 1"
         :class="[activeMenu == 1 ? 'active-menu' : 'none-active-menu']"
         href="#"
-        >Sự kiện</a
+        >Tài khoản</a
       >
       <a
         @click="activeMenu = 2"
         :class="[activeMenu == 2 ? 'active-menu' : 'none-active-menu']"
         href="#"
-        >Thói quen</a
+        >Vai trò</a
+      >
+      <a
+        @click="activeMenu = 3"
+        :class="[activeMenu == 3 ? 'active-menu' : 'none-active-menu']"
+        href="#"
+        >Quyền</a
       >
     </div>
     <!-- Filter -->
+    <!-- <div class="border-hr mb-3"></div> -->
     <!-- Search -->
     <div class="border-hr mb-3"></div>
     <div class="d-flex justify-content-between mx-3 mb-3">
@@ -292,13 +355,26 @@ export default {
           <span id="add" class="mx-2">Thêm</span>
         </button>
         <Add :item="data.itemAdd" @create="create" />
+        <button
+          type="button"
+          class="btn btn-secondary ml-3"
+          data-toggle="modal"
+          data-target="#model-setPermission"
+          @click="setPermission()"
+        >
+          <span style="font-size: 14px" id="setPermission" class="mx-2"
+            >Tạo quyền</span
+          >
+        </button>
+        <SetPermission v-if="data.showSetPermission" :item="data.roleValue" />
       </div>
     </div>
     <!-- Table -->
     <Table
       :items="setPages"
-      :fields="['Tên thói quen']"
+      :fields="['Tên vai trò']"
       :labels="['name']"
+      :showActionList="[flase, true, true]"
       @delete="(value) => deleteOne(value)"
       @edit="
         async (value, value1) => (
@@ -354,11 +430,9 @@ export default {
 #delete-all {
   font-size: 14px;
 }
-.show-modal {
-  /* display: block;
-  opacity: 1;
-  background-color: var(--dark);
-  pointer-events: auto;
-  z-index: 1; */
+.input {
+  background-color: inherit;
+  border: 1px solid var(--gray);
+  border-radius: 5px;
 }
 </style>

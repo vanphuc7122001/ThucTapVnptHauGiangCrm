@@ -124,44 +124,16 @@ const routes = [
     component: () => import('../views/account/index.vue'),
     
   },
-  //AccountList.vue
-  // {
-  //   path:'/accountlist',
-  //   name: 'AccountList',
-  //   component: () => import('../views/account/AccountList.vue'),
-  // },
-  //permissionlist.vue
   {
-    path: '/permissionlist',
-    name: 'PermissionList',
-    component: () => import('../views/account/PermissionList.vue')
+    path: '/permission',
+    name: 'Permission',
+    component: () => import('../views/permission/index.vue')
   },
   //rolelist.vue
   {
-    path: '/rolelist',
-    name: 'RoleList',
-    component: () => import('../views/account/RoleList.vue')
-  },
-  //view account
-  {
-    path: '/account/:id',
-    name: 'AccountList.view',
-    component: () => import('../views/account/view.vue'),
-    props: true,
-  },
-  // view role
-  {
-    path: '/rolelist/:id',
-    name: 'RoleList.view',
-    component: () => import('../views/account/view.vue'),
-    props: true,
-  }, 
-  // view permission
-  {
-    path: '/permissionlist/:id',
-    name: 'PermissionList.view',
-    component: () => import('../views/account/view.vue'),
-    props: true,
+    path: '/role',
+    name: 'Role',
+    component: () => import('../views/role/index.vue')
   },
   // Report
   {

@@ -216,6 +216,15 @@ export default {
       router.push({ name: "Event.view", params: { id: _id } });
     };
 
+    const getOne = async (_id) => {
+      try {
+        const result = await http_getOne(Event, _id);
+        return result;
+      } catch (error) {
+        
+      }
+    }
+
     const refresh = async () => {
       data.items = await http_getAll(Event);
       for (const value of data.items) {
@@ -247,6 +256,7 @@ export default {
       view,
       delete_a,
       refresh,
+      getOne,
     };
   },
 };
@@ -364,8 +374,8 @@ export default {
       :labels="['name', 'content', 'time_duration_format']"
       @delete="(value) => deleteOne(value)"
       @edit="
-        (value, value1) => (
-          (data.editValue = value),
+        async (value, value1) => (
+          (data.editValue = await getOne(value._id)),
           (data.activeEdit = value1),
           (data.editValue.time_duration =
             data.editValue.time_duration.toUpperCase())

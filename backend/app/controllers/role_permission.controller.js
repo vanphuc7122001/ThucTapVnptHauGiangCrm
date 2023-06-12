@@ -44,8 +44,6 @@ exports.findAll = async (req, res, next) => {
     try {
         const documents = await Role_Permission.findAll({
             include: [
-                Permission,
-                Role,
             ]
         });
         return res.send(documents);

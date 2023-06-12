@@ -3,8 +3,8 @@ const createError = require('http-errors');
 const { v4: uuidv4 } = require('uuid');
 
 exports.create = async (req, res, next) => {
-    if (Object.keys(req.body).length === 8) {
-        const { name, birthday, avatar, address, phone, email, postionId, unitId } = req.body;
+    if (Object.keys(req.body).length >= 8) {
+        const { name, birthday, address, phone, email, postionId, unitId } = req.body;
         const employees = await Employee.findAll();
         for (let value of employees) {
             if (value.name == name && value.phone == phone && value.email == email) {
@@ -18,7 +18,6 @@ exports.create = async (req, res, next) => {
             const document = await Employee.create({
                 name: req.body.name,
                 birthday: req.body.birthday,
-                avatar: req.body.avatar,
                 address: req.body.address,
                 phone: req.body.phone,
                 email: req.body.email,
@@ -150,7 +149,7 @@ exports.deleteAll = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
     console.log('update', req.body);
-    const { name, birthday, avatar, address, phone, email, postionId, unitId } = req.body;
+    const { name, birthday, address, phone, email, postionId, unitId } = req.body;
     try {
         let employees = [await Employee.findOne({
             where: {
@@ -160,7 +159,7 @@ exports.update = async (req, res, next) => {
 
         employees = employees.filter(
             (value, index) => {
-                return value.name == name && value.birthday == birthday && value.avatar == avatar && value.address == address 
+                return value.name == name && value.birthday == birthday && value.address == address 
                 && value.phone == phone && value.email == email && value.postionId == postionId && value.unitId == unitId;
             }
         )
@@ -169,7 +168,6 @@ exports.update = async (req, res, next) => {
             const document = await Employee.update({
                 name: req.body.name,
                 birthday: req.body.birthday,
-                avatar: req.body.avatar,
                 address: req.body.address,
                 phone: req.body.phone,
                 email: req.body.email,

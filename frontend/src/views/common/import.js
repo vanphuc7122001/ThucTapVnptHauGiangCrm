@@ -6,7 +6,7 @@ import Search from "../../components/form/search.vue";
 import DeleteAll from "../../components/form/delete-all.vue";
 import Select_Advanced from "../../components/form/select_advanced.vue";
 import form_wizard_customer from "../../components/form/form_wizard_customer.vue";
-import { reactive, computed, watch, ref, onBeforeMount } from "vue";
+import { reactive, computed, watch, ref, onBeforeMount, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { formatDateTime, formatDate } from "../../assets/js/common.js";
 // import { toString, _filter } from "../../assets/js/pagination.js";
@@ -30,6 +30,7 @@ import Position from "../../services/position.service";
 import Role from "../../services/role.service";
 import Task from "../../services/task.service";
 import Unit from "../../services/unit.service";
+import Role_Permission from "../../services/role_permission.service";
 
 // http methods
 import {
@@ -65,6 +66,7 @@ export {
     watch,
     ref,
     onBeforeMount,
+    onMounted,
     // router
     useRouter,
     // format date or datetime
@@ -89,6 +91,7 @@ export {
     Role,
     Task,
     Unit,
+    Role_Permission,
     // http service
     http_getAll,
     http_create,

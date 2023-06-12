@@ -526,21 +526,21 @@ const Employee = sequelize.define("Employee", {
             setEncrypt(value, "birthday", this);
         },
     },
-    avatar: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-        validate: {
-            notEmpty: {
-                msg: "Avatar nhân viên không được bỏ trống.",
-            },
-        },
-        get() {
-            return getDecrypt("avatar", this);
-        },
-        set(value) {
-            setEncrypt(value, "avatar", this);
-        },
-    },
+    // avatar: {
+    //     type: DataTypes.TEXT,
+    //     allowNull: false,
+    //     validate: {
+    //         notEmpty: {
+    //             msg: "Avatar nhân viên không được bỏ trống.",
+    //         },
+    //     },
+    //     get() {
+    //         return getDecrypt("avatar", this);
+    //     },
+    //     set(value) {
+    //         setEncrypt(value, "avatar", this);
+    //     },
+    // },
     address: {
         type: DataTypes.TEXT,
         allowNull: false,

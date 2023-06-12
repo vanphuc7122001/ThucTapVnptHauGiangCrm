@@ -26,6 +26,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    showActionList: {
+      type: Array,
+      default: [true, true, true],
+    },
   },
   setup(props, ntx) {},
 };
@@ -46,11 +50,12 @@ export default {
     </thead>
     <tbody>
       <tr v-for="(item, index) in items">
-        <td><input type="checkbox" name="" id="" /></td>
+        <td><input type="checkbox" v-model="item.checked" name="" id="" /></td>
         <td>{{ index + 1 }}</td>
         <td v-for="(label, index1) in labels">{{ item[label] }}</td>
         <td v-if="activeAction == true">
           <button
+            v-if="showActionList[0] == true"
             type="button"
             class=""
             data-toggle="modal"
@@ -64,6 +69,7 @@ export default {
             </span>
           </button>
           <button
+            v-if="showActionList[1] == true"
             type="button"
             class="mx-2"
             data-toggle="modal"
@@ -72,15 +78,16 @@ export default {
             <span
               id="edit"
               class="material-symbols-outlined d-flex align-items-center justify-content-center"
-              @click="$emit('edit', item, true)" 
+              @click="$emit('edit', item, true)"
             >
               edit
             </span>
           </button>
           <span
+            v-if="showActionList[2] == true"
             id="delete"
             class="material-symbols-outlined"
-            @click="$emit('delete', item._id)"
+            @click="$emit('delete', item._id, item)"
           >
             delete
           </span>
@@ -88,7 +95,9 @@ export default {
       </tr>
     </tbody>
   </table>
-  <p v-if="items.length == 0" class="text-center mt-2">Không tồn tại bản ghi.</p>
+  <p v-if="items.length == 0" class="text-center mt-2">
+    Không tồn tại bản ghi.
+  </p>
 </template>
 
 <style scoped>

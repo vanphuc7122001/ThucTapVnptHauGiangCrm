@@ -5,6 +5,8 @@ import Employee from "../../services/employee.service";
 // ******
 import Select_Advanced from "../../components/form/select_advanced.vue";
 import Position from "../../services/position.service";
+import Role from "../../services/role.service";
+import Account from "../../services/account.service";
 import SelectOption from "../../components/box_lananh/select_cdu.vue";
 import CenterServices from "../../services/center_vnpt.service";
 import departmentsServices from "../../services/department.service";
@@ -48,6 +50,10 @@ export default {
           _id: 2,
           name: "Công việc",
         },
+        {
+          _id: 3,
+          name: "Tài khoản",
+        },
       ],
       activeStep: 1,
       item: {
@@ -61,22 +67,46 @@ export default {
       modelValue: "",
       modelDep: "",
       modelUnit: "",
+      roles: [],
+      modelRole: "",
     });
     const create = async () => {
       data.item.unitId = selectedOptionUnit.value;
       data.item.postionId = selectedOptionPosition.value;
-      console.log('aaaaa', data.item);
-      const result = await http_create(Employee, data.item);
-      if (!result.error) {
-        alert_success(
-          `Thêm nhân viên`,
-          `Nhân viên "${result.document.name}" đã được tạo thành công.`
-        );
-        refresh();
-      } else if (result.error) {
-        alert_error(`Thêm nhân viên`, `${result.msg}`);
+      data.item.checkUser = true;
+      const account = await http_create(Account, data.item);
+      if (account.user_name == true) {
+        console.log("item", data.item);
+        const result = await http_create(Employee, data.item);
+        data.item.checkUser = false;
+        console.log("result", result);
+        if (!result.error) {
+          data.item.EmployeeId = result.document._id;
+          const account = await http_create(Account, data.item);
+          alert_success(
+            `Thêm nhân viên`,
+            `Nhân viên "${result.document.name}" đã được tạo thành công.`
+          );
+          refresh();
+        } else if (result.error) {
+          alert_error(`Thêm nhân viên`, `${result.msg}`);
+        }
+        ctx.emit("create");
+      } else if (account.user_name == false) {
+        alert_error(`Thêm nhân viên`, `${account.msg}`);
       }
-      ctx.emit("create");
+    };
+
+    const setAccount = () => {
+      const charset =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      let password = "";
+
+      for (let i = 0; i < 9; i++) {
+        const randomIndex = Math.floor(Math.random() * charset.length);
+        password += charset[randomIndex];
+      }
+      data.item.password = password;
     };
     // ****REFRESH
     const refresh = async (name) => {
@@ -449,6 +479,8 @@ export default {
     onMounted(async () => {
       console.log("Mouted updateAdd:", props.updateAdd);
       await refresh_add();
+      setAccount();
+      data.roles = await http_getAll(Role);
     });
     return {
       data,
@@ -554,7 +586,7 @@ export default {
                     required
                   />
                 </div>
-                <div class="form-group flex-grow-1">
+                <!-- <div class="form-group flex-grow-1">
                   <label for="avatar"
                     >Avatar(<span style="color: red">*</span>):</label
                   >
@@ -566,7 +598,7 @@ export default {
                     v-model="data.item.avatar"
                     required
                   />
-                </div>
+                </div> -->
                 <div class="form-group flex-grow-1">
                   <label for="address"
                     >Địa chỉ(<span style="color: red">*</span>):</label
@@ -652,7 +684,12 @@ export default {
                         )
                       "
                       @delete="(value) => onDeletePosition(value)"
-                      @chose="(value, value1) => (selectedOptionPosition = value, data.modelPos = value1.name)"
+                      @chose="
+                        (value, value1) => (
+                          (selectedOptionPosition = value),
+                          (data.modelPos = value1.name)
+                        )
+                      "
                     />
                   </div>
                 </div>
@@ -681,7 +718,12 @@ export default {
                         )
                       "
                       @delete="(value) => onDeleteCenter(value)"
-                      @chose="(value, value1) => (selectedOptionCenter = value, data.modelValue = value1.name)"
+                      @chose="
+                        (value, value1) => (
+                          (selectedOptionCenter = value),
+                          (data.modelValue = value1.name)
+                        )
+                      "
                     />
                   </div>
                 </div>
@@ -709,7 +751,12 @@ export default {
                       )
                     "
                     @delete="(value) => onDeleteDep(value)"
-                    @chose="(value, value1) => (selectedOptionDepartment = value, data.modelDep = value1.name)"
+                    @chose="
+                      (value, value1) => (
+                        (selectedOptionDepartment = value),
+                        (data.modelDep = value1.name)
+                      )
+                    "
                   />
                 </div>
                 <div class="form-group flex-grow-1">
@@ -731,7 +778,78 @@ export default {
                       )
                     "
                     @delete="(value) => onDeleteUnit(value)"
-                    @chose="(value, value1) => (selectedOptionUnit = value, value, data.modelUnit = value1.name)"
+                    @chose="
+                      (value, value1) => (
+                        (selectedOptionUnit = value),
+                        value,
+                        (data.modelUnit = value1.name)
+                      )
+                    "
+                  />
+                </div>
+              </form>
+              <!-- page3 -->
+              <form
+                v-if="data.activeStep == 3"
+                action=""
+                class="was-validated"
+                style="width: 100%"
+              >
+                <div class="form-group flex-grow-1">
+                  <label for="name"
+                    >Tên tài khoản(<span style="color: red">*</span>):</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="name"
+                    name="name"
+                    v-model="data.item.user_name"
+                    required
+                  />
+                </div>
+                <div class="form-group flex-grow-1">
+                  <label for="birthday"
+                    >Mật khẩu(<span style="color: red">*</span>):</label
+                  >
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="birthday"
+                    name="birthday"
+                    v-model="data.item.password"
+                    required
+                  />
+                </div>
+                <div class="form-group flex-grow-1">
+                  <label for="avatar"
+                    >Vai trò(<span style="color: red">*</span>):</label
+                  >
+                  <Select_Advanced
+                    required
+                    :options="data.roles"
+                    :modelValue="data.modelRole"
+                    style="height: 40px"
+                    @searchSelect="
+                      async (value) => (
+                        await refresh_add(),
+                        (positions.position = positions.position.filter(
+                          (value1, index) => {
+                            console.log(value1, value);
+                            return (
+                              value1.name.includes(value) || value.length == 0
+                            );
+                          }
+                        )),
+                        console.log('searchSlect', value.length)
+                      )
+                    "
+                    @chose="
+                      (value, value1) => (
+                        (data.item.roleId = value),
+                        (data.modelRole = value1.name)
+                      )
+                    "
                   />
                 </div>
                 <b-button
@@ -765,7 +883,7 @@ export default {
                     data.activeStep > 1 &&
                     data.activeStep <= data.stepList.length
                   "
-                  class="btn-prev d-flex align-items-center px-3 py-1"
+                  class="btn-prev d-flex align-items-center px-3 py-1 ml-3"
                   @click="data.activeStep = 1"
                   ><span
                     class="material-symbols-outlined d-flex align-items-center"

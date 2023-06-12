@@ -1,10 +1,23 @@
-const { Account } = require("../models/index.model.js");
+const { Account, Role, Employee } = require("../models/index.model.js");
 const createError = require("http-errors");
 const { v4: uuidv4 } = require("uuid");
 const { DataTypes, Op } = require("sequelize");
 
 exports.create = async (req, res, next) => {
-    if (Object.keys(req.body).length === 4) {
+    const accounts = await Account.findAll();
+    for (let value of accounts) {
+        if (
+            value.user_name == req.body.user_name
+        ) {
+            return res.send({
+                error: true,
+                user_name: false,
+                msg: `Đã tồn tại tài khoản ${value.user_name}.`,
+            });
+        }
+    }
+
+    if (Object.keys(req.body).length >= 4 && req.body.checkUser == false) {
         const { EmployeeId, roleId, password, user_name } = req.body;
         const accounts = await Account.findAll();
         for (let value of accounts) {
@@ -40,13 +53,19 @@ exports.create = async (req, res, next) => {
         return res.send({
             error: true,
             msg: `Vui lòng nhập đủ thông tin.`,
+            user_name: true,
         });
     }
 };
 
 exports.findAll = async (req, res, next) => {
     try {
-        const documents = await Account.findAll({});
+        const documents = await Account.findAll({
+            include: [
+                Role,
+                Employee
+            ]
+        });
         return res.send(documents);
     } catch (error) {
         console.log(error);

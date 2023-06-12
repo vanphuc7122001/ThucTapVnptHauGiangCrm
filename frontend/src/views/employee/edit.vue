@@ -290,11 +290,10 @@ export default {
                     required
                   />
                 </div>
-                <div class="form-group flex-grow-1">
+                <!-- <div class="form-group flex-grow-1">
                   <label for="avatar"
                     >Avatar(<span style="color: red">*</span>):</label
                   >
-                  <!-- Khum bít làm huhu -->
                   <input
                     type="text"
                     class="form-control"
@@ -303,7 +302,7 @@ export default {
                     v-model="item.avatar"
                     required
                   />
-                </div>
+                </div> -->
                 <div class="form-group flex-grow-1">
                   <label for="address"
                     >Địa chỉ(<span style="color: red">*</span>):</label
