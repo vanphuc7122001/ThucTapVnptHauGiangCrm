@@ -1,14 +1,29 @@
 <script>
-import Table from "../../components/table/table_duy.vue";
-import Pagination from "../../components/table/pagination_duy.vue";
-import Dropdown from "../../components/form/dropdown.vue";
-import Select from "../../components/form/select.vue";
-import Search from "../../components/form/search.vue";
-import DeleteAll from "../../components/form/delete-all.vue";
+import {
+  Table,
+  Pagination,
+  Dropdown,
+  Select,
+  Search,
+  DeleteAll, 
+  http_getAll,
+  http_create,
+  http_getOne,
+  http_deleteOne,
+  http_update,
+  reactive, ref, onBeforeMount,
+  Customer_Types,
+  alert_success,
+  alert_error,
+  alert_delete,
+  formatDateTime,
+} from '../common/import.js'
+
 import Add from "./add.vue";
 import Edit from "./edit.vue";
-import { reactive, computed, watch, ref } from "vue";
-import { useRouter } from "vue-router";
+// import service
+
+
 export default {
   components: {
     Table,
@@ -21,114 +36,104 @@ export default {
     Edit,
   },
   setup(ctx) {
-    const data = reactive({
-      items: [
-        {
-          _id: 1,
-          name: "Normal",
-          'amount': 100,
-        },
-        {
-          _id: 2,
-          name: "VIP",
-          'amount': 50,
-        },
-      ],
-      entryValue: 5,
-      numberOfPages: 1,
-      totalRow: 0,
-      startRow: 0,
-      endRow: 0,
-      currentPage: 1,
-      searchText: "",
-      itemAdd: {
-        name: "",
-        content: "",
-      },
+
+    // declare variables
+    let data = reactive({
+      items: null,
       activeEdit: false,
       editValue: {
         _id: "",
         name: "",
-        content: "",
       },
     });
 
-    // computed
-    const toString = computed(() => {
-      console.log("Starting search");
-      return data.items.map((value, index) => {
-        return [value.name].join("").toLocaleLowerCase();
-      });
-    });
-    const filter = computed(() => {
-      return data.items.filter((value, index) => {
-        return toString.value[index].includes(
-          data.searchText.toLocaleLowerCase()
-        );
-      });
-    });
-    const filtered = computed(() => {
-      if (!data.searchText) {
-        data.totalRow = data.items.length;
-        return data.items;
-      } else {
-        data.totalRow = filter.value.length;
-        return filter.value;
-      }
-    });
-    const setNumberOfPages = computed(() => {
-      return Math.ceil(filtered.value.length / data.entryValue);
-    });
-    const setPages = computed(() => {
-      if (setNumberOfPages.value == 0 || data.entryValue == "All") {
-        data.entryValue = data.items.length;
-        data.numberOfPages = 1;
-      } else data.numberOfPages = setNumberOfPages.value;
-      data.startRow = (data.currentPage - 1) * data.entryValue + 1;
-      data.endRow = data.currentPage * data.entryValue;
-      return filtered.value.filter((item, index) => {
-        return (
-          index + 1 > (data.currentPage - 1) * data.entryValue &&
-          index + 1 <= data.currentPage * data.entryValue
-        );
-      });
-    });
-
-    // methods
-    const create = () => {
-      console.log("creating");
-    };
-    const update = (item) => {
-      console.log("updating", item);
-    };
-    const deleteOne = (_id) => {
-      console.log("deleting", _id);
-    };
-    const edit = () => {
-      console.log("edit");
-    };
-
-    const router = useRouter();
-
-    const view = (_id) => {
-      console.log("view", _id);
-      router.push({ name: "Customer_Types.view", params: { id: _id } });
-    };
-
-    // watch
     const activeMenu = ref(2);
-    watch(activeMenu, (newValue, oldValue) => {
-      router.push({ name: "Customer" });
+
+    // get data from emit 
+    
+    const EditEmit = (dataEdit, isEdit) => {
+      data.editValue = dataEdit;
+      data.activeEdit = isEdit;
+    };
+
+
+    // method
+    const refresh = async () => {
+      const res = await http_getAll(Customer_Types);
+      data.items = res.documents;
+    };
+
+
+    const handleCreate = async (name) => {
+      const res = await http_create(Customer_Types, {name})
+      if(res.error) {
+        alert_error(`Thêm loại khách hàng`, `${res.msg}`);
+      }else{
+        alert_success(
+          `Thêm loại khách hàng`,
+          `Loại khách hàng ${res.document.name} đã thêm vào lúc ${formatDateTime(
+            new Date()
+          )} đã được tạo thành công.`
+        );
+        refresh();
+      }
+    };
+
+    const handleDelete = async (_id) => {
+      const res = await http_getOne(Customer_Types, _id);
+      const customerType = res.document
+      const isConfirmed = await alert_delete(
+        `Xoá loại khách hàng`,
+        `Bạn có chắc chắn muốn xoá loại khách hàng không ?`
+      );
+
+      if(isConfirmed) {
+        const result = await http_deleteOne(Customer_Types, _id);
+        if(result.error) {
+          alert_error('Lổi', result.msg)
+        }else{
+          alert_success(
+          `Xoá loại khách hàng`,
+          `Bạn đã xoá thành công loại khách hàng ${customerType.name} lúc ${formatDateTime(
+            new Date()
+          )}.`
+        );
+        refresh();
+        }
+        
+      }
+    };
+
+    const handleUpdate = async (item) => {
+      const rs = await http_update(Customer_Types, item._id, {...item})
+      const doc = await http_getOne(Customer_Types, item._id);
+      console.log(doc.document);
+      if(rs.error) {
+        alert_error('Sửa loại khách hàng', `${rs.msg}`);
+        refresh();
+      }else{
+        alert_success(
+          `Sửa loại khách hàng`,
+          `Bạn đã sửa thành công loại khách hàng ${doc.document.name} lúc ${formatDateTime(
+            new Date()
+          )}.`
+        );
+        refresh();
+      }
+    }
+
+    // life cycle
+    onBeforeMount(async () => {
+      refresh();
     });
+
     return {
       data,
-      setPages,
       activeMenu,
-      create,
-      update,
-      deleteOne,
-      edit,
-      view,
+      EditEmit,
+      handleDelete,
+      handleCreate,
+      handleUpdate
     };
   },
 };
@@ -138,67 +143,28 @@ export default {
   <div class="border-box d-flex flex-column ml-2">
     <!-- Menu -->
     <div class="d-flex menu my-3 mx-3 justify-content-end">
-      <a
+      <router-link
+        to="/customer"
         @click="activeMenu = 1"
         :class="[activeMenu == 1 ? 'active-menu' : 'none-active-menu']"
-        href="#"
-        >Khách hàng</a
-      >
-      <a
+        >Khách hàng
+      </router-link>
+      <router-link
+        to="/customer_types"
         @click="activeMenu = 2"
         :class="[activeMenu == 2 ? 'active-menu' : 'none-active-menu']"
-        href="#"
-        >Loại khách hàng</a
-      >
+        
+        >Loại khách hàng
+      </router-link>
     </div>
     <!-- Filter -->
     <!-- Search -->
     <div class="border-hr mb-3"></div>
     <div class="d-flex justify-content-between mx-3 mb-3">
       <div class="d-flex justify-content-start">
-        <Select
-          class="d-flex justify-content-start"
-          :options="[
-            {
-              name: 5,
-              value: 5,
-            },
-            {
-              name: 10,
-              value: 10,
-            },
-            {
-              name: 20,
-              value: 20,
-            },
-            {
-              name: 30,
-              value: 30,
-            },
-            {
-              name: 'All',
-              value: 'All',
-            },
-          ]"
-          @update:entryValue="(value) => (data.entryValue = value)"
-          :entryValue="data.entryValue"
-        />
-        <Search
-          class="ml-3"
-          style="width: 300px"
-          @update:searchText="(value) => (data.searchText = value)"
-        />
+        <h3>Loại khách hàng</h3>
       </div>
       <div class="d-flex align-items-start">
-        <button
-          type="button"
-          class="btn btn-danger mr-3"
-          data-toggle="modal"
-          data-target="#model-delete-all"
-        >
-          <span id="delete-all" class="mx-2">Xoá</span>
-        </button>
-        <DeleteAll :items="data.items" />
         <button
           type="button"
           class="btn btn-primary"
@@ -207,38 +173,22 @@ export default {
         >
           <span id="add" class="mx-2">Thêm</span>
         </button>
-        <Add :item="data.itemAdd" @create="create" />
+        <Add @add="handleCreate" />
       </div>
     </div>
     <!-- Table -->
     <Table
-      :items="setPages"
-      :fields="['Tên', 'Số lượng']"
-      :labels="['name', 'amount']"
-      @delete="(value) => deleteOne(value)"
-      @edit="
-        (value, value1) => (
-          (data.editValue = value), (data.activeEdit = value1)
-        )
-      "
-      @view="(value) => view(value)"
+      :items="data.items"
+      :fields="['Tên']"
+      :labels="['name']"
+      @delete="handleDelete"
+      @edit="EditEmit"
     />
-    <!-- Pagination -->
-    <Pagination
-      :numberOfPages="data.numberOfPages"
-      :totalRow="data.totalRow"
-      :startRow="data.startRow"
-      :endRow="data.endRow"
-      :currentPage="data.currentPage"
-      @update:currentPage="(value) => (data.currentPage = value)"
-      class="mx-3"
+    <Edit
+      :item="data.editValue"
+      @update="handleUpdate"
     />
   </div>
-  <Edit
-    :item="data.editValue"
-    :class="[data.activeEdit ? 'show-modal' : 'd-none']"
-    @cancel="data.activeEdit = false"
-  />
 </template>
 
 <style scoped>
@@ -246,34 +196,33 @@ export default {
   border: 1px solid var(--gray);
   border-radius: 5px;
 }
+
 .menu {
   /* border: 1px solid var(--gray); */
   border-collapse: collapse;
 }
+
 .menu a {
   border: 1px solid var(--gray);
   border-collapse: collapse;
   padding: 8px 12px;
   font-size: 15px;
 }
+
 .active-menu {
   color: blue;
 }
+
 .none-active-menu {
   color: var(--dark);
 }
+
 .border-hr {
   border-top: 1px solid var(--gray);
 }
+
 #add,
 #delete-all {
   font-size: 14px;
-}
-.show-modal {
-  display: block;
-  opacity: 1;
-  background-color: var(--dark);
-  /* pointer-events: auto; */
-  z-index: 1;
 }
 </style>

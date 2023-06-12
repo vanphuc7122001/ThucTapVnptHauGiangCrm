@@ -4,7 +4,7 @@ import Add from "./add.vue";
 import Edit from "./edit.vue";
 import View from "./view.vue";
 import AddHabit from "../habit/add.vue";
-import { reactive, computed, ref, onBeforeMount } from "vue";
+import { reactive, computed, ref, onBeforeMount, watch } from "vue";
 import {
   http_getAll,
   http_deleteOne,
@@ -21,8 +21,7 @@ import {
   Company_KH,
   Customer_Work,
   Customer,
-  formatDateTime,
-  formatDate,
+  Customer_Types,
 } from "../common/import";
 
 export default {
@@ -96,34 +95,43 @@ export default {
         current_position: "",
         work_temp: "",
       },
+
       customerTypeValue: "",
       customerValue: {},
       showAddHabit: false,
+      customerType: null,
     });
 
+    const entryValueCustomerType = ref("Loại khách hàng");
+    const entryValueStatusTask = ref("Trạng thái chăm sóc");
+
     const reFresh = async () => {
-      const rs = await http_getAll(Customer_Work);
-      data.items = rs.documents;
+      const cusWork = await http_getAll(Customer_Work);
+      const customerType = await http_getAll(Customer_Types);
+      data.items = cusWork.documents;
+      data.customerType = customerType.documents;
 
-      for (let value of data.items) {
-        value.checked = false;
-      }
-
-      if (data.custypeTypeValue.length != 0) {
-        data.items = data.items.filter((value, index) => {
-          return value.name == "vip";
+      if (entryValueCustomerType.value != "Loại khách hàng") {
+        data.items = data.items.filter((cusWork) => {
+          return (
+            cusWork.Customer.Customer_Type.name == entryValueCustomerType.value
+          );
         });
       }
 
-      if (data.custypeTypeValue.length != 0) {
-        data.items = data.items.filter((value, index) => {
-          return value.name == "vip";
-        });
+      if(entryValueStatusTask.value != 'Trạng thái chăm sóc') {
+        
+        data.items = data.items.filter( (cusWork) => {
+          return cusWork.Customer.Tasks.filter( task => {
+            return task.Status_Task.status == entryValueStatusTask.value;
+          }).length > 0
+
+        })
       }
     };
 
     const showAddHabit = () => {
-      console.log('ok');
+      console.log("ok");
       data.customerValue = {};
       data.showAddHabit = false;
       for (let value of data.items) {
@@ -146,7 +154,7 @@ export default {
     const toString = computed(() => {
       console.log("Starting search");
       return data.items.map((value, index) => {
-        return [value.Customer.name, value.Customer.phone]
+        return [value.Customer.name, value.Customer.phone, value.Customer.email]
           .join("")
           .toLocaleLowerCase();
       });
@@ -250,10 +258,9 @@ export default {
         },
         Events: [
           ...item.Customer.Events,
-
-          // {name: item.Customer.Events[0].name,
-          // content: item.Customer.Events[0].content,
-          // time_duration: item.Customer.Events[0].time_duration}
+        ],
+        Tasks: [
+          ...item.Customer.Tasks,
         ],
         Habits: {
           ...item.Customer.Habits,
@@ -300,17 +307,46 @@ export default {
       console.log("Check edit", data.activeEdit);
     };
 
+    const updateEntryValueCustomerType = (value) => {
+      entryValueCustomerType.value = value;
+    };
+
+    const updateEntryValueStatusTask = (value) => {
+      entryValueStatusTask.value = value;
+    };
+
+    watch(entryValueCustomerType, (newValue, oldValue) => {
+      if (newValue != "Loại khách hàng") {
+        reFresh();
+      } else {
+        reFresh();
+      }
+    });
+
+    watch(entryValueStatusTask, (newValue, oldValue) => {
+      // console.log('status', newValue);
+      if (newValue != "Trạng thái chăm sóc") {
+        reFresh();
+      } else {
+        reFresh();
+      }
+    });
+
     return {
-      data,
-      setPages,
-      activeMenu,
       update,
       deleteOne,
       edit,
       handleDelete,
       refresh_customer,
       view,
-      showAddHabit
+      showAddHabit,
+      updateEntryValueCustomerType,
+      updateEntryValueStatusTask,
+      entryValueCustomerType,
+      entryValueStatusTask,
+      data,
+      setPages,
+      activeMenu,
     };
   },
 };
@@ -341,12 +377,28 @@ export default {
       <span class="mx-3 mb-3 h6">Lọc khách hàng</span>
       <div class="d-flex mx-3">
         <div class="form-group w-100">
-          <Select :title="`Loại khách hàng`" :entryValue="`Loại khách hàng`" />
+          <Select
+            :title="`Loại khách hàng`"
+            :entryValue="entryValueCustomerType"
+            :options="data.customerType"
+            @update:entryValue="updateEntryValueCustomerType"
+          />
         </div>
         <div class="form-group w-100 ml-3">
           <Select
             :title="`Trạng thái chăm sóc`"
-            :entryValue="`Trạng thái chăm sóc`"
+            :entryValue="entryValueStatusTask"
+            :options="[
+              {
+                name: 'Thành công',
+                value: 'true',
+              },
+              {
+                name: 'Thất bại',
+                value: 'false',
+              },
+            ]"
+            @update:entryValue="updateEntryValueStatusTask"
           />
         </div>
         <div class="form-group"></div>
