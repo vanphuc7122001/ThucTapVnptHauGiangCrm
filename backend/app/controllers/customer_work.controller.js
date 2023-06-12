@@ -1,21 +1,32 @@
-const { Customer_Types, Customer_Work, Customer } = require('../models/index.model.js');
-const createError = require('http-errors');
-const { v4: uuidv4 } = require('uuid');
+const {
+    Customer_Types,
+    Customer_Work,
+    Customer,
+    Company_KH,
+} = require("../models/index.model.js");
+const createError = require("http-errors");
+const { v4: uuidv4 } = require("uuid");
 
+// "customerId" : "1",
+// "current_workplace" : "2",
+// "work_history" : "4",
+// "current_position" : "3",
+// "work_temp" : "5",
+// "companyId" : "7"
 exports.create = async (req, res, next) => {
     try {
         const document = await Customer_Work.create({
-            name: req.body.name,
-            customerId: req.body.customerId,
+            ...req.body,
         });
-        return res.send(document);
+
+        return res.status(200).json({
+            msg: document ? "Tạo thành công" : "Tạo thất bại",
+            error: document ? false : true,
+        });
     } catch (error) {
-        console.log(error);
-        return next(
-            createError(400, 'Error creating customer types !')
-        )
+        return next(createError(500, error.message));
     }
-}
+};
 
 exports.findAll = async (req, res, next) => {
     try {
@@ -26,44 +37,95 @@ exports.findAll = async (req, res, next) => {
                     include: [
                         {
                             model: Customer_Types,
-                        }
+                        },
                     ],
-                }
-            ]
+                },
+                {
+                    model: Company_KH,
+                },
+            ],
         });
-        return res.send(documents);
+
+        return res.status(200).json({
+            msg: documents.length > 0 ? "Danh sách công việc khách hàng!!" : "Trống",
+            error: documents.length > 0 ? false : true,
+            documents,
+        });
     } catch (error) {
-        console.log(error);
-        return next(
-            createError(400, 'Error finding customers !')
-        )
+        return next(createError(500, error.message));
     }
-}
+};
 
 exports.findOne = async (req, res, next) => {
-    try {
-        const documents = await Customer_Work.findOne({
-            where: {
-                _id: req.params.id,
-            }
-        });
-        return res.send(documents);
-    } catch (error) {
-        return next(
-            createError(400, 'Error finding customer !')
-        )
-    }
-}
+  const { id } = req.params;
+  try {
+    const documents = await Customer_Work.findOne({
+      include: [
+        {
+          model: Customer,
+          include: [
+            {
+              model: Customer_Types,
+            },
+          ],
+        },
+      ],
+      where: {
+        _id: id,
+      },
+    });
+
+    return res.status(200).json({
+      msg: documents ? "Find customer work" : "Not found!!",
+      statusCode: documents ? true : false,
+      payload: documents ? documents : undefined,
+    });
+  } catch (error) {
+    return next(createError(500, error.message));
+  }
+};
 
 exports.deleteOne = async (req, res, next) => {
+    const { id } = req.params;
+    try {
+        const document = await Customer_Work.destroy({
+            where: {
+                _id: id,
+            },
+        });
 
-}
-
-exports.deleteAll = async (req, res, next) => {
-
-}
+        return res.status(200).json({
+            msg: document
+                ? "Xóa thành công!!!"
+                : "Không tìm thấy khách hàng để xóa!!!",
+            error: document ? false : true,
+        });
+    } catch (error) {
+        return next(createError(500, error.message));
+    }
+};
 
 exports.update = async (req, res, next) => {
+    const { id } = req.params;
+    try {
+        const document = await Customer_Work.update(
+            {
+                ...req.body,
+            },
+            {
+                where: {
+                    _id: id,
+                },
+            }
+        );
 
-}
-
+        return res.status(200).json({
+            msg: document[0]
+                ? "Sửa dử liệu thành công"
+                : "Không tìm thấy thông tin để sửa",
+            error: document[0] ? false : true,
+        });
+    } catch (error) {
+        return next(createError(500, error.message));
+    }
+};

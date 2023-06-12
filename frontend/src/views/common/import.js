@@ -5,6 +5,7 @@ import Select from "../../components/form/select.vue";
 import Search from "../../components/form/search.vue";
 import DeleteAll from "../../components/form/delete-all.vue";
 import Select_Advanced from "../../components/form/select_advanced.vue";
+import form_wizard_customer from "../../components/form/form_wizard_customer.vue";
 import { reactive, computed, watch, ref, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
 import { formatDateTime, formatDate } from "../../assets/js/common.js";
@@ -57,6 +58,7 @@ export {
     Search,
     DeleteAll,
     Select_Advanced,
+    form_wizard_customer,
     // compositions
     reactive,
     computed,

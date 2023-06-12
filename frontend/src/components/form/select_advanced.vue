@@ -14,6 +14,7 @@
       type="text"
       class="px-2"
       v-model="searchText"
+      style="font-size: 16px;"
       @input="
         (activeSelect = true),
           $emit('searchSelect', searchText.toLocaleLowerCase())
@@ -34,14 +35,14 @@
         <span
           @click="
             [
-              $emit('chose', option._id),
+              $emit('chose', option._id, option),
               (activeSelect = false),
               (modelValue = option.name),
               (searchText = modelValue),
             ]
           "
           class="mr-2"
-          style="cursor: pointer"
+          style="cursor: pointer; font-size: 15px;"
           onmouseover="this.style.color='green';"
           onmouseout="this.style.color='';"
           >{{ option.name }}</span
@@ -114,7 +115,7 @@ input {
   border-radius: 5px;
   z-index: 10;
   margin-top: 50px;
-  background-color: var(--light);
+  background-color: white;
 }
 
 .select-option {

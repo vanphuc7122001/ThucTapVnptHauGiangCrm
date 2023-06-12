@@ -3,12 +3,17 @@ const createError = require('http-errors');
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
+const path = require("path");
 
 // initialize
 const app = express();
 app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
+
+// config path
+const pathPublic = path.join(__dirname, "./app/public");
+app.use("/public", express.static(pathPublic));
 
 // simple route
 app.get('/', (req, res, next) => {
@@ -48,16 +53,22 @@ const AccountRouter = require('./app/routes/account.route');
 const AppointmentRouter = require('./app/routes/appointment.route');
 const TaskRouter = require('./app/routes/task.route');
 const LogRouter = require('./app/routes/log.route');
+const Role_PermissionRouter = require('./app/routes/role_permission.route');
+const Customer_EventRouter = require('./app/routes/customer_event.route');
+const Customer_HabitRouter = require('./app/routes/customer_habit.route');
+const Task_EmployeeRouter = require('./app/routes/task_employee.route');
+const MailRouter = require("./app/routes/mail.route");
+
 
 // use router
 app.use('/api/customers', customerRouter);
 app.use('/api/customer_types', customer_typesRouter);
 app.use('/api/customer_works', customer_workRouter);
-app.use('/api/company_KHs', Company_KHRouter);
+app.use('/api/company_khs', Company_KHRouter);
 app.use('/api/events', EventRouter);
 app.use('/api/habits', HabitRouter);
 app.use('/api/positions', PositionRouter);
-app.use('/api/center_VNPTHGs', Center_VNPTHGRouter);
+app.use('/api/center_vnpthgs', Center_VNPTHGRouter);
 app.use('/api/departments', DepartmentRouter);
 app.use('/api/units', UnitRouter);
 app.use('/api/permissions', PermissionRouter);
@@ -68,6 +79,11 @@ app.use('/api/accounts', AccountRouter);
 app.use('/api/appointments', AppointmentRouter);
 app.use('/api/tasks', TaskRouter);
 app.use('/api/logs', LogRouter);
+app.use('/api/role_permissions', Role_PermissionRouter);
+app.use('/api/customer_events', Customer_EventRouter);
+app.use('/api/customer_habits', Customer_HabitRouter);
+app.use('/api/task_employees', Task_EmployeeRouter);
+app.use("/api/mail", MailRouter);
 
 // check errors
 app.use((req, res, next) => {

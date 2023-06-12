@@ -40,15 +40,22 @@ export default {
       <tr>
         <th></th>
         <th>Stt</th>
-        <th v-for="(value, index) in fields">{{ value }}</th>
+        <th>Khách hàng</th>
+        <th>Nhân viên</th>
+        <th>Chu kỳ</th>
+        <th v-for="(value, index) in fields" :key="index">{{ value }}</th>
         <th v-if="activeAction == true">Hành động</th>
       </tr>
     </thead>
     <tbody>
-      <tr v-for="(item, index) in items">
+      <tr v-for="(item, index) in items" :key="index">
         <td><input type="checkbox" name="" id="" /></td>
         <td>{{ index + 1 }}</td>
-        <td v-for="(label, index1) in labels">{{ item[label] }}</td>
+        <td>{{ item.Customer.name }}</td>
+        <td>{{ item.Employee.name }}</td>
+        <td>{{ item.Cycle.name }}</td>
+        <td v-for="(label, index1) in labels" :key="index1">{{ item[label] }}</td>
+        <td>{{ item.Status_Task.status }}</td>
         <td v-if="activeAction == true">
           <button
             type="button"
@@ -67,7 +74,7 @@ export default {
             type="button"
             class="mx-2"
             data-toggle="modal"
-            data-target="#model-edit"
+            data-target="#model-form-wizard"
           >
             <span
               id="edit"

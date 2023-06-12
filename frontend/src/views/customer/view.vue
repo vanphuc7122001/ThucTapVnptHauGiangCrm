@@ -1,4 +1,16 @@
-<script></script>
+<script>
+export default {
+  props: {
+    item: {
+      type: Object
+    }
+  },
+  setup(props, context) {
+
+  }
+}
+</script>
+
 
 <template>
   <div class="modal" id="model-view">
@@ -20,6 +32,7 @@
             </button>
             <div id="personal-info" class="collapse mx-2">
               Lorem ipsum dolor text....
+              {{ item.Customer.name }}
             </div>
           </div>
           <div class=" mt-2">
@@ -28,6 +41,7 @@
             </button>
             <div id="customer-type" class="collapse mx-2">
               Lorem ipsum dolor text....
+              {{ item.Customer_Type.name }}
             </div>
           </div>
           <div class=" mt-2">
@@ -36,6 +50,7 @@
             </button>
             <div id="customer-work" class="collapse mx-2">
               Lorem ipsum dolor text....
+              {{ item.current_workplace }}
             </div>
           </div>
           <div class=" mt-2">
@@ -43,7 +58,7 @@
               Danh sách chăm sóc khách hàng
             </button>
             <div id="assignment" class="collapse mx-2">
-              Lorem ipsum dolor text....
+              Nửa join bảng task thêm sau
             </div>
           </div>
           <div class=" mt-2">
@@ -51,7 +66,10 @@
               Danh sách sự kiện
             </button>
             <div id="event" class="collapse mx-2">
-              Lorem ipsum dolor text....
+              Lorem ipsum dolor text.... 
+              <div v-for="(value, index) in item.Events" :key="index">
+                {{ value.name }}
+              </div>
             </div>
           </div>
           <div class=" mt-2">
@@ -60,6 +78,9 @@
             </button>
             <div id="habit" class="collapse mx-2">
               Lorem ipsum dolor text....
+              <div v-for="(value, index) in item.Habits" :key="index">
+                {{ value.name }}
+              </div>
             </div>
           </div>
         </div>
@@ -69,3 +90,7 @@
 </template>
 
 <style scoped></style>
+
+
+
+

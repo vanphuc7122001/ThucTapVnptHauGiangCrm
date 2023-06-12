@@ -8,10 +8,30 @@ import DeleteAll from "../../components/form/delete-all.vue";
 import Add from "./add.vue";
 import Edit from "./edit.vue";
 import View from "./view.vue";
-import { reactive, computed, watch, ref } from "vue";
+import Select_Advanced from "../../components/form/select_advanced.vue";
+import { reactive, computed, watch, ref, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
+// services
+
+import Task from "../../services/task.service";
+import Cycle from "../../services/cycle.service";
+import Employee from "../../services/employee.service";
+import Customer from "../../services/customer.service";
+import {
+  http_getAll,
+  http_create,
+  http_getOne,
+  http_deleteOne,
+  http_update,
+} from "../../assets/js/common.http";
+import {
+  alert_success,
+  alert_error,
+  alert_delete,
+} from "../../assets/js/common.alert";
 export default {
   components: {
+    Select_Advanced,
     Table,
     Pagination,
     Dropdown,
@@ -20,82 +40,32 @@ export default {
     Add,
     DeleteAll,
     Edit,
-    View
+    View,
   },
   setup(ctx) {
     const data = reactive({
       items: [
         {
-          _id: 1,
-          customer: "Nguyễn Văn A",
-          staff: "Trúc",
-          startDate: "15/5/2023",
-          endDate: "05/07/2023",
-          cycle: "month",
-          content: "ABCDEFGHIKJLMN",
-          status: false,
-          statusContent: "ac",
-          appointment: [],
-        },
-        {
-          _id: 2,
-          customer: "Nguyễn Văn B",
-          staff: "Trúc",
-          startDate: "15/5/2023",
-          endDate: "05/07/2023",
-          cycle: "month",
-          content: "ABCDEFGHIKJLMN",
-          status: false,
-          statusContent: "ac",
-          appointment: [],
-        },
-        {
-          _id: 3,
-          customer: "Nguyễn Văn C",
-          staff: "Trúc",
-          startDate: "15/5/2023",
-          endDate: "05/07/2023",
-          cycle: "month",
-          content: "ABCDEFGHIKJLMN",
-          status: false,
-          statusContent: "ac",
-          appointment: [],
-        },
-        {
-          _id: 4,
-          customer: "Nguyễn Văn D",
-          staff: "Trúc",
-          startDate: "15/5/2023",
-          endDate: "05/07/2023",
-          cycle: "month",
-          content: "ABCDEFGHIKJLMN",
-          status: false,
-          statusContent: "ac",
-          appointment: [],
-        },
-        {
-          _id: 5,
-          customer: "Nguyễn Văn E",
-          staff: "Trúc",
-          startDate: "15/5/2023",
-          endDate: "05/07/2023",
-          cycle: "month",
-          content: "ABCDEFGHIKJLMN",
-          status: false,
-          statusContent: "ac",
-          appointment: [],
-        },
-        {
-          _id: 6,
-          customer: "Nguyễn Văn F",
-          staff: "Trúc",
-          startDate: "15/5/2023",
-          endDate: "05/07/2023",
-          cycle: "month",
-          content: "ABCDEFGHIKJLMN",
-          status: false,
-          statusContent: "ac",
-          appointment: [],
+          _id: "",
+          start_date: "",
+          end_date: "",
+          content: "",
+          Customer: {
+            _id: "",
+            name: "",
+          },
+          Cycle: {
+            _id: "",
+            name: "",
+          },
+          Employee: {
+            _id: "",
+            name: "",
+          },
+          Status_Task: {
+            status: "",
+            reason: "",
+          },
         },
       ],
       entryValue: 5,
@@ -105,25 +75,26 @@ export default {
       endRow: 0,
       currentPage: 1,
       searchText: "",
-      itemAdd: {
-        _id: "",
-        name: "",
-        startDate: "",
-        endDate: "",
-        content: "",
-        customer: "",
-        employee: "",
-      },
       activeEdit: false,
       editValue: {
         _id: "",
-        name: "",
-        date: "",
+        start_date: "",
+        end_date: "",
         content: "",
-        customer: "",
-        employee: "",
+        customerId: "",
+        cycleId: "",
+        employeeId: "",
+        Status_Task: {
+          status: "",
+          reason: "",
+        },
       },
+      addcycle: {},
+      cus: [],
+      employee: [],
     });
+
+    const cycles = reactive({ cycle: [] });
 
     // computed
     const toString = computed(() => {
@@ -167,17 +138,67 @@ export default {
     });
 
     // methods
-    const create = () => {
-      console.log("creating");
+
+    const create = async () => {
+      //await refresh();
+      console.log("new task");
+      data.items = await http_getAll(Task);
     };
-    const update = (item) => {
-      console.log("updating", item);
+
+    // const update = async (item) => {
+    //   console.log("updating", item);
+    //   const result = await http_update(Task,data.editValue._id, data.editValue );
+    //   console.log("result", result);
+    //   if (!result.error) {
+    //     // const task = await http_getOne(Task,result.document._id);
+    //     // console.log("task", task);
+    //     alert_success(
+    //       `Chỉnh sửa phân công`,
+    //       `Đã chỉnh sửa phân công khách hàng của nhân viên thành công.`
+    //     );
+    //     refresh();
+    //   } else if (result.error) {
+    //     alert_error(`Thêm phân công`, `${result.msg}`);
+    //   }
+    // };
+
+    const update = async (item) => {
+      const result = await http_update(Task, editValue._id, editValue);
+      if (!result.error) {
+        alert_success(`Sửa phân công`, `${result.msg}`);
+        refresh();
+      } else if (result.error) {
+        alert_error(`Sửa phân công`, `${result.msg}`);
+      }
     };
-    const deleteOne = (_id) => {
-      console.log("deleting", _id);
+    const edit = async (editValue) => {
+      console.log("edit", editValue);
+      const result = await http_update(Task, editValue._id, editValue);
+      console.log("ne", result);
+      if (!result.error) {
+        alert_success(`Sửa phân công`, `${result.msg}`);
+        refresh();
+      } else if (result.error) {
+        alert_error(`Sửa phân công`, `${result.msg}`);
+      }
     };
-    const edit = () => {
-      console.log("edit");
+
+    const deleteOne = async (_id) => {
+      const task = await http_getOne(Task, _id);
+      console.log("deleting", task);
+      const isConfirmed = await alert_delete(
+        `Xoá sự phân công`,
+        `Bạn có chắc chắn muốn xoá phân công của nhân viên ${task.Employee.name} không ?`
+      );
+      console.log(isConfirmed);
+      if (isConfirmed == true) {
+        const result = await http_deleteOne(Task, _id);
+        alert_success(
+          `Xoá phân công`,
+          `Bạn đã xoá thành công phân công của nhân viên ${task.Employee.name} .`
+        );
+        refresh();
+      }
     };
 
     const router = useRouter();
@@ -189,8 +210,38 @@ export default {
 
     const appointment = (_id) => {
       router.push({ name: "Assignment.appointment", params: { id: _id } });
-    }
+    };
+
+    const refresh = async () => {
+      cycles.cycle = await http_getAll(Cycle);
+      data.cus = await http_getAll(Customer);
+      data.cus = data.cus.documents;
+      console.log("aaa", data.cus);
+      data.employee = await http_getAll(Employee);
+      data.items = await http_getAll(Task);
+    };
+
+    // handle http methods
+
+    // Hàm callback được gọi trước khi component được mount (load)
+    onBeforeMount(async () => {
+      await refresh();
+      console.log("task", data.items);
+      console.log("cycle", cycles.cycle);
+      console.log("employee", data.employee);
+      console.log("customer", data.cus);
+    });
+    // onBeforeMount(async () => {
+    //   data.items = await getAll(Task);
+    //   data.cycles = await getAll(Cycle);
+    //   data.cus = await getAll(Customer);
+    //   data.employee = await getAll(Employee);
+    //   console.log("task", data.items[0].Status_Task['status']);
+    //   console.log("cycle", data.cycles);
+    // });
     // watch
+
+    // const task_status = ref("Status_Task['status']")
     return {
       data,
       setPages,
@@ -200,6 +251,7 @@ export default {
       edit,
       view,
       appointment,
+      cycles,
     };
   },
 };
@@ -214,7 +266,7 @@ export default {
       <span class="mx-3 mb-3 h6">Lọc phân công</span>
       <div class="d-flex mx-3">
         <div class="form-group w-100">
-          <Select  :title="`Chu kỳ`" :entryValue="`Chu kỳ`" />
+          <Select :title="`Chu kỳ`" :entryValue="`Chu kỳ`" />
         </div>
         <div class="form-group w-100 ml-3">
           <Select :title="`Trạng thái`" :entryValue="`Trạng thái`" />
@@ -225,8 +277,7 @@ export default {
         <div class="form-group w-100 ml-3">
           <Select :title="`Ngày kết thúc`" :entryValue="`Ngày kết thúc`" />
         </div>
-        <div class="form-group">
-        </div>
+        <div class="form-group"></div>
       </div>
     </div>
     <div class="border-hr mb-3"></div>
@@ -274,7 +325,7 @@ export default {
         >
           <span id="delete-all" class="mx-2">Xoá</span>
         </button>
-        <DeleteAll :items="data.items" />
+        <!-- <DeleteAll :items="data.items" /> -->
         <button
           type="button"
           class="btn btn-primary"
@@ -283,14 +334,29 @@ export default {
         >
           <span id="add" class="mx-2">Thêm</span>
         </button>
-        <Add :item="data.itemAdd" @create="create" />
+        <Add
+          @create="create"
+          :cycles="data.cycles"
+          :cus="data.cus"
+          :employee="data.employee"
+          @newCycle="
+            (value) => {
+              cycles.cycle = value;
+            }
+          "
+        />
       </div>
     </div>
     <!-- Table -->
     <Table
       :items="setPages"
-      :fields="['Khách hàng', 'Nhân viên', 'Ngày bắt đầu', 'Ngày kết thúc', 'Chu kỳ','Nội dung chăm sóc', 'Trạng thái']"
-      :labels="['customer', 'staff','startDate', 'endDate','cycle','content', 'status']"
+      :fields="[
+        'Ngày bắt đầu',
+        'Ngày kết thúc',
+        'Nội dung chăm sóc',
+        'Trạng thái',
+      ]"
+      :labels="['start_date', 'end_date', 'content']"
       @delete="(value) => deleteOne(value)"
       @edit="
         (value, value1) => (
@@ -315,6 +381,10 @@ export default {
     :item="data.editValue"
     :class="[data.activeEdit ? 'show-modal' : 'd-none']"
     @cancel="data.activeEdit = false"
+    :cycles="cycles.cycle"
+    :cus="data.cus"
+    :employee="data.employee"
+    @edit="edit(data.editValue)"
   />
   <View />
 </template>

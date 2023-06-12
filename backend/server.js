@@ -3,9 +3,10 @@ const { config, connection, sequelize, createTable } = require("./app/config/ind
 
 // connect to the database
 connection();
-// createTable();
+// createTable()
 // start server
 const PORT = config.app.port;
+
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
 })

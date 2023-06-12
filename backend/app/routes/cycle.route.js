@@ -1,17 +1,18 @@
 const express = require('express');
-const customers = require('../controllers/customer.controller');
+const cycles = require('../controllers/cycle.controller');
 
 const router = express.Router();
 
 router.route('/')
-    .post(customers.create)
-    .get(customers.findAll)
-    .delete(customers.deleteAll)
+    .post(cycles.create)
+    .get(cycles.findAll)
+    .delete(cycles.deleteAll)
 
 router.route('/:id')
-    .put(customers.update)
-    .get(customers.findOne)
-    .delete(customers.deleteOne)
+    .put(cycles.update)
+    .get(cycles.findOne)
+    .delete(cycles.deleteOne)
 
 module.exports = router;
+
 

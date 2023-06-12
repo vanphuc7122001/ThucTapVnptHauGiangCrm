@@ -1,7 +1,7 @@
 import createApiClient from "./api.service";
 
 class EventService {
-    constructor(baseUrl = "/api/center_vnpts") {
+    constructor(baseUrl = "/api/center_vnpthgs") {
         this.api = createApiClient(baseUrl);
     }
     async getAll() {

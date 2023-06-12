@@ -1,17 +1,17 @@
 const express = require('express');
-const customers = require('../controllers/customer.controller');
+const centerVNPTHGs = require('../controllers/center_VNPTHG.controller');
 
 const router = express.Router();
 
 router.route('/')
-    .post(customers.create)
-    .get(customers.findAll)
-    .delete(customers.deleteAll)
+    .post(centerVNPTHGs.create)
+    .get(centerVNPTHGs.findAll)
+    .delete(centerVNPTHGs.deleteAll)
 
 router.route('/:id')
-    .put(customers.update)
-    .get(customers.findOne)
-    .delete(customers.deleteOne)
+    .put(centerVNPTHGs.update)
+    .get(centerVNPTHGs.findOne)
+    .delete(centerVNPTHGs.deleteOne)
 
 module.exports = router;
 

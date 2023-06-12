@@ -39,8 +39,17 @@ const getDecrypt = (name, modelInstance) => {
 const Customer_Types = sequelize.define('Customer_Types', {
     _id: setPrimary,
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: "Tên loại khách hàng không được bỏ trống.",
+            },
+            // len: {
+            //     args: [1, Infinity], // Độ dài từ 1 ký tự trở lên
+            //     msg: 'Tên người dùng không được bỏ trống.',
+            // },
+        },
         get() {
             return getDecrypt('name', this);
         },
@@ -50,132 +59,234 @@ const Customer_Types = sequelize.define('Customer_Types', {
     }
 });
 
-const Customer = sequelize.define('Customer', {
+const Customer = sequelize.define("Customer", {
     _id: setPrimary,
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: "Tên khách hàng không được bỏ trống.",
+            },
+            // len: {
+            //     args: [1, Infinity], // Độ dài từ 1 ký tự trở lên
+            //     msg: 'Tên người dùng không được bỏ trống.',
+            // },
+        },
         get() {
-            return getDecrypt('name', this);
+            return getDecrypt("name", this);
         },
         set(value) {
-            setEncrypt(value, 'name', this);
+            setEncrypt(value, "name", this);
         },
     },
     birthday: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: "Ngày sinh không được bỏ trống.",
+            },
+            // len: {
+            //     args: [1, Infinity], // Độ dài từ 1 ký tự trở lên
+            //     msg: 'Tên người dùng không được bỏ trống.',
+            // },
+        },
         get() {
-            return getDecrypt('birthday', this);
+            return getDecrypt("birthday", this);
         },
         set(value) {
-            setEncrypt(value, 'birthday', this);
+            setEncrypt(value, "birthday", this);
         },
     },
     avatar: {
-        type: DataTypes.STRING,
-        allowNull: false,
+        type: DataTypes.TEXT,
+        allowNull: true,
+        // default:
+        //     "https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper-thumbnail.png",
+        validate: {
+            notEmpty: {
+                msg: "Ảnh khách hàng không được bỏ trống không được bỏ trống.",
+            },
+            // len: {
+            //     args: [1, Infinity], // Độ dài từ 1 ký tự trở lên
+            //     msg: 'Tên người dùng không được bỏ trống.',
+            // },
+        },
         get() {
-            return getDecrypt('avatar', this);
+            return getDecrypt("avatar", this);
         },
         set(value) {
-            setEncrypt(value, 'avatar', this);
+            setEncrypt(value, "avatar", this);
         },
     },
     address: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: "Địa chỉ khách hàng không được bỏ trống.",
+            },
+            // len: {
+            //     args: [1, Infinity], // Độ dài từ 1 ký tự trở lên
+            //     msg: 'Tên người dùng không được bỏ trống.',
+            // },
+        },
         get() {
-            return getDecrypt('address', this);
+            return getDecrypt("address", this);
         },
         set(value) {
-            setEncrypt(value, 'address', this);
+            setEncrypt(value, "address", this);
         },
     },
     phone: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: "SDT khách hàng không được bỏ trống.",
+            },
+            // len: {
+            //     args: [1, Infinity], // Độ dài từ 1 ký tự trở lên
+            //     msg: 'Tên người dùng không được bỏ trống.',
+            // },
+        },
         get() {
-            return getDecrypt('phone', this);
+            return getDecrypt("phone", this);
         },
         set(value) {
-            setEncrypt(value, 'phone', this);
+            setEncrypt(value, "phone", this);
         },
     },
     email: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: "Email khách hàng không được bỏ trống.",
+            },
+            // len: {
+            //     args: [1, Infinity], // Độ dài từ 1 ký tự trở lên
+            //     msg: 'Tên người dùng không được bỏ trống.',
+            // },
+        },
         get() {
-            return getDecrypt('email', this);
+            return getDecrypt("email", this);
         },
         set(value) {
-            setEncrypt(value, 'email', this);
+            setEncrypt(value, "email", this);
         },
-    }
-})
+    },
+});
 
-const Customer_Work = sequelize.define('Customer_Work', {
+const Customer_Work = sequelize.define("Customer_Work", {
     _id: setPrimary,
     current_workplace: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: "Tên công việc không được bỏ trống.",
+            },
+            // len: {
+            //     args: [1, Infinity], // Độ dài từ 1 ký tự trở lên
+            //     msg: 'Tên người dùng không được bỏ trống.',
+            // },
+        },
         get() {
-            return getDecrypt('current_workplace', this);
+            return getDecrypt("current_workplace", this);
         },
         set(value) {
-            setEncrypt(value, 'current_workplace', this);
+            setEncrypt(value, "current_workplace", this);
         },
     },
     work_history: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: "Lịch sử làm việc không được bỏ trống",
+            },
+            // len: {
+            //     args: [1, Infinity], // Độ dài từ 1 ký tự trở lên
+            //     msg: 'Tên người dùng không được bỏ trống.',
+            // },
+        },
         get() {
-            return getDecrypt('work_history', this);
+            return getDecrypt("work_history", this);
         },
         set(value) {
-            setEncrypt(value, 'work_history', this);
+            setEncrypt(value, "work_history", this);
         },
     },
     current_position: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: "Vị trí công việc không được bỏ trống.",
+            },
+            // len: {
+            //     args: [1, Infinity], // Độ dài từ 1 ký tự trở lên
+            //     msg: 'Tên người dùng không được bỏ trống.',
+            // },
+        },
         get() {
-            return getDecrypt('current_position', this);
+            return getDecrypt("current_position", this);
         },
         set(value) {
-            setEncrypt(value, 'current_position', this);
+            setEncrypt(value, "current_position", this);
         },
     },
     work_temp: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: "Nhiệm kì công việc không được bỏ trống.",
+            },
+            // len: {
+            //     args: [1, Infinity], // Độ dài từ 1 ký tự trở lên
+            //     msg: 'Tên người dùng không được bỏ trống.',
+            // },
+        },
         get() {
-            return getDecrypt('work_temp', this);
+            return getDecrypt("work_temp", this);
         },
         set(value) {
-            setEncrypt(value, 'work_temp', this);
+            setEncrypt(value, "work_temp", this);
         },
-    }
+    },
 });
 
-const Company_KH = sequelize.define('Company_KH', {
+const Company_KH = sequelize.define("Company_KH", {
     _id: setPrimary,
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: "Công ty KH không được bỏ trống.",
+            },
+            // len: {
+            //     args: [1, Infinity], // Độ dài từ 1 ký tự trở lên
+            //     msg: 'Tên người dùng không được bỏ trống.',
+            // },
+        },
         get() {
-            return getDecrypt('name', this);
+            return getDecrypt("name", this);
         },
         set(value) {
-            setEncrypt(value, 'name', this);
+            setEncrypt(value, "name", this);
         },
-    }
+    },
 });
+
 
 const Event = sequelize.define('Event', {
     _id: setPrimary,
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         underscored: true,
         validate: {
@@ -195,7 +306,7 @@ const Event = sequelize.define('Event', {
         },
     },
     time_duration: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         validate: {
             notEmpty: {
@@ -210,7 +321,7 @@ const Event = sequelize.define('Event', {
         },
     },
     content: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         validate: {
             notEmpty: {
@@ -229,7 +340,7 @@ const Event = sequelize.define('Event', {
 const Habit = sequelize.define('Habit', {
     _id: setPrimary,
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         validate: {
             notEmpty: {
@@ -245,67 +356,97 @@ const Habit = sequelize.define('Habit', {
     }
 });
 
-const Position = sequelize.define('Position', {
+const Position = sequelize.define("Position", {
     _id: setPrimary,
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        underscored: true,
+        validate: {
+            notEmpty: {
+                msg: "Tên vị trí không được bỏ trống.",
+            },
+        },
         get() {
-            return getDecrypt('name', this);
+            return getDecrypt("name", this);
         },
         set(value) {
-            setEncrypt(value, 'name', this);
+            setEncrypt(value, "name", this);
         },
-    }
+    },
 });
 
-const Center_VNPTHG = sequelize.define('Center_VNPTHG', {
+const Center_VNPTHG = sequelize.define("Center_VNPTHG", {
     _id: setPrimary,
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        underscored: true,
+        validate: {
+            notEmpty: {
+                msg: "Tên trung tâm không được bỏ trống.",
+            },
+        },
         get() {
-            return getDecrypt('name', this);
+            return getDecrypt("name", this);
         },
         set(value) {
-            setEncrypt(value, 'name', this);
+            setEncrypt(value, "name", this);
         },
-    }
+    },
 });
 
-const Department = sequelize.define('Department', {
+const Department = sequelize.define("Department", {
     _id: setPrimary,
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        underscored: true,
+        validate: {
+            notEmpty: {
+                msg: "Tên phòng không được bỏ trống.",
+            },
+        },
         get() {
-            return getDecrypt('name', this);
+            return getDecrypt("name", this);
         },
         set(value) {
-            setEncrypt(value, 'name', this);
+            setEncrypt(value, "name", this);
         },
-    }
+    },
 });
 
-const Unit = sequelize.define('Unit', {
+const Unit = sequelize.define("Unit", {
     _id: setPrimary,
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        underscored: true,
+        validate: {
+            notEmpty: {
+                msg: "Tên đơn vị không được bỏ trống.",
+            },
+        },
         get() {
-            return getDecrypt('name', this);
+            return getDecrypt("name", this);
         },
         set(value) {
-            setEncrypt(value, 'name', this);
+            setEncrypt(value, "name", this);
         },
-    }
+    },
 });
+
 
 const Permission = sequelize.define('Permission', {
     _id: setPrimary,
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: 'Tên quyền không được bỏ trống.',
+            },
+        },
         get() {
             return getDecrypt('name', this);
         },
@@ -318,8 +459,13 @@ const Permission = sequelize.define('Permission', {
 const Role = sequelize.define('Role', {
     _id: setPrimary,
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: 'Tên chức năng không được bỏ trống.',
+            },
+        },
         get() {
             return getDecrypt('name', this);
         },
@@ -332,8 +478,13 @@ const Role = sequelize.define('Role', {
 const Cycle = sequelize.define('Cycle', {
     _id: setPrimary,
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: 'Nội dung không được bỏ trống.',
+            },
+        },
         get() {
             return getDecrypt('name', this);
         },
@@ -343,75 +494,116 @@ const Cycle = sequelize.define('Cycle', {
     }
 });
 
-const Employee = sequelize.define('Employee', {
+const Employee = sequelize.define("Employee", {
     _id: setPrimary,
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: "Tên nhân viên không được bỏ trống.",
+            },
+        },
         get() {
-            return getDecrypt('name', this);
+            return getDecrypt("name", this);
         },
         set(value) {
-            setEncrypt(value, 'name', this);
+            setEncrypt(value, "name", this);
         },
     },
     birthday: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: "Ngày sinh nhân viên không được bỏ trống.",
+            },
+        },
         get() {
-            return getDecrypt('birthday', this);
+            return getDecrypt("birthday", this);
         },
         set(value) {
-            setEncrypt(value, 'birthday', this);
+            setEncrypt(value, "birthday", this);
         },
     },
     avatar: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: "Avatar nhân viên không được bỏ trống.",
+            },
+        },
         get() {
-            return getDecrypt('avatar', this);
+            return getDecrypt("avatar", this);
         },
         set(value) {
-            setEncrypt(value, 'avatar', this);
+            setEncrypt(value, "avatar", this);
         },
     },
     address: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: "Địa chỉ nhân viên không được bỏ trống.",
+            },
+        },
         get() {
-            return getDecrypt('address', this);
+            return getDecrypt("address", this);
         },
         set(value) {
-            setEncrypt(value, 'address', this);
+            setEncrypt(value, "address", this);
         },
     },
     phone: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: "Số điện thoại nhân viên không được bỏ trống.",
+            },
+        },
         get() {
-            return getDecrypt('phone', this);
+            return getDecrypt("phone", this);
         },
         set(value) {
-            setEncrypt(value, 'phone', this);
+            setEncrypt(value, "phone", this);
         },
     },
     email: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: "Email nhân viên không được bỏ trống.",
+            },
+        },
         get() {
-            return getDecrypt('email', this);
+            return getDecrypt("email", this);
         },
         set(value) {
-            setEncrypt(value, 'email', this);
+            setEncrypt(value, "email", this);
         },
-    }
-})
+    },
+});
+
 
 const Account = sequelize.define('Account', {
     _id: setPrimary,
     user_name: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: 'Tên đăng nhập không được bỏ trống.',
+            },
+        },
+        validate: {
+            notEmpty: {
+                msg: 'Mật khẩu không được bỏ trống.',
+            },
+        },
         get() {
             return getDecrypt('user_name', this);
         },
@@ -420,7 +612,7 @@ const Account = sequelize.define('Account', {
         },
     },
     password: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         get() {
             return getDecrypt('password', this);
@@ -434,7 +626,7 @@ const Account = sequelize.define('Account', {
 const Appointment = sequelize.define('Appointment', {
     _id: setPrimary,
     date_time: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         validate: {
             notEmpty: {
@@ -449,7 +641,7 @@ const Appointment = sequelize.define('Appointment', {
         },
     },
     content: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         validate: {
             notEmpty: {
@@ -468,7 +660,7 @@ const Appointment = sequelize.define('Appointment', {
 const Status_Task = sequelize.define('Status_Task', {
     _id: setPrimary,
     status: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         get() {
             return getDecrypt('status', this);
@@ -478,7 +670,7 @@ const Status_Task = sequelize.define('Status_Task', {
         },
     },
     reason: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         get() {
             return getDecrypt('reason', this);
@@ -492,7 +684,7 @@ const Status_Task = sequelize.define('Status_Task', {
 const FeedBack_Task = sequelize.define('FeedBack_Task', {
     _id: setPrimary,
     evaluate: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         get() {
             return getDecrypt('evaluate', this);
@@ -502,7 +694,7 @@ const FeedBack_Task = sequelize.define('FeedBack_Task', {
         },
     },
     comment: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         get() {
             return getDecrypt('comment', this);
@@ -516,7 +708,7 @@ const FeedBack_Task = sequelize.define('FeedBack_Task', {
 const Status_App = sequelize.define('Status_App', {
     _id: setPrimary,
     status: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         get() {
             return getDecrypt('status', this);
@@ -526,7 +718,7 @@ const Status_App = sequelize.define('Status_App', {
         },
     },
     reason: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         get() {
             return getDecrypt('reason', this);
@@ -540,8 +732,13 @@ const Status_App = sequelize.define('Status_App', {
 const Task = sequelize.define('Task', {
     _id: setPrimary,
     start_date: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: 'Ngày bắt đầu không được bỏ trống.',
+            },
+        },
         get() {
             return getDecrypt('start_date', this);
         },
@@ -550,8 +747,13 @@ const Task = sequelize.define('Task', {
         },
     },
     end_date: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: 'Ngày kết thúc không được bỏ trống.',
+            },
+        },
         get() {
             return getDecrypt('end_date', this);
         },
@@ -560,8 +762,13 @@ const Task = sequelize.define('Task', {
         },
     },
     content: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: 'Nội dung không được bỏ trống.',
+            },
+        },
         get() {
             return getDecrypt('content', this);
         },
@@ -574,7 +781,7 @@ const Task = sequelize.define('Task', {
 const Log = sequelize.define('Log', {
     _id: setPrimary,
     created_at: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         get() {
             return getDecrypt('created_at', this);
@@ -584,7 +791,7 @@ const Log = sequelize.define('Log', {
         },
     },
     created_user: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         get() {
             return getDecrypt('created_user', this);
@@ -594,7 +801,7 @@ const Log = sequelize.define('Log', {
         },
     },
     content: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         get() {
             return getDecrypt('content', this);

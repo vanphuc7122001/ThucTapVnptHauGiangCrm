@@ -6,7 +6,6 @@ const router = express.Router();
 router.route('/')
     .post(customerTypes.create)
     .get(customerTypes.findAll)
-    .delete(customerTypes.deleteAll)
 
 router.route('/:id')
     .put(customerTypes.update)

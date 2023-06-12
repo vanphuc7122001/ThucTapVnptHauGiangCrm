@@ -1,34 +1,40 @@
 <template>
-  <div class="modal" id="model-add">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <h4 class="modal-title" style="font-size: 15px;">Thêm sự kiện mới</h4>
-        <button type="button" class="close" data-dismiss="modal">
-          &times;
-        </button>
-      </div>
-
-      <!-- Modal body -->
-      <div class="modal-body">
-        <form-customer-phuc :btnName="'Thêm'"/>
-      </div>
-    </div>
-  </div>
-</div>
+  <form_wizard_customer :id_form="'model-add'" @refresh_customer="refresh_customer"/>
 </template>
 
 <script>
-import formCustomerPhuc from '../../components/form/form-customer-phuc.vue';
+import axios from 'axios';
+import {
+  http_getAll,
+  http_getOne,
+  http_deleteOne,
+  http_update,
+  http_create,
+  alert_success,
+  alert_error,
+  alert_delete,
+  form_wizard_customer,
+  Company_KH,
+  Customer_Work,
+  Customer,
+} from '../common/import'
 
 export default {
-components: {
-  formCustomerPhuc
-}
+  components: {
+    form_wizard_customer
+  },
+  setup(_,{emit}){
+
+    const refresh_customer = () => {
+      emit('refresh_customer')
+    }
+    return {
+      refresh_customer
+    }
+  }
+
+
 }
 </script>
 
-<style>
-
-</style>
+<style></style>
