@@ -136,7 +136,7 @@ export default {
       console.log("Value delete:", value);
       const result = await alert_delete("Bạn muốn xóa", value.name);
       if (result) {
-        await CenterServices.deleteOne(value._id);
+        await CenterServices.delete(value._id);
         alert_success("Bạn đã xóa trung tâm", value.name);
         await refresh_add();
         ctx.emit("newCenter", centers.center);

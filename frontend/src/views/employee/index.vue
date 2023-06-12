@@ -36,7 +36,7 @@ import {
   alert_delete,
   alert_warning,
 } from "../../assets/js/common.alert";
-
+import SelectCDU from "../../components/box_lananh/select_cdu.vue";
 export default {
   components: {
     Table,
@@ -53,6 +53,7 @@ export default {
     Add1,
     Mail,
     FormWizard,
+    SelectCDU,
   },
   setup(ctx) {
     const data = reactive({
@@ -88,6 +89,32 @@ export default {
       searchText: "",
       activeEdit: false,
       editValue: {},
+
+      viewValue: {
+        _id: "",
+        name: "",
+        birthday: "",
+        // avatar: "",
+        address: "",
+        phone: "",
+        email: "",
+        Position: {
+          _id: "",
+          name: "",
+        },
+        Unit: {
+          _id: "",
+          name: "",
+          Department: {
+            _id: "",
+            name: "",
+            Center_VNPTHG: {
+              name: "",
+              _id: "",
+            },
+          },
+        },
+      },
       modelPositon: "Chức vụ",
       modelValue: "Trung tâm",
       modelDep: "Phòng",
@@ -98,7 +125,16 @@ export default {
     const toString = computed(() => {
       console.log("Starting search");
       return data.items.map((value, index) => {
-        return [value.name].join("").toLocaleLowerCase();
+        return [
+          value.name,
+          value.phone,
+          value.Position.name,
+          value.Unit.name,
+          value.Unit.Department.name,
+          value.Unit.Department.Center_VNPTHG.name,
+        ]
+          .join("")
+          .toLocaleLowerCase();
       });
     });
     const filter = computed(() => {
@@ -138,11 +174,6 @@ export default {
     });
 
     const router = useRouter();
-
-    const view = (_id) => {
-      console.log("view", _id);
-      router.push({ name: "Employee.view", params: { id: _id } });
-    };
 
     // watch
     const activeMenu = ref(1);
@@ -201,18 +232,31 @@ export default {
 
     // ****** trung tâm ******
     const centers = reactive({ center: [] });
-    const selectedOptionCenter = ref("Trung tâm");
+    const selectedOptionCenter = ref("");
     watch(selectedOptionCenter, async (newValue, oldValue) => {
+      if (newValue == "") {
+        return;
+      }
+
       const doc = ref("");
-      doc.value = await CenterServices.getOne(selectedOptionCenter.value);
+      doc.value = await CenterServices.get(selectedOptionCenter.value);
       data.modelValue = doc.value.name;
       data.items = await http_getAll(Employee);
-      data.items = data.items.filter((val, index) => {
-        return (
-          val.Unit.Department.Center_VNPTHG._id == selectedOptionCenter.value
-        );
-      });
-      console.log("new", data.items);
+      if (selectedOptionPosition.value != "") {
+        data.items = data.items.filter((val, index) => {
+          return (
+            val.Unit.Department.Center_VNPTHG._id ==
+              selectedOptionCenter.value &&
+            val.Position._id == selectedOptionPosition.value
+          );
+        });
+      } else {
+        data.items = data.items.filter((val, index) => {
+          return (
+            val.Unit.Department.Center_VNPTHG._id == selectedOptionCenter.value
+          );
+        });
+      }
       departments.department = await departmentsServices.findAllDepOfACenter(
         newValue
       );
@@ -254,15 +298,24 @@ export default {
           return true;
         };
         showSweetAlert();
+      } else if (newValue == "all") {
+        await refresh();
+        selectedOptionCenter.value = "";
+        selectedOptionDepartment.value = "";
+        selectedOptionUnit.value = "";
+        selectedOptionPosition.value = "";
       }
     });
 
     //DEP
     const departments = reactive({ department: [] });
-    const selectedOptionDepartment = ref("Phòng");
+    const selectedOptionDepartment = ref("");
     watch(selectedOptionDepartment, async (newValue, oldValue) => {
+      if (newValue == "") {
+        return;
+      }
       const doc = ref("");
-      doc.value = await CenterServices.getOne(selectedOptionCenter.value);
+      doc.value = await CenterServices.get(selectedOptionCenter.value);
       data.modelValue = doc.value.name;
       const docDep = ref("");
       docDep.value = await departmentsServices.getOne(
@@ -270,12 +323,24 @@ export default {
       );
       data.modelDep = docDep.value.name;
       data.items = await http_getAll(Employee);
-      data.items = data.items.filter((val, index) => {
-        return (
-          val.Unit.Department.Center_VNPTHG._id == selectedOptionCenter.value &&
-          val.Unit.Department._id == selectedOptionDepartment.value
-        );
-      });
+      if (selectedOptionPosition.value != "") {
+        data.items = data.items.filter((val, index) => {
+          return (
+            val.Unit.Department.Center_VNPTHG._id ==
+              selectedOptionCenter.value &&
+            val.Unit.Department._id == selectedOptionDepartment.value &&
+            val.Position._id == selectedOptionPosition.value
+          );
+        });
+      } else {
+        data.items = data.items.filter((val, index) => {
+          return (
+            val.Unit.Department.Center_VNPTHG._id ==
+              selectedOptionCenter.value &&
+            val.Unit.Department._id == selectedOptionDepartment.value
+          );
+        });
+      }
 
       units.unit = await unitsServices.findAllUnitsOfADep(newValue);
       units.unit.push({ _id: "other", name: "khác" });
@@ -335,6 +400,12 @@ export default {
 
         // Gọi hàm showSweetAlert khi bạn muốn hiển thị SweetAlert
         showSweetAlert();
+      } else if (newValue == "all") {
+        await refresh();
+        selectedOptionCenter.value = "";
+        selectedOptionDepartment.value = "";
+        selectedOptionUnit.value = "";
+        selectedOptionPosition.value = "";
       }
     });
 
@@ -344,8 +415,11 @@ export default {
     });
     const selectedOptionUnit = ref("Đơn vị");
     watch(selectedOptionUnit, async (newValue, oldValue) => {
+      if (newValue == "") {
+        return;
+      }
       const doc = ref("");
-      doc.value = await CenterServices.getOne(selectedOptionCenter.value);
+      doc.value = await CenterServices.get(selectedOptionCenter.value);
       data.modelValue = doc.value.name;
       // DEP
       const docDep = ref("");
@@ -358,13 +432,26 @@ export default {
       data.modelUnit = docUnit.value.name;
 
       data.items = await http_getAll(Employee);
-      data.items = data.items.filter((val, index) => {
-        return (
-          val.Unit.Department.Center_VNPTHG._id == selectedOptionCenter.value &&
-          val.Unit.Department._id == selectedOptionDepartment.value &&
-          val.unitId == selectedOptionUnit.value
-        );
-      });
+      if (selectedOptionPosition.value != "") {
+        data.items = data.items.filter((val, index) => {
+          return (
+            val.Unit.Department.Center_VNPTHG._id ==
+              selectedOptionCenter.value &&
+            val.Unit.Department._id == selectedOptionDepartment.value &&
+            val.unitId == selectedOptionUnit.value &&
+            val.Position._id == selectedOptionPosition.value
+          );
+        });
+      } else {
+        data.items = data.items.filter((val, index) => {
+          return (
+            val.Unit.Department.Center_VNPTHG._id ==
+              selectedOptionCenter.value &&
+            val.Unit.Department._id == selectedOptionDepartment.value &&
+            val.unitId == selectedOptionUnit.value
+          );
+        });
+      }
       if (newValue == "other") {
         const showSweetAlert = async () => {
           const { value: formValues } = await Swal.fire({
@@ -475,6 +562,12 @@ export default {
 
         // Gọi hàm showSweetAlert khi bạn muốn hiển thị SweetAlert
         showSweetAlert();
+      } else if (newValue == "all") {
+        await refresh();
+        selectedOptionCenter.value = "";
+        selectedOptionDepartment.value = "";
+        selectedOptionUnit.value = "";
+        selectedOptionPosition.value = "";
       }
     });
     const search = async (value) => {
@@ -489,6 +582,10 @@ export default {
     const positions = reactive({ position: [] });
     const selectedOptionPosition = ref("Chức vụ");
     watch(selectedOptionPosition, async (newValue, oldValue) => {
+      if (newValue == "") {
+        return;
+      }
+
       const docPosition = ref("");
       docPosition.value = await http_getOne(
         Position,
@@ -497,9 +594,48 @@ export default {
       data.modelPositon = docPosition.value.name;
 
       data.items = await http_getAll(Employee);
-      data.items = data.items.filter((val, index) => {
-        return val.Position._id == selectedOptionPosition.value;
-      });
+      if (
+        selectedOptionCenter.value != "" &&
+        selectedOptionDepartment.value != "" &&
+        selectedOptionUnit.value != ""
+      ) {
+        data.items = data.items.filter((val, index) => {
+          console.log("đủ 3");
+          return (
+            val.Position._id == selectedOptionPosition.value &&
+            val.Unit.Department.Center_VNPTHG._id ==
+              selectedOptionCenter.value &&
+            val.Unit.Department._id == selectedOptionDepartment.value &&
+            val.unitId == selectedOptionUnit.value
+          );
+        });
+      } else if (
+        selectedOptionCenter.value != "" &&
+        selectedOptionDepartment.value != ""
+      ) {
+        console.log(data.items);
+        data.items = data.items.filter((val, index) => {
+          return (
+            val.Position._id == selectedOptionPosition.value &&
+            val.Unit.Department.Center_VNPTHG._id ==
+              selectedOptionCenter.value &&
+            val.Unit.Department._id == selectedOptionDepartment.value
+          );
+        });
+      } else if (selectedOptionCenter.value != "") {
+        console.log(data.items);
+        data.items = data.items.filter((val, index) => {
+          return (
+            val.Position._id == selectedOptionPosition.value &&
+            val.Unit.Department.Center_VNPTHG._id == selectedOptionCenter.value
+          );
+        });
+      } else {
+        console.log("đủ 1");
+        data.items = data.items.filter((val, index) => {
+          return val.Position._id == selectedOptionPosition.value;
+        });
+      }
       if (newValue == "other") {
         const showSweetAlert = async () => {
           const { value: positionName } = await Swal.fire({
@@ -530,6 +666,12 @@ export default {
           return true;
         };
         showSweetAlert();
+      } else if (newValue == "all") {
+        await refresh();
+        selectedOptionCenter.value = "";
+        selectedOptionDepartment.value = "";
+        selectedOptionUnit.value = "";
+        selectedOptionPosition.value = "";
       }
     });
 
@@ -548,7 +690,7 @@ export default {
       console.log("Value delete:", value);
       const result = await alert_delete("Bạn muốn xóa", value.name);
       if (result) {
-        await CenterServices.deleteOne(value._id);
+        await CenterServices.delete(value._id);
         alert_success("Bạn đã xóa trung tâm", value.name);
         await refresh();
       }
@@ -605,9 +747,6 @@ export default {
       await refresh();
     });
 
-    onBeforeMount(async () => {
-      await refresh();
-    });
     return {
       data,
       setPages,
@@ -616,7 +755,7 @@ export default {
       update,
       deleteOne,
       edit,
-      view,
+
       centers,
       selectedOptionCenter,
       departments,
@@ -644,7 +783,7 @@ export default {
     <div class="d-flex flex-column mt-3">
       <span class="mx-3 mb-3 h6">Lọc nhân viên</span>
       <div class="d-flex mx-3">
-        <div class="form-group w-100">
+        <!-- <div class="form-group w-100">
           <Select_Advanced
             class="form-control"
             required
@@ -666,9 +805,9 @@ export default {
             @delete="(value) => onDeletePosition(value)"
             @choosed="(value) => (selectedOptionPosition = value)"
           />
-        </div>
+        </div> -->
         <!-- **** Lan Anh **** -->
-        <div class="form-group w-100 ml-3">
+        <!-- <div class="form-group w-100 ml-3">
           <Select_Advanced
             :options="centers.center"
             :modelValue="data.modelValue"
@@ -725,6 +864,49 @@ export default {
             "
             @delete="(value) => onDeleteUnit(value)"
             @choosed="(value) => (selectedOptionUnit = value)"
+          />
+        </div> -->
+        <div class="form-group w-100">
+          <label for="name">Chức vụ</label>
+          <SelectCDU
+            class="d-flex justify-content-start"
+            :title="`Chức vụ`"
+            :field="positions.position"
+            :selectedOption="selectedOptionPosition"
+            @option="(value) => (selectedOptionPosition = value)"
+          />
+        </div>
+        <div class="form-group w-100">
+          <label for="name">Trung tâm</label>
+
+          <SelectCDU
+            class="d-flex justify-content-start"
+            :title="`Trung tâm`"
+            :field="centers.center"
+            :selectedOption="selectedOptionCenter"
+            @option="(value) => (selectedOptionCenter = value)"
+          />
+        </div>
+        <div class="form-group w-100">
+          <label for="name">Phòng</label>
+
+          <SelectCDU
+            class="d-flex justify-content-start"
+            :title="`Phòng`"
+            :field="departments.department"
+            :selectedOption="selectedOptionDepartment"
+            @option="(value) => (selectedOptionDepartment = value)"
+          />
+        </div>
+        <div class="form-group w-100">
+          <label for="name">Tổ</label>
+
+          <SelectCDU
+            class="d-flex justify-content-start"
+            :title="`Tổ`"
+            :selectedOption="selectedOptionUnit"
+            :field="units.unit"
+            @option="(value) => (selectedOptionUnit = value)"
           />
         </div>
       </div>
@@ -839,7 +1021,7 @@ export default {
           (data.editValue = value), (data.activeEdit = value1)
         )
       "
-      @view="(value) => view(value)"
+      @view="(value) => (data.viewValue = value)"
       @checkbox="(value) => (mail.list = value)"
     />
     <!-- Pagination -->
@@ -865,7 +1047,8 @@ export default {
         }
       "
     />
-    <View />
+
+    <View :item="data.viewValue" />
   </div>
 </template>
 

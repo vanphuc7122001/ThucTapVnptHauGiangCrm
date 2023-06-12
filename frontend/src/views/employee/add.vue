@@ -25,6 +25,8 @@ import {
   http_getOne,
   http_deleteOne,
 } from "../../assets/js/common.http";
+import mailService from "../../services/mail.service";
+
 export default {
   components: {
     Select,
@@ -70,11 +72,25 @@ export default {
       roles: [],
       modelRole: "",
     });
+
     const create = async () => {
+      const dataMail = reactive({
+        title: "Thông tin tài khoản nhân viên",
+        content: `<h3> Xin chào công ty chúng tôi xin cung cấp cho bạn
+        tên tài khoản và mã tài khoản của bạn </h3>
+        <h4> Mã tài khoản: ${data.item.user_name} </h4>
+        <h4> Mã tài khoản: ${data.item.password} </h4>
+        `,
+        mail: data.item.email,
+      });
+
+      console.log("NDMail:", dataMail);
+
       data.item.unitId = selectedOptionUnit.value;
       data.item.postionId = selectedOptionPosition.value;
       data.item.checkUser = true;
       const account = await http_create(Account, data.item);
+      await mailService.sendmail(dataMail);
       if (account.user_name == true) {
         console.log("item", data.item);
         const result = await http_create(Employee, data.item);
@@ -161,12 +177,12 @@ export default {
             data.modelPos = document.document.name;
             positions.position.push({ _id: "other", name: "khác" });
             ctx.emit("newPosition", positions.position);
-            // selectedOptionPosition.value = document._id;
+            selectedOptionPosition.value = document.document._id;
           }
           return true;
         };
         showSweetAlert();
-        // selectedOptionPosition.value = 0;
+        selectedOptionPosition.value = 0;
       }
     });
     //CENTERS
@@ -440,7 +456,7 @@ export default {
       console.log("Value delete:", value);
       const result = await alert_delete("Bạn muốn xóa", value.name);
       if (result) {
-        await CenterServices.deleteOne(value._id);
+        await CenterServices.delete(value._id);
         alert_success("Bạn đã xóa trung tâm", value.name);
         await refresh_add();
         ctx.emit("newCenter", centers.center);
@@ -870,7 +886,7 @@ export default {
                     data.activeStep < data.stepList.length
                   "
                   class="btn-next d-flex align-items-center px-3 py-1"
-                  @click="data.activeStep = 2"
+                  @click="data.activeStep = data.activeStep + 1"
                   >Next
                   <span
                     class="material-symbols-outlined d-flex align-items-center"
@@ -884,7 +900,7 @@ export default {
                     data.activeStep <= data.stepList.length
                   "
                   class="btn-prev d-flex align-items-center px-3 py-1 ml-3"
-                  @click="data.activeStep = 1"
+                  @click="data.activeStep = data.activeStep - 1"
                   ><span
                     class="material-symbols-outlined d-flex align-items-center"
                   >
