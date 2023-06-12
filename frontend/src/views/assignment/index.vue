@@ -4,6 +4,8 @@ import Pagination from "../../components/table/pagination_duy.vue";
 import Dropdown from "../../components/form/dropdown.vue";
 import Select from "../../components/form/select.vue";
 import Search from "../../components/form/search.vue";
+import SelectFilter from "../../components/form/select_task_truc.vue";
+import InputFilter from "../../components/form/form_filter_truc.vue";
 import DeleteAll from "../../components/form/delete-all.vue";
 import Add from "./add.vue";
 import Edit from "./edit.vue";
@@ -30,8 +32,11 @@ import {
   alert_error,
   alert_delete,
 } from "../../assets/js/common.alert";
+import { formatDate } from "../../assets/js/common"
 export default {
   components: {
+    SelectFilter,
+    InputFilter,
     Select_Advanced,
     Table,
     Pagination,
@@ -68,6 +73,11 @@ export default {
             status: "",
             reason: "",
           },
+          Appoitment: {
+            _id:"",
+            date_time: "",
+            content: "",
+          }
         },
       ],
       entryValue: 5,
@@ -91,6 +101,33 @@ export default {
           reason: "",
         },
       },
+      viewValue: {
+          _id: "",
+          start_date: "",
+          end_date: "",
+          content: "",
+          Customer: {
+            _id: "",
+            name: "",
+          },
+          Cycle: {
+            _id: "",
+            name: "",
+          },
+          Employee: {
+            _id: "",
+            name: "",
+          },
+          Status_Task: {
+            status: "",
+            reason: "",
+          },
+          Appoitment: {
+            _id:"",
+            date_time: "",
+            content: "",
+          }
+        },
       addcycle: {},
       cus: [],
       employee: [],
@@ -98,7 +135,63 @@ export default {
       taskObject: {},
     });
 
+
+    const cycleValue = ref('');
+    const startdateValue = ref('');
+    const statusValue = ref('');
+    const enddateValue = ref('');
     const cycles = reactive({ cycle: [] });
+
+        //watch lọc
+        watch(cycleValue,async (newValue, oldValue) =>{
+      console.log("hhhh",newValue)
+      await refresh();
+      if(newValue == 0 ){
+        return await refresh();
+      }
+      if(cycleValue.length != 0){
+        console.log("status",statusValue);
+        console.log("startdate",startdateValue);
+        console.log("end",enddateValue);
+
+        data.items = data.items.filter((value, index) => {
+          return value.cycleId == cycleValue.value
+        })
+      
+
+      }
+    });
+    watch(statusValue, async (newValue, oldValue)=>{
+      console.log("status",newValue)
+      await refresh();
+      if(statusValue.length != 0){
+        data.items = data.items.filter((value, index) => {
+          // console.log('name', value.Status_Task.status)
+        return value.Status_Task.status == statusValue.value
+        })
+      }
+    });
+
+    watch(startdateValue, async (newValue, oldValue)=>{
+      console.log("start date",newValue)
+      await refresh();
+      if(startdateValue.length != 0){
+        data.items = data.items.filter((value, index) => {
+        return value.start_date == startdateValue.value
+        })
+      }
+    });
+
+    watch(enddateValue, async (newValue, oldValue)=>{
+      console.log("end date",newValue)
+      await refresh();
+      if(enddateValue.length != 0){
+        data.items = data.items.filter((value, index) => {
+        return value.end_date == enddateValue.value
+        })
+      }
+    })
+
 
     // computed
     const toString = computed(() => {
@@ -224,6 +317,10 @@ export default {
       console.log("aaa", data.cus);
       data.employee = await http_getAll(Employee);
       data.items = await http_getAll(Task);
+      for (const value of data.items) {
+        value.end_date_format = formatDate(value.end_date);
+        value.start_date_format = formatDate(value.start_date);
+      }
     };
 
     // handle http methods
@@ -257,6 +354,10 @@ export default {
       view,
       appointment,
       cycles,
+      cycleValue,
+      statusValue,
+      startdateValue,
+      enddateValue,
     };
   },
 };
@@ -271,16 +372,38 @@ export default {
       <span class="mx-3 mb-3 h6">Lọc phân công</span>
       <div class="d-flex mx-3">
         <div class="form-group w-100">
-          <Select :title="`Chu kỳ`" :entryValue="`Chu kỳ`" />
+          <SelectFilter 
+          :title="`Chu kỳ`" 
+          @update:entryValue="(value) => cycleValue = value"
+          :entryValue="`Chu kỳ`"
+          :options="cycles.cycle"
+          />
         </div>
         <div class="form-group w-100 ml-3">
-          <Select :title="`Trạng thái`" :entryValue="`Trạng thái`" />
+          <Select 
+          :title="`Trạng thái`" 
+          :entryValue="`Trạng thái`"
+          @update:entryValue="(value) => statusValue = value"
+          :options="[
+            {
+              name: 'Thành công',
+              value: 'true',
+            },
+            {
+              name: 'Thất bại',
+              value: 'false',
+            },
+          ]" />
         </div>
         <div class="form-group w-100 ml-3">
-          <Select :title="`Ngày bắt đầu`" :entryValue="`Ngày bắt đầu`" />
+          <InputFilter 
+            @update:entryValue="(value) => startdateValue = value"
+            :title="`Ngày bắt đầu`" :entryValue="`Ngày bắt đầu`"  />
         </div>
         <div class="form-group w-100 ml-3">
-          <Select :title="`Ngày kết thúc`" :entryValue="`Ngày kết thúc`" />
+          <InputFilter 
+            @update:entryValue="(value) => enddateValue = value"
+            :title="`Ngày kết thúc`" :entryValue="`Ngày kết thúc`"  />
         </div>
         <div class="form-group"></div>
       </div>
@@ -361,14 +484,14 @@ export default {
         'Nội dung chăm sóc',
         'Trạng thái',
       ]"
-      :labels="['start_date', 'end_date', 'content']"
+      :labels="['start_date_format', 'end_date_format', 'content']"
       @delete="(value) => deleteOne(value)"
       @edit="
         (value, value1) => (
           (data.editValue = value), (data.activeEdit = value1)
         )
       "
-      @view="(value) => view(value)"
+      @view="(value) => (data.viewValue = value)"
       @appointment="
         (value, value1) => ((data.taskId = value), (data.taskObject = value1))
       "
@@ -398,7 +521,9 @@ export default {
     :taskId="data.taskId"
     :task="data.taskObject"
   />
-  <View />
+  <View
+  :viewValue="data.viewValue" 
+   />
 </template>
 
 <style scoped>

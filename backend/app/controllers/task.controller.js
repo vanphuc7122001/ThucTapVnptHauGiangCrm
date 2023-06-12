@@ -83,6 +83,9 @@ exports.findAll = async (req, res, next) => {
             {
                 model: Cycle,
             },
+            {
+                model: Appointment,
+            },
             ]
 
         });

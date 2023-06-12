@@ -48,7 +48,7 @@
           >{{ option.name }}</span
         >
         <span
-          v-if="option._id != 'other'"
+          v-if="option._id != 'other' && add== true"
           @click="[$emit('delete', option)]"
           class="material-symbols-outlined"
           style="font-size: 15px; cursor: pointer"
@@ -73,6 +73,10 @@ export default {
     disabled: {
       type: String,
       default: `false`,
+    },
+    add: {
+      type: Boolean,
+      default: true,
     },
   },
   watch: {

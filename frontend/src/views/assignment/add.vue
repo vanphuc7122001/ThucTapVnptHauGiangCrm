@@ -24,18 +24,7 @@ export default {
     Select_Advanced,
   },
   props: {
-    cycles: {
-      type: Object,
-      default: {},
-    },
-    cus: {
-      type: Object,
-      default: {},
-    },
-    employee: {
-      type: Object,
-      default: {},
-    },
+
   },
   setup(props, ctx) {
     const data = reactive({
@@ -48,9 +37,13 @@ export default {
         leaderId: "",
       },
       modelValue: "",
+      modelEm:"",
+      modelCus: "",
     });
 
     const cycles = reactive({ cycle: [] });
+    const customers = reactive({ customer: [] });
+    const employees = reactive({ employee: [] });
     let selectedOptionCycle = ref("0");
     watch(selectedOptionCycle, async (newValue, oldValue) => {
       // Alert add center
@@ -129,6 +122,9 @@ export default {
 
     const refresh = async () => {
       cycles.cycle = await http_getAll(Cycle);
+      customers.customer = await http_getAll(Customer);
+      customers.customer = customers.customer.documents;
+      employees.employee = await http_getAll(Employee);
       cycles.cycle.push({
         _id: "other",
         name: "other",
@@ -144,6 +140,8 @@ export default {
       data,
       refresh,
       cycles,
+      customers,
+      employees,
       selectedOptionCycle,
       deleteOne,
     };
@@ -174,38 +172,43 @@ export default {
               <label for="name"
                 >Khách hàng(<span style="color: red">*</span>):</label
               >
-              <select
-                id=""
-                class="form-control"
-                required
-                v-model="data.itemAdd.customerId"
-              >
-                <option value="" disabled selected hidden></option>
-                <option v-for="cus in cus" :key="cus" :value="cus._id">
-                  {{ cus.name }}
-                </option>
-              </select>
+              <Select_Advanced style="height: 40px;" required
+              :add="false"
+              :options="customers.customer"
+              :modelValue="data.modelCus"
+                @searchSelect="
+                  async (value) => (
+                    await refresh(),
+                    (customers.customer = customers.customer.filter((value1, index) => {
+                      console.log(value1, value);
+                      return value1.name.includes(value) || value.length == 0;
+                    })),
+                    console.log('searchSlect', value.length)
+                  )
+                "
+                @chose="(value,value1) => (data.itemAdd.customerId = value, data.modelCus=value1.name)"
+              />
             </div>
-
             <div class="form-group">
               <label for=""
                 >Nhân viên(<span style="color: red">*</span>):</label
               >
-              <select
-                id=""
-                class="form-control"
-                required
-                v-model="data.itemAdd.leaderId"
-              >
-                <option value="" disabled selected hidden></option>
-                <option
-                  v-for="employee in employee"
-                  :key="employee"
-                  :value="employee._id"
-                >
-                  {{ employee.name }}
-                </option>
-              </select>
+              <Select_Advanced style="height: 40px;" required
+              :add="false"
+              :options="employees.employee"
+              :modelValue="data.modelEm"
+                @searchSelect="
+                  async (value) => (
+                    await refresh(),
+                    (employees.employee = employees.employee.filter((value1, index) => {
+                      console.log(value1, value);
+                      return value1.name.includes(value) || value.length == 0;
+                    })),
+                    console.log('searchSlect', value.length)
+                  )
+                "
+                @chose="(value,value1) => (data.itemAdd.leaderId = value, data.modelEm = value1.name)"
+              />
             </div>
 
             <div class="form-group">
@@ -236,15 +239,6 @@ export default {
 
             <div class="form-group">
               <label for="">Chu kỳ(<span style="color: red">*</span>):</label>
-              <!-- <select id="" class="form-control" required v-model="item.cycleId"
-              @click="AddCycle">
-                <option value="" selected disabled hidden></option>
-                <option v-for="cycle in cycles" :key="cycle" :value="cycle._id">{{ cycle.name }}</option>
-                <option v-for="(value, index) in data.cycleSelect" :key="index" :value="value._id">
-                  {{ value.name }}
-                </option>
-                <option value="Add" >khác</option>
-              </select> -->
               <Select_Advanced
                 style="height: 40px;"
                 required

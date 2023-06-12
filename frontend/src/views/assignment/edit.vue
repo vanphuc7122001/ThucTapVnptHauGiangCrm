@@ -223,15 +223,21 @@ export default {
                   <label for="content"
                     >Trạng thái(<span style="color: red">*</span>):</label
                   >
-                  <input
+                  <!-- <input
                     type="text"
                     class="form-control w-100"
                     id="name"
                     name="name"
                     v-model="item.Status_Task.status"
                     required
-                  />
+                  /> -->
+
+                  <select id="" class="form-control w-100" required v-model="item.Status_Task.status">
+                    <option value="true" >Thành công</option>
+                    <option value="false" >Thất bại</option>
+                  </select>
                 </div>
+                
                 <div class="form-group flex-grow-1">
                   <label for="content"
                     >Nội dung trạng thái(<span style="color: red">*</span
