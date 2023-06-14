@@ -1,11 +1,15 @@
 <script>
-import { defineEmits, inject } from "vue";
+import { defineEmits, inject, reactive } from "vue";
 
 export default {
   props: {
 
   },
   setup(props, ctx) {
+    const data = reactive({
+      employeeName: sessionStorage.getItem("employeeName"),
+      role: sessionStorage.getItem("role")
+    })
     const emit = inject('emit');
     const updateMenuResponsive = () => {
       console.log('starting')
@@ -13,6 +17,7 @@ export default {
     };
     return {
       updateMenuResponsive,
+      data
     };
   },
 };
@@ -56,8 +61,8 @@ export default {
         <div
           class="d-xl-flex d-none flex-column align-items-center justify-content-center ml-2"
         >
-          <span class="font-size-13">Keyone</span>
-          <span class="italic-text font-size-13">Employee</span>
+          <span class="font-size-13">{{ data.employeeName }}</span>
+          <span class="italic-text font-size-13">{{ data.role }}</span>
         </div>
       </div>
     </div>

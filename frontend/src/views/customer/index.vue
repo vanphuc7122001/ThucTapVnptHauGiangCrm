@@ -40,7 +40,7 @@ export default {
   },
   setup(ctx) {
     const data = reactive({
-      items: null,
+      items: [],
       entryValue: 5,
       numberOfPages: 1,
       totalRow: 0,
@@ -154,7 +154,7 @@ export default {
     const toString = computed(() => {
       console.log("Starting search");
       return data.items.map((value, index) => {
-        return [value.Customer.name, value.Customer.phone, value.Customer.email]
+        return [value.Customer.name,value.Customer.email,value.Customer.phone]
           .join("")
           .toLocaleLowerCase();
       });
@@ -166,7 +166,6 @@ export default {
         );
       });
     });
-
     const filtered = computed(() => {
       if (!data.searchText) {
         data.totalRow = data.items.length;
@@ -195,7 +194,6 @@ export default {
         });
       } else return data.items.value;
     });
-
     // methods
     const update = (item) => {
       console.log("updating", item);
@@ -357,17 +355,15 @@ export default {
     <!-- Menu -->
     <div class="d-flex menu my-3 mx-3 justify-content-end">
       <router-link
-        to="/customer"
+        to="/admin/home/customer"
         @click="activeMenu = 1"
         :class="[activeMenu == 1 ? 'active-menu' : 'none-active-menu']"
-        href="#"
         >Khách hàng
       </router-link>
       <router-link
-        to="customer_types"
+        to="/admin/home/customer_types"
         @click="activeMenu = 2"
         :class="[activeMenu == 2 ? 'active-menu' : 'none-active-menu']"
-        href="#"
         >Loại khách hàng
       </router-link>
     </div>

@@ -9,17 +9,28 @@
       "
     >
       <div class="col-lg-4">
-        <div class="card shadow bg-bray" style="background: #20262E">
+        <div class="card shadow bg-bray" style="background: #20262e">
           <div class="card-body p-5">
             <h5 class="card-title text-center mb-4">
-              <img src="./assets/images/logo2.png" alt="" style="width: 230px" />
+              <img
+                src="./assets/images/logo2.png"
+                alt=""
+                style="width: 230px"
+              />
             </h5>
-            <h3 class="text-center mb-4" style="font-weight: bold; color: white">
+            <h3
+              class="text-center mb-4"
+              style="font-weight: bold; color: white"
+            >
               ĐĂNG NHẬP
             </h3>
             <form @submit.prevent="login">
               <div class="mb-3">
-                <label for="text" class="form-label" style="font-weight: bold; color: white;margin-bottom:15px">
+                <label
+                  for="text"
+                  class="form-label"
+                  style="font-weight: bold; color: white; margin-bottom: 15px"
+                >
                   Tên Tài Khoản(<span style="color: red">*</span>):
                 </label>
                 <input
@@ -31,31 +42,47 @@
                 />
               </div>
               <div class="mb-3">
-                <label for="password" class="form-label" style="font-weight: bold; color: white;margin-bottom:15px;margin-top:10px">
+                <label
+                  for="password"
+                  class="form-label"
+                  style="
+                    font-weight: bold;
+                    color: white;
+                    margin-bottom: 15px;
+                    margin-top: 10px;
+                  "
+                >
                   Mật Khẩu(<span style="color: red">*</span>):
                 </label>
                 <div class="input-group">
-      <input
-        v-model="password"
-        :type="showPassword ? 'text' : 'password'"
-        class="form-control"
-        id="password"
-        required
-      />
-      <div class="input-group-append">
-        <span class="input-group-text">
-          <i
-            class="fa"
-            :class="{'fa-eye': showPassword, 'fa-eye-slash': !showPassword}"
-            @click="togglePasswordVisibility"
-            style="cursor: pointer;"
-          ></i>
-        </span>
-      </div>
-    </div>
+                  <input
+                    v-model="password"
+                    :type="showPassword ? 'text' : 'password'"
+                    class="form-control"
+                    id="password"
+                    required
+                  />
+                  <div class="input-group-append">
+                    <span class="input-group-text">
+                      <i
+                        class="fa"
+                        :class="{
+                          'fa-eye': showPassword,
+                          'fa-eye-slash': !showPassword,
+                        }"
+                        @click="togglePasswordVisibility"
+                        style="cursor: pointer"
+                      ></i>
+                    </span>
+                  </div>
+                </div>
               </div>
-              
-              <button type="submit" class="btn btn-primary w-100" style="font-weight: bold; margin-top: 20px">
+
+              <button
+                type="submit"
+                class="btn btn-primary w-100"
+                style="font-weight: bold; margin-top: 20px"
+              >
                 Đăng Nhập
               </button>
             </form>
@@ -70,6 +97,7 @@
 import { ref } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import { alert_error, alert_success } from "./assets/js/common.alert";
 export default {
   setup() {
     const showPassword = ref(false);
@@ -83,26 +111,40 @@ export default {
     const login = async () => {
       try {
         // Gửi yêu cầu POST tới backend để kiểm tra đăng nhập
-        const response = await axios.post("http://localhost:3000/api/login", {
-          user_name: user_name.value,
-          password: password.value,
-        });
-        localStorage.setItem("token", response.data.token);
+        const response = await axios.post(
+          "http://localhost:3000/api/accounts/login",
+          {
+            user_name: user_name.value,
+            password: password.value,
+          }
+        );
+        console.log("response", response);
+        sessionStorage.setItem("token", response.data.token);
 
         // Kiểm tra phản hồi từ backend
-        if (response.data.success) {
+        if (response.data.error == false) {
           console.log(response.data.message);
           console.log(response);
           console.log("USERNAME:", user_name.value);
           console.log("PASSWORD:", password.value);
 
           // Đăng nhập thành công, chuyển hướng đến trang chủ
-          router.push("/");
-          location.reload()
+          alert_success(`Login`, `Đăng nhập thành công`);
+          // sessionStorage.setItem("loginInfo", {
+          //   customerId: response.data.document.Employee._id,
+          //   customerName: response.data.document.Employee.name,
+          //   role: response.data.document.Role.name,
+          // });
+          sessionStorage.setItem("employeeId", response.data.document.Employee._id);
+          sessionStorage.setItem("employeeName", response.data.document.Employee.name);
+          sessionStorage.setItem("role", response.data.document.Role.name);
+          // router.push({ name: "Dashboard" });
+          location.reload();
         } else {
           // Đăng nhập thất bại, xử lý thông báo lỗi hoặc hiển thị thông báo lỗi trên giao diện
-          console.log(response.data.message);
-          router.push("/login");
+          console.log(response.data.msg);
+          alert_error(`Login`, `${response.data.msg}`);
+          router.push({ name: "Login" });
         }
       } catch (error) {
         console.log(error);
@@ -110,11 +152,14 @@ export default {
     };
 
     const check = () => {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
+      const loginInfo = sessionStorage.getItem("loginInfo");
+      console.log(loginInfo);
+      console.log("token", token);
       if (token) {
-        router.push("/");
+        router.push({ name: "Dashboard" });
       } else {
-        router.push("/login");
+        router.push({ name: "Login" });
       }
     };
 
@@ -123,8 +168,9 @@ export default {
     return {
       user_name,
       password,
-      login,togglePasswordVisibility,
-      showPassword
+      login,
+      togglePasswordVisibility,
+      showPassword,
     };
   },
 };

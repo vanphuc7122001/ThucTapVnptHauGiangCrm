@@ -13,5 +13,7 @@ router.route('/:id')
     .get(accounts.findOne)
     .delete(accounts.deleteOne)
 
+router.route('/login')
+    .post(accounts.login)
 module.exports = router;
 

@@ -1,9 +1,9 @@
 <script>
 import Add from "./add.vue";
 import FormWizard from "../../components/form/form-wizard.vue";
+import Table from "../../components/table/table_account.vue";
 import {
   // components
-  Table,
   Pagination,
   Dropdown,
   Select,
@@ -83,21 +83,10 @@ export default {
       activeEdit: false,
       editValue: {},
       searchSelect: "",
-      optionSelect: [
-        {
-          _id: 1,
-          name: "1",
-        },
-        {
-          _id: 2,
-          name: "2",
-        },
-      ],
-      test: {
-        a: "",
-        b: "",
-      },
+      optionSelect: null,
     });
+
+    const entryValueRoleAccount = ref('Vai trò tài khoản')
     const toString = computed(() => {
       console.log("Starting search");
       return data.items.map((value, index) => {
@@ -216,32 +205,61 @@ export default {
 
     const refresh = async () => {
       data.items = await http_getAll(Account);
+      console.log('1', data.items);
       data.items = data.items.map((value, index) => {
         return {
           _id: value._id,
           user_name: value.user_name,
           employee: value.Employee.name,
           role: value.Role.name,
+          permision: [
+            ...value.Role.Permissions
+          ]
         };
       });
+      console.log('2', data.items);
+
+      const roles = await http_getAll(Role)
+      data.optionSelect = [
+        ...roles
+      ]
+
+      if(entryValueRoleAccount.value != 'Vai trò tài khoản') {
+        data.items = data.items.filter( (item) => {
+          return item.role == entryValueRoleAccount.value
+        })
+      }
     };
 
     const delete_a = async (objectData) => {
       console.log("delete_a", objectData);
     };
 
-    // handle http methods
+    const updateEntryValueRoleAccount = (value) => {
+        entryValueRoleAccount.value = value
+    }
+
+    //watch 
+    watch( entryValueRoleAccount, (newValue, oldValue) => {
+      if( entryValueRoleAccount.value != 'Vai trò tài khoản'){
+        refresh();
+      }else{
+        refresh();
+      }
+    })
+
 
     // Hàm callback được gọi trước khi component được mount (load)
     onBeforeMount(async () => {
       refresh();
-      console.log(data.items);
+      console.log('data.items', data.items);
     });
 
     return {
       data,
       setPages,
       activeMenu,
+      entryValueRoleAccount, 
       create,
       update,
       deleteOne,
@@ -249,6 +267,7 @@ export default {
       view,
       delete_a,
       refresh,
+      updateEntryValueRoleAccount
     };
   },
 };
@@ -284,13 +303,10 @@ export default {
       <div class="d-flex mx-3">
         <div class="form-group w-100">
           <Select
-            :title="`Vai trò tài khoản`"
-            :entryValue="`Vai trò tài khoản`"
-            :options="[
-              { name: '1 tuần', value: '1 tuần' },
-              { name: '1 tháng', value: '1 tháng' },
-              { name: '1 năm', value: '1 năm' },
-            ]"
+            :title="'Vai trò tài khoản'"
+            :entryValue="entryValueRoleAccount"
+            :options="data.optionSelect"
+            @update:entryValue="updateEntryValueRoleAccount"
           />
         </div>
         <!-- <div class="form-group ml-3">
@@ -359,7 +375,7 @@ export default {
     <Table
       :items="setPages"
       :fields="['Tên nhân viên', 'Tên tài khoản', 'Vai trò tài khoản', 'Quyền']"
-      :labels="['employee', 'user_name', 'role', 'content']"
+      :labels="['employee', 'user_name', 'role']"
       :showActionList="[false, false, true]"
       @delete="(value) => deleteOne(value)"
       @edit="
@@ -419,4 +435,3 @@ export default {
   border-radius: 5px;
 }
 </style>
-

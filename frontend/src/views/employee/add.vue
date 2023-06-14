@@ -76,11 +76,17 @@ export default {
     const create = async () => {
       const dataMail = reactive({
         title: "Thông tin tài khoản nhân viên",
-        content: `<h3> Xin chào công ty chúng tôi xin cung cấp cho bạn
-        tên tài khoản và mã tài khoản của bạn </h3>
-        <h4> Tên tài khoản: ${data.item.user_name} </h4>
-        <h4> Mật Khẩu: ${data.item.password} </h4>
-        `,
+        content: `<div>
+                    <h3>Dear ${data.item.name}</h3>
+                    <p>Chào mừng bạn đã trở thành nhân viên chính thức của công ty.</p>
+                    <p>Và đây là thông tin tài khoản của bạn để đăng nhập vào hệ thống</p>
+                    <p>quản lý chăm sóc khách hàng trong suốt quá trình làm việc tại công ty</p>
+                    <p>Tài khoản: ${data.item.user_name}</p>
+                    <p>Mật Khẩu: ${data.item.password} </p>
+                    <p>-----------------------------------------------------------------------</p>
+                    <p><span style="font-weight: bold;">Địa chỉ:</span> 61 Võ Văn Kiệt, Phường 5, Vị Thanh, Hậu Giang 95000</p>
+                    <p><span style="font-weight: bold;">Điện thoại:</span> 097 747 42 44</p>
+	                </div>`,
         mail: data.item.email,
       });
 

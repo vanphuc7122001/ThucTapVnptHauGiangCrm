@@ -41,7 +41,9 @@ exports.create = async (req, res, next) => {
 
 exports.findAll = async (req, res, next) => {
   try {
-    const documents = await Role.findAll({});
+    const documents = await Role.findAll({
+
+    });
     return res.send(documents);
   } catch (error) {
     console.log(error);
