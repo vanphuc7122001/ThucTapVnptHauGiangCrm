@@ -30,6 +30,10 @@ export default {
       type: Array,
       default: [true, true, true],
     },
+    startRow: {
+      type: Number,
+      default: 1,
+    }
   },
   setup(props, ntx) {},
 };
@@ -49,9 +53,10 @@ export default {
       </tr>
     </thead>
     <tbody>
+      {{ startRow }}
       <tr v-for="(item, index) in items">
         <td><input type="checkbox" v-model="item.checked" name="" id="" /></td>
-        <td>{{ index + 1 }}</td>
+        <td>{{ startRow + index + 1 }}</td>
         <td v-for="(label, index1) in labels">{{ item[label] }}</td>
         <td v-if="activeAction == true">
           <button

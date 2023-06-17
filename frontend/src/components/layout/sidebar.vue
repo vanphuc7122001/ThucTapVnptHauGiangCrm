@@ -122,7 +122,7 @@ export default {
               >
                 {{ sidebarTask.icon }}
               </span>
-              <span class="d-flex align-items-center" style="font-size: 15px;">{{
+              <span class="d-flex align-items-center" style="font-size: 18px;">{{
                 sidebarTask.name_icon
               }}</span>
             </div>
@@ -136,14 +136,13 @@ export default {
 <style scoped>
 .border-sidebar {
   border: 1px solid var(--gray);
-  border-bottom: 0;
-  border-top: 0;
-  border-left: 0;
-  height: 100vh;
-  max-height: 100vh;
+  border-radius: 5px;
+  height: 100%;
+  width: 100%;
+  /* max-height: 100vh;
   position: fixed;
   top: 0;
-  left: 0;
+  left: 0; */
   overflow-x: auto;
   overflow-y: hidden;
 }

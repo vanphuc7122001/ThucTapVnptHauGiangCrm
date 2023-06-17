@@ -8,7 +8,7 @@
         background-size: 100% 100%;
       "
     >
-      <div class="col-lg-4">
+      <div class="d-flex">
         <div class="card shadow bg-bray" style="background: #20262e">
           <div class="card-body p-5">
             <h5 class="card-title text-center mb-4">

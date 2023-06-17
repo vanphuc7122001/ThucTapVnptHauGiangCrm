@@ -49,7 +49,8 @@ import {
     alert_error,
     alert_delete,
     alert_warning,
-    alert_info
+    alert_info,
+    alert_delete_wide
 } from "../../assets/js/common.alert";
 
 export {
@@ -107,6 +108,7 @@ export {
     alert_error,
     alert_delete,
     alert_warning,
-    alert_info
+    alert_info,
+    alert_delete_wide
 }
 

@@ -205,7 +205,7 @@ export default {
         );
       } else {
         const formData = new FormData();
-        if (isImageUploaded.value == true) {
+        if (isImageUploaded.value == false) {
           formData.append("avatar", props.item.Customer.avatar);
         } else {
           console.log("Không có thay đổi");

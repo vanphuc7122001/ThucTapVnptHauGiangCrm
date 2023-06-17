@@ -59,7 +59,7 @@ export const alert_delete = async (title, text) => {
     await Swal.fire({
         icon: 'question',
         title: title,
-        text: text,
+        html: text,
         background: '#fff',
         didOpen: () => {
             const popup = Swal.getPopup();
@@ -68,6 +68,31 @@ export const alert_delete = async (title, text) => {
         showCancelButton: true,
         showConfirmButton: true,
         reverseButtons: true,
+    }).then((result) => {
+        isConfirmed = result.isConfirmed;
+    })
+    return isConfirmed;
+}
+
+export const alert_delete_wide = async (title, text) => {
+    let isConfirmed = false;
+    await Swal.fire({
+        icon: 'question',
+        title: title,
+        html: text,
+        background: '#fff',
+        didOpen: () => {
+            const popup = Swal.getPopup();
+            popup.style.border = '2px solid #fff';
+        },
+        showCancelButton: true,
+        showConfirmButton: true,
+        reverseButtons: true,
+        customClass: {
+            container: 'wide-dialog-container',
+            popup: 'wide-dialog-popup',
+            content: 'wide-dialog-content',
+        },
     }).then((result) => {
         isConfirmed = result.isConfirmed;
     })

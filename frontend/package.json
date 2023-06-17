@@ -14,6 +14,7 @@
     "bootstrap-icons": "^1.10.5",
     "sweetalert2": "^11.7.10",
     "vue": "^3.2.47",
+    "vue-click-outside": "^1.1.0",
     "vue-router": "^4.2.0"
   },
   "devDependencies": {

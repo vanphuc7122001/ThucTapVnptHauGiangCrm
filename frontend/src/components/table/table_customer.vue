@@ -1,36 +1,56 @@
 <template>
-    <table
-      class="my-table mb-2"
-    >
-      <thead>
-        <tr>
-          <th></th>
-          <th>Stt</th>
-          <th v-for="(value, index) in fields" :key="index">{{ value }}</th>
-          <th>Hành động</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(item, index) in items" :key="index">
-          <td><input type="checkbox" v-model="item.checked" name="" id="" /></td>
-          <td>{{ index + 1 }}</td>
-          <td>{{ item.Customer.name }}</td>
-          <td>{{ item.Customer.email }}</td>
-          <td>{{ item.Customer.phone }}</td>
-          <td>{{ item.current_position }}</td>
-          <td>{{ item.Company_KH.name }}</td>
-          <td>{{ item.Customer.Customer_Type.name }}</td>
+  <table class="my-table mb-2">
+    <thead>
+      <tr class="">
+        <th>
+          <input
+            type="checkbox"
+            name=""
+            id=""
+            :checked="selectAll[0].checked == true"
+            v-model="selectAll[0].checked"
+            @click="$emit('selectAll', selectAll[0].checked)"
+            class="d-flex align-items-center size-16"
+          />
+        </th>
+        <th><span class="size-16">Stt</span></th>
+        <th v-for="(value, index) in fields" :key="index">
+          <span class="size-16">{{ value }}</span>
+        </th>
+        <th><span class="size-16">Hành động</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="size-16" v-for="(item, index) in items" :key="index">
+        <td>
+          <input
+            type="checkbox"
+            :checked="item.checked == true"
+            v-model="item.checked"
+            name=""
+            id=""
+            class="d-flex align-items-center size-16"
+          />
+        </td>
+        <td class="size-16">{{ startRow + index }}</td>
+        <td class="size-16">{{ item.Customer.name }}</td>
+        <td class="size-16">{{ item.Customer.email }}</td>
+        <td class="size-16">{{ item.Customer.phone }}</td>
+        <td class="size-16">{{ item.current_position }}</td>
+        <td class="size-16">{{ item.Company_KH.name }}</td>
+        <td class="size-16">{{ item.Customer.Customer_Type.name }}</td>
 
-          <td>
+        <td class="">
+          <div class="d-flex align-items-center">
             <button
               type="button"
-              class=""
+              class="format-btn"
               data-toggle="modal"
               data-target="#model-view"
             >
               <span
                 id="view"
-                class="material-symbols-outlined d-flex align-items-center"
+                class="material-symbols-outlined d-flex align-content-center"
                 @click="$emit('view', item)"
               >
                 visibility
@@ -38,13 +58,13 @@
             </button>
             <button
               type="button"
-              class="mx-2"
+              class="mx-2 format-btn"
               data-toggle="modal"
               data-target="#model-edit"
             >
               <span
                 id="edit"
-                class="material-symbols-outlined d-flex align-items-center justify-content-center"
+                class="material-symbols-outlined d-flex align-content-center"
                 @click="$emit('edit', item, true)"
               >
                 edit
@@ -53,16 +73,18 @@
             <span
               id="delete"
               class="material-symbols-outlined"
-              @click="$emit('delete', item.Customer._id, item.Company_KH._id, item)"
+              @click="
+                $emit('delete', item.Customer._id, item.Company_KH._id, item)
+              "
             >
               delete
             </span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </template>
-
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</template>
 
 <script>
 export default {
@@ -79,13 +101,21 @@ export default {
       type: Array,
       default: [],
     },
+    startRow: {
+      type: Number,
+      default: 1,
+    },
+    selectAll: {
+      type: Array,
+      default: [],
+    },
   },
   setup(props, ntx) {
     console.log(props.items);
-    const defaultCustomerType = 'Thường'
+    const defaultCustomerType = "Thường";
     return {
-      defaultCustomerType
-    }
+      defaultCustomerType,
+    };
   },
 };
 </script>

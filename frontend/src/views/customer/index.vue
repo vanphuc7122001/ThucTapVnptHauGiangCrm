@@ -12,6 +12,7 @@ import {
   alert_error,
   alert_warning,
   alert_delete,
+  alert_delete_wide,
   Pagination,
   Dropdown,
   Select,
@@ -100,34 +101,58 @@ export default {
       customerValue: {},
       showAddHabit: false,
       customerType: null,
+      choseSearch: "",
+      selectAll: [
+        {
+          checked: false,
+        },
+      ],
     });
 
-    const entryValueCustomerType = ref("Loại khách hàng");
-    const entryValueStatusTask = ref("Trạng thái chăm sóc");
+    const entryValueCustomerType = ref("");
+    const entryNameCustomerType = ref("Chọn loại khách hàng");
+    const entryValueStatusTask = ref("");
+    const entryNameStatusTask = ref("Trạng thái chăm sóc");
 
     const reFresh = async () => {
       const cusWork = await http_getAll(Customer_Work);
       const customerType = await http_getAll(Customer_Types);
       data.items = cusWork.documents;
-      data.customerType = customerType.documents;
+      for (let value of data.items) {
+        value.checked = false;
+      }
 
-      if (entryValueCustomerType.value != "Loại khách hàng") {
+      console.log("customer", data.items);
+      data.customerType = customerType.documents;
+      console.log("customerType", data.customerType);
+      data.customerType = data.customerType.map((value, index) => {
+        return {
+          ...value,
+          value: value._id,
+        };
+      });
+      console.log("customerType", data.customerType);
+
+      if (entryValueCustomerType.value.length > 0) {
         data.items = data.items.filter((cusWork) => {
           return (
-            cusWork.Customer.Customer_Type.name == entryValueCustomerType.value
+            cusWork.Customer.Customer_Type._id == entryValueCustomerType.value
           );
         });
       }
 
-      if(entryValueStatusTask.value != 'Trạng thái chăm sóc') {
-        
-        data.items = data.items.filter( (cusWork) => {
-          return cusWork.Customer.Tasks.filter( task => {
-            return task.Status_Task.status == entryValueStatusTask.value;
-          }).length > 0
+      console.log("customer1", data.items);
 
-        })
-      }
+      // if (entryValueStatusTask.value != "Trạng thái chăm sóc") {
+      //   data.items = data.items.filter((cusWork) => {
+      //     return (
+      //       cusWork.Customer.Tasks.filter((task) => {
+      //         return task.Status_Task.status == entryValueStatusTask.value;
+      //       }).length > 0
+      //     );
+      //   });
+      // }
+      console.log("customer2", data.items);
     };
 
     const showAddHabit = () => {
@@ -153,11 +178,29 @@ export default {
     // computed
     const toString = computed(() => {
       console.log("Starting search");
-      return data.items.map((value, index) => {
-        return [value.Customer.name,value.Customer.email,value.Customer.phone]
-          .join("")
-          .toLocaleLowerCase();
-      });
+      if (data.choseSearch == "name") {
+        return data.items.map((value, index) => {
+          return [value.Customer.name].join("").toLocaleLowerCase();
+        });
+      } else if (data.choseSearch == "email") {
+        return data.items.map((value, index) => {
+          return [value.Customer.email].join("").toLocaleLowerCase();
+        });
+      } else if (data.choseSearch == "phone") {
+        return data.items.map((value, index) => {
+          return [value.Customer.phone].join("").toLocaleLowerCase();
+        });
+      } else {
+        return data.items.map((value, index) => {
+          return [
+            value.Customer.name,
+            value.Customer.email,
+            value.Customer.phone,
+          ]
+            .join("")
+            .toLocaleLowerCase();
+        });
+      }
     });
     const filter = computed(() => {
       return data.items.filter((value, index) => {
@@ -219,14 +262,8 @@ export default {
         if (rsCustomer.error) {
           alert_error("Lổi ", rsCustomer.msg);
         } else {
-          const rsCompany = await http_deleteOne(Company_KH, CompanyId);
-          console.log(rsCompany);
-          if (rsCompany.error) {
-            alert_error("Lổi ", rsCompany.msg);
-          } else {
-            reFresh();
-            alert_success("Thành công", "Xóa khách hàng thành công");
-          }
+          reFresh();
+          alert_success("Thành công", "Xóa khách hàng thành công");
         }
       }
     };
@@ -254,12 +291,8 @@ export default {
           _id: item.Company_KH._id,
           name: item.Company_KH.name,
         },
-        Events: [
-          ...item.Customer.Events,
-        ],
-        Tasks: [
-          ...item.Customer.Tasks,
-        ],
+        Events: [...item.Customer.Events],
+        Tasks: [...item.Customer.Tasks],
         Habits: {
           ...item.Customer.Habits,
         },
@@ -313,6 +346,75 @@ export default {
       entryValueStatusTask.value = value;
     };
 
+    const handleSelectAll = (value) => {
+      console.log("cccc", value);
+      if (value == false) {
+        for (let value1 of data.items) {
+          value1.checked = true;
+        }
+      } else {
+        for (let value1 of data.items) {
+          value1.checked = false;
+        }
+      }
+    }; 
+    
+    const deleteMany = async () => {
+      try {
+        const deleteArray = data.items.filter((value, index) => {
+          return value.checked == true;
+        });
+        let name, phone, email;
+        let contentAlert = `<p>Bạn có muốn xoá tất cả khách hàng này không?</p><p>Tổng số khách hàng sẽ xoá là: <span style="color: blue;">${deleteArray.length}</span></p>
+          <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Tên khách hàng</th>
+          <th>Email</th>
+          <th>Số điện thoại</th>
+        </tr>
+      </thead> <tbody>`;
+        console.log("deleteArray", deleteArray[0].Customer);
+        for (let value of deleteArray) {
+          console.log(value.Customer);
+          contentAlert += `<tr>
+          <td>${value.Customer.name}</td>
+          <td>${value.Customer.email}</td>
+          <td>
+            ${value.Customer.phone}
+          </td>
+        </tr>`;
+        }
+        contentAlert += `</tbody>
+    </table>`;
+        const isConfirmed = await alert_delete_wide(
+          `Xoá nhiều khách khách hàng`,
+          contentAlert
+        );
+        if (isConfirmed) {
+          let checkDeleteAll = false;
+          for (let valueDelete of deleteArray) {
+            const rsCustomer = await http_deleteOne(
+              Customer,
+              valueDelete.Customer._id
+            );
+            if (rsCustomer.error) {
+              alert_error("Lổi ", rsCustomer.msg);
+              checkDeleteAll = false;
+            } else {
+              checkDeleteAll = true;
+            }
+          }
+          if (checkDeleteAll) {
+            reFresh();
+            alert_success("Thành công", "Xóa khách hàng thành công");
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     watch(entryValueCustomerType, (newValue, oldValue) => {
       if (newValue != "Loại khách hàng") {
         reFresh();
@@ -341,43 +443,58 @@ export default {
       updateEntryValueCustomerType,
       updateEntryValueStatusTask,
       entryValueCustomerType,
+      entryNameCustomerType,
       entryValueStatusTask,
+      entryNameStatusTask,
       data,
       setPages,
       activeMenu,
+      handleSelectAll,
+      deleteMany,
+      reFresh,
     };
   },
 };
 </script>
 
 <template>
-  <div class="border-box d-flex flex-column ml-2">
+  <div class="border-box d-flex flex-column ml-2" style="margin-right: -3px">
     <!-- Menu -->
     <div class="d-flex menu my-3 mx-3 justify-content-end">
       <router-link
         to="/admin/home/customer"
         @click="activeMenu = 1"
         :class="[activeMenu == 1 ? 'active-menu' : 'none-active-menu']"
-        >Khách hàng
+        ><span class="size-18">Khách hàng</span>
       </router-link>
       <router-link
         to="/admin/home/customer_types"
         @click="activeMenu = 2"
         :class="[activeMenu == 2 ? 'active-menu' : 'none-active-menu']"
-        >Loại khách hàng
+        ><span class="size-18">Loại khách hàng</span>
       </router-link>
     </div>
     <!-- Filter -->
     <div class="border-hr mb-3"></div>
-    <div class="d-flex flex-column mt-3">
-      <span class="mx-3 mb-3 h6">Lọc khách hàng</span>
+    <div class="d-flex flex-column">
+      <span class="mx-3 mb-3 h6 size-18">Lọc khách hàng</span>
       <div class="d-flex mx-3">
         <div class="form-group w-100">
+          <!-- entryValue = modelValue -->
           <Select
             :title="`Loại khách hàng`"
-            :entryValue="entryValueCustomerType"
+            :entryValue="entryNameCustomerType"
             :options="data.customerType"
-            @update:entryValue="updateEntryValueCustomerType"
+            @update:entryValue="
+              (value, value1) => (
+                updateEntryValueCustomerType(value),
+                (entryNameCustomerType = value1.name)
+              )
+            "
+            @refresh="
+              (entryNameCustomerType = 'Chọn loại khách hàng'), updateEntryValueCustomerType('')
+            "
+            style="height: 35px"
           />
         </div>
         <div class="form-group w-100 ml-3">
@@ -423,18 +540,40 @@ export default {
               name: 30,
               value: 30,
             },
-            {
-              name: 'All',
-              value: 'All',
-            },
           ]"
+          style="width: 125px"
+          :title="`Số bản ghi`"
           @update:entryValue="(value) => (data.entryValue = value)"
           :entryValue="data.entryValue"
+          @refresh="data.entryValue = 'All'"
         />
         <Search
           class="ml-3"
           style="width: 300px"
           @update:searchText="(value) => (data.searchText = value)"
+          :entryValue="data.searchText"
+          @choseSearch="
+            async (value) => (
+              console.log('search ........'),
+              (data.choseSearch = value),
+              (data.currentPage = 1)
+            )
+          "
+          @refresh="(data.entryValue = 'All'), (data.currentPage = 1)"
+          :options="[
+            {
+              _id: 'name',
+              name: 'Tìm kiếm theo tên',
+            },
+            {
+              _id: 'email',
+              name: 'Tìm kiếm theo email',
+            },
+            {
+              _id: 'phone',
+              name: 'Tìm kiếm theo số điện thoại',
+            },
+          ]"
         />
       </div>
       <div class="d-flex align-items-start">
@@ -443,8 +582,11 @@ export default {
           class="btn btn-danger mr-3"
           data-toggle="modal"
           data-target="#model-delete-all"
+          @click="deleteMany()"
         >
-          <span id="delete-all" class="mx-2">Xoá</span>
+          <span id="delete-all" class="mx-2"
+            ><span class="size-16">Xoá</span></span
+          >
         </button>
         <!-- <DeleteAll :items="data.items" /> -->
         <button
@@ -453,7 +595,7 @@ export default {
           data-toggle="modal"
           data-target="#model-add"
         >
-          <span id="add" class="mx-2">Thêm</span>
+          <span id="add" class="mx-2"><span class="size-16">Thêm</span></span>
         </button>
         <Add @refresh_customer="refresh_customer" />
         <button
@@ -463,7 +605,9 @@ export default {
           data-target="#model-addHabit"
           @click="showAddHabit()"
         >
-          <span id="add" class="mx-2">Thêm thói quen</span>
+          <span id="add" class="mx-2"
+            ><span class="size-16">Thêm thói quen</span></span
+          >
         </button>
         <AddHabit v-if="data.showAddHabit" :item="data.customerValue" />
       </div>
@@ -479,6 +623,9 @@ export default {
         'Công ty',
         'Loại khách hàng',
       ]"
+      :selectAll="data.selectAll"
+      :startRow="data.startRow"
+      @selectAll="(value) => handleSelectAll(value)"
       @delete="handleDelete"
       @edit="edit"
       @view="view"

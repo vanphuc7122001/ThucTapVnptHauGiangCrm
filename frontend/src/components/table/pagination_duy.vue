@@ -49,13 +49,15 @@ export default {
 
 <template>
   <div class="d-flex justify-content-between align-items-center mt-2">
-    <p>
-      Hiển thị từ {{ totalRow == 0 ? 0 : startRow }} đển
-      {{ endRow > totalRow ? totalRow : endRow }} của {{ totalRow }} bản ghi
+    <p class="size-16">
+      Hiển thị {{ totalRow == 0 ? 0 : startRow }} đển
+      {{ endRow > totalRow ? totalRow : endRow }} trên {{ totalRow }} bản ghi
     </p>
     <ul class="pagination">
       <li @click="updatePrevPage(currentPage)" class="page-item">
-        <a class="page-link text-dark" href="#">Previous</a>
+        <a class="page-link text-dark material-symbols-outlined h-100" href="#"
+          ><span class="size-20">chevron_left</span></a
+        >
       </li>
       <li
         @click="updateCurrentPage(value)"
@@ -63,14 +65,16 @@ export default {
         class="page-item"
       >
         <a
-          class="page-link"
+          class="page-link h-100 d-flex align-items-center"
           :class="[index == currentPage - 1 ? 'text-blue' : 'text-dark']"
           href="#"
           >{{ value }}</a
         >
       </li>
       <li @click="updateNextPage(currentPage)" class="page-item">
-        <a class="page-link text-dark" href="#">Next</a>
+        <a class="page-link text-dark material-symbols-outlined h-100" href="#"
+          ><span class="size-20">chevron_right</span></a
+        >
       </li>
     </ul>
   </div>
@@ -83,9 +87,9 @@ export default {
 .page-link {
   border: 1px solid var(--gray);
   border-collapse: collapse;
-  padding: 8px 12px;
+  padding: 6px 12px;
   background-color: inherit;
-  font-size: 14px;
+  font-size: 16px;
 }
 .text-dark {
   color: var(--dark);

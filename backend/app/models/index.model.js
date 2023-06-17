@@ -659,74 +659,60 @@ const Appointment = sequelize.define('Appointment', {
 
 const Status_Task = sequelize.define('Status_Task', {
     _id: setPrimary,
-    status: {
+    name: {
         type: DataTypes.TEXT,
         allowNull: false,
         get() {
-            return getDecrypt('status', this);
+            return getDecrypt('name', this);
         },
         set(value) {
-            setEncrypt(value, 'status', this);
+            setEncrypt(value, 'name', this);
         },
     },
-    reason: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-        get() {
-            return getDecrypt('reason', this);
-        },
-        set(value) {
-            setEncrypt(value, 'reason', this);
-        },
-    }
 })
 
-const FeedBack_Task = sequelize.define('FeedBack_Task', {
-    _id: setPrimary,
-    evaluate: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-        get() {
-            return getDecrypt('evaluate', this);
-        },
-        set(value) {
-            setEncrypt(value, 'evaluate', this);
-        },
-    },
-    comment: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-        get() {
-            return getDecrypt('comment', this);
-        },
-        set(value) {
-            setEncrypt(value, 'comment', this);
-        },
-    }
-})
+
 
 const Status_App = sequelize.define('Status_App', {
     _id: setPrimary,
-    status: {
+    name: {
         type: DataTypes.TEXT,
         allowNull: false,
         get() {
-            return getDecrypt('status', this);
+            return getDecrypt('name', this);
         },
         set(value) {
-            setEncrypt(value, 'status', this);
+            setEncrypt(value, 'name', this);
         },
     },
-    reason: {
+})
+
+const Evaluate = sequelize.define('Evaluate', {
+    _id: setPrimary,
+    star: {
         type: DataTypes.TEXT,
         allowNull: false,
         get() {
-            return getDecrypt('reason', this);
+            return getDecrypt('star', this);
         },
         set(value) {
-            setEncrypt(value, 'reason', this);
+            setEncrypt(value, 'star', this);
         },
-    }
+    },
+})
+
+const Comment = sequelize.define('Comment', {
+    _id: setPrimary,
+    content: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+        get() {
+            return getDecrypt('content', this);
+        },
+        set(value) {
+            setEncrypt(value, 'content', this);
+        },
+    },
 })
 
 const Task = sequelize.define('Task', {
@@ -774,6 +760,15 @@ const Task = sequelize.define('Task', {
         },
         set(value) {
             setEncrypt(value, 'content', this);
+        },
+    },
+    note: {
+        type: DataTypes.TEXT,
+        get() {
+            return getDecrypt('note', this);
+        },
+        set(value) {
+            setEncrypt(value, 'note', this);
         },
     }
 })
@@ -937,6 +932,36 @@ Account.belongsTo(Role, {
     onUpdate: 'CASCADE'
 });
 
+// checked
+Status_Task.hasMany(Task, {
+    foreignKey: 'StatusTaskId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+Task.belongsTo(Status_Task, {
+    foreignKey: 'StatusTaskId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+
+// checked
+Status_App.hasMany(Appointment, {
+    foreignKey: 'StatusAppId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+Appointment.belongsTo(Status_App, {
+    foreignKey: 'StatusAppId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+
+// checked
+Evaluate.hasMany(Task, {
+    foreignKey: 'EvaluateId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+Task.belongsTo(Evaluate, {
+    foreignKey: 'EvaluateId', onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+
 // many-to-many relationship
 
 // checked
@@ -995,31 +1020,11 @@ Account.belongsTo(Employee, {
 });
 
 // checked
-Appointment.hasOne(Status_App, {
+Task.hasOne(Comment, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE'
 });
-Status_App.belongsTo(Appointment, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE'
-});
-
-// checked
-Task.hasOne(Status_Task, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE'
-});
-Status_Task.belongsTo(Task, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE'
-});
-
-// checked
-Task.hasOne(FeedBack_Task, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE'
-});
-FeedBack_Task.belongsTo(Task, {
+Comment.belongsTo(Task, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE'
 });
@@ -1043,9 +1048,10 @@ Account.sync();
 Appointment.sync();
 Task.sync();
 Log.sync();
+Evaluate.sync();
+Comment.sync();
 Status_App.sync();
 Status_Task.sync();
-FeedBack_Task.sync();
 Customer_Event.sync();
 Customer_Habit.sync();
 Employee_Task.sync();
@@ -1076,6 +1082,7 @@ module.exports = {
     Role_Permission,
     Status_App,
     Status_Task,
-    FeedBack_Task,
+    Evaluate,
+    Comment,
 };
 
