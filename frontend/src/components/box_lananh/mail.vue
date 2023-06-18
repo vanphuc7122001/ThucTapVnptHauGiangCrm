@@ -10,14 +10,7 @@ export default {
       mail: "",
     });
     const sendEmail = async () => {
-      // console.log("mail:", item);
       ntx.emit("sendEmail", item);
-      // try {
-      //   await mailService.sendmail(item);
-      //   console.log("Email sent successfully.");
-      // } catch (error) {
-      //   console.error("Error sending email:", error);
-      // }
     };
 
     return {
@@ -74,8 +67,7 @@ export default {
                   </div>
                   <div class="form-group flex-grow-1">
                     <label for="content"
-                      >Nội dung sự kiện(<span style="color: red">*</span
-                      >):</label
+                      >Nội dung (<span style="color: red">*</span>):</label
                     >
                     <textarea
                       id="content"

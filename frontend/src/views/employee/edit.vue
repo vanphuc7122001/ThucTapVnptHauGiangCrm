@@ -165,9 +165,7 @@ export default {
     const update = ref("");
     update.value = props.updateAdd;
     watchEffect(async () => {
-      console.log("updateADD:", props.updateAdd);
       if (props.updateAdd) {
-        console.log("updateADD:", props.updateAdd);
         await refresh_add();
         ctx.emit("restore", false);
       }
@@ -356,11 +354,10 @@ export default {
                   >
                   <div class="form-group w-100">
                     <Select_Advanced
-                      class="form-control"
                       required
                       :modelValue="item.Position.name"
                       :options="positions.position"
-                      style="width: 100%; height: 100%"
+                      style="height: 40px"
                       @searchSelect="
                         async (value) => (
                           await refresh_add(),
@@ -376,7 +373,12 @@ export default {
                         )
                       "
                       @delete="(value) => onDeletePosition(value)"
-                      @choosed="(value) => (item.postionId = value)"
+                      @chose="
+                        (value, value1) => {
+                          item.postionId = value;
+                          item.Position.name = value1.name;
+                        }
+                      "
                     />
                   </div>
                 </div>
@@ -386,11 +388,10 @@ export default {
                   >
                   <div class="form-group w-100">
                     <Select_Advanced
-                      class="form-control"
                       required
                       :options="centers.center"
                       :modelValue="item.Unit.Department.Center_VNPTHG.name"
-                      style="width: 100%; height: 100%"
+                      style="height: 40px"
                       @searchSelect="
                         async (value) => (
                           await refresh_add(),
@@ -406,7 +407,13 @@ export default {
                         )
                       "
                       @delete="(value) => onDeleteCenter(value)"
-                      @choosed="(value) => (selectedOptionCenter = value)"
+                      @chose="
+                        (value, value1) => (
+                          (selectedOptionCenter = value),
+                          (item.Unit.Department.Center_VNPTHG.name =
+                            value1.name)
+                        )
+                      "
                     />
                   </div>
                 </div>
@@ -415,11 +422,10 @@ export default {
                     >Phòng(<span style="color: red">*</span>):</label
                   >
                   <Select_Advanced
-                    class="form-control"
                     required
                     :options="departments.department"
                     :modelValue="item.Unit.Department.name"
-                    style="width: 100%; height: 100%"
+                    style="height: 40px"
                     @searchSelect="
                       async (value) => (
                         await refresh_add(),
@@ -435,16 +441,20 @@ export default {
                       )
                     "
                     @delete="(value) => onDeleteDep(value)"
-                    @choosed="(value) => (selectedOptionDepartment = value)"
+                    @chose="
+                      (value, value1) => {
+                        (selectedOptionDepartment = value),
+                          (item.Unit.Department.name = value1.name);
+                      }
+                    "
                   />
                 </div>
                 <div class="form-group flex-grow-1">
                   <label for="">Tổ(<span style="color: red">*</span>):</label>
                   <Select_Advanced
-                    class="form-control"
                     :options="units.unit"
                     :modelValue="item.Unit.name"
-                    style="width: 100%; height: 100%"
+                    style="height: 40px"
                     @searchSelect="
                       async (value) => (
                         await refresh_add(),
@@ -458,7 +468,11 @@ export default {
                       )
                     "
                     @delete="(value) => onDeleteUnit(value)"
-                    @choosed="(value) => (item.unitId = value)"
+                    @chose="
+                      (value, value1) => {
+                        (item.unitId = value), (item.Unit.name = value1.name);
+                      }
+                    "
                   />
                 </div>
                 <button

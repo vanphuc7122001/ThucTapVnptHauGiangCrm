@@ -1,5 +1,90 @@
+<template>
+  <table class="my-table mb-2">
+    <thead>
+      <tr class="">
+        <th>
+          <input
+            type="checkbox"
+            name=""
+            id=""
+            :checked="selectAll[0].checked == true"
+            v-model="selectAll[0].checked"
+            @click="$emit('selectAll', selectAll[0].checked)"
+            class="d-flex align-items-center size-16"
+          />
+        </th>
+        <th><span class="size-16">Stt</span></th>
+        <th v-for="(value, index) in fields" :key="index">
+          <span class="size-16">{{ value }}</span>
+        </th>
+        <th><span class="size-16">Hành động</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="size-16" v-for="(item, index) in items" :key="index">
+        <td>
+          <input
+            type="checkbox"
+            :checked="item.checked == true"
+            v-model="item.checked"
+            name=""
+            id=""
+            class="d-flex align-items-center size-16"
+          />
+        </td>
+        <td class="size-16">{{ startRow + index }}</td>
+        <td class="size-16">{{ item.name }}</td>
+        <td class="size-16">{{ item.phone }}</td>
+        <td class="size-16">{{ item.address }}</td>
+        <td class="size-16">{{ item.Position.name }}</td>
+        <td class="size-16">{{ item.Unit.name }}</td>
+        <td class="size-16">{{ item.Unit.Department.name }}</td>
+        <td class="size-16">{{ item.Unit.Department.Center_VNPTHG.name }}</td>
+        <td class="">
+          <div class="d-flex align-items-center">
+            <button
+              type="button"
+              class="format-btn"
+              data-toggle="modal"
+              data-target="#model-view"
+            >
+              <span
+                id="view"
+                class="material-symbols-outlined d-flex align-content-center"
+                @click="$emit('view', item._id, item)"
+              >
+                visibility
+              </span>
+            </button>
+            <button
+              type="button"
+              class="mx-2 format-btn"
+              data-toggle="modal"
+              data-target="#model-edit"
+            >
+              <span
+                id="edit"
+                class="material-symbols-outlined d-flex align-content-center"
+                @click="$emit('edit', item, true)"
+              >
+                edit
+              </span>
+            </button>
+            <span
+              id="delete"
+              class="material-symbols-outlined"
+              @click="$emit('delete', item._id, item)"
+            >
+              delete
+            </span>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</template>
+
 <script>
-import { reactive, watchEffect, ref } from "vue";
 export default {
   props: {
     items: {
@@ -14,127 +99,24 @@ export default {
       type: Array,
       default: [],
     },
-    actionList: {
+    startRow: {
+      type: Number,
+      default: 1,
+    },
+    selectAll: {
       type: Array,
       default: [],
     },
-    activeAction: {
-      type: Boolean,
-      default: true,
-    },
-    borderTableAll: {
-      type: Boolean,
-      default: false,
-    },
   },
   setup(props, ntx) {
-    const checkedValues = ref([]);
-
-    const handleCheckboxChange = (value, checked) => {
-      console.log("change");
-      if (checked) {
-        // Checkbox được chọn, thêm giá trị vào mảng checkedValues nếu chưa tồn tại
-        if (!checkedValues.value.includes(value)) {
-          checkedValues.value.push(value);
-        }
-      } else {
-        // Checkbox bị bỏ chọn, loại bỏ giá trị khỏi mảng checkedValues nếu tồn tại
-        const index = checkedValues.value.indexOf(value);
-        if (index > -1) {
-          checkedValues.value.splice(index, 1);
-        }
-      }
-      console.log("change", checkedValues.value);
-      ntx.emit("checkbox", checkedValues.value);
-    };
-
-    // watchEffect(() => {
-    //   console.log(checkedValues.value);
-    // });
-
+    console.log(props.items);
+    const defaultCustomerType = "Thường";
     return {
-      handleCheckboxChange,
+      defaultCustomerType,
     };
   },
 };
 </script>
-
-<template>
-  <table
-    class="my-table mb-2"
-    :class="[borderTableAll ? 'border-table-all' : '']"
-  >
-    <thead>
-      <tr>
-        <th></th>
-        <th>Stt</th>
-        <th v-for="(value, index) in fields" :key="index">{{ value }}</th>
-        <th v-if="activeAction == true">Hành động</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="(item, index) in items" :key="index">
-        <td>
-          <input
-            type="checkbox"
-            name=""
-            :id="`checkbox ${index}`"
-            :value="`${item.email}`"
-            @change="
-              handleCheckboxChange($event.target.value, $event.target.checked)
-            "
-          />
-        </td>
-        <td>{{ index + 1 }}</td>
-        <td v-for="(label, index1) in labels" :key="index1">
-          {{ item[label] }}
-        </td>
-        <td>{{ item.Position.name }}</td>
-        <td>{{ item.Unit.name }}</td>
-        <td>{{ item.Unit.Department.name }}</td>
-        <td>{{ item.Unit.Department.Center_VNPTHG.name }}</td>
-        <td v-if="activeAction == true">
-          <button
-            type="button"
-            class=""
-            data-toggle="modal"
-            data-target="#model-view"
-          >
-            <span
-              id="view"
-              class="material-symbols-outlined d-flex align-items-center"
-              @click="$emit('view', item)"
-            >
-              visibility
-            </span>
-          </button>
-          <button
-            type="button"
-            class="mx-2"
-            data-toggle="modal"
-            data-target="#model-edit"
-          >
-            <span
-              id="edit"
-              class="material-symbols-outlined d-flex align-items-center justify-content-center"
-              @click="$emit('edit', item, true)"
-            >
-              edit
-            </span>
-          </button>
-          <span
-            id="delete"
-            class="material-symbols-outlined"
-            @click="$emit('delete', item._id)"
-          >
-            delete
-          </span>
-        </td>
-      </tr>
-      <!-- <button @click="getSelectedCheckboxes()">Lấy các checkbox đã chọn</button> -->
-    </tbody>
-  </table>
-</template>
 
 <style scoped>
 .my-table {

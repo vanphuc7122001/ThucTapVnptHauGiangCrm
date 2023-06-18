@@ -39,7 +39,6 @@ export default {
       type: Object,
       default: {},
     },
-    updateAdd: { type: String, default: "" },
   },
   setup(props, ctx) {
     const data = reactive({
@@ -64,6 +63,7 @@ export default {
         phone: "",
         email: "",
         address: "",
+        password: "",
       },
       modelPos: "",
       modelValue: "",
@@ -94,6 +94,7 @@ export default {
 
       data.item.unitId = selectedOptionUnit.value;
       data.item.postionId = selectedOptionPosition.value;
+
       data.item.checkUser = true;
       const account = await http_create(Account, data.item);
       if (account.user_name == true) {
@@ -104,16 +105,30 @@ export default {
         if (!result.error) {
           data.item.EmployeeId = result.document._id;
           const account = await http_create(Account, data.item);
-          await mailService.sendmail(dataMail);
           alert_success(
             `Thêm nhân viên`,
             `Nhân viên "${result.document.name}" đã được tạo thành công.`
           );
+          await mailService.sendmail(dataMail);
+
           refresh();
         } else if (result.error) {
           alert_error(`Thêm nhân viên`, `${result.msg}`);
         }
         ctx.emit("create");
+        data.item = {
+          name: "",
+          birthday: "",
+          phone: "",
+          email: "",
+          address: "",
+        };
+        data.modelValue = "";
+        data.modelDep = "";
+        data.modelUnit = "";
+        data.modelPos = "";
+        data.modelRole = "";
+        data.item.password = setAccount();
       } else if (account.user_name == false) {
         alert_error(`Thêm nhân viên`, `${account.msg}`);
       }
@@ -128,7 +143,8 @@ export default {
         const randomIndex = Math.floor(Math.random() * charset.length);
         password += charset[randomIndex];
       }
-      data.item.password = password;
+      // data.item.password = password;
+      return password;
     };
     // ****REFRESH
     const refresh = async (name) => {
@@ -233,6 +249,7 @@ export default {
             alert_success(`Đã thêm trung tâm`, `${CenterName}`);
             await refresh("center");
             data.modelValue = document.document.name;
+            selectedOptionCenter.value = document.document._id;
             centers.center.push({ _id: "other", name: "khác" });
             ctx.emit("newCenter", centers.center);
           }
@@ -301,7 +318,9 @@ export default {
             }
             alert_success(`Đã thêm phòng`, `${formValues.inputValue}`);
             data.modelDep = document.document.name;
+            selectedOptionDepartment.value = document.document._id;
             await refresh("department");
+            departments.department.push({ _id: "other", name: "khác" });
             ctx.emit("newDep", departments.department);
           }
         };
@@ -329,14 +348,14 @@ export default {
         ${centers.center
           .map(
             (option) => `<option value="${option._id}"
-            ${option._id == selectedOptionCenter.value ? "selected" : ""} 
+            ${option._id == selectedOptionCenter.value ? "selected" : ""}
             >${option.name}</option>`
           )
           .join("")}
       </select>
       <select id="my-select-dep" class="swal2-input form-control  ml-3  mx-2" style="width:92%" >
         <option value="">Phòng</option>
-        
+
       </select>
       </select>
       <input id="my-input" class="swal2-input form-control  m-3" style="width:92%" type="text" placeholder="Tên tổ">
@@ -376,7 +395,7 @@ export default {
                 `<option value="${option._id}"
                 ${
                   option._id == selectedOptionDepartment.value ? "selected" : ""
-                } 
+                }
 
                 >${option.name}</option>`
             )
@@ -388,12 +407,12 @@ export default {
                   (await departmentsServices.findAllDepOfACenter(Id)) || [];
 
                 dep.innerHTML = `
-          <option value="">Select a product</option>
+
           ${departments.department
             .map(
               (option) =>
                 `<option value="${option._id}"
-                
+
                 >${option.name}</option>`
             )
             .join("")}
@@ -422,6 +441,8 @@ export default {
             alert_success(`Đã thêm `, `${formValues.inputValue}`);
 
             await refresh("unit");
+            units.unit.push({ _id: "other", name: "khác" });
+
             ctx.emit("newUnit", units.unit);
             selectedOptionUnit.value = document.document._id;
             data.modelUnit = document.document.name;
@@ -488,20 +509,10 @@ export default {
         ctx.emit("newUnit", units.unit);
       }
     };
-    const update = ref("");
-    update.value = props.updateAdd;
-    watchEffect(async () => {
-      console.log("updateADD:", props.updateAdd);
-      if (props.updateAdd) {
-        console.log("updateADD:", props.updateAdd);
-        await refresh_add();
-        ctx.emit("restore", false);
-      }
-    });
+
     onMounted(async () => {
-      console.log("Mouted updateAdd:", props.updateAdd);
       await refresh_add();
-      setAccount();
+      data.item.password = setAccount();
       data.roles = await http_getAll(Role);
     });
     return {
