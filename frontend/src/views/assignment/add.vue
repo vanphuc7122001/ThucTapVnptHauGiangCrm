@@ -4,6 +4,8 @@ import Task from "../../services/task.service";
 import Cycle from "../../services/cycle.service";
 import Employee from "../../services/employee.service";
 import Customer from "../../services/customer.service";
+import StatusTask from "../../services/status_task.service";
+import Evaluate from "../../services/evaluate.service";
 import Swal from "sweetalert2";
 import Select_Advanced from "../../components/form/select_advanced.vue";
 import axios from "axios";
@@ -23,9 +25,7 @@ export default {
   components: {
     Select_Advanced,
   },
-  props: {
-
-  },
+  props: {},
   setup(props, ctx) {
     const data = reactive({
       itemAdd: {
@@ -35,15 +35,31 @@ export default {
         customerId: "",
         cycleId: "",
         leaderId: "",
+        EvaluateId: "",
+        StatusTaskId: "",
       },
       modelValue: "",
-      modelEm:"",
-      modelCus: "",
+      modelStatus: "",
+      modelEva: "",
+      stepList: [
+        {
+          _id: 1,
+          name: "Phân công",
+        },
+        {
+          _id: 2,
+          name: "Trạng thái",
+        },
+      ],
+      activeStep: 1,
     });
 
     const cycles = reactive({ cycle: [] });
     const customers = reactive({ customer: [] });
     const employees = reactive({ employee: [] });
+    const statustasks = reactive({ statustask: [] });
+    const evaluates = reactive({ evaluate: [] });
+    //loc theo chu ky
     let selectedOptionCycle = ref("0");
     watch(selectedOptionCycle, async (newValue, oldValue) => {
       // Alert add center
@@ -82,10 +98,59 @@ export default {
         selectedOptionCycle.value = 0;
       }
     });
+    let selectedOptionStatus = ref("0");
+    watch(selectedOptionStatus, async (newValue, oldValue) => {
+      if (newValue == "other") {
+        const showSweetAlert = async () => {
+          const { value: statusTask } = await Swal.fire({
+            title: "Thêm trạng thái mới",
+            input: "text",
+            inputLabel: "Tên trạng thái",
+            inputValue: "",
+            showCancelButton: true,
+            inputValidator: (value) => {
+              if (!value) {
+                return "Tên trạng thái không được bỏ trống";
+              }
+            },
+          });
 
+          if (statusTask) {
+            const res = await http_create(StatusTask, { name: statusTask });
+            if (res.error) {
+              alert_warning(`Đã tồn tại trạng thái `, `${statusTask}`);
+              return false;
+            }
+            alert_success(`Đã thêm trạng thái`, `${statusTask}`);
+            data.modelStatus = res.document.name;
+            await refresh();
+            ctx.emit("newStatus", statustasks.statustask);
+            console.log("ne", res.document.name);
+            selectedOptionStatus.value = res.document._id;
+          }
+          return true;
+        };
+        showSweetAlert();
+        selectedOptionStatus.value = 0;
+      }
+    });
+
+    //tao phan cong moi
     const create = async () => {
       data.itemAdd.cycleId = selectedOptionCycle.value;
+      data.itemAdd.StatusTaskId = selectedOptionStatus.value;
       console.log(data.itemAdd);
+      data.itemAdd.leaderId = sessionStorage.getItem("employeeId");
+      console.log("leaderId:", sessionStorage.getItem("employeeId"));
+      const evals = await http_getAll(Evaluate);
+      console.log("evals", evals);
+      for (let i = 0; i < evals.length; i++) {
+        data.itemAdd.EvaluateId = evals[i]._id;
+        // data.itemAdd.Evaluate.star = evals[i].star;
+        break;
+      }
+      console.log("star", data.itemAdd.EvaluateId);
+      console.log("data itemadd", data.itemAdd);
       const result = await http_create(Task, data.itemAdd);
       console.log("result", result);
       if (!result.error) {
@@ -93,7 +158,7 @@ export default {
         console.log("task", task);
         alert_success(
           `Thêm phân công`,
-          `Phân công khách hàng "${task.Customer.name}" cho nhân viên "${task.Employee.name}" đã được tạo thành công.`
+          `Phân công khách hàng "${task.Customer.name}" đã được tạo thành công.`
         );
         data.itemAdd = {};
       } else if (result.error) {
@@ -102,6 +167,7 @@ export default {
       ctx.emit("create");
     };
 
+    //xoa phan cong
     const deleteOne = async (_id) => {
       const cycle = await http_getOne(Cycle, _id);
       console.log("deleting", cycle);
@@ -125,9 +191,15 @@ export default {
       customers.customer = await http_getAll(Customer);
       customers.customer = customers.customer.documents;
       employees.employee = await http_getAll(Employee);
+      statustasks.statustask = await http_getAll(StatusTask);
+      evaluates.evaluate = await http_getAll(Evaluate);
       cycles.cycle.push({
         _id: "other",
-        name: "other",
+        name: "khác",
+      });
+      statustasks.statustask.push({
+        _id: "other",
+        name: "khác",
       });
       // data.cycleSelect = [...rs];
     };
@@ -143,7 +215,10 @@ export default {
       customers,
       employees,
       selectedOptionCycle,
+      selectedOptionStatus,
       deleteOne,
+      evaluates,
+      statustasks,
     };
   },
 };
@@ -152,135 +227,308 @@ export default {
 <template>
   <!-- The Modal -->
   <!-- The Modal -->
-  <div class="modal" id="model-add">
-    <div class="modal-dialog">
+  <div class="modal" id="model-add-wizard">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title" style="font-size: 15px">
-            Thêm mới phân công
-          </h4>
-          <button type="button" class="close" data-dismiss="modal">
+          <h4 class="modal-title" style="font-size: 15px">Thêm phân công</h4>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            @click="data.activeStep = 1"
+          >
             &times;
           </button>
         </div>
 
         <!-- Modal body -->
-        <div class="modal-body">
-          <form action="/action_page.php" class="was-validated">
-            <div class="form-group">
-              <label for="name"
-                >Khách hàng(<span style="color: red">*</span>):</label
+        <div class="model-body">
+          <div class="d-flex">
+            <!-- steps -->
+            <div class="d-flex flex-column" style="height: 100%">
+              <div
+                class="d-flex mt-3 mx-3"
+                v-for="(value, index) in data.stepList"
+                :key="value"
               >
-              <Select_Advanced style="height: 40px;" required
-              :add="false"
-              :options="customers.customer"
-              :modelValue="data.modelCus"
-                @searchSelect="
-                  async (value) => (
-                    await refresh(),
-                    (customers.customer = customers.customer.filter((value1, index) => {
-                      console.log(value1, value);
-                      return value1.name.includes(value) || value.length == 0;
-                    })),
-                    console.log('searchSlect', value.length)
-                  )
-                "
-                @chose="(value,value1) => (data.itemAdd.customerId = value, data.modelCus=value1.name)"
-              />
+                <span
+                  @click="data.activeStep = index + 1"
+                  class="step-id px-3 py-2"
+                  :class="[data.activeStep == index + 1 ? 'active-step' : '']"
+                  >{{ value._id }}</span
+                >
+                <span
+                  class="d-flex align-items-center pl-3"
+                  :class="[data.activeStep == index + 1 ? 'active-step' : '']"
+                  >{{ value.name }}</span
+                >
+              </div>
             </div>
-            <div class="form-group">
-              <label for=""
-                >Nhân viên(<span style="color: red">*</span>):</label
-              >
-              <Select_Advanced style="height: 40px;" required
-              :add="false"
-              :options="employees.employee"
-              :modelValue="data.modelEm"
-                @searchSelect="
-                  async (value) => (
-                    await refresh(),
-                    (employees.employee = employees.employee.filter((value1, index) => {
-                      console.log(value1, value);
-                      return value1.name.includes(value) || value.length == 0;
-                    })),
-                    console.log('searchSlect', value.length)
-                  )
-                "
-                @chose="(value,value1) => (data.itemAdd.leaderId = value, data.modelEm = value1.name)"
-              />
-            </div>
-
-            <div class="form-group">
-              <label for=""
-                >Ngày bắt đầu(<span style="color: red">*</span>):</label
-              >
-              <input
-                type="date"
-                class="form-control"
-                id=""
-                v-model="data.itemAdd.start_date"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label for=""
-                >Ngày kết thúc(<span style="color: red">*</span>):</label
-              >
-              <input
-                type="date"
-                class="form-control"
-                id=""
-                v-model="data.itemAdd.end_date"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="">Chu kỳ(<span style="color: red">*</span>):</label>
-              <Select_Advanced
-                style="height: 40px;"
-                required
-                :options="cycles.cycle"
-                :modelValue="data.modelValue"
-                @searchSelect="
-                  async (value) => (
-                    await refresh(),
-                    (cycles.cycle = cycles.cycle.filter((value1, index) => {
-                      console.log(value1, value);
-                      return value1.name.includes(value) || value.length == 0;
-                    })),
-                    console.log('searchSlect', value.length)
-                  )
-                "
-                @delete="(value) => deleteOne(value._id)"
-                @chose="(value, value1) => (selectedOptionCycle = value, data.modelValue = value1.name)"
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="">Nội dung chăm sóc(<span style="color: red">*</span>):</label>
-              <textarea
-                class="form-control"
-                v-model="data.itemAdd.content"
-                required
-              ></textarea>
-            </div>
-            <button
-              type="button"
-              class="btn btn-primary px-3 py-2"
-              style="font-size: 14px"
-              id="add"
-              data-dismiss="modal"
+            <!-- form -->
+            <div
+              class="d-flex flex-grow-1 flex-column step-content px-3 my-3"
+              style="width: 10000px"
             >
-              <span @click="create">Thêm</span>
-            </button>
-          </form>
+              <!-- page 1 -->
+              <form
+                v-if="data.activeStep == 1"
+                action=""
+                class="was-validated"
+                style="width: 100%"
+              >
+                <div class="form-group flex-grow-1">
+                  <label for="name"
+                    >Khách hàng(<span style="color: red">*</span>):</label
+                  >
+                  <Select_Advanced
+                    style="height: 40px"
+                    required
+                    :add="false"
+                    :options="customers.customer"
+                    :modelValue="data.modelCus"
+                    @searchSelect="
+                      async (value) => (
+                        await refresh(),
+                        (customers.customer = customers.customer.filter(
+                          (value1, index) => {
+                            console.log(value1, value);
+                            return (
+                              value1.name.includes(value) || value.length == 0
+                            );
+                          }
+                        )),
+                        console.log('searchSlect', value.length)
+                      )
+                    "
+                    @chose="
+                      (value, value1) => (
+                        (data.itemAdd.customerId = value),
+                        (data.modelCus = value1.name)
+                      )
+                    "
+                  />
+                </div>
+                <div class="form-group flex-grow-1">
+                  <label for="name"
+                    >Ngày bắt đầu(<span style="color: red">*</span>):</label
+                  >
+                  <input
+                    type="date"
+                    class="form-control"
+                    id=""
+                    v-model="data.itemAdd.start_date"
+                    required
+                  />
+                </div>
+                <div class="form-group flex-grow-1">
+                  <label for="name"
+                    >Ngày kết thúc(<span style="color: red">*</span>):</label
+                  >
+                  <input
+                    type="date"
+                    class="form-control"
+                    id=""
+                    v-model="data.itemAdd.end_date"
+                    required
+                  />
+                </div>
+
+                <div class="form-group flex-grow-1">
+                  <label for="content"
+                    >Chu kỳ(<span style="color: red">*</span>):</label
+                  >
+                  <Select_Advanced
+                    style="height: 40px"
+                    required
+                    :options="cycles.cycle"
+                    :modelValue="data.modelValue"
+                    @searchSelect="
+                      async (value) => (
+                        await refresh(),
+                        (cycles.cycle = cycles.cycle.filter((value1, index) => {
+                          console.log(value1, value);
+                          return (
+                            value1.name.includes(value) || value.length == 0
+                          );
+                        })),
+                        console.log('searchSlect', value.length)
+                      )
+                    "
+                    @delete="(value) => deleteOne(value._id)"
+                    @chose="
+                      (value, value1) => (
+                        (selectedOptionCycle = value),
+                        (data.modelValue = value1.name)
+                      )
+                    "
+                  />
+                </div>
+                <div class="form-group flex-grow-1">
+                  <label for="content"
+                    >Nội dung chăm sóc(<span style="color: red">*</span
+                    >):</label
+                  >
+                  <textarea
+                    class="form-control"
+                    v-model="data.itemAdd.content"
+                    required
+                  ></textarea>
+                </div>
+              </form>
+              <!-- page 2 -->
+              <form
+                v-if="data.activeStep == 2"
+                action=""
+                class="was-validated"
+                style="width: 100%"
+              >
+                <div class="form-group flex-grow-1">
+                  <div class="form-group flex-grow-1">
+                    <label for="content"
+                      >Trạng thái phân công(<span style="color: red">*</span
+                      >):</label
+                    >
+                    <!-- <select
+                      id=""
+                      class="form-control"
+                      required
+                      v-model="item.StatusTaskId"
+                    >
+                      <option value="" disabled selected hidden>
+                        Chọn trạng thái
+                      </option>
+                      <option
+                        v-for=" statustask in statustask"
+                        :key="statustask"
+                        :value="statustask._id"
+                      >
+                        {{ statustask.name }}
+                      </option>
+                    </select> -->
+                    <Select_Advanced
+                      style="height: 40px"
+                      required
+                      :options="statustasks.statustask"
+                      :modelValue="data.modelStatus"
+                      @searchSelect="
+                        async (value) => (
+                          await refresh(),
+                          (statustasks.statustask =
+                            statustasks.statustask.filter((value1, index) => {
+                              console.log(value1, value);
+                              return (
+                                value1.name.includes(value) || value.length == 0
+                              );
+                            })),
+                          console.log('searchSlect', value.length)
+                        )
+                      "
+                      @delete="(value) => deleteOne(value._id)"
+                      @chose="
+                        (value, value1) => (
+                          (selectedOptionStatus = value),
+                          (data.modelStatus = value1.name)
+                        )
+                      "
+                    />
+                  </div>
+                </div>
+                <div class="form-group flex-grow-1">
+                  <label for="content"
+                    >Chú thích(<span style="color: red">*</span>):</label
+                  >
+                  <textarea
+                    v-model="data.itemAdd.note"
+                    id="content"
+                    required
+                    class="form-control w-100"
+                    rows="5"
+                  ></textarea>
+                </div>
+                <button
+                  type="button"
+                  class="btn btn-primary px-3 py-2"
+                  style="font-size: 14px"
+                  @click="create"
+                  id="create"
+                  data-dismiss="modal"
+                >
+                  <span>Thêm</span>
+                </button>
+              </form>
+              <div class="d-flex justify-content-end mt-3">
+                <span
+                  v-if="
+                    data.activeStep >= 1 &&
+                    data.activeStep < data.stepList.length
+                  "
+                  class="btn-next d-flex align-items-center px-3 py-1"
+                  @click="data.activeStep = 2"
+                  >Next
+                  <span
+                    class="material-symbols-outlined d-flex align-items-center"
+                  >
+                    navigate_next
+                  </span>
+                </span>
+                <span
+                  v-if="
+                    data.activeStep > 1 &&
+                    data.activeStep <= data.stepList.length
+                  "
+                  class="btn-prev d-flex align-items-center px-3 py-1"
+                  @click="data.activeStep = 1"
+                  ><span
+                    class="material-symbols-outlined d-flex align-items-center"
+                  >
+                    navigate_before </span
+                  >Previous</span
+                >
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.step-id {
+  border: 1px solid var(--gray);
+  border-radius: 5px;
+  cursor: pointer;
+}
+.step-content {
+  border-left: 1px solid var(--gray);
+}
+input {
+  width: 100%;
+}
+.active-step {
+  color: blue;
+}
+.btn-next {
+  border: 1px solid var(--gray);
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-next:hover {
+  background-color: green;
+  color: white;
+}
+
+.btn-prev {
+  border: 1px solid var(--gray);
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-prev:hover {
+  background-color: red;
+  color: white;
+}
+</style>

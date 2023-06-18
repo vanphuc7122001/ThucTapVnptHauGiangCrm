@@ -17,7 +17,6 @@
         <th v-for="(value, index) in fields" :key="index">
           <span class="size-16">{{ value }}</span>
         </th>
-        <th><span class="size-16">Hành động</span></th>
       </tr>
     </thead>
     <tbody>
@@ -33,51 +32,10 @@
         </td>
         <td class="size-16">{{ startRow + index }}</td>
         <td class="size-16">{{ item.name }}</td>
-        <td class="size-16">{{ item.phone }}</td>
-        <td class="size-16">{{ item.email }}</td>
         <td class="size-16">{{ item.Position.name }}</td>
         <td class="size-16">{{ item.Unit.name }}</td>
         <td class="size-16">{{ item.Unit.Department.name }}</td>
         <td class="size-16">{{ item.Unit.Department.Center_VNPTHG.name }}</td>
-        <td class="">
-          <div class="d-flex align-items-center">
-            <button
-              type="button"
-              class="format-btn"
-              data-toggle="modal"
-              data-target="#model-view"
-            >
-              <span
-                id="view"
-                class="material-symbols-outlined d-flex align-content-center"
-                @click="$emit('view', item._id, item)"
-              >
-                visibility
-              </span>
-            </button>
-            <button
-              type="button"
-              class="mx-2 format-btn"
-              data-toggle="modal"
-              data-target="#model-edit"
-            >
-              <span
-                id="edit"
-                class="material-symbols-outlined d-flex align-content-center"
-                @click="$emit('edit', item, true)"
-              >
-                edit
-              </span>
-            </button>
-            <span
-              id="delete"
-              class="material-symbols-outlined"
-              @click="$emit('delete', item._id, item)"
-            >
-              delete
-            </span>
-          </div>
-        </td>
       </tr>
     </tbody>
   </table>

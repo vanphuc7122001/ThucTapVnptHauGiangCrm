@@ -18,6 +18,14 @@ export default {
       type: Object,
       default: {},
     },
+    statustask: {
+      type: Object,
+      default: {},
+    },
+    evaluate: {
+      type: Object,
+      default: {},
+    },
   },
   setup(props, ctx) {
     const data = reactive({
@@ -71,6 +79,7 @@ export default {
               <div
                 class="d-flex mt-3 mx-3"
                 v-for="(value, index) in data.stepList"
+                :key="value"
               >
                 <span
                   @click="data.activeStep = index + 1"
@@ -112,28 +121,6 @@ export default {
                     </option>
                     <option v-for="cus in cus" :key="cus" :value="cus._id">
                       {{ cus.name }}
-                    </option>
-                  </select>
-                </div>
-                <div class="form-group flex-grow-1">
-                  <label for="content"
-                    >Nhân viên(<span style="color: red">*</span>):</label
-                  >
-                  <select
-                    id=""
-                    class="form-control"
-                    required
-                    v-model="item.leaderId"
-                  >
-                    <option value="" disabled selected hidden>
-                      Chọn nhân viên
-                    </option>
-                    <option
-                      v-for="employee in employee"
-                      :key="employee"
-                      :value="employee._id"
-                    >
-                      {{ employee.name }}
                     </option>
                   </select>
                 </div>
@@ -188,7 +175,8 @@ export default {
                 </div>
                 <div class="form-group flex-grow-1">
                   <label for="content"
-                    >Nội dung(<span style="color: red">*</span>):</label
+                    >Nội dung phân công(<span style="color: red">*</span
+                    >):</label
                   >
                   <textarea
                     v-model="item.content"
@@ -220,31 +208,75 @@ export default {
                 />
               </div> -->
                 <div class="form-group flex-grow-1">
-                  <label for="content"
-                    >Trạng thái(<span style="color: red">*</span>):</label
-                  >
-                  <!-- <input
-                    type="text"
-                    class="form-control w-100"
-                    id="name"
-                    name="name"
-                    v-model="item.Status_Task.status"
-                    required
-                  /> -->
-
-                  <select id="" class="form-control w-100" required v-model="item.Status_Task.status">
-                    <option value="true" >Thành công</option>
-                    <option value="false" >Thất bại</option>
-                  </select>
+                  <div class="form-group flex-grow-1">
+                    <label for="content"
+                      >Trạng thái phân công(<span style="color: red">*</span
+                      >):</label
+                    >
+                    <select
+                      id=""
+                      class="form-control"
+                      required
+                      v-model="item.StatusTaskId"
+                    >
+                      <option value="" disabled selected hidden>
+                        Chọn trạng thái
+                      </option>
+                      <option
+                        v-for="statustask in statustask"
+                        :key="statustask"
+                        :value="statustask._id"
+                      >
+                        {{ statustask.name }}
+                      </option>
+                    </select>
+                  </div>
                 </div>
-                
+                <div class="form-group flex-grow-1">
+                  <div class="form-group flex-grow-1">
+                    <label for="content"
+                      >Đánh giá phân công(<span style="color: red">*</span
+                      >):</label
+                    >
+                    <select
+                      id=""
+                      class="form-control"
+                      required
+                      v-model="item.EvaluateId"
+                    >
+                      <option value="" disabled selected hidden>
+                        Chọn sao
+                      </option>
+                      <option
+                        v-for="evaluate in evaluate"
+                        :key="evaluate"
+                        :value="evaluate._id"
+                      >
+                        {{ evaluate.star }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+
                 <div class="form-group flex-grow-1">
                   <label for="content"
-                    >Nội dung trạng thái(<span style="color: red">*</span
+                    >Chú thích(<span style="color: red">*</span>):</label
+                  >
+                  <textarea
+                    v-model="item.note"
+                    id="content"
+                    required
+                    class="form-control w-100"
+                    rows="5"
+                  ></textarea>
+                </div>
+                <div class="form-group flex-grow-1">
+                  <label for="content"
+                    >Nhận xét của khách hàng(<span style="color: red">*</span
                     >):</label
                   >
                   <textarea
-                    v-model="item.Status_Task.reason"
+                    v-model="item.Comment.content"
                     id="content"
                     required
                     class="form-control w-100"

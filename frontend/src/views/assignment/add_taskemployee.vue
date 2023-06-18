@@ -1,0 +1,813 @@
+<script>
+import { reactive, onBeforeMount, ref, watch, computed } from "vue";
+import Select_Advanced from "../../components/form/select_advanced.vue";
+import Table from "../../components/table/table_task_employee.vue";
+import Select from "../../components/form/select.vue";
+import Pagination from "../../components/table/pagination_duy.vue";
+//service
+import Employee from "../../services/employee.service";
+import Position from "../../services/position.service";
+import CenterServices from "../../services/center_vnpt.service";
+import departmentsServices from "../../services/department.service";
+import unitsServices from "../../services/unit.service";
+import EmployeeTask from "../../services/task_employee.service";
+import {
+  http_getAll,
+  http_create,
+  http_getOne,
+  http_deleteOne,
+} from "../../assets/js/common.http";
+import {
+  alert_success,
+  alert_error,
+  alert_delete,
+  alert_warning,
+} from "../../assets/js/common.alert";
+import { Task } from "../common/import";
+export default {
+  components: {
+    Select_Advanced,
+    Table,
+    Select,
+    Pagination,
+  },
+  props: {
+    item: {
+      type: Object,
+      default: [],
+    },
+  },
+  setup(props, ctx) {
+    const data = reactive({
+      itemAdd: {
+        EmployeeId: "",
+      },
+      itemEm: [
+        {
+          _id: "",
+          name: "",
+          postionId: "",
+          Position: {
+            _id: "",
+            name: "",
+          },
+          unitId: "",
+          Unit: {
+            _id: "",
+            name: "",
+            Department: {
+              _id: "",
+              name: "",
+              Center_VNPTHG: {
+                _id: "",
+                name: "",
+              },
+            },
+          },
+        },
+      ],
+      modelEm: "",
+      modelPositon: "Chức vụ",
+      modelValue: "Trung tâm",
+      modelDep: "Phòng",
+      modelUnit: "Tổ",
+      entryValue: 5,
+      numberOfPages: 1,
+      totalRow: 0,
+      startRow: 0,
+      endRow: 0,
+      currentPage: 1,
+      arrTaskEm: {},
+      center: {},
+      department: {},
+      unit: {},
+      position: {},
+      selectAll: [
+        {
+          checked: false,
+        },
+      ],
+    });
+
+    const employees = reactive({ employee: [] });
+
+    // computed
+    const toString = computed(() => {
+      console.log("Starting search");
+      if (data.choseSearch == "name") {
+        return data.itemEm.map((value, index) => {
+          return [value.name].join("").toLocaleLowerCase();
+        });
+      } else if (data.choseSearch == "email") {
+        return data.itemEm.map((value, index) => {
+          return [value.email].join("").toLocaleLowerCase();
+        });
+      } else if (data.choseSearch == "phone") {
+        return data.itemEm.map((value, index) => {
+          return [value.phone].join("").toLocaleLowerCase();
+        });
+      } else {
+        return data.itemEm.map((value, index) => {
+          return [value.name, value.email, value.phone]
+            .join("")
+            .toLocaleLowerCase();
+        });
+      }
+    });
+    const filter = computed(() => {
+      return data.itemEm.filter((value, index) => {
+        return toString.value[index].includes(
+          data.searchText.toLocaleLowerCase()
+        );
+      });
+    });
+    const filtered = computed(() => {
+      if (!data.searchText) {
+        data.totalRow = data.itemEm.length;
+        return data.itemEm;
+      } else {
+        data.totalRow = filter.value.length;
+        return filter.value;
+      }
+    });
+    const setNumberOfPages = computed(() => {
+      return Math.ceil(filtered.value.length / data.entryValue);
+    });
+    const setPages = computed(() => {
+      if (data.itemEm.length > 0) {
+        if (setNumberOfPages.value == 0 || data.entryValue == "All") {
+          data.entryValue = data.itemEm.length;
+          data.numberOfPages = 1;
+        } else data.numberOfPages = setNumberOfPages.value;
+        data.startRow = (data.currentPage - 1) * data.entryValue + 1;
+        data.endRow = data.currentPage * data.entryValue;
+        return filtered.value.filter((item, index) => {
+          return (
+            index + 1 > (data.currentPage - 1) * data.entryValue &&
+            index + 1 <= data.currentPage * data.entryValue
+          );
+        });
+      } else return data.itemEm.value;
+    });
+    //SelectAll
+    const arrayCheck = reactive({ data: [] });
+    const entryValuePosition = ref(""); //id
+    const entryNamePosition = ref("Chức vụ"); //name
+    const entryValueCenter = ref("");
+    const entryNameCenter = ref("Trung tâm");
+    const entryValueDepartment = ref(""); //id
+    const entryNameDepartment = ref("Phòng"); //name
+    const entryValueUnit = ref("");
+    const entryNameUnit = ref("Tổ");
+
+    //watch lọc nhân viên
+    // ******LỌC ******
+    //POSITION
+    const positions = reactive({ position: [] });
+    watch(entryValuePosition, async (newValue, oldValue) => {
+      if (newValue == "") {
+        await refresh();
+        return;
+      }
+      data.itemEm = await http_getAll(Employee);
+      //1.lấy danh sách nhân viên chức vụ x
+      if (entryValuePosition.value.length > 0) {
+        data.itemEm = data.itemEm.filter((val) => {
+          return val.postionId == entryValuePosition.value;
+        });
+      }
+      if (
+        entryNameCenter.value != "" &&
+        entryNameDepartment.value != "" &&
+        entryValueUnit.value != ""
+      ) {
+        data.itemEm = data.itemEm.filter((value) => {
+          return (
+            value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value &&
+            value.Unit.Department._id == entryValueDepartment.value &&
+            value.unitId == entryValueUnit.value
+          );
+        });
+      }
+      //2. chọn 1 trung tâm và 1 phòng
+      else if (
+        entryValueCenter.value != "" &&
+        entryValueDepartment.value != ""
+      ) {
+        data.itemEm = data.itemEm.filter((value) => {
+          return (
+            value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value &&
+            value.Unit.Department._id == entryValueDepartment.value
+          );
+        });
+      } else if (entryValueCenter.value != "") {
+        data.itemEm = data.itemEm.filter((val) => {
+          return (
+            val.Unit.Department.Center_VNPTHG._id == entryValueCenter.value
+          );
+        });
+      }
+      data.selectAll[0].checked = false;
+      for (let array of arrayCheck.data) {
+        for (let value of data.itemEm) {
+          if (array._id == value._id) {
+            value.checked = true;
+            break;
+          }
+          value.checked = false;
+        }
+      }
+      console.log("itemEm:", data.itemEm);
+    });
+    const updateEntryValuePosition = (value) => {
+      entryValuePosition.value = value;
+    };
+
+    //  CENTER
+
+    watch(entryValueCenter, async (newValue, oldValue) => {
+      if (newValue == "") {
+        await refresh();
+        return;
+      }
+      //Lấy tất cả nhân viên
+      data.itemEm = await http_getAll(Employee);
+      //Lấy tất cả phòng của 1 trung tâm
+      data.department = await departmentsServices.findAllDepOfACenter(newValue);
+      data.department = data.department.map((value, index) => {
+        return {
+          ...value,
+          value: value._id,
+        };
+      });
+      //Lấy tất cả tổ của 1 trung tâm
+      for (let value of data.department) {
+        var newUnit = await unitsServices.findAllUnitsOfADep(value._id);
+        for (let value of newUnit) {
+          data.unit.push(value);
+        }
+      }
+      data.unit = data.unit.map((value, index) => {
+        return {
+          ...value,
+          value: value._id,
+        };
+      });
+      //Lọc
+      // 1. có chức vụ và trung tâm
+      if (entryValueCenter.value != "" && entryValuePosition.value != "") {
+        data.itemEm = data.itemEm.filter((value, index) => {
+          return (
+            value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value &&
+            value.postionId == entryValuePosition.value
+          );
+        });
+      }
+      //2.  chỉ có trung tâm
+      else {
+        data.itemEm = data.itemEm.filter((value, index) => {
+          return (
+            value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value
+          );
+        });
+      }
+      data.selectAll[0].checked = false;
+      for (let array of arrayCheck.data) {
+        for (let value of data.itemEm) {
+          if (array._id == value._id) {
+            value.checked = true;
+            break;
+          }
+          value.checked = false;
+        }
+      }
+      console.log("itemEm:", data.itemEm);
+    });
+    //UpdateEntryValueCenter
+    const updateEntryValueCenter = (value) => {
+      entryValueCenter.value = value;
+    };
+
+    //DEP
+    watch(entryValueDepartment, async (newValue, oldValue) => {
+      if (newValue == "") {
+        await refresh();
+        return;
+      }
+      //Lấy tất cả nhân vien
+      data.itemEm = await http_getAll(Employee);
+      //Lấy tất cả tổ của 1 phòng
+      data.unit = await unitsServices.findAllUnitsOfADep(newValue);
+      data.unit = data.unit.map((value, index) => {
+        return {
+          ...value,
+          value: value._id,
+        };
+      });
+      //Lọc
+      //1. có trung tâm, phòng, chức vụ
+      if (entryValuePosition.value != "") {
+        data.itemEm = data.itemEm.filter((value, index) => {
+          return (
+            value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value &&
+            value.Unit.Department._id == entryValueDepartment.value &&
+            value.postionId == entryValuePosition.value
+          );
+        });
+      }
+      // 2. có trung tâm và phòng
+      else {
+        data.itemEm = data.itemEm.filter((value, index) => {
+          return (
+            value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value &&
+            value.Unit.Department._id == entryValueDepartment.value
+          );
+        });
+      }
+      data.selectAll[0].checked = false;
+      for (let array of arrayCheck.data) {
+        for (let value of data.itemEm) {
+          if (array._id == value._id) {
+            value.checked = true;
+            break;
+          }
+          value.checked = false;
+        }
+      }
+      console.log("itemEm:", data.itemEm);
+    });
+    const updateEntryValueDepartment = (value) => {
+      entryValueDepartment.value = value;
+    };
+
+    //UNIT
+    watch(entryValueUnit, async (newValue, oldValue) => {
+      if (newValue == "") {
+        await refresh();
+        return;
+      }
+      //Lấy tất cả nhân vien
+      data.itemEm = await http_getAll(Employee);
+      //Lọc
+      //1. có position
+      if (entryValuePosition.value != "") {
+        data.itemEm = data.itemEm.filter((value, index) => {
+          return (
+            value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value &&
+            value.Unit.Department._id == entryValueDepartment.value &&
+            value.postionId == entryValuePosition.value &&
+            value.unitId == entryValueUnit.value
+          );
+        });
+      }
+      //2. có trung tâm, phòng, tổ
+      else {
+        console.log("2");
+        data.itemEm = data.itemEm.filter((value, index) => {
+          return (
+            value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value &&
+            value.Unit.Department._id == entryValueDepartment.value &&
+            value.unitId == entryValueUnit.value
+          );
+        });
+      }
+      data.selectAll[0].checked = false;
+      for (let array of arrayCheck.data) {
+        for (let value of data.itemEm) {
+          if (array._id == value._id) {
+            value.checked = true;
+            break;
+          }
+          value.checked = false;
+        }
+      }
+      console.log("itemEm:", data.itemEm);
+    });
+    const updateEntryValueUnit = (value) => {
+      entryValueUnit.value = value;
+    };
+
+    // method
+
+    //giao việc cho nhân viên
+    // const createTaskEm = async () => {
+    //   console.log("đây nè");
+    //   console.log("id Task dang chon:", props.item._id);
+    //   const newData = reactive({ TaskId: " ", EmployeeId: " " });
+    //   const listEmployees = reactive({ listEmployee:[]});
+    //   listEmployees.listEmployee = await http_getOne(Task,props.item._id);
+    //   console.log('list',listEmployees.listEmployee);
+    //   newData.TaskId = props.item._id;
+    //   console.log("số lượng nhân viên:", data.itemEm.length);
+    //   const count = data.itemEm.filter(
+    //     (element) => element.checked === true
+    //   ).length;
+    //   console.log("count", count);
+    //   if (count == 0) {
+    //     alert_warning("Bạn chưa chọn nhân viên", "");
+    //     return;
+    //   }
+
+    //   var j;
+    //   for (j = 0; j < listEmployees.listEmployee.Employees.length; j++) {
+    //     const dataDel = reactive({
+    //       data: {
+    //         TaskId: props.item._id,
+    //         EmployeeId: listEmployees.listEmployee.Employees[j]._id,
+    //       },
+    //     });
+    //     const result = await EmployeeTask.deleteOne(dataDel.data);
+    //   }
+    //   for (let i = 0; i < data.itemEm.length; i++) {
+    //     if (data.itemEm[i].checked == true) {
+    //       // console.log("ss", data.itemEm[i]);
+    //       try {
+    //         newData.EmployeeId = data.itemEm[i]._id;
+    //         const result = await http_create(EmployeeTask, newData);
+    //         console.log("ss", data.itemEm[i]);
+    //       } catch (error) {
+    //         console.error("Lỗi tạo công việc:", error);
+    //       }
+    //     }
+    //   }
+
+    //   alert_success(
+    //     `Giao việc`,
+    //     `Phân công khách hàng ${props.item.Customer.name} đã được tạo thành công`
+    //   );
+    //   await refresh();
+    // };
+
+    const createTaskEm = async (value) => {
+      const dataTaskEm = reactive({ TaskId: " ", EmployeeId: " " });
+      dataTaskEm.TaskId = props.item._id;
+      if (arrayCheck.data.length == 0) {
+        alert_warning("Chưa chọn nhân viên để giao việc", "");
+        return;
+      }
+      for (let i = 0; i < arrayCheck.data.length; i++) {
+        if (arrayCheck.data[i].checked == true) {
+          try {
+            dataTaskEm.EmployeeId = arrayCheck.data[i]._id;
+            await http_create(EmployeeTask, dataTaskEm);
+          } catch (error) {
+            console.error("Error sending email:", error);
+          }
+        }
+      }
+      alert_success("Đã giao việc cho nhân viên thành công", "");
+    };
+
+    //tu giao viec
+    const addTaskEm = async () => {
+      const newData = reactive({ TaskId: " ", EmployeeId: " " });
+      newData.TaskId = props.item._id;
+      newData.EmployeeId = sessionStorage.getItem("employeeId");
+      console.log("leaderId:", newData.EmployeeId);
+      console.log("taskid:", newData.TaskId);
+      try {
+        const result = await http_create(EmployeeTask, newData);
+        console.log(result.error);
+        if (result.error == true) {
+          alert_warning(`Thêm công việc`, `Công việc đã được giao cho bạn`);
+        } else {
+          alert_success(
+            `Thêm công việc`,
+            `Nhận khách hàng ${props.item.Customer.name} thành công`
+          );
+        }
+        await refresh();
+      } catch (error) {
+        console.error("Lỗi tạo công việc:", error);
+      }
+    };
+
+    //CHECKALL
+    const handleSelectAll = (value) => {
+      arrayCheck.data = [];
+      if (value == false) {
+        for (let value1 of data.itemEm) {
+          value1.checked = true;
+          arrayCheck.data.push(value1);
+        }
+      } else {
+        for (let value1 of data.itemEm) {
+          value1.checked = false;
+          const index = arrayCheck.data.indexOf(value1._id);
+          if (index !== -1) {
+            arrayCheck.data.splice(index, 1);
+          }
+        }
+      }
+      console.log("arrayCheck:", arrayCheck.data);
+    };
+    const handlSelectOne = (id, item) => {
+      console.log(id, item);
+      if (item.checked == false) {
+        arrayCheck.data.push(item);
+      } else {
+        arrayCheck.data = arrayCheck.data.filter((value, index) => {
+          return value._id != id;
+        });
+      }
+      data.selectAll[0].checked = false;
+      console.log("arrayCheckOne:", arrayCheck.data);
+    };
+
+    const refresh = async () => {
+      // data.cycleSelect = [...rs];
+      console.log("REFRESH");
+      data.itemEm = await http_getAll(Employee);
+      console.log("ds nv", data.itemEm);
+      // ***
+      const employeeTask = reactive({ data: [] });
+      employeeTask.data = await http_getOne(Task, props.item._id);
+      console.log("list", employeeTask.data);
+      var i;
+      for (i = 0; i < data.itemEm.length; i++) {
+        data.itemEm[i].checked = false;
+      }
+      for (i = 0; i < data.itemEm.length; i++) {
+        for (var j = 0; j < employeeTask.data.Employees.length; j++) {
+          if (data.itemEm[i]._id == employeeTask.data.Employees[j]._id) {
+            data.itemEm[i].checked = true;
+          }
+        }
+      }
+      console.log("check:", data.itemEm);
+
+      data.position = await http_getAll(Position);
+
+      data.center = await CenterServices.getAll();
+      data.department = await departmentsServices.getAll();
+      data.unit = await unitsServices.getAll();
+
+      data.position = data.position.map((value, index) => {
+        return {
+          ...value,
+          value: value._id,
+        };
+      });
+      data.center = data.center.map((value, index) => {
+        return {
+          ...value,
+          value: value._id,
+        };
+      });
+      data.department = data.department.map((value, index) => {
+        return {
+          ...value,
+          value: value._id,
+        };
+      });
+      data.unit = data.unit.map((value, index) => {
+        return {
+          ...value,
+          value: value._id,
+        };
+      });
+      entryNamePosition.value = "Chức vụ";
+      entryValuePosition.value = "";
+      entryNameCenter.value = "Trung tâm";
+      entryValueCenter.value = "";
+      entryNameDepartment.value = "Phòng";
+      entryValueDepartment.value = "";
+      entryNameUnit.value = "Tổ";
+      entryValueUnit.value = "";
+      data.selectAll[0].checked = false;
+    };
+    const closeModal = async () => {
+      console.log("close modal");
+
+      await refresh();
+      showModal.value = false;
+    };
+    onBeforeMount(() => {
+      refresh();
+    });
+
+    return {
+      setPages,
+      createTaskEm,
+      refresh,
+      employees,
+      data,
+      closeModal,
+      addTaskEm,
+      entryNamePosition,
+      entryValuePosition,
+      entryNameCenter,
+      entryValueCenter,
+      entryNameDepartment,
+      entryValueDepartment,
+      entryNameUnit,
+      entryValueUnit,
+      updateEntryValuePosition,
+      updateEntryValueCenter,
+      updateEntryValueUnit,
+      updateEntryValueDepartment,
+      handlSelectOne,
+      handleSelectAll,
+    };
+  },
+};
+</script>
+
+<template>
+  <!-- The Modal -->
+  <div class="modal" id="model-form-task_em">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title" style="font-size: 15px">
+            Giao việc cho nhân viên
+          </h4>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            @click="closeModal"
+          >
+            &times;
+          </button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="model-body">
+          <div style="padding: 24px">
+            <form action="" class="was-validated">
+              <div class="form-group">
+                <label for="name"
+                  >Khách hàng(<span style="color: red">*</span>):</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="name"
+                  name="name"
+                  v-model="item.Customer.name"
+                  disabled
+                />
+              </div>
+              <div class="form-group">
+                <label for=""
+                  >Nội dung chăm sóc(<span style="color: red">*</span>):</label
+                >
+                <textarea
+                  class="form-control"
+                  v-model="item.content"
+                  required
+                  disabled
+                ></textarea>
+              </div>
+              <div class="border-box d-flex flex-column">
+                <div class="d-flex mx-3">
+                  <div class="form-group w-100 mr-2">
+                    <Select
+                      :title="`Chức vụ`"
+                      :entryValue="entryNamePosition"
+                      :options="data.position"
+                      @update:entryValue="
+                        (value, value1) => (
+                          updateEntryValuePosition(value),
+                          (entryNamePosition = value1.name)
+                        )
+                      "
+                      @refresh="
+                        (entryNamePosition = 'Chọn chức vụ'),
+                          updateEntryValuePosition('')
+                      "
+                      style="height: 35px"
+                    />
+                  </div>
+                  <div class="form-group w-100 mr-2">
+                    <Select
+                      :title="`Trung tâm`"
+                      :entryValue="entryNameCenter"
+                      :options="data.center"
+                      @update:entryValue="
+                        (value, value1) => (
+                          updateEntryValueCenter(value),
+                          (entryNameCenter = value1.name)
+                        )
+                      "
+                      @refresh="
+                        (entryNameCenter = 'Chọn trung tâm'),
+                          updateEntryValueCenter('')
+                      "
+                      style="height: 35px"
+                    />
+                  </div>
+
+                  <!-- Phòng -->
+                  <div class="form-group w-100 mr-2">
+                    <Select
+                      :title="`Phòng`"
+                      :entryValue="entryNameDepartment"
+                      :options="data.department"
+                      @update:entryValue="
+                        (value, value1) => (
+                          updateEntryValueDepartment(value),
+                          (entryNameDepartment = value1.name)
+                        )
+                      "
+                      @refresh="
+                        (entryNameDepartment = 'Chọn phòng'),
+                          updateEntryValueDepartment('')
+                      "
+                      style="height: 35px"
+                    />
+                  </div>
+
+                  <div class="form-group w-100">
+                    <Select
+                      :title="`Tổ`"
+                      :entryValue="entryNameUnit"
+                      :options="data.unit"
+                      @update:entryValue="
+                        (value, value1) => (
+                          updateEntryValueUnit(value),
+                          (entryNameUnit = value1.name)
+                        )
+                      "
+                      @refresh="
+                        (entryNameUnit = 'Chọn tổ'), updateEntryValueUnit('')
+                      "
+                      style="height: 35px"
+                    />
+                  </div>
+                </div>
+                <!-- <Table
+                  @selectAll="checkAll()"
+                  :selectAll="selectAll"
+                  :itemEm="setPages"
+                  :fields="['Tên','Chức vụ' ,'Tổ', 'Phòng', 'Trung tâm']"
+                  :labels="['name']"
+                /> -->
+                <!-- <Table
+                  :selectAll="selectAll"
+                  :items="setPages"
+                  :fields="[
+                    'Tên',
+                    'Chức vụ',
+                    'Đơn vị',
+                    'Phòng',
+                    'Trung tâm',
+                  ]"
+                  :labels="['name']"
+                  :startRow="data.startRow"
+                /> -->
+                <Table
+                  :items="setPages"
+                  :fields="['Tên', 'Chức vụ', 'Đơn vị', 'Phòng', 'Trung tâm']"
+                  :selectAll="data.selectAll"
+                  :startRow="data.startRow"
+                  @selectAll="(value) => handleSelectAll(value)"
+                  @selectOne="(id, item) => handlSelectOne(id, item)"
+                />
+                <Pagination
+                  :numberOfPages="data.numberOfPages"
+                  :totalRow="data.totalRow"
+                  :startRow="data.startRow"
+                  :endRow="data.endRow"
+                  :currentPage="data.currentPage"
+                  @update:currentPage="(value) => (data.currentPage = value)"
+                  class="mx-3"
+                />
+              </div>
+
+              <button
+                type="button"
+                class="btn btn-primary px-3 py-2"
+                style="font-size: 14px; margin-right: 24px"
+                @click="createTaskEm"
+                id="add"
+              >
+                <span>Giao việc</span>
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary px-3 py-2"
+                style="font-size: 14px"
+                @click="addTaskEm"
+                id=""
+              >
+                <span>Nhận việc</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.border-box {
+  border: 1px solid var(--gray);
+  border-radius: 5px;
+  padding-top: 10px;
+  margin-bottom: 14px;
+}
+</style>

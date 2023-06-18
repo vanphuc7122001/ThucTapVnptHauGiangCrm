@@ -8,6 +8,7 @@ import SelectFilter from "../../components/form/select_task_truc.vue";
 import InputFilter from "../../components/form/form_filter_truc.vue";
 import DeleteAll from "../../components/form/delete-all.vue";
 import Add from "./add.vue";
+import Add_TaskEmployee from "./add_taskemployee.vue";
 import Edit from "./edit.vue";
 import View from "./view.vue";
 import Select_Advanced from "../../components/form/select_advanced.vue";
@@ -19,6 +20,10 @@ import Task from "../../services/task.service";
 import Cycle from "../../services/cycle.service";
 import Employee from "../../services/employee.service";
 import Customer from "../../services/customer.service";
+import Employees_Task from "../../services/task_employee.service";
+import Appointment from "../../services/appointment.service";
+import StatusTask from "../../services/status_task.service";
+import Evaluate from "../../services/evaluate.service";
 import AddAppointment from "../appointment/add.vue";
 import {
   http_getAll,
@@ -31,8 +36,10 @@ import {
   alert_success,
   alert_error,
   alert_delete,
+  alert_warning,
+  alert_delete_wide,
 } from "../../assets/js/common.alert";
-import { formatDate } from "../../assets/js/common"
+import { formatDate } from "../../assets/js/common";
 export default {
   components: {
     SelectFilter,
@@ -42,12 +49,13 @@ export default {
     Pagination,
     Dropdown,
     Select,
-    Search,
     Add,
     DeleteAll,
     Edit,
     View,
     AddAppointment,
+    Add_TaskEmployee,
+    Search,
   },
   setup(ctx) {
     const data = reactive({
@@ -61,6 +69,7 @@ export default {
             _id: "",
             name: "",
           },
+          cycleId: "",
           Cycle: {
             _id: "",
             name: "",
@@ -70,14 +79,25 @@ export default {
             name: "",
           },
           Status_Task: {
-            status: "",
-            reason: "",
+            _id: "",
+            name: "",
           },
-          Appoitment: {
-            _id:"",
+          Appointments: {
+            _id: "",
             date_time: "",
             content: "",
-          }
+            Status_App: {
+              status: "",
+              reason: "",
+            },
+          },
+          Evaluate: {
+            star: "",
+          },
+          Comment: {
+            _id: "",
+            content: "",
+          },
         },
       ],
       entryValue: 5,
@@ -95,110 +115,447 @@ export default {
         content: "",
         customerId: "",
         cycleId: "",
-        employeeId: "",
+        leaderId: "",
         Status_Task: {
-          status: "",
-          reason: "",
+          _id: "",
+          name: "",
         },
       },
       viewValue: {
+        _id: "",
+        start_date: "",
+        end_date: "",
+        content: "",
+        leaderId: "",
+        Customer: {
           _id: "",
-          start_date: "",
-          end_date: "",
-          content: "",
-          Customer: {
+          name: "",
+          birthday: "",
+          avatar: "",
+          address: "",
+          email: "",
+          Customer_Type: {
             _id: "",
             name: "",
           },
-          Cycle: {
-            _id: "",
-            name: "",
-          },
-          Employee: {
-            _id: "",
-            name: "",
-          },
-          Status_Task: {
-            status: "",
-            reason: "",
-          },
-          Appoitment: {
-            _id:"",
-            date_time: "",
-            content: "",
-          }
         },
-      addcycle: {},
+        Cycle: {
+          _id: "",
+          name: "",
+        },
+        Employees: {},
+        Status_Task: {
+          _id: "",
+          name: "",
+        },
+        Appointments: {
+          _id: "",
+          date_time: "",
+          content: "",
+          Status_App: {
+            _id: "",
+            name: "",
+          },
+        },
+        Evaluate: {
+          star: "",
+        },
+        Comment: {
+          _id: "",
+          content: "",
+        },
+      },
+      evaluate: [],
+      statusTask: [],
       cus: [],
       employee: [],
       taskId: "",
       taskObject: {},
+      taskEmployee: {
+        _id: "",
+        start_date: "",
+        end_date: "",
+        content: "",
+        Customer: {
+          _id: "",
+          name: "",
+        },
+        cycleId: "",
+        Cycle: {
+          _id: "",
+          name: "",
+        },
+        Employee: {
+          _id: "",
+          name: "",
+        },
+        Status_Task: {
+          _id: "",
+          name: "",
+        },
+        Appointments: {
+          _id: "",
+          date_time: "",
+          content: "",
+          Status_App: {
+            status: "",
+            reason: "",
+          },
+        },
+        Evaluate: {
+          star: "",
+        },
+        Comment: {
+          _id: "",
+          content: "",
+        },
+      },
+      showTask_Employee: false,
+      listAppoiment: {},
+      listEmployeeTask: {},
+      selectAll: [
+        {
+          checked: false,
+        },
+      ],
     });
 
-
-    const cycleValue = ref('');
-    const startdateValue = ref('');
-    const statusValue = ref('');
-    const enddateValue = ref('');
+    const cycleValue = ref("");
+    const startdateValue = ref("");
+    const statusValue = ref("");
+    const enddateValue = ref("");
     const cycles = reactive({ cycle: [] });
+    const status_tasks = reactive({ status_task: [] });
 
-        //watch lọc
-        watch(cycleValue,async (newValue, oldValue) =>{
-      console.log("hhhh",newValue)
+    const entryValueStatusTask = ref(""); //id
+    const entryNameStatusTask = ref("Trạng thái");
+    const entryValueCycle = ref(""); //id
+    const entryNameCycle = ref("Chu kỳ"); //name
+    const updateEntryValueStatusTask = (value) => {
+      entryValueStatusTask.value = value;
+    };
+    const updateEntryValueCycle = (value) => {
+      entryValueCycle.value = value;
+    };
+    //watch lọc
+    watch(entryValueCycle, async (newValue, oldValue) => {
+      console.log("hhhh", newValue);
       await refresh();
-      if(newValue == 0 ){
+      if (newValue == 0) {
         return await refresh();
       }
-      if(cycleValue.length != 0){
-        console.log("status",statusValue);
-        console.log("startdate",startdateValue);
-        console.log("end",enddateValue);
-
+      if (
+        entryValueStatusTask.value != "" &&
+        startdateValue.value != "" &&
+        enddateValue.value != ""
+      ) {
+        console.log("trúc");
         data.items = data.items.filter((value, index) => {
-          return value.cycleId == cycleValue.value
-        })
-      
-
+          return (
+            value.cycleId == entryValueCycle.value &&
+            value.Status_Task._id == entryValueStatusTask.value &&
+            value.start_date == startdateValue.value &&
+            value.end_date == enddateValue.value
+          );
+        });
+      } else if (
+        entryValueStatusTask.value != "" &&
+        startdateValue.value != ""
+      ) {
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.cycleId == entryValueCycle.value &&
+            value.Status_Task._id == entryValueStatusTask.value &&
+            value.start_date == startdateValue.value
+          );
+        });
+      } else if (enddateValue.value != "" && startdateValue.value != "") {
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.cycleId == entryValueCycle.value &&
+            value.start_date == startdateValue.value &&
+            value.end_date == enddateValue.value
+          );
+        });
+      } else if (entryValueStatusTask.value != "" && enddateValue.value != "") {
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.cycleId == entryValueCycle.value &&
+            value.Status_Task.status == entryValueStatusTask.value &&
+            value.end_date == enddateValue.value
+          );
+        });
+      } else if (entryValueStatusTask.value != "") {
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.cycleId == entryValueCycle.value &&
+            value.Status_Task._id == entryValueStatusTask.value
+          );
+        });
+      } else if (startdateValue.value != "") {
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.cycleId == entryValueCycle.value &&
+            value.start_date == startdateValue.value
+          );
+        });
+      } else if (enddateValue.value != "") {
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.cycleId == entryValueCycle.value &&
+            value.end_date == enddateValue.value
+          );
+        });
+      } else {
+        console.log("hhhttttt:", newValue);
+        data.items = data.items.filter((value, index) => {
+          return value.cycleId == entryValueCycle.value;
+        });
       }
     });
-    watch(statusValue, async (newValue, oldValue)=>{
-      console.log("status",newValue)
+    watch(entryValueStatusTask, async (newValue, oldValue) => {
+      console.log("status", newValue);
+      console.log("status", entryValueCycle.value);
       await refresh();
-      if(statusValue.length != 0){
+      if (newValue == "") {
+        await refresh();
+        return;
+      }
+      if (
+        entryValueCycle.value != "" &&
+        startdateValue.value != "" &&
+        enddateValue.value != ""
+      ) {
+        console.log("hello");
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.cycleId == entryValueCycle.value &&
+            value.Status_Task._id == entryValueStatusTask.value &&
+            value.start_date == startdateValue.value &&
+            value.end_date == enddateValue.value
+          );
+        });
+      } else if (startdateValue.value != "" && enddateValue.value != "") {
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.Status_Task._id == entryValueStatusTask.value &&
+            value.start_date == startdateValue.value &&
+            value.end_date == enddateValue.value
+          );
+        });
+      } else if (startdateValue.value != "" && entryValueCycle.value != "") {
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.cycleId == entryValueCycle.value &&
+            value.start_date == startdateValue.value &&
+            value.Status_Task._id == entryValueStatusTask.value
+          );
+        });
+      } else if (enddateValue.value != "" && entryValueCycle.value != "") {
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.cycleId == entryValueCycle.value &&
+            value.end_date == enddateValue.value &&
+            value.Status_Task._id == entryValueStatusTask.value
+          );
+        });
+      } else if (entryValueCycle.value != "") {
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.cycleId == entryValueCycle.value &&
+            value.Status_Task._id == entryValueStatusTask.value
+          );
+        });
+      } else if (startdateValue.value != "") {
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.Status_Task._id == entryValueStatusTask.value &&
+            value.start_date == startdateValue.value
+          );
+        });
+      } else if (enddateValue.value != "") {
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.end_date == enddateValue.value &&
+            value.Status_Task._id == entryValueStatusTask.value
+          );
+        });
+      } else {
         data.items = data.items.filter((value, index) => {
           // console.log('name', value.Status_Task.status)
-        return value.Status_Task.status == statusValue.value
-        })
+          return value.Status_Task._id == entryValueStatusTask.value;
+        });
       }
     });
 
-    watch(startdateValue, async (newValue, oldValue)=>{
-      console.log("start date",newValue)
+    watch(startdateValue, async (newValue, oldValue) => {
+      console.log("start date", newValue);
       await refresh();
-      if(startdateValue.length != 0){
+      if (
+        entryValueStatusTask.value != "" &&
+        enddateValue.value != "" &&
+        entryValueCycle.value != ""
+      ) {
         data.items = data.items.filter((value, index) => {
-        return value.start_date == startdateValue.value
-        })
+          return (
+            value.cycleId == entryValueCycle.value &&
+            value.Status_Task._id == entryValueStatusTask.value &&
+            value.start_date == startdateValue.value &&
+            value.end_date == enddateValue.value
+          );
+        });
+      } else if (
+        entryValueCycle.value != "" &&
+        entryValueStatusTask.value != ""
+      ) {
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.cycleId == entryValueCycle.value &&
+            value.Status_Task._id == entryValueStatusTask.value &&
+            value.start_date == startdateValue.value
+          );
+        });
+      } else if (entryValueStatusTask.value != "" && enddateValue.value != "") {
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.Status_Task._id == entryValueStatusTask.value &&
+            value.start_date == startdateValue.value &&
+            value.end_date == enddateValue.value
+          );
+        });
+      } else if (entryValueCycle.value != "" && enddateValue.value != "") {
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.cycleId == entryValueCycle.value &&
+            value.start_date == startdateValue.value &&
+            value.end_date == enddateValue.value
+          );
+        });
+      } else if (entryValueCycle.value != "") {
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.cycleId == entryValueCycle.value &&
+            value.start_date == startdateValue.value
+          );
+        });
+      } else if (entryValueStatusTask.value != "") {
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.Status_Task._id == entryValueStatusTask.value &&
+            value.start_date == startdateValue.value
+          );
+        });
+      } else if (enddateValue.value != "") {
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.start_date == startdateValue.value &&
+            value.end_date == enddateValue.value
+          );
+        });
+      } else {
+        data.items = data.items.filter((value, index) => {
+          return value.start_date == startdateValue.value;
+        });
       }
     });
 
-    watch(enddateValue, async (newValue, oldValue)=>{
-      console.log("end date",newValue)
+    watch(enddateValue, async (newValue, oldValue) => {
+      console.log("end date", newValue);
       await refresh();
-      if(enddateValue.length != 0){
-        data.items = data.items.filter((value, index) => {
-        return value.end_date == enddateValue.value
-        })
-      }
-    })
 
+      if (
+        entryValueStatusTask.value != "" &&
+        startdateValue.value != "" &&
+        entryValueCycle.value != ""
+      ) {
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.cycleId == entryValueCycle.value &&
+            value.Status_Task._id == entryValueStatusTask.value &&
+            value.start_date == startdateValue.value &&
+            value.end_date == enddateValue.value
+          );
+        });
+      } else if (
+        entryValueCycle.value != "" &&
+        entryValueStatusTask.value != ""
+      ) {
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.cycleId == entryValueCycle.value &&
+            value.Status_Task._id == entryValueStatusTask.value &&
+            value.end_date == enddateValue.value
+          );
+        });
+      } else if (
+        entryValueStatusTask.value != "" &&
+        startdateValue.value != ""
+      ) {
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.Status_Task._id == entryValueStatusTask.value &&
+            value.start_date == startdateValue.value &&
+            value.end_date == enddateValue.value
+          );
+        });
+      } else if (entryValueCycle.value != "" && startdateValue.value != "") {
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.cycleId == entryValueCycle.value &&
+            value.start_date == startdateValue.value &&
+            value.end_date == enddateValue.value
+          );
+        });
+      } else if (entryValueCycle.value != "") {
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.cycleId == entryValueCycle.value &&
+            value.end_date == enddateValue.value
+          );
+        });
+      } else if (entryValueStatusTask.value != "") {
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.Status_Task._id == entryValueStatusTask.value &&
+            value.end_date == enddateValue.value
+          );
+        });
+      } else if (startdateValue.value != "") {
+        data.items = data.items.filter((value, index) => {
+          return (
+            value.start_date == startdateValue.value &&
+            value.end_date == enddateValue.value
+          );
+        });
+      } else {
+        data.items = data.items.filter((value, index) => {
+          return value.end_date == enddateValue.value;
+        });
+      }
+    });
 
     // computed
     const toString = computed(() => {
       console.log("Starting search");
-      return data.items.map((value, index) => {
-        return [value.name].join("").toLocaleLowerCase();
-      });
+      if (data.choseSearch == "nameCus") {
+        return data.items.map((value, index) => {
+          return [value.Customer.name].join("").toLocaleLowerCase();
+        });
+      } else if (data.choseSearch == "statustask") {
+        return data.items.map((value, index) => {
+          return [value.Status_Task.name].join("").toLocaleLowerCase();
+        });
+      } else if (data.choseSearch == "cycle") {
+        return data.items.map((value, index) => {
+          return [value.Cycle.name].join("").toLocaleLowerCase();
+        });
+      } else {
+        return data.items.map((value, index) => {
+          return [value.Customer.name, value.Status_Task.name, value.Cycle.name]
+            .join("")
+            .toLocaleLowerCase();
+        });
+      }
     });
     const filter = computed(() => {
       return data.items.filter((value, index) => {
@@ -220,45 +577,47 @@ export default {
       return Math.ceil(filtered.value.length / data.entryValue);
     });
     const setPages = computed(() => {
-      if (setNumberOfPages.value == 0 || data.entryValue == "All") {
-        data.entryValue = data.items.length;
-        data.numberOfPages = 1;
-      } else data.numberOfPages = setNumberOfPages.value;
-      data.startRow = (data.currentPage - 1) * data.entryValue + 1;
-      data.endRow = data.currentPage * data.entryValue;
-      return filtered.value.filter((item, index) => {
-        return (
-          index + 1 > (data.currentPage - 1) * data.entryValue &&
-          index + 1 <= data.currentPage * data.entryValue
-        );
-      });
+      if (data.items.length > 0) {
+        if (setNumberOfPages.value == 0 || data.entryValue == "All") {
+          data.entryValue = data.items.length;
+          data.numberOfPages = 1;
+        } else data.numberOfPages = setNumberOfPages.value;
+        data.startRow = (data.currentPage - 1) * data.entryValue + 1;
+        data.endRow = data.currentPage * data.entryValue;
+        return filtered.value.filter((item, index) => {
+          return (
+            index + 1 > (data.currentPage - 1) * data.entryValue &&
+            index + 1 <= data.currentPage * data.entryValue
+          );
+        });
+      } else return data.items.value;
     });
-
     // methods
+    const showTask_Employee = () => {
+      console.log("day ne");
+      data.showTask_Employee = false;
+      for (let value of data.items) {
+        if (value.checked == true) {
+          console.log("item", value);
+          data.taskEmployee = value;
+          data.showTask_Employee = true;
+          break;
+        }
+      }
+      if (data.showTask_Employee == false) {
+        alert_warning(
+          `Thêm phân công cho nhân viên`,
+          `Vui lòng chọn phân công để giao việc cho nhân viên.`
+        );
+      }
+    };
 
     const create = async () => {
       //await refresh();
       console.log("new task");
       data.items = await http_getAll(Task);
-      refresh();
+      await refresh();
     };
-
-    // const update = async (item) => {
-    //   console.log("updating", item);
-    //   const result = await http_update(Task,data.editValue._id, data.editValue );
-    //   console.log("result", result);
-    //   if (!result.error) {
-    //     // const task = await http_getOne(Task,result.document._id);
-    //     // console.log("task", task);
-    //     alert_success(
-    //       `Chỉnh sửa phân công`,
-    //       `Đã chỉnh sửa phân công khách hàng của nhân viên thành công.`
-    //     );
-    //     refresh();
-    //   } else if (result.error) {
-    //     alert_error(`Thêm phân công`, `${result.msg}`);
-    //   }
-    // };
 
     const update = async (item) => {
       const result = await http_update(Task, editValue._id, editValue);
@@ -281,29 +640,142 @@ export default {
       }
     };
 
-    const deleteOne = async (_id) => {
-      const task = await http_getOne(Task, _id);
-      console.log("deleting", task);
-      const isConfirmed = await alert_delete(
-        `Xoá sự phân công`,
-        `Bạn có chắc chắn muốn xoá phân công của nhân viên ${task.Employee.name} không ?`
-      );
-      console.log(isConfirmed);
-      if (isConfirmed == true) {
-        const result = await http_deleteOne(Task, _id);
-        alert_success(
-          `Xoá phân công`,
-          `Bạn đã xoá thành công phân công của nhân viên ${task.Employee.name} .`
-        );
-        refresh();
-      }
-    };
+    // const deleteOne = async (_id) => {
+    //   const task = await http_getOne(Task, _id);
+    //   console.log("deleting", task);
+    //   const isConfirmed = await alert_delete(
+    //     `Xoá sự phân công`,
+    //     `Bạn có chắc chắn muốn xoá phân công của khách hàng ${task.Customer.name} không ?`
+    //   );
+    //   console.log(isConfirmed);
+    //   if (isConfirmed == true) {
+    //     const result = await http_deleteOne(Task, _id);
+    //     alert_success(
+    //       `Xoá phân công`,
+    //       `Bạn đã xoá thành công phân công của khách hàng ${task.Customer.name} .`
+    //     );
+    //     refresh();
+    //   }
+    // };
 
     const router = useRouter();
 
-    const view = (_id) => {
-      console.log("view", _id);
-      router.push({ name: "Assignment.view", params: { id: _id } });
+    const view = async (id) => {
+      console.log(id);
+      data.viewValue = await http_getOne(Task, id);
+      console.log(data.viewValue);
+      // router.push({ name: "Assignment.view", params: { id: _id } });
+    };
+
+    //SelectAll
+    const arrayCheck = reactive({ data: [] });
+
+    const handleSelectAll = (value) => {
+      arrayCheck.data = [];
+      if (value == false) {
+        for (let value1 of data.items) {
+          value1.checked = true;
+          arrayCheck.data.push(value1);
+        }
+      } else {
+        for (let value1 of data.items) {
+          value1.checked = false;
+          const index = arrayCheck.data.indexOf(value1._id);
+          if (index !== -1) {
+            arrayCheck.data.splice(index, 1);
+          }
+        }
+      }
+      console.log("arrayCheck:", arrayCheck.data);
+    };
+    const handlSelectOne = (id, item) => {
+      console.log(id, item);
+      if (item.checked == false) {
+        arrayCheck.data.push(item);
+      } else {
+        arrayCheck.data = arrayCheck.data.filter((value, index) => {
+          return value._id != id;
+        });
+      }
+      data.selectAll[0].checked = false;
+      console.log("arrayCheckOne:", arrayCheck.data);
+    };
+
+    // HANDLE DELETE
+    const handleDelete = async (id, item) => {
+      console.log("h", id, item);
+      const isConfirmed = await alert_delete(
+        "Xóa",
+        `Bạn có chắc là xóa phân công<span style="color: blue;"> </span> không!!`
+      );
+      if (isConfirmed) {
+        const rsTask = await http_deleteOne(Task, id);
+        console.log(rsTask);
+        if (rsTask.error) {
+          alert_error("Lỗi ", rsTask.msg);
+        } else {
+          refresh();
+          alert_success("Thành công", "Xóa khách hàng thành công");
+        }
+      }
+    };
+    const deleteMany = async () => {
+      console.log("delete many");
+      try {
+        //Mảng nhân viên sẽ xóa
+        // const deleteArray = data.items.filter((value, index) => {
+        //   return value.checked == true;
+        // });
+        if (arrayCheck.data.length == 0) {
+          alert_warning("Bạn chưa chọn phân công", "");
+          return;
+        }
+        let contentAlert = `<p>Bạn có muốn xoá tất cả phân công này không?
+          </p><p>Tổng số phân công sẽ xoá là:
+           <span style="color: blue;">${arrayCheck.data.length}</span></p>
+            <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Khách hàng</th>
+            <th>Ngày bắt đầu</th>
+            <th>Ngày kết thúc</th>
+          </tr>
+        </thead> <tbody>`;
+        for (let value of arrayCheck.data) {
+          console.log(value);
+          contentAlert += `<tr>
+            <td>${value.Customer.name}</td>
+            <td>${value.start_date}</td>
+            <td>
+              ${value.end_date}
+            </td>
+          </tr>`;
+        }
+        contentAlert += `</tbody>
+      </table>`;
+        const isConfirmed = await alert_delete_wide(
+          `Xoá nhiều phân công`,
+          contentAlert
+        );
+        if (isConfirmed) {
+          let checkDeleteAll = false;
+          for (let valueDelete of arrayCheck.data) {
+            const rsTask = await http_deleteOne(Task, valueDelete._id);
+            if (rsTask.error) {
+              alert_error("Lỗi ", rsTask.msg);
+              checkDeleteAll = false;
+            } else {
+              checkDeleteAll = true;
+            }
+          }
+          if (checkDeleteAll) {
+            refresh();
+            alert_success("Thành công", "Xóa phân công thành công");
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     const appointment = (_id) => {
@@ -311,16 +783,36 @@ export default {
     };
 
     const refresh = async () => {
+      data.evaluate = await http_getAll(Evaluate);
+      status_tasks.status_task = await http_getAll(StatusTask);
       cycles.cycle = await http_getAll(Cycle);
       data.cus = await http_getAll(Customer);
       data.cus = data.cus.documents;
       console.log("aaa", data.cus);
       data.employee = await http_getAll(Employee);
       data.items = await http_getAll(Task);
+      for (let value of data.items) {
+        value.checked = false;
+      }
       for (const value of data.items) {
         value.end_date_format = formatDate(value.end_date);
         value.start_date_format = formatDate(value.start_date);
       }
+      status_tasks.status_task = status_tasks.status_task.map(
+        (value, index) => {
+          return {
+            ...value,
+            value: value._id,
+          };
+        }
+      );
+      cycles.cycle = cycles.cycle.map((value, index) => {
+        return {
+          ...value,
+          value: value._id,
+        };
+      });
+      data.selectAll[0].checked = false;
     };
 
     // handle http methods
@@ -328,28 +820,18 @@ export default {
     // Hàm callback được gọi trước khi component được mount (load)
     onBeforeMount(async () => {
       await refresh();
+      console.log("status task", status_tasks.status_task);
       console.log("task", data.items);
       console.log("cycle", cycles.cycle);
       console.log("employee", data.employee);
       console.log("customer", data.cus);
     });
-    // onBeforeMount(async () => {
-    //   data.items = await getAll(Task);
-    //   data.cycles = await getAll(Cycle);
-    //   data.cus = await getAll(Customer);
-    //   data.employee = await getAll(Employee);
-    //   console.log("task", data.items[0].Status_Task['status']);
-    //   console.log("cycle", data.cycles);
-    // });
-    // watch
 
-    // const task_status = ref("Status_Task['status']")
     return {
       data,
       setPages,
       create,
       update,
-      deleteOne,
       edit,
       view,
       appointment,
@@ -358,6 +840,18 @@ export default {
       statusValue,
       startdateValue,
       enddateValue,
+      showTask_Employee,
+      status_tasks,
+      updateEntryValueStatusTask,
+      updateEntryValueCycle,
+      entryValueStatusTask,
+      entryNameStatusTask,
+      entryNameCycle,
+      entryValueCycle,
+      handleDelete,
+      deleteMany,
+      handlSelectOne,
+      handleSelectAll,
     };
   },
 };
@@ -372,38 +866,55 @@ export default {
       <span class="mx-3 mb-3 h6">Lọc phân công</span>
       <div class="d-flex mx-3">
         <div class="form-group w-100">
-          <SelectFilter 
-          :title="`Chu kỳ`" 
-          @update:entryValue="(value) => cycleValue = value"
-          :entryValue="`Chu kỳ`"
-          :options="cycles.cycle"
+          <Select
+            :title="`Chu kỳ`"
+            :entryValue="entryNameCycle"
+            :options="cycles.cycle"
+            @update:entryValue="
+              (value, value1) => (
+                updateEntryValueCycle(value), (entryNameCycle = value1.name)
+              )
+            "
+            @refresh="
+              (entryNameCycle = 'Chọn trạng thái chăm sóc'),
+                updateEntryValueCycle('')
+            "
+            style="height: 35px"
           />
         </div>
         <div class="form-group w-100 ml-3">
-          <Select 
-          :title="`Trạng thái`" 
-          :entryValue="`Trạng thái`"
-          @update:entryValue="(value) => statusValue = value"
-          :options="[
-            {
-              name: 'Thành công',
-              value: 'true',
-            },
-            {
-              name: 'Thất bại',
-              value: 'false',
-            },
-          ]" />
+          <Select
+            :title="`Trạng thái phân công`"
+            :entryValue="entryNameStatusTask"
+            :options="status_tasks.status_task"
+            @update:entryValue="
+              (value, value1) => (
+                updateEntryValueStatusTask(value),
+                (entryNameStatusTask = value1.name)
+              )
+            "
+            @refresh="
+              (entryNameStatusTask = 'Chọn trạng thái chăm sóc'),
+                updateEntryValueStatusTask('')
+            "
+            style="height: 35px"
+          />
         </div>
         <div class="form-group w-100 ml-3">
-          <InputFilter 
-            @update:entryValue="(value) => startdateValue = value"
-            :title="`Ngày bắt đầu`" :entryValue="`Ngày bắt đầu`"  />
+          <InputFilter
+            @update:entryValue="(value) => (startdateValue = value)"
+            :title="`Ngày bắt đầu`"
+            :entryValue="`Ngày bắt đầu`"
+            style="height: 35px"
+          />
         </div>
         <div class="form-group w-100 ml-3">
-          <InputFilter 
-            @update:entryValue="(value) => enddateValue = value"
-            :title="`Ngày kết thúc`" :entryValue="`Ngày kết thúc`"  />
+          <InputFilter
+            @update:entryValue="(value) => (enddateValue = value)"
+            :title="`Ngày kết thúc`"
+            :entryValue="`Ngày kết thúc`"
+            style="height: 35px"
+          />
         </div>
         <div class="form-group"></div>
       </div>
@@ -430,26 +941,62 @@ export default {
               name: 30,
               value: 30,
             },
-            {
-              name: 'All',
-              value: 'All',
-            },
           ]"
+          style="width: 125px"
+          :title="`Số bản ghi`"
           @update:entryValue="(value) => (data.entryValue = value)"
           :entryValue="data.entryValue"
+          @refresh="data.entryValue = 'All'"
         />
         <Search
           class="ml-3"
           style="width: 300px"
           @update:searchText="(value) => (data.searchText = value)"
+          :entryValue="data.searchText"
+          @choseSearch="
+            async (value) => (
+              console.log('search ........'),
+              (data.choseSearch = value),
+              (data.currentPage = 1)
+            )
+          "
+          @refresh="(data.entryValue = 'All'), (data.currentPage = 1)"
+          :options="[
+            {
+              _id: 'nameCus',
+              name: 'Tìm kiếm theo tên khách hàng',
+            },
+            {
+              _id: 'statustask',
+              name: 'Tìm kiếm theo trạng thái',
+            },
+            {
+              _id: 'cycle',
+              name: 'Tìm kiếm theo chu kỳ',
+            },
+          ]"
         />
       </div>
       <div class="d-flex align-items-start">
+        <Add_TaskEmployee
+          v-if="data.showTask_Employee"
+          :item="data.taskEmployee"
+        />
+        <button
+          type="button"
+          class="btn btn-warning mr-3"
+          data-toggle="modal"
+          data-target="#model-form-task_em"
+          @click="showTask_Employee()"
+        >
+          <span class="mx-2">Giao việc</span>
+        </button>
         <button
           type="button"
           class="btn btn-danger mr-3"
           data-toggle="modal"
           data-target="#model-delete-all"
+          @click="deleteMany()"
         >
           <span id="delete-all" class="mx-2">Xoá</span>
         </button>
@@ -458,7 +1005,7 @@ export default {
           type="button"
           class="btn btn-primary"
           data-toggle="modal"
-          data-target="#model-add"
+          data-target="#model-add-wizard"
         >
           <span id="add" class="mx-2">Thêm</span>
         </button>
@@ -470,6 +1017,11 @@ export default {
           @newCycle="
             (value) => {
               cycles.cycle = value;
+            }
+          "
+          @newStatus="
+            (value) => {
+              status_tasks.status_task = value;
             }
           "
         />
@@ -484,14 +1036,17 @@ export default {
         'Nội dung chăm sóc',
         'Trạng thái',
       ]"
+      :selectAll="data.selectAll"
       :labels="['start_date_format', 'end_date_format', 'content']"
-      @delete="(value) => deleteOne(value)"
+      @selectAll="(value) => handleSelectAll(value)"
+      @selectOne="(id, item) => handlSelectOne(id, item)"
+      @delete="handleDelete"
       @edit="
         (value, value1) => (
           (data.editValue = value), (data.activeEdit = value1)
         )
       "
-      @view="(value) => (data.viewValue = value)"
+      @view="(value) => view(value)"
       @appointment="
         (value, value1) => ((data.taskId = value), (data.taskObject = value1))
       "
@@ -506,24 +1061,24 @@ export default {
       @update:currentPage="(value) => (data.currentPage = value)"
       class="mx-3"
     />
+    <Edit
+      :item="data.editValue"
+      :class="[data.activeEdit ? 'show-modal' : 'd-none']"
+      @cancel="data.activeEdit = false"
+      :cycles="cycles.cycle"
+      :cus="data.cus"
+      :employee="data.employee"
+      :evaluate="data.evaluate"
+      :statustask="status_tasks.status_task"
+      @edit="edit(data.editValue)"
+    />
+    <AddAppointment
+      v-if="data.taskId.length > 0"
+      :taskId="data.taskId"
+      :task="data.taskObject"
+    />
+    <View :viewValue="data.viewValue" />
   </div>
-  <Edit
-    :item="data.editValue"
-    :class="[data.activeEdit ? 'show-modal' : 'd-none']"
-    @cancel="data.activeEdit = false"
-    :cycles="cycles.cycle"
-    :cus="data.cus"
-    :employee="data.employee"
-    @edit="edit(data.editValue)"
-  />
-  <AddAppointment
-    v-if="data.taskId.length > 0"
-    :taskId="data.taskId"
-    :task="data.taskObject"
-  />
-  <View
-  :viewValue="data.viewValue" 
-   />
 </template>
 
 <style scoped>

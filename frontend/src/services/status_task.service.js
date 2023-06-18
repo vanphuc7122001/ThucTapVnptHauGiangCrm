@@ -1,7 +1,7 @@
 import createApiClient from "./api.service";
 
 class EventService {
-  constructor(baseUrl = "/api/task_employees/") {
+  constructor(baseUrl = "/api/status_tasks") {
     this.api = createApiClient(baseUrl);
   }
   async getAll() {
@@ -10,11 +10,17 @@ class EventService {
   async create(data) {
     return (await this.api.post("/", data)).data;
   }
-  async deleteOne(data) {
-    return (await this.api.post(`/del`, data)).data;
+  async deleteAll() {
+    return (await this.api.delete("/")).data;
   }
   async get(id) {
     return (await this.api.get(`/${id}`)).data;
+  }
+  async update(id, data) {
+    return (await this.api.put(`/${id}`, data)).data;
+  }
+  async delete(id) {
+    return (await this.api.delete(`/${id}`)).data;
   }
 }
 

@@ -176,6 +176,7 @@ export default {
           },
         },
       },
+      //***
       center: {},
       department: {},
       unit: {},
@@ -274,10 +275,10 @@ export default {
         value.checked = false;
       }
       data.position = await http_getAll(Position);
-
       data.center = await CenterServices.getAll();
       data.department = await departmentsServices.getAll();
       data.unit = await unitsServices.getAll();
+
       data.position = data.position.map((value, index) => {
         return {
           ...value,
@@ -325,12 +326,11 @@ export default {
     const activeMenu = ref(1);
     // methods
     const create = async () => {
-      refresh();
+      await refresh();
     };
 
     const edit = async (editValue) => {
-      console.log(editValue);
-
+      console.log("Edit:", editValue);
       const result = await http_update(Employee, editValue._id, editValue);
       if (!result.error) {
         alert_success(`Sửa nhân viên`, `${result.msg}`);
@@ -401,9 +401,7 @@ export default {
     const updateEntryValuePosition = (value) => {
       entryValuePosition.value = value;
     };
-
     //  CENTER
-
     watch(entryValueCenter, async (newValue, oldValue) => {
       if (newValue == "") {
         await refresh();
@@ -567,6 +565,7 @@ export default {
     };
 
     //SelectAll
+    //***
     const arrayCheck = reactive({ data: [] });
 
     const handleSelectAll = (value) => {
@@ -587,7 +586,7 @@ export default {
       }
       console.log("arrayCheck:", arrayCheck.data);
     };
-    const handlSelectOne = (id, item) => {
+    const handleSelectOne = (id, item) => {
       if (item.checked == false) {
         arrayCheck.data.push(item);
       } else {
@@ -676,6 +675,7 @@ export default {
       }
     };
 
+    // ***
     const updateDepartment = async (value) => {
       if (entryValueCenter.value != "") {
         data.department = await departmentsServices.findAllDepOfACenter(
@@ -710,12 +710,12 @@ export default {
     };
     const sendEmail = async (value) => {
       const dataMail = reactive({ title: "", content: "", mail: "" });
+      dataMail.title = value.title;
+      dataMail.content = value.content;
       for (let i = 0; i < arrayCheck.data.length; i++) {
         if (arrayCheck.data[i].checked == true) {
-          console.log("name:", arrayCheck.data[i].name);
+          alert_success("Mail đã được gửi", "");
           try {
-            dataMail.title = value.title;
-            dataMail.content = value.content;
             dataMail.mail = arrayCheck.data[i].email;
             await mailService.sendmail(dataMail);
             console.log("Email sent successfully.");
@@ -723,8 +723,8 @@ export default {
             console.error("Error sending email:", error);
           }
         }
+        await refresh();
       }
-      alert_success("Mail đã được gửi", "");
     };
     //CHECKALL
     const checkAll = (value) => {
@@ -774,11 +774,12 @@ export default {
       updateEntryValueDepartment,
       updateEntryValueUnit,
 
+      //***
       handleDelete,
       deleteMany,
       handleSelectAll,
 
-      handlSelectOne,
+      handleSelectOne,
     };
   },
 };
@@ -980,7 +981,7 @@ export default {
       :selectAll="data.selectAll"
       :startRow="data.startRow"
       @selectAll="(value) => handleSelectAll(value)"
-      @selectOne="(id, item) => handlSelectOne(id, item)"
+      @selectOne="(id, item) => handleSelectOne(id, item)"
       @delete="handleDelete"
       @edit="
         (value, value1) => (
