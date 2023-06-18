@@ -387,11 +387,16 @@ export default {
         });
       }
       data.selectAll[0].checked = false;
-      for (let value of data.items) {
-        // for(let a of arrayCheck.data){
-        //   value.checked = false;
-        // }
+      for (let array of arrayCheck.data) {
+        for (let value of data.items) {
+          if (array._id == value._id) {
+            value.checked = true;
+            break;
+          }
+          value.checked = false;
+        }
       }
+      console.log("items:", data.items);
     });
     const updateEntryValuePosition = (value) => {
       entryValuePosition.value = value;
@@ -446,6 +451,16 @@ export default {
         });
       }
       data.selectAll[0].checked = false;
+      for (let array of arrayCheck.data) {
+        for (let value of data.items) {
+          if (array._id == value._id) {
+            value.checked = true;
+            break;
+          }
+          value.checked = false;
+        }
+      }
+      console.log("items:", data.items);
     });
     //UpdateEntryValueCenter
     const updateEntryValueCenter = (value) => {
@@ -489,6 +504,16 @@ export default {
         });
       }
       data.selectAll[0].checked = false;
+      for (let array of arrayCheck.data) {
+        for (let value of data.items) {
+          if (array._id == value._id) {
+            value.checked = true;
+            break;
+          }
+          value.checked = false;
+        }
+      }
+      console.log("items:", data.items);
     });
     const updateEntryValueDepartment = (value) => {
       entryValueDepartment.value = value;
@@ -526,6 +551,16 @@ export default {
         });
       }
       data.selectAll[0].checked = false;
+      for (let array of arrayCheck.data) {
+        for (let value of data.items) {
+          if (array._id == value._id) {
+            value.checked = true;
+            break;
+          }
+          value.checked = false;
+        }
+      }
+      console.log("items:", data.items);
     });
     const updateEntryValueUnit = (value) => {
       entryValueUnit.value = value;
@@ -539,7 +574,7 @@ export default {
       if (value == false) {
         for (let value1 of data.items) {
           value1.checked = true;
-          arrayCheck.data.push(value1._id);
+          arrayCheck.data.push(value1);
         }
       } else {
         for (let value1 of data.items) {
@@ -554,10 +589,10 @@ export default {
     };
     const handlSelectOne = (id, item) => {
       if (item.checked == false) {
-        arrayCheck.data.push(id);
+        arrayCheck.data.push(item);
       } else {
         arrayCheck.data = arrayCheck.data.filter((value, index) => {
-          return value != id;
+          return value._id != id;
         });
       }
       data.selectAll[0].checked = false;
@@ -586,14 +621,16 @@ export default {
       console.log("delete many");
       try {
         //Mảng nhân viên sẽ xóa
-        const deleteArray = data.items.filter((value, index) => {
-          return value.checked == true;
-        });
-        if (deleteArray.length == 0) {
+        // const deleteArray = data.items.filter((value, index) => {
+        //   return value.checked == true;
+        // });
+        if (arrayCheck.data.length == 0) {
           alert_warning("Bạn chưa chọn nhân viên", "");
           return;
         }
-        let contentAlert = `<p>Bạn có muốn xoá tất cả nhân viên này không?</p><p>Tổng số nhân viên sẽ xoá là: <span style="color: blue;">${deleteArray.length}</span></p>
+        let contentAlert = `<p>Bạn có muốn xoá tất cả nhân viên này không?
+          </p><p>Tổng số nhân viên sẽ xoá là:
+           <span style="color: blue;">${arrayCheck.data.length}</span></p>
             <table class="table table-bordered">
         <thead>
           <tr>
@@ -602,7 +639,7 @@ export default {
             <th>Tổ</th>
           </tr>
         </thead> <tbody>`;
-        for (let value of deleteArray) {
+        for (let value of arrayCheck.data) {
           console.log(value);
           contentAlert += `<tr>
             <td>${value.name}</td>
@@ -620,10 +657,10 @@ export default {
         );
         if (isConfirmed) {
           let checkDeleteAll = false;
-          for (let valueDelete of deleteArray) {
+          for (let valueDelete of arrayCheck.data) {
             const rsEmployee = await http_deleteOne(Employee, valueDelete._id);
             if (rsEmployee.error) {
-              alert_error("Lổi ", rsEmployee.msg);
+              alert_error("Lỗi ", rsEmployee.msg);
               checkDeleteAll = false;
             } else {
               checkDeleteAll = true;
@@ -673,12 +710,13 @@ export default {
     };
     const sendEmail = async (value) => {
       const dataMail = reactive({ title: "", content: "", mail: "" });
-      for (let i = 0; i < data.items.length; i++) {
-        if (data.items[i].checked == true) {
+      for (let i = 0; i < arrayCheck.data.length; i++) {
+        if (arrayCheck.data[i].checked == true) {
+          console.log("name:", arrayCheck.data[i].name);
           try {
             dataMail.title = value.title;
             dataMail.content = value.content;
-            dataMail.mail = data.items[i].email;
+            dataMail.mail = arrayCheck.data[i].email;
             await mailService.sendmail(dataMail);
             console.log("Email sent successfully.");
           } catch (error) {
