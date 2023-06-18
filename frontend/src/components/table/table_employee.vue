@@ -27,8 +27,7 @@
             type="checkbox"
             :checked="item.checked == true"
             v-model="item.checked"
-            name=""
-            id=""
+            @click="$emit('selectOne', item._id, item)"
             class="d-flex align-items-center size-16"
           />
         </td>

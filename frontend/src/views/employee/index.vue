@@ -307,6 +307,7 @@ export default {
       //     return val.postionId == entryValuePosition.value;
       //   });
       // }
+      // ***
       entryNamePosition.value = "Chức vụ";
       entryValuePosition.value = "";
       entryNameCenter.value = "Trung tâm";
@@ -526,18 +527,26 @@ export default {
     };
 
     //SelectAll
+    const arrayCheck = reactive({ data: [] });
+
     const handleSelectAll = (value) => {
-      console.log("cccc", value);
       if (value == false) {
         for (let value1 of data.items) {
           value1.checked = true;
+          arrayCheck.data.push(value1._id);
         }
       } else {
         for (let value1 of data.items) {
           value1.checked = false;
+          const index = arrayCheck.data.indexOf(value1._id);
+          if (index !== -1) {
+            arrayCheck.data.splice(index, 1);
+          }
         }
       }
+      console.log("arrayCheck:", arrayCheck.data);
     };
+    const handlSelectOne = (id, item) => {};
 
     // HANDLE DELETE
     const handleDelete = async (id, item) => {
@@ -714,6 +723,8 @@ export default {
       handleDelete,
       deleteMany,
       handleSelectAll,
+
+      handlSelectOne,
     };
   },
 };
@@ -915,6 +926,7 @@ export default {
       :selectAll="data.selectAll"
       :startRow="data.startRow"
       @selectAll="(value) => handleSelectAll(value)"
+      @selectOne="(id, item) => handlSelectOne(id, item)"
       @delete="handleDelete"
       @edit="
         (value, value1) => (
