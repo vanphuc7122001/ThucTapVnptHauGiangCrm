@@ -387,6 +387,11 @@ export default {
         });
       }
       data.selectAll[0].checked = false;
+      for (let value of data.items) {
+        // for(let a of arrayCheck.data){
+        //   value.checked = false;
+        // }
+      }
     });
     const updateEntryValuePosition = (value) => {
       entryValuePosition.value = value;
@@ -530,6 +535,7 @@ export default {
     const arrayCheck = reactive({ data: [] });
 
     const handleSelectAll = (value) => {
+      arrayCheck.data = [];
       if (value == false) {
         for (let value1 of data.items) {
           value1.checked = true;
@@ -546,7 +552,17 @@ export default {
       }
       console.log("arrayCheck:", arrayCheck.data);
     };
-    const handlSelectOne = (id, item) => {};
+    const handlSelectOne = (id, item) => {
+      if (item.checked == false) {
+        arrayCheck.data.push(id);
+      } else {
+        arrayCheck.data = arrayCheck.data.filter((value, index) => {
+          return value != id;
+        });
+      }
+      data.selectAll[0].checked = false;
+      console.log("arrayCheckOne:", arrayCheck.data);
+    };
 
     // HANDLE DELETE
     const handleDelete = async (id, item) => {
