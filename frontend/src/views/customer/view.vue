@@ -1,8 +1,6 @@
 <script>
 import { ref } from 'vue'
-import {
-  Table
-} from '../common/import'
+import Table from '../../components/table/table_customer_types.vue'
 export default {
   components: {
     Table
@@ -47,11 +45,11 @@ export default {
 
         <!-- Modal body -->
         <div class="modal-body">
-          <div class="">
+          <div class="mb-2">
             <button data-toggle="collapse" class="px-3 py-2 h6 border-none" data-target="#personal-info" style="margin-bottom: 0;" @click="handleActiveCus">
               Thông tin cá nhân
             </button>
-            <div v-if="isActive" id="personal-info" class="collapse m-3 border-all">
+            <div v-if="isActive" id="personal-info" class="collapse my-2 border-all">
               <img :src="item.Customer.avatar" alt="" class="rounded-circle mx-auto d-block border border-dark my-3" height="100">
               <div class="d-flex justify-content-around">
                 <div>
@@ -76,11 +74,11 @@ export default {
               {{ item.Customer_Type.name }}
             </div>
           </div> -->
-          <div class="mt-2">
-            <button data-toggle="collapse" class="px-3 py-2 h6 border-none" data-target="#customer-work" @click="handleActiveCus">
+          <div class="mb-2">
+            <button data-toggle="collapse" style="margin-bottom: 0px;" class="px-3 py-2 h6 border-none" data-target="#customer-work" @click="handleActiveCus">
               Công việc
             </button>
-            <div v-if="isActive" id="customer-work" class="collapse border-all">
+            <div v-if="isActive" id="customer-work" class="collapse border-all my-2">
               <!-- d-flex justify-content-around align-items-center -->
               <div class="d-flex justify-content-around align-items-center" style="height: 100px;">
                 <div>
@@ -94,11 +92,11 @@ export default {
               </div>
             </div>
           </div>
-          <div class="mt-2">
-            <button style="margin-bottom: 0px;" data-toggle="collapse" class="px-3 py-2 h6 border-none" data-target="#assignment" @click="handleActiveCus">
+          <div class="">
+            <button data-toggle="collapse" class="px-3 py-2 h6 border-none" data-target="#assignment" @click="handleActiveCus">
               Danh sách chăm sóc khách hàng
             </button>
-            <div v-if="isActive" id="assignment" class="collapse my-3">
+            <div v-if="isActive" id="assignment" class="collapse">
              <div class="table-responsive">
               <Table
                 :items="itemViewCareCus"
@@ -118,11 +116,11 @@ export default {
               </div> -->
             </div>
           </div>
-          <div class=" mt-2">
+          <div class="">
             <button data-toggle="collapse" class="px-3 py-2 h6 border-none" data-target="#event" @click="handleActiveCus">
               Danh sách sự kiện
             </button>
-            <div v-if="isActive" id="event" class="collapse mx-2">
+            <div v-if="isActive" id="event" class="collapse">
               <Table
                 :items="item.Events"
                 :fields="['Tên sự kiện']"
@@ -138,7 +136,7 @@ export default {
             <button data-toggle="collapse" class="px-3 py-2 h6 border-none" data-target="#habit" @click="handleActiveCus">
               Danh sách thói quen khách hàng
             </button>
-            <div v-if="isActive" id="habit" class="collapse mx-2">
+            <div v-if="isActive" id="habit" class="collapse mt-2">
               <Table
                 :items="item.Habits"
                 :fields="['Tên thói quen']"

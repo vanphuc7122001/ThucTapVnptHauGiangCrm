@@ -91,7 +91,7 @@ export default {
             >
               Công việc
             </button>
-            <div v-if="isActive" id="customer-type" class="collapse border-all">
+            <div v-if="isActive" id="customer-type" class="collapse border-all" style="margin-bottom: 10px;">
               <div
                 class="d-flex justify-content-around align-items-center"
                 style="height: 100px"
@@ -164,6 +164,7 @@ export default {
 <style scoped>
 .border-none {
   outline: none;
+  border: none;
 }
 
 .border-all {

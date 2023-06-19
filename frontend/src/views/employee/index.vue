@@ -317,8 +317,10 @@ export default {
       entryNameUnit.value = "Tổ";
       entryValueUnit.value = "";
 
-      for (let array of arrayCheck.data) {
-        for (let value of data.items) {
+      //***thay đổi
+      for (let value of data.items) {
+        for (let array of arrayCheck.data) {
+          console.log("arrayid==value_id", array._id == value._id);
           if (array._id == value._id) {
             value.checked = true;
             break;
@@ -394,9 +396,14 @@ export default {
           );
         });
       }
+      //Thay đổi
       data.selectAll[0].checked = false;
-      for (let array of arrayCheck.data) {
-        for (let value of data.items) {
+      for (let value of data.items) {
+        value.checked = false;
+      }
+      for (let value of data.items) {
+        for (let array of arrayCheck.data) {
+          console.log("arrayid==value_id", array._id == value._id);
           if (array._id == value._id) {
             value.checked = true;
             break;
@@ -457,8 +464,12 @@ export default {
         });
       }
       data.selectAll[0].checked = false;
-      for (let array of arrayCheck.data) {
-        for (let value of data.items) {
+      for (let value of data.items) {
+        value.checked = false;
+      }
+      for (let value of data.items) {
+        for (let array of arrayCheck.data) {
+          console.log("arrayid==value_id", array._id == value._id);
           if (array._id == value._id) {
             value.checked = true;
             break;
@@ -467,6 +478,7 @@ export default {
         }
       }
       console.log("items:", data.items);
+      console.log("Array:", arrayCheck.data);
     });
     //UpdateEntryValueCenter
     const updateEntryValueCenter = (value) => {
@@ -509,9 +521,13 @@ export default {
           );
         });
       }
-      data.selectAll[0].checked = false;
-      for (let array of arrayCheck.data) {
-        for (let value of data.items) {
+      //Thay đổi
+      for (let value of data.items) {
+        value.checked = false;
+      }
+      for (let value of data.items) {
+        for (let array of arrayCheck.data) {
+          console.log("arrayid==value_id", array._id == value._id);
           if (array._id == value._id) {
             value.checked = true;
             break;
@@ -556,9 +572,14 @@ export default {
           );
         });
       }
+      //Thay đổi
       data.selectAll[0].checked = false;
-      for (let array of arrayCheck.data) {
-        for (let value of data.items) {
+      for (let value of data.items) {
+        value.checked = false;
+      }
+      for (let value of data.items) {
+        for (let array of arrayCheck.data) {
+          console.log("arrayid==value_id", array._id == value._id);
           if (array._id == value._id) {
             value.checked = true;
             break;
@@ -577,7 +598,7 @@ export default {
     const arrayCheck = reactive({ data: [] });
 
     const handleSelectAll = (value) => {
-      arrayCheck.data = [];
+      // arrayCheck.data = [];
       if (value == false) {
         for (let value1 of data.items) {
           value1.checked = true;
@@ -599,11 +620,12 @@ export default {
         arrayCheck.data.push(item);
       } else {
         arrayCheck.data = arrayCheck.data.filter((value, index) => {
+          console.log(value._id != id);
           return value._id != id;
         });
       }
       data.selectAll[0].checked = false;
-      console.log("arrayCheckOne:", arrayCheck.data);
+      console.log("arrayCheckOne:", arrayCheck.data, item.checked);
     };
 
     // HANDLE DELETE
@@ -734,16 +756,7 @@ export default {
         await refresh();
       }
     };
-    //CHECKALL
-    const checkAll = (value) => {
-      console.log("index", value, data.items.length);
 
-      var i;
-      for (i = 0; i < data.items.length; i++) {
-        data.items[i].checked = value;
-      }
-      console.log("check all:", data.items[0].checked);
-    };
     onBeforeMount(async () => {
       await refresh();
     });
@@ -763,7 +776,7 @@ export default {
       mail,
       showMail,
       view,
-      checkAll,
+
       //DUY
       entryValuePosition,
       entryNamePosition,
