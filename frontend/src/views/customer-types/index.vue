@@ -1,6 +1,5 @@
 <script>
 import {
-  Table,
   Pagination,
   Dropdown,
   Select,
@@ -19,6 +18,7 @@ import {
   formatDateTime,
 } from '../common/import.js'
 
+import Table from '../../components/table/table_customer_types.vue'
 import Add from "./add.vue";
 import Edit from "./edit.vue";
 // import service
