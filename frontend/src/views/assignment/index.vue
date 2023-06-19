@@ -1198,7 +1198,7 @@ export default {
               )
             "
             @refresh="
-              (entryNameCycle= 'Chọn trạng thái chăm sóc'), updateEntryValueCycle('')
+              (entryNameCycle= 'Chu kỳ'), updateEntryValueCycle('')
             "
             style="height: 35px"/>
         </div>
@@ -1214,13 +1214,13 @@ export default {
               )
             "
             @refresh="
-              (entryNameEval= 'Chọn đánh giá'), updateEntryValueEval('')
+              (entryNameEval= 'Đánh giá'), updateEntryValueEval('')
             "
             style="height: 35px"/>
         </div>
         <div class="form-group w-100 ml-3">
           <Select
-            :title="`Trạng thái phân công`"
+            :title="`Trạng thái`"
             :entryValue="entryNameStatusTask"
             :options="status_tasks.status_task"
             @update:entryValue="
@@ -1230,7 +1230,7 @@ export default {
               )
             "
             @refresh="
-              (entryNameStatusTask = 'Chọn trạng thái chăm sóc'), updateEntryValueStatusTask('')
+              (entryNameStatusTask = 'Trạng thái'), updateEntryValueStatusTask('')
             "
             style="height: 35px"
           />

@@ -598,7 +598,7 @@ export default {
     const arrayCheck = reactive({ data: [] });
 
     const handleSelectAll = (value) => {
-      // arrayCheck.data = [];
+      arrayCheck.data = [];
       if (value == false) {
         for (let value1 of data.items) {
           value1.checked = true;

@@ -113,7 +113,7 @@ export default {
     });
 
     const entryValueCustomerType = ref("");
-    const entryNameCustomerType = ref("Chọn loại khách hàng");
+    const entryNameCustomerType = ref("Loại khách hàng");
     const entryValueStatusTask = ref("");
     const entryNameStatusTask = ref("Trạng thái chăm sóc");
 
@@ -510,7 +510,7 @@ export default {
                 (entryNameCustomerType = value1.name)
               )
               " @refresh="
-    (entryNameCustomerType = 'Chọn loại khách hàng'), updateEntryValueCustomerType('')
+    (entryNameCustomerType = 'Loại khách hàng'), updateEntryValueCustomerType('')
     " style="height: 35px" />
         </div>
         <div class="form-group w-100 ml-3">

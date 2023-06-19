@@ -113,9 +113,8 @@ export default {
               delete
             </span>
             <button
-            style="border:none"
             type="button"
-            class="mx-2"
+            class="mx-2 format-btn"
             data-toggle="modal"
             data-target="#modal-addAppointment"
           >
