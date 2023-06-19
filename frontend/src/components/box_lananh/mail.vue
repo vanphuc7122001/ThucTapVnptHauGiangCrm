@@ -28,9 +28,7 @@ export default {
         <div class="modal-content">
           <!-- Modal Header -->
           <div class="modal-header">
-            <h4 class="modal-title" style="font-size: 15px">
-              Thêm sự kiện mới
-            </h4>
+            <h4 class="modal-title" style="font-size: 16px">Thư điện tử</h4>
             <button type="button" class="close" data-dismiss="modal">
               &times;
             </button>

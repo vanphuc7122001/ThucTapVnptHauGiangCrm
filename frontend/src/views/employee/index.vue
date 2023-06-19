@@ -317,6 +317,15 @@ export default {
       entryNameUnit.value = "Tổ";
       entryValueUnit.value = "";
 
+      for (let array of arrayCheck.data) {
+        for (let value of data.items) {
+          if (array._id == value._id) {
+            value.checked = true;
+            break;
+          }
+          value.checked = false;
+        }
+      }
       data.selectAll[0].checked = false;
     };
     const router = useRouter();
@@ -747,9 +756,6 @@ export default {
       edit,
       // search,
       refresh,
-
-      positions,
-      entryValuePosition,
       // mail,
       sendEmail,
       updateDepartment,
