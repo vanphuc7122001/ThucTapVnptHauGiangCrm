@@ -23,6 +23,7 @@ import {
   Customer_Work,
   Customer,
   Customer_Types,
+  Status_Task
 } from "../common/import";
 
 export default {
@@ -101,12 +102,14 @@ export default {
       customerValue: {},
       showAddHabit: false,
       customerType: null,
+      customerStatus: null, // khởi tạo trạng thái chăm sóc khách hàng
       choseSearch: "",
       selectAll: [
         {
           checked: false,
         },
       ],
+      viewCareCus: null
     });
 
     const entryValueCustomerType = ref("");
@@ -117,21 +120,34 @@ export default {
     const reFresh = async () => {
       const cusWork = await http_getAll(Customer_Work);
       const customerType = await http_getAll(Customer_Types);
+      const customerStatus = await http_getAll(Status_Task);
+
       data.items = cusWork.documents;
       for (let value of data.items) {
         value.checked = false;
       }
 
-      console.log("customer", data.items);
+
+      // loại khách hàng
       data.customerType = customerType.documents;
-      console.log("customerType", data.customerType);
+
+      // format loại khách hàng
       data.customerType = data.customerType.map((value, index) => {
         return {
           ...value,
           value: value._id,
         };
       });
-      console.log("customerType", data.customerType);
+
+      // trạng thái task chăm sóc khách hàng
+      data.customerStatus = customerStatus.map((value, index) => {
+        return {
+          ...value,
+          value: value._id,
+        };
+      })
+
+
 
       if (entryValueCustomerType.value.length > 0) {
         data.items = data.items.filter((cusWork) => {
@@ -141,18 +157,17 @@ export default {
         });
       }
 
-      console.log("customer1", data.items);
+      // console.log("customer1", data.items);
 
-      // if (entryValueStatusTask.value != "Trạng thái chăm sóc") {
-      //   data.items = data.items.filter((cusWork) => {
-      //     return (
-      //       cusWork.Customer.Tasks.filter((task) => {
-      //         return task.Status_Task.status == entryValueStatusTask.value;
-      //       }).length > 0
-      //     );
-      //   });
-      // }
-      console.log("customer2", data.items);
+      if (entryValueStatusTask.value.length > 0) {
+        data.items = data.items.filter((cusWork) => {
+          return (
+            cusWork.Customer.Tasks.filter((task) => {
+              return task.Status_Task._id == entryValueStatusTask.value;
+            }).length > 0
+          );
+        });
+      }
     };
 
     const showAddHabit = () => {
@@ -302,6 +317,20 @@ export default {
         current_position: item.current_position,
         work_temp: item.work_temp,
       };
+
+      data.viewCareCus = item.Customer.Tasks.map((value) => {
+        console.log('Value:', value);
+        return {
+          start_date: value.start_date,
+          end_date: value.end_date,
+          content: value.content,
+          customerName: item.Customer.name,
+          cycleName: value.Cycle.name, // join bản sao
+          statusName: value.Status_Task.name,
+          EvaluateStar: value.Evaluate.star,
+          comment: value.Comment == null ? 'Chưa cập nhật' : value.Comment.content
+        }
+      })
     };
 
     //   formatDateTime,
@@ -357,8 +386,8 @@ export default {
           value1.checked = false;
         }
       }
-    }; 
-    
+    };
+
     const deleteMany = async () => {
       try {
         const deleteArray = data.items.filter((value, index) => {
@@ -416,7 +445,7 @@ export default {
     };
 
     watch(entryValueCustomerType, (newValue, oldValue) => {
-      if (newValue != "Loại khách hàng") {
+      if (newValue != "") {
         reFresh();
       } else {
         reFresh();
@@ -425,7 +454,7 @@ export default {
 
     watch(entryValueStatusTask, (newValue, oldValue) => {
       // console.log('status', newValue);
-      if (newValue != "Trạng thái chăm sóc") {
+      if (newValue != "") {
         reFresh();
       } else {
         reFresh();
@@ -461,17 +490,11 @@ export default {
   <div class="border-box d-flex flex-column ml-2" style="margin-right: -3px">
     <!-- Menu -->
     <div class="d-flex menu my-3 mx-3 justify-content-end">
-      <router-link
-        to="/admin/home/customer"
-        @click="activeMenu = 1"
-        :class="[activeMenu == 1 ? 'active-menu' : 'none-active-menu']"
-        ><span class="size-18">Khách hàng</span>
+      <router-link to="/customer" @click="activeMenu = 1"
+        :class="[activeMenu == 1 ? 'active-menu' : 'none-active-menu']"><span class="size-18">Khách hàng</span>
       </router-link>
-      <router-link
-        to="/admin/home/customer_types"
-        @click="activeMenu = 2"
-        :class="[activeMenu == 2 ? 'active-menu' : 'none-active-menu']"
-        ><span class="size-18">Loại khách hàng</span>
+      <router-link to="/customer_types" @click="activeMenu = 2"
+        :class="[activeMenu == 2 ? 'active-menu' : 'none-active-menu']"><span class="size-18">Loại khách hàng</span>
       </router-link>
     </div>
     <!-- Filter -->
@@ -481,38 +504,23 @@ export default {
       <div class="d-flex mx-3">
         <div class="form-group w-100">
           <!-- entryValue = modelValue -->
-          <Select
-            :title="`Loại khách hàng`"
-            :entryValue="entryNameCustomerType"
-            :options="data.customerType"
-            @update:entryValue="
-              (value, value1) => (
+          <Select :title="`Loại khách hàng`" :entryValue="entryNameCustomerType" :options="data.customerType"
+            @update:entryValue="(value, value1) => (
                 updateEntryValueCustomerType(value),
                 (entryNameCustomerType = value1.name)
               )
-            "
-            @refresh="
-              (entryNameCustomerType = 'Chọn loại khách hàng'), updateEntryValueCustomerType('')
-            "
-            style="height: 35px"
-          />
+              " @refresh="
+    (entryNameCustomerType = 'Chọn loại khách hàng'), updateEntryValueCustomerType('')
+    " style="height: 35px" />
         </div>
         <div class="form-group w-100 ml-3">
-          <Select
-            :title="`Trạng thái chăm sóc`"
-            :entryValue="entryValueStatusTask"
-            :options="[
-              {
-                name: 'Thành công',
-                value: 'true',
-              },
-              {
-                name: 'Thất bại',
-                value: 'false',
-              },
-            ]"
-            @update:entryValue="updateEntryValueStatusTask"
-          />
+          <Select :title="`Trạng thái chăm sóc`" :entryValue="entryNameStatusTask" :options="data.customerStatus"
+            @update:entryValue="(value, value1) => (
+                updateEntryValueStatusTask(value),
+                (entryNameStatusTask = value1.name)
+              )" @refresh="
+    (entryNameStatusTask = 'Trạng thái chăm sóc'), updateEntryValueStatusTask('')
+    " style="height: 35px" />
         </div>
         <div class="form-group"></div>
       </div>
@@ -521,132 +529,80 @@ export default {
     <div class="border-hr mb-3"></div>
     <div class="d-flex justify-content-between mx-3 mb-3">
       <div class="d-flex justify-content-start">
-        <Select
-          class="d-flex justify-content-start"
-          :options="[
-            {
-              name: 5,
-              value: 5,
-            },
-            {
-              name: 10,
-              value: 10,
-            },
-            {
-              name: 20,
-              value: 20,
-            },
-            {
-              name: 30,
-              value: 30,
-            },
-          ]"
-          style="width: 125px"
-          :title="`Số bản ghi`"
-          @update:entryValue="(value) => (data.entryValue = value)"
-          :entryValue="data.entryValue"
-          @refresh="data.entryValue = 'All'"
-        />
-        <Search
-          class="ml-3"
-          style="width: 300px"
-          @update:searchText="(value) => (data.searchText = value)"
-          :entryValue="data.searchText"
-          @choseSearch="
-            async (value) => (
+        <Select class="d-flex justify-content-start" :options="[
+          {
+            name: 5,
+            value: 5,
+          },
+          {
+            name: 10,
+            value: 10,
+          },
+          {
+            name: 20,
+            value: 20,
+          },
+          {
+            name: 30,
+            value: 30,
+          },
+        ]" style="width: 125px" :title="`Số bản ghi`" @update:entryValue="(value) => (data.entryValue = value)"
+          :entryValue="data.entryValue" @refresh="data.entryValue = 'All'" />
+        <Search class="ml-3" style="width: 300px" @update:searchText="(value) => (data.searchText = value)"
+          :entryValue="data.searchText" @choseSearch="async (value) => (
               console.log('search ........'),
               (data.choseSearch = value),
               (data.currentPage = 1)
             )
-          "
-          @refresh="(data.entryValue = 'All'), (data.currentPage = 1)"
-          :options="[
-            {
-              _id: 'name',
-              name: 'Tìm kiếm theo tên',
-            },
-            {
-              _id: 'email',
-              name: 'Tìm kiếm theo email',
-            },
-            {
-              _id: 'phone',
-              name: 'Tìm kiếm theo số điện thoại',
-            },
-          ]"
-        />
+            " @refresh="(data.entryValue = 'All'), (data.currentPage = 1)" :options="[
+    {
+      _id: 'name',
+      name: 'Tìm kiếm theo tên',
+    },
+    {
+      _id: 'email',
+      name: 'Tìm kiếm theo email',
+    },
+    {
+      _id: 'phone',
+      name: 'Tìm kiếm theo số điện thoại',
+    },
+  ]" />
       </div>
       <div class="d-flex align-items-start">
-        <button
-          type="button"
-          class="btn btn-danger mr-3"
-          data-toggle="modal"
-          data-target="#model-delete-all"
-          @click="deleteMany()"
-        >
-          <span id="delete-all" class="mx-2"
-            ><span class="size-16">Xoá</span></span
-          >
+        <button type="button" class="btn btn-danger mr-3" data-toggle="modal" data-target="#model-delete-all"
+          @click="deleteMany()">
+          <span id="delete-all" class="mx-2"><span class="size-16">Xoá</span></span>
         </button>
         <!-- <DeleteAll :items="data.items" /> -->
-        <button
-          type="button"
-          class="btn btn-primary"
-          data-toggle="modal"
-          data-target="#model-add"
-        >
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#model-add">
           <span id="add" class="mx-2"><span class="size-16">Thêm</span></span>
         </button>
         <Add @refresh_customer="refresh_customer" />
-        <button
-          type="button"
-          class="btn btn-secondary ml-3"
-          data-toggle="modal"
-          data-target="#model-addHabit"
-          @click="showAddHabit()"
-        >
-          <span id="add" class="mx-2"
-            ><span class="size-16">Thêm thói quen</span></span
-          >
+        <button type="button" class="btn btn-secondary ml-3" data-toggle="modal" data-target="#model-addHabit"
+          @click="showAddHabit()">
+          <span id="add" class="mx-2"><span class="size-16">Thêm thói quen</span></span>
         </button>
         <AddHabit v-if="data.showAddHabit" :item="data.customerValue" />
       </div>
     </div>
     <!-- Table -->
-    <Table
-      :items="setPages"
-      :fields="[
-        'Tên',
-        'Email',
-        'Sdt',
-        'Công việc',
-        'Công ty',
-        'Loại khách hàng',
-      ]"
-      :selectAll="data.selectAll"
-      :startRow="data.startRow"
-      @selectAll="(value) => handleSelectAll(value)"
-      @delete="handleDelete"
-      @edit="edit"
-      @view="view"
-    />
+    <Table :items="setPages" :fields="[
+      'Tên',
+      'Email',
+      'Sdt',
+      'Công việc',
+      'Công ty',
+      'Loại khách hàng',
+    ]" :selectAll="data.selectAll" :startRow="data.startRow" @selectAll="(value) => handleSelectAll(value)"
+      @delete="handleDelete" @edit="edit" @view="view" />
     <!-- Pagination -->
-    <Pagination
-      :numberOfPages="data.numberOfPages"
-      :totalRow="data.totalRow"
-      :startRow="data.startRow"
-      :endRow="data.endRow"
-      :currentPage="data.currentPage"
-      @update:currentPage="(value) => (data.currentPage = value)"
-      class="mx-3"
-    />
-    <Edit
-      :item="data.viewValue"
-      :class="[data.activeEdit ? 'show-modal' : 'd-none']"
-      @cancel="data.activeEdit = false"
-      @refresh_customer="refresh_customer"
-    />
-    <View :item="data.viewValue" />
+    <Pagination :numberOfPages="data.numberOfPages" :totalRow="data.totalRow" :startRow="data.startRow"
+      :endRow="data.endRow" :currentPage="data.currentPage" @update:currentPage="(value) => (data.currentPage = value)"
+      class="mx-3" />
+    <Edit :item="data.viewValue" :class="[data.activeEdit ? 'show-modal' : 'd-none']" @cancel="data.activeEdit = false"
+      @refresh_customer="refresh_customer" />
+    <View :item="data.viewValue" :itemViewCareCus="data.viewCareCus" />
   </div>
 </template>
 

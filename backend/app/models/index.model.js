@@ -240,16 +240,7 @@ const Customer_Work = sequelize.define("Customer_Work", {
   },
   work_temp: {
     type: DataTypes.TEXT,
-    allowNull: false,
-    validate: {
-      notEmpty: {
-        msg: "Nhiệm kì công việc không được bỏ trống.",
-      },
-      // len: {
-      //     args: [1, Infinity], // Độ dài từ 1 ký tự trở lên
-      //     msg: 'Tên người dùng không được bỏ trống.',
-      // },
-    },
+    allowNull: true,
     get() {
       return getDecrypt("work_temp", this);
     },
@@ -1081,7 +1072,7 @@ Appointment.sync();
 Task.sync();
 Log.sync();
 Evaluate.sync();
-Comment.sync({ alert: true });
+Comment.sync();
 Status_App.sync();
 Status_Task.sync();
 Customer_Event.sync();

@@ -496,7 +496,7 @@ export default {
                   </div>
                   <div class="form-group">
                     <label for="wor_work_temp"
-                      >Nhiệm kỳ(<span style="color: red">*</span>)</label
+                      >Nhiệm kỳ</label
                     >
                     <input
                       type="text"
@@ -504,6 +504,7 @@ export default {
                       id="wor_work_temp"
                       v-model="item.work_temp"
                       required
+                      style="border-color: #28a745;"
                     />
                   </div>
                 </div>
@@ -527,7 +528,7 @@ export default {
                   "
                   class="btn-next d-flex align-items-center px-3 py-1 mx-2"
                   @click="data.activeStep = data.activeStep + 1"
-                  >Next
+                  >Tiếp tục
                   <span
                     class="material-symbols-outlined d-flex align-items-center"
                   >
@@ -545,7 +546,7 @@ export default {
                     class="material-symbols-outlined d-flex align-items-center mx-2"
                   >
                     navigate_before </span
-                  >Previous</span
+                  >Quay lại</span
                 >
               </div>
             </div>

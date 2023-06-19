@@ -7,6 +7,9 @@ const {
   Status_Task,
   Event,
   Habit,
+  Evaluate,
+  Comment,
+  Cycle,
 } = require("../models/index.model.js");
 const createError = require("http-errors");
 const { v4: uuidv4 } = require("uuid");
@@ -32,6 +35,8 @@ exports.create = async (req, res, next) => {
   }
 };
 
+// Evaluate,
+// Comment,
 exports.findAll = async (req, res, next) => {
   try {
     const documents = await Customer_Work.findAll({
@@ -44,6 +49,15 @@ exports.findAll = async (req, res, next) => {
               include: [
                 {
                   model: Status_Task,
+                },
+                {
+                  model: Evaluate,
+                },
+                {
+                  model: Comment,
+                },
+                {
+                  model: Cycle,
                 },
               ],
             },

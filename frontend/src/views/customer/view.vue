@@ -1,12 +1,33 @@
 <script>
+import { ref } from 'vue'
+import {
+  Table
+} from '../common/import'
 export default {
+  components: {
+    Table
+  },
   props: {
     item: {
       type: Object
     }
+    ,
+    itemViewCareCus: {
+      type: Array
+    }
   },
   setup(props, context) {
 
+    const isActive = ref(false)
+
+    const handleActiveCus = () => {
+      isActive.value = !isActive.value
+    }
+    
+    return {
+      isActive,
+      handleActiveCus
+    }
   }
 }
 </script>
@@ -27,11 +48,11 @@ export default {
         <!-- Modal body -->
         <div class="modal-body">
           <div class="">
-            <button data-toggle="collapse" class="px-3 py-2 h6 border-none" data-target="#personal-info">
+            <button data-toggle="collapse" class="px-3 py-2 h6 border-none" data-target="#personal-info" style="margin-bottom: 0;" @click="handleActiveCus">
               Thông tin cá nhân
             </button>
-            <div id="personal-info" class="collapse mx-2">
-              <img :src="item.Customer.avatar" alt="" class="rounded-circle mx-auto d-block border border-dark" height="100">
+            <div v-if="isActive" id="personal-info" class="collapse m-3 border-all">
+              <img :src="item.Customer.avatar" alt="" class="rounded-circle mx-auto d-block border border-dark my-3" height="100">
               <div class="d-flex justify-content-around">
                 <div>
                   <p><span class="font-weight-bold">Họ tên: </span> {{ item.Customer.name }}</p>
@@ -55,12 +76,13 @@ export default {
               {{ item.Customer_Type.name }}
             </div>
           </div> -->
-          <div class=" mt-2">
-            <button data-toggle="collapse" class="px-3 py-2 h6 border-none" data-target="#customer-work">
+          <div class="mt-2">
+            <button data-toggle="collapse" class="px-3 py-2 h6 border-none" data-target="#customer-work" @click="handleActiveCus">
               Công việc
             </button>
-            <div id="customer-work" class="collapse mx-2">
-              <div class="d-flex justify-content-around">
+            <div v-if="isActive" id="customer-work" class="collapse border-all">
+              <!-- d-flex justify-content-around align-items-center -->
+              <div class="d-flex justify-content-around align-items-center" style="height: 100px;">
                 <div>
                   <p><span class="font-weight-bold">Công việc hiện tại: </span> {{ item.current_workplace }}</p>
                   <p><span class="font-weight-bold">Vị trí hiện tại: </span> {{ item.current_position }}</p>
@@ -72,36 +94,65 @@ export default {
               </div>
             </div>
           </div>
-          <div class=" mt-2">
-            <button data-toggle="collapse" class="px-3 py-2 h6 border-none" data-target="#assignment">
+          <div class="mt-2">
+            <button style="margin-bottom: 0px;" data-toggle="collapse" class="px-3 py-2 h6 border-none" data-target="#assignment" @click="handleActiveCus">
               Danh sách chăm sóc khách hàng
             </button>
-            <div id="assignment" class="collapse mx-2">
-              <div v-for="(value, index) in item.Tasks" :key="index">
+            <div v-if="isActive" id="assignment" class="collapse my-3">
+             <div class="table-responsive">
+              <Table
+                :items="itemViewCareCus"
+                :fields="['Ngày bắt đầu', 'Ngày kết thúc', 'Nội dung chăm sóc', 'Tên khách hàng', 'Chu kì', 'Trạng thái' , 'Sao', 'Đánh giá']"
+                :labels="['start_date','end_date', 'content' ,'customerName','cycleName','statusName','EvaluateStar', 'comment']" 
+                :borderTableAll="true"
+                :showActionList="[false, false, false]"
+                :activeAction="false"
+                :isActiveCheckbox="false"
+                :startRow="0"
+              />
+             </div>
+              <!-- <div v-for="(value, index) in item.Tasks" :key="index">
               <p> Ngày bắt đầu:  {{ value.start_date }}</p>
               <p> Ngày kết thúc: {{ value.end_date }}</p>
               <p> Nội dung: {{ value.content }}</p>
-              </div>
+              </div> -->
             </div>
           </div>
           <div class=" mt-2">
-            <button data-toggle="collapse" class="px-3 py-2 h6 border-none" data-target="#event">
+            <button data-toggle="collapse" class="px-3 py-2 h6 border-none" data-target="#event" @click="handleActiveCus">
               Danh sách sự kiện
             </button>
-            <div id="event" class="collapse mx-2">
-              
+            <div v-if="isActive" id="event" class="collapse mx-2">
+              <Table
+                :items="item.Events"
+                :fields="['Tên sự kiện']"
+                :labels="['name']" 
+                :borderTableAll="true"
+                :showActionList="[false, false, false]"
+                :activeAction="false"
+                :isActiveCheckbox="false"
+              />
             </div>
           </div>
-          <div class=" mt-2">
-            <button data-toggle="collapse" class="px-3 py-2 h6 border-none" data-target="#habit">
+          <div class="">
+            <button data-toggle="collapse" class="px-3 py-2 h6 border-none" data-target="#habit" @click="handleActiveCus">
               Danh sách thói quen khách hàng
             </button>
-            <div id="habit" class="collapse mx-2">
-              <div v-for="(value, index) in item.Habits" :key="index">
+            <div v-if="isActive" id="habit" class="collapse mx-2">
+              <Table
+                :items="item.Habits"
+                :fields="['Tên thói quen']"
+                :labels="['name']" 
+                :borderTableAll="true"
+                :showActionList="[false, false, false]"
+                :activeAction="false"
+                :isActiveCheckbox="false"
+              />
+              <!-- <div v-for="(value, index) in item.Habits" :key="index">
                 <p class="text-center">
                 {{ value.name }}
                 </p>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -113,8 +164,11 @@ export default {
 <style scoped>
   .border-none {
     outline: none;
+    border: none;
+  }
+
+  .border-all {
+    border: 1px solid #ccc;
+    border-radius: 5px;
   }
 </style>
-
-
-

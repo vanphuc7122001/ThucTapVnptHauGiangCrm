@@ -1,5 +1,5 @@
 <script>
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 export default {
   props: {
     items: {
@@ -34,94 +34,84 @@ export default {
       type: Number,
       default: 1,
     },
-    selectAll: {
-      type: Array,
-      default: [],
-    },
+    isActiveCheckbox: {
+      type: Boolean,
+      default: true,
+    }
   },
-  setup(props, ntx) {},
+  setup(props, ntx) {
+
+  },
 };
 </script>
 
 <template>
+<div>
   <table
     class="my-table mb-2"
     :class="[borderTableAll ? 'border-table-all' : '']"
   >
     <thead>
       <tr>
-        <th>
-          <input
-            type="checkbox"
-            name=""
-            id=""
-            :checked="selectAll[0].checked == true"
-            v-model="selectAll[0].checked"
-            @click="$emit('selectAll', selectAll[0].checked)"
-            class="d-flex align-items-center size-16"
-          />
-        </th>
-        <th><span class="size-16">Stt</span></th>
-        <th v-for="(value, index) in fields" :key="index">
-          <span class="size-16">{{ value }}</span>
-        </th>
-        <th><span class="size-16">Hành động</span></th>
+        <th v-if="isActiveCheckbox"></th>
+        <th>Stt</th>
+        <th v-for="(value, index) in fields" :key="index">{{ value }}</th>
+        <th v-if="activeAction == true">Hành động</th>
       </tr>
     </thead>
     <tbody>
-      <tr class="size-16" v-for="(item, index) in items">
-        <td><input type="checkbox" v-model="item.checked" name="" id="" /></td>
-        <td class="size-16">{{ startRow + index }}</td>
-        <td class="size-16" v-for="(label, index1) in labels">
-          {{ item[label] }}
-        </td>
+      <!-- {{ startRow }} -->
+      <tr v-for="(item, index) in items" :key="index">
+        <td  v-if="isActiveCheckbox" ><input type="checkbox" v-model="item.checked" name="" id="" /></td>
+        <td>{{ startRow + index + 1 }}</td>
+        <td v-for="(label, index1) in labels" :key="index1">{{ item[label] }}</td>
         <td v-if="activeAction == true">
-          <div class="d-flex align-items-center">
-            <button
-              v-if="showActionList[0] == true"
-              type="button"
-              class="format-btn"
-              data-toggle="modal"
-              data-target="#model-view"
-            >
-              <span
-                id="view"
-                class="material-symbols-outlined d-flex align-items-center"
-              >
-                visibility
-              </span>
-            </button>
-            <button
-              v-if="showActionList[1] == true"
-              type="button"
-              class="mx-2 format-btn"
-              data-toggle="modal"
-              data-target="#model-edit"
-            >
-              <span
-                id="edit"
-                class="material-symbols-outlined d-flex align-items-center justify-content-center"
-                @click="$emit('edit', item, true)"
-              >
-                edit
-              </span>
-            </button>
+          <button
+            v-if="showActionList[0] == true"
+            type="button"
+            class="format-btn"
+            data-toggle="modal"
+            data-target="#model-view"
+          >
             <span
-              v-if="showActionList[2] == true"
-              id="delete"
-              class="material-symbols-outlined"
-              @click="$emit('delete', item._id, item)"
+              id="view"
+              class="material-symbols-outlined d-flex align-items-center"
+              @click="$emit('view', item)"
             >
-              delete
+              visibility
             </span>
-          </div>
+          </button>
+          <button
+            v-if="showActionList[1] == true"
+            type="button"
+            class="mx-2 format-btn"
+            data-toggle="modal"
+            data-target="#model-edit"
+          >
+            <span
+              id="edit"
+              class="material-symbols-outlined d-flex align-items-center justify-content-center"
+              @click="$emit('edit', item, true)"
+            >
+              edit
+            </span>
+          </button>
+          <span
+            v-if="showActionList[2] == true"
+            id="delete"
+            class="material-symbols-outlined format-btn"
+            @click="$emit('delete', item._id, item)"
+          >
+            delete
+          </span>
         </td>
       </tr>
     </tbody>
   </table>
-  <p v-if="items.length == 0" class="text-center mt-2">
+  <!-- <p v-if="items.length == 0" class="text-center mt-2">
     Không tồn tại bản ghi.
-  </p>
+  </p> -->
+</div>
 </template>
 
 <style scoped>

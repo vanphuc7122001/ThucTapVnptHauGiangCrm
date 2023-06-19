@@ -183,6 +183,8 @@ export default {
       :labels="['name']"
       @delete="handleDelete"
       @edit="EditEmit"
+      :showActionList="[false, true, true]"
+      :startRow="0"
     />
     <Edit
       :item="data.editValue"
