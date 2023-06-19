@@ -25,7 +25,9 @@ export default {
   components: {
     Select_Advanced,
   },
-  props: {},
+  props: {
+
+  },
   setup(props, ctx) {
     const data = reactive({
       itemAdd: {
@@ -35,11 +37,11 @@ export default {
         customerId: "",
         cycleId: "",
         leaderId: "",
-        EvaluateId: "",
-        StatusTaskId: "",
+        EvaluateId:"",
+        StatusTaskId:"",
       },
       modelValue: "",
-      modelStatus: "",
+      modelStatus:"",
       modelEva: "",
       stepList: [
         {
@@ -127,6 +129,7 @@ export default {
             ctx.emit("newStatus", statustasks.statustask);
             console.log("ne", res.document.name);
             selectedOptionStatus.value = res.document._id;
+
           }
           return true;
         };
@@ -134,6 +137,8 @@ export default {
         selectedOptionStatus.value = 0;
       }
     });
+  
+
 
     //tao phan cong moi
     const create = async () => {
@@ -141,16 +146,19 @@ export default {
       data.itemAdd.StatusTaskId = selectedOptionStatus.value;
       console.log(data.itemAdd);
       data.itemAdd.leaderId = sessionStorage.getItem("employeeId");
-      console.log("leaderId:", sessionStorage.getItem("employeeId"));
+      console.log('leaderId:', sessionStorage.getItem("employeeId"))
       const evals = await http_getAll(Evaluate);
-      console.log("evals", evals);
-      for (let i = 0; i < evals.length; i++) {
-        data.itemAdd.EvaluateId = evals[i]._id;
-        // data.itemAdd.Evaluate.star = evals[i].star;
-        break;
+      console.log("evals",evals);
+      // data.itemAdd.EvaluateId = evals[0]._id;
+      for(let i=0; i< evals.length; i++){
+        if(evals[i].star == "một"){
+          data.itemAdd.EvaluateId = evals[i]._id;
+          // data.itemAdd.Evaluate.star = evals[i].star;
+          break;
+        }
       }
-      console.log("star", data.itemAdd.EvaluateId);
-      console.log("data itemadd", data.itemAdd);
+      console.log("star",data.itemAdd.EvaluateId)
+      console.log('data itemadd', data.itemAdd);
       const result = await http_create(Task, data.itemAdd);
       console.log("result", result);
       if (!result.error) {
@@ -167,8 +175,9 @@ export default {
       ctx.emit("create");
     };
 
+
     //xoa phan cong
-    const deleteOne = async (_id) => {
+    const deleteCycle = async (_id) => {
       const cycle = await http_getOne(Cycle, _id);
       console.log("deleting", cycle);
       const isConfirmed = await alert_delete(
@@ -181,6 +190,23 @@ export default {
         alert_success(
           `Xoá chu kỳ`,
           `Bạn đã xoá thành công chu kỳ ${cycle.name} .`
+        );
+        refresh();
+      }
+    };
+    const deleteStatusTask = async (_id) => {
+      const status_task = await http_getOne(StatusTask, _id);
+      console.log("deleting", status_task);
+      const isConfirmed = await alert_delete(
+        `Xoá trạng thái`,
+        `Bạn có chắc chắn muốn xoá trạng thái ${status_task.name} không ?`
+      );
+      console.log(isConfirmed);
+      if (isConfirmed == true) {
+        const result = await http_deleteOne(StatusTask, _id);
+        alert_success(
+          `Xoá trạng thái`,
+          `Bạn đã xoá thành công trạng thái ${status_task.name} .`
         );
         refresh();
       }
@@ -216,7 +242,8 @@ export default {
       employees,
       selectedOptionCycle,
       selectedOptionStatus,
-      deleteOne,
+      deleteCycle,
+      deleteStatusTask,
       evaluates,
       statustasks,
     };
@@ -232,7 +259,9 @@ export default {
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title" style="font-size: 15px">Thêm phân công</h4>
+          <h4 class="modal-title" style="font-size: 15px">
+            Thêm phân công
+          </h4>
           <button
             type="button"
             class="close"
@@ -250,8 +279,7 @@ export default {
             <div class="d-flex flex-column" style="height: 100%">
               <div
                 class="d-flex mt-3 mx-3"
-                v-for="(value, index) in data.stepList"
-                :key="value"
+                v-for="(value, index) in data.stepList" :key="value"
               >
                 <span
                   @click="data.activeStep = index + 1"
@@ -282,32 +310,21 @@ export default {
                   <label for="name"
                     >Khách hàng(<span style="color: red">*</span>):</label
                   >
-                  <Select_Advanced
-                    style="height: 40px"
-                    required
-                    :add="false"
-                    :options="customers.customer"
-                    :modelValue="data.modelCus"
-                    @searchSelect="
-                      async (value) => (
-                        await refresh(),
-                        (customers.customer = customers.customer.filter(
-                          (value1, index) => {
-                            console.log(value1, value);
-                            return (
-                              value1.name.includes(value) || value.length == 0
-                            );
-                          }
-                        )),
-                        console.log('searchSlect', value.length)
-                      )
-                    "
-                    @chose="
-                      (value, value1) => (
-                        (data.itemAdd.customerId = value),
-                        (data.modelCus = value1.name)
-                      )
-                    "
+                  <Select_Advanced style="height: 40px;" required
+                  :add="false"
+                  :options="customers.customer"
+                  :modelValue="data.modelCus"
+                  @searchSelect="
+                  async (value) => (
+                    await refresh(),
+                    (customers.customer = customers.customer.filter((value1, index) => {
+                      console.log(value1, value);
+                      return value1.name.includes(value) || value.length == 0;
+                    })),
+                    console.log('searchSlect', value.length)
+                    )
+                  "
+                  @chose="(value,value1) => (data.itemAdd.customerId = value, data.modelCus=value1.name)"
                   />
                 </div>
                 <div class="form-group flex-grow-1">
@@ -340,35 +357,27 @@ export default {
                     >Chu kỳ(<span style="color: red">*</span>):</label
                   >
                   <Select_Advanced
-                    style="height: 40px"
-                    required
-                    :options="cycles.cycle"
-                    :modelValue="data.modelValue"
-                    @searchSelect="
-                      async (value) => (
-                        await refresh(),
-                        (cycles.cycle = cycles.cycle.filter((value1, index) => {
-                          console.log(value1, value);
-                          return (
-                            value1.name.includes(value) || value.length == 0
-                          );
-                        })),
-                        console.log('searchSlect', value.length)
-                      )
-                    "
-                    @delete="(value) => deleteOne(value._id)"
-                    @chose="
-                      (value, value1) => (
-                        (selectedOptionCycle = value),
-                        (data.modelValue = value1.name)
-                      )
-                    "
+                      style="height: 40px;"
+                      required
+                      :options="cycles.cycle"
+                      :modelValue="data.modelValue"
+                      @searchSelect="
+                        async (value) => (
+                          await refresh(),
+                          (cycles.cycle = cycles.cycle.filter((value1, index) => {
+                            console.log(value1, value);
+                            return value1.name.includes(value) || value.length == 0;
+                          })),
+                          console.log('searchSlect', value.length)
+                        )
+                      "
+                      @delete="(value) => deleteCycle(value._id)"
+                      @chose="(value, value1) => (selectedOptionCycle = value, data.modelValue = value1.name)"
                   />
                 </div>
                 <div class="form-group flex-grow-1">
                   <label for="content"
-                    >Nội dung chăm sóc(<span style="color: red">*</span
-                    >):</label
+                    >Nội dung chăm sóc(<span style="color: red">*</span>):</label
                   >
                   <textarea
                     class="form-control"
@@ -387,8 +396,7 @@ export default {
                 <div class="form-group flex-grow-1">
                   <div class="form-group flex-grow-1">
                     <label for="content"
-                      >Trạng thái phân công(<span style="color: red">*</span
-                      >):</label
+                      >Trạng thái phân công(<span style="color: red">*</span>):</label
                     >
                     <!-- <select
                       id=""
@@ -408,36 +416,29 @@ export default {
                       </option>
                     </select> -->
                     <Select_Advanced
-                      style="height: 40px"
+                      style="height: 40px;"
                       required
                       :options="statustasks.statustask"
                       :modelValue="data.modelStatus"
                       @searchSelect="
                         async (value) => (
                           await refresh(),
-                          (statustasks.statustask =
-                            statustasks.statustask.filter((value1, index) => {
-                              console.log(value1, value);
-                              return (
-                                value1.name.includes(value) || value.length == 0
-                              );
-                            })),
+                          (statustasks.statustask = statustasks.statustask.filter((value1, index) => {
+                            console.log(value1, value);
+                            return value1.name.includes(value) || value.length == 0;
+                          })),
                           console.log('searchSlect', value.length)
                         )
                       "
-                      @delete="(value) => deleteOne(value._id)"
-                      @chose="
-                        (value, value1) => (
-                          (selectedOptionStatus = value),
-                          (data.modelStatus = value1.name)
-                        )
-                      "
+                      @delete="(value) => deleteStatusTask(value._id)"
+                      @chose="(value, value1) => (selectedOptionStatus = value, data.modelStatus = value1.name)"
                     />
                   </div>
                 </div>
                 <div class="form-group flex-grow-1">
                   <label for="content"
-                    >Chú thích(<span style="color: red">*</span>):</label
+                    >Chú thích(<span style="color: red">*</span
+                    >):</label
                   >
                   <textarea
                     v-model="data.itemAdd.note"
@@ -530,5 +531,4 @@ input {
 .btn-prev:hover {
   background-color: red;
   color: white;
-}
-</style>
+}</style>

@@ -18,7 +18,7 @@ export default {
       type: Object,
       default: {},
     },
-    statustask: {
+    statustask:{
       type: Object,
       default: {},
     },
@@ -78,8 +78,7 @@ export default {
             <div class="d-flex flex-column" style="height: 100%">
               <div
                 class="d-flex mt-3 mx-3"
-                v-for="(value, index) in data.stepList"
-                :key="value"
+                v-for="(value, index) in data.stepList" :key="value"
               >
                 <span
                   @click="data.activeStep = index + 1"
@@ -175,8 +174,7 @@ export default {
                 </div>
                 <div class="form-group flex-grow-1">
                   <label for="content"
-                    >Nội dung phân công(<span style="color: red">*</span
-                    >):</label
+                    >Nội dung phân công(<span style="color: red">*</span>):</label
                   >
                   <textarea
                     v-model="item.content"
@@ -210,8 +208,7 @@ export default {
                 <div class="form-group flex-grow-1">
                   <div class="form-group flex-grow-1">
                     <label for="content"
-                      >Trạng thái phân công(<span style="color: red">*</span
-                      >):</label
+                      >Trạng thái phân công(<span style="color: red">*</span>):</label
                     >
                     <select
                       id=""
@@ -223,7 +220,7 @@ export default {
                         Chọn trạng thái
                       </option>
                       <option
-                        v-for="statustask in statustask"
+                        v-for=" statustask in statustask"
                         :key="statustask"
                         :value="statustask._id"
                       >
@@ -232,11 +229,10 @@ export default {
                     </select>
                   </div>
                 </div>
-                <div class="form-group flex-grow-1">
+                <!-- <div class="form-group flex-grow-1">
                   <div class="form-group flex-grow-1">
                     <label for="content"
-                      >Đánh giá phân công(<span style="color: red">*</span
-                      >):</label
+                      >Đánh giá phân công(<span style="color: red">*</span>):</label
                     >
                     <select
                       id=""
@@ -248,7 +244,7 @@ export default {
                         Chọn sao
                       </option>
                       <option
-                        v-for="evaluate in evaluate"
+                        v-for=" evaluate in evaluate"
                         :key="evaluate"
                         :value="evaluate._id"
                       >
@@ -256,11 +252,12 @@ export default {
                       </option>
                     </select>
                   </div>
-                </div>
-
+                </div> -->
+                
                 <div class="form-group flex-grow-1">
                   <label for="content"
-                    >Chú thích(<span style="color: red">*</span>):</label
+                    >Chú thích(<span style="color: red">*</span
+                    >):</label
                   >
                   <textarea
                     v-model="item.note"
@@ -270,7 +267,7 @@ export default {
                     rows="5"
                   ></textarea>
                 </div>
-                <div class="form-group flex-grow-1">
+                <!-- <div class="form-group flex-grow-1">
                   <label for="content"
                     >Nhận xét của khách hàng(<span style="color: red">*</span
                     >):</label
@@ -282,7 +279,7 @@ export default {
                     class="form-control w-100"
                     rows="5"
                   ></textarea>
-                </div>
+                </div> -->
                 <button
                   type="button"
                   class="btn btn-warning px-3 py-2"

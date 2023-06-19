@@ -42,8 +42,7 @@ export default {
   >
     <thead>
       <tr>
-        <th>
-          <input
+        <th><input
             type="checkbox"
             name=""
             id=""
@@ -51,8 +50,7 @@ export default {
             v-model="selectAll[0].checked"
             @click="$emit('selectAll', selectAll[0].checked)"
             class="d-flex align-items-center size-16"
-          />
-        </th>
+          /></th>
         <th>Stt</th>
         <th>Khách hàng</th>
         <th>Chu kỳ</th>
@@ -62,15 +60,12 @@ export default {
     </thead>
     <tbody>
       <tr v-for="(item, index) in items" :key="index">
-        <td>
-          <input
+        <td><input 
             type="checkbox"
             :checked="item.checked == true"
             v-model="item.checked"
             @click="$emit('selectOne', item._id, item)"
-            class="d-flex align-items-center size-16"
-          />
-        </td>
+            class="d-flex align-items-center size-16" /></td>
         <td>{{ index + 1 }}</td>
         <td>{{ item.Customer.name }}</td>
         <td>{{ item.Cycle.name }}</td>
@@ -111,25 +106,27 @@ export default {
             <span
               id="delete"
               class="material-symbols-outlined"
-              @click="$emit('delete', item._id, item)"
+              @click="
+                $emit('delete', item._id, item)
+              "
             >
               delete
             </span>
             <button
-              style="border: none"
-              type="button"
-              class="mx-2"
-              data-toggle="modal"
-              data-target="#modal-addAppointment"
+            style="border:none"
+            type="button"
+            class="mx-2"
+            data-toggle="modal"
+            data-target="#modal-addAppointment"
+          >
+            <span
+              id="appointment"
+              class="material-symbols-outlined d-flex align-items-center justify-content-center"
+              @click="$emit('appointment', item._id, item)"
             >
-              <span
-                id="appointment"
-                class="material-symbols-outlined d-flex align-items-center justify-content-center"
-                @click="$emit('appointment', item._id, item)"
-              >
-                schedule
-              </span>
-            </button>
+              schedule
+            </span>
+          </button>
           </div>
         </td>
         <!-- <td v-if="activeAction == true">
