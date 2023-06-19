@@ -30,8 +30,23 @@ export default {
       type: Array,
       default: [true, true, true],
     },
+    startRow: {
+      type: Number,
+      default: 1,
+    },
+    selectAll: {
+      type: Array,
+      default: [],
+    },
   },
-  setup(props, ntx) {},
+  setup(props, ntx) {
+    const data = reactive({
+      activeShow: false,
+    });
+    return {
+      data,
+    };
+  },
 };
 </script>
 
@@ -43,24 +58,53 @@ export default {
     >
       <thead>
         <tr>
-          <th></th>
-          <th>Stt</th>
-          <th v-for="(value, index) in fields" :key="index">{{ value }}</th>
-          <th v-if="activeAction == true">Hành động</th>
+          <th>
+            <input
+              type="checkbox"
+              name=""
+              id=""
+              :checked="selectAll[0].checked == true"
+              v-model="selectAll[0].checked"
+              @click="$emit('selectAll', selectAll[0].checked)"
+              class="d-flex align-items-center size-16"
+            />
+          </th>
+          <th><span class="size-16">Stt</span></th>
+          <th v-for="(value, index) in fields" :key="index">
+            <span class="size-16">{{ value }}</span>
+          </th>
+          <th><span class="size-16">Hành động</span></th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, index) in items" :key="index">
+        <tr class="size-16" v-for="(item, index) in items" :key="index">
           <td>
             <input type="checkbox" v-model="item.checked" name="" id="" />
           </td>
-          <td>{{ index + 1 }}</td>
-          <td v-for="(label, index1) in labels" :key="index1">
+          <td class="size-16">{{ startRow + index }}</td>
+          <td class="size-16" v-for="(label, index1) in labels" :key="index1">
             {{ item[label] }}
           </td>
-          <td>
-            <button data-toggle="collapse" data-target="#demo">
-              xem quyền
+          <td class="size-16">
+            <button
+              class="format-btn d-flex align-items-center"
+              data-toggle="collapse"
+              data-target="#demo"
+            >
+              <span
+                v-if="!data.activeShow"
+                @click="data.activeShow = !data.activeShow"
+                class="material-symbols-outlined d-flex align-items-center"
+              >
+                arrow_right
+              </span>
+              <span
+                v-if="data.activeShow"
+                @click="data.activeShow = !data.activeShow"
+                class="material-symbols-outlined"
+              >
+                arrow_drop_down
+              </span>
             </button>
 
             <div id="demo" class="collapse">
@@ -70,43 +114,45 @@ export default {
             </div>
           </td>
           <td v-if="activeAction == true">
-            <button
-              v-if="showActionList[0] == true"
-              type="button"
-              class=""
-              data-toggle="modal"
-              data-target="#model-view"
-            >
-              <span
-                id="view"
-                class="material-symbols-outlined d-flex align-items-center"
+            <div class="d-flex align-items-center">
+              <button
+                v-if="showActionList[0] == true"
+                type="button"
+                class=""
+                data-toggle="modal"
+                data-target="#model-view"
               >
-                visibility
-              </span>
-            </button>
-            <button
-              v-if="showActionList[1] == true"
-              type="button"
-              class="mx-2"
-              data-toggle="modal"
-              data-target="#model-edit"
-            >
-              <span
-                id="edit"
-                class="material-symbols-outlined d-flex align-items-center justify-content-center"
-                @click="$emit('edit', item, true)"
+                <span
+                  id="view"
+                  class="material-symbols-outlined d-flex align-items-center"
+                >
+                  visibility
+                </span>
+              </button>
+              <button
+                v-if="showActionList[1] == true"
+                type="button"
+                class="mx-2"
+                data-toggle="modal"
+                data-target="#model-edit"
               >
-                edit
+                <span
+                  id="edit"
+                  class="material-symbols-outlined d-flex align-items-center justify-content-center"
+                  @click="$emit('edit', item, true)"
+                >
+                  edit
+                </span>
+              </button>
+              <span
+                v-if="showActionList[2] == true"
+                id="delete"
+                class="material-symbols-outlined"
+                @click="$emit('delete', item._id, item)"
+              >
+                delete
               </span>
-            </button>
-            <span
-              v-if="showActionList[2] == true"
-              id="delete"
-              class="material-symbols-outlined"
-              @click="$emit('delete', item._id, item)"
-            >
-              delete
-            </span>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -164,5 +210,9 @@ export default {
 
 #delete:hover {
   color: var(--red);
+}
+
+.format-btn {
+  background-color: var(--light);
 }
 </style>

@@ -51,6 +51,7 @@ import {
   alert_delete,
   alert_warning,
   alert_info,
+  alert_delete_wide,
 } from "../common/import.js";
 export default {
   components: {
@@ -73,11 +74,19 @@ export default {
       endRow: 0,
       currentPage: 1,
       searchText: "",
-      itemAdd: {
-        name: "",
-      },
+      itemAdd: [
+        {
+          name: "",
+        },
+      ],
       activeEdit: false,
       editValue: {},
+      choseSearch: "",
+      selectAll: [
+        {
+          checked: false,
+        },
+      ],
     });
 
     // computed
@@ -125,15 +134,22 @@ export default {
 
     // methods
     const create = async () => {
-      const result = await http_create(Habit, data.itemAdd);
-      if (!result.error) {
-        alert_success(
-          `Thêm thói quen khách hàng`,
-          `Thói quen ${result.document.name} đã được tạo thành công.`
-        );
-        refresh();
-      } else if (result.error) {
-        alert_error(`Thêm thói quen khách hàng`, `${result.msg}`);
+      try {
+        let isFlase = false;
+        for (let value of data.itemAdd) {
+          const result = await http_create(Habit, value);
+          if (result.error) {
+            alert_error(`Thêm thói quên`, `${result.msg}`);
+            break;
+          } else if (!result.error) isFlase = true;
+        }
+        if (isFlase) {
+          alert_success(`Thêm thói quen`, `Thói quen đã được tạo thành công.`);
+          refresh();
+          data.itemAdd = [{ name: "" }];
+        }
+      } catch (error) {
+        console.log(error);
       }
     };
     const update = async (item) => {
@@ -188,6 +204,74 @@ export default {
 
     const refresh = async () => {
       data.items = await http_getAll(Habit);
+      for (let value of data.items) {
+        value.checked = false;
+      }
+    };
+
+    const handleSelectAll = (value) => {
+      console.log("cccc", value);
+      if (value == false) {
+        for (let value1 of data.items) {
+          value1.checked = true;
+        }
+      } else {
+        for (let value1 of data.items) {
+          value1.checked = false;
+        }
+      }
+    };
+
+    const removeItem = (index) => {
+      data.itemAdd = data.itemAdd.filter((value1, index1) => {
+        return index1 != index;
+      });
+    };
+
+    const deleteMany = async () => {
+      try {
+        const deleteArray = data.items.filter((value, index) => {
+          return value.checked == true;
+        });
+        let name, phone, email;
+        let contentAlert = `<p>Bạn có muốn xoá tất cả thói quen này không?</p><p>Tổng số thói quen sẽ xoá là: <span style="color: blue;">${deleteArray.length}</span></p>
+          <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Tên thói quen</th>
+        </tr>
+      </thead> <tbody>`;
+        console.log("deleteArray", deleteArray[0].Customer);
+        for (let value of deleteArray) {
+          contentAlert += `<tr>
+          <td>${value.name}</td>
+        </tr>`;
+        }
+        contentAlert += `</tbody>
+    </table>`;
+        const isConfirmed = await alert_delete_wide(
+          `Xoá nhiều thói quen`,
+          contentAlert
+        );
+        if (isConfirmed) {
+          let checkDeleteAll = false;
+          for (let valueDelete of deleteArray) {
+            const result = await http_deleteOne(Habit, valueDelete._id);
+            if (result.error) {
+              alert_error("Lổi ", result.msg);
+              checkDeleteAll = false;
+            } else {
+              checkDeleteAll = true;
+            }
+          }
+          if (checkDeleteAll) {
+            refresh();
+            alert_success("Thành công", "Xóa quyền thành công");
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     // watch
@@ -211,6 +295,9 @@ export default {
       edit,
       view,
       getOne,
+      handleSelectAll,
+      deleteMany,
+      removeItem,
     };
   },
 };
@@ -220,18 +307,20 @@ export default {
   <div class="border-box d-flex flex-column ml-2">
     <!-- Menu -->
     <div class="d-flex menu my-3 mx-3 justify-content-end">
-      <a
+      <router-link
+        :to="{ name: 'Event' }"
         @click="activeMenu = 1"
         :class="[activeMenu == 1 ? 'active-menu' : 'none-active-menu']"
-        href="#"
-        >Sự kiện</a
       >
-      <a
+        <span class="size-17">Sự kiện</span>
+      </router-link>
+      <router-link
+        :to="{ name: 'Habit' }"
         @click="activeMenu = 2"
         :class="[activeMenu == 2 ? 'active-menu' : 'none-active-menu']"
-        href="#"
-        >Thói quen</a
       >
+        <span class="size-18">Thói quen</span>
+      </router-link>
     </div>
     <!-- Filter -->
     <!-- Search -->
@@ -257,18 +346,32 @@ export default {
               name: 30,
               value: 30,
             },
-            {
-              name: 'All',
-              value: 'All',
-            },
           ]"
+          style="width: 125px"
+          :title="`Số bản ghi`"
           @update:entryValue="(value) => (data.entryValue = value)"
           :entryValue="data.entryValue"
+          @refresh="data.entryValue = 'All'"
         />
         <Search
           class="ml-3"
           style="width: 300px"
           @update:searchText="(value) => (data.searchText = value)"
+          :entryValue="data.searchText"
+          @choseSearch="
+            async (value) => (
+              console.log('search ........'),
+              (data.choseSearch = value),
+              (data.currentPage = 1)
+            )
+          "
+          @refresh="(data.entryValue = 'All'), (data.currentPage = 1)"
+          :options="[
+            {
+              _id: 'name',
+              name: 'Tìm kiếm theo tên',
+            },
+          ]"
         />
       </div>
       <div class="d-flex align-items-start">
@@ -277,19 +380,20 @@ export default {
           class="btn btn-danger mr-3"
           data-toggle="modal"
           data-target="#model-delete-all"
+          @click="deleteMany()"
         >
           <span id="delete-all" class="mx-2">Xoá</span>
         </button>
         <!-- <DeleteAll :items="data.items" /> -->
-        <!-- <button
+        <button
           type="button"
           class="btn btn-primary"
           data-toggle="modal"
           data-target="#model-add"
         >
           <span id="add" class="mx-2">Thêm</span>
-        </button> -->
-        <!-- <Add :item="data.itemAdd" @create="create" /> -->
+        </button>
+        <Add :items="data.itemAdd" @create="create" @remove="removeItem" />
       </div>
     </div>
     <!-- Table -->
@@ -298,6 +402,9 @@ export default {
       :fields="['Tên thói quen']"
       :labels="['name']"
       @delete="(value) => deleteOne(value)"
+      :startRow="data.startRow"
+      :selectAll="data.selectAll"
+      @selectAll="(value) => handleSelectAll(value)"
       @edit="
         async (value, value1) => (
           (data.editValue = await getOne(value._id)), (data.activeEdit = value1)

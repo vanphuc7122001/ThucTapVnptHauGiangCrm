@@ -53,6 +53,7 @@ import {
   alert_delete,
   alert_warning,
   alert_info,
+  alert_delete_wide,
 } from "../common/import.js";
 
 export default {
@@ -78,9 +79,11 @@ export default {
       endRow: 0,
       currentPage: 1,
       searchText: "",
-      itemAdd: {
-        name: "",
-      },
+      itemAdd: [
+        {
+          name: "",
+        },
+      ],
       activeEdit: false,
       editValue: {},
       searchSelect: "",
@@ -98,6 +101,12 @@ export default {
         a: "",
         b: "",
       },
+      choseSearch: "",
+      selectAll: [
+        {
+          checked: false,
+        },
+      ],
     });
     const toString = computed(() => {
       console.log("Starting search");
@@ -156,17 +165,35 @@ export default {
 
     // methods
     const create = async () => {
-      const result = await http_create(Permission, data.itemAdd);
-      if (!result.error) {
+      try {
+        let isFlase = false;
+        for (let value of data.itemAdd) {
+          const result = await http_create(Permission, value);
+          if (result.error){
+            alert_error(`Thêm quyền`, `${result.msg}`);
+            break;
+          }
+          else if (!result.error) isFlase = true;
+        }
+        if (isFlase) {
         alert_success(
           `Thêm quyền`,
-          `Quyền ${result.document.name} đã được tạo thành công.`
+          `Quyền đã được tạo thành công.`
         );
         refresh();
-      } else if (result.error) {
-        alert_error(`Thêm quyền`, `${result.msg}`);
+        data.itemAdd = [{name: ''}];
+      } 
+      } catch (error) {
+        console.log(error);
       }
     };
+
+    const removeItem = (index) => {
+      data.itemAdd = data.itemAdd.filter((value1, index1) => {
+        return index1 != index;
+      });
+    };
+
     const update = async (item) => {
       const result = await http_update(Event, editValue._id, editValue);
       if (!result.error) {
@@ -177,8 +204,8 @@ export default {
       }
     };
     const deleteOne = async (_id, data) => {
-    //   const event = await http_getOne(Permission, _id);
-    //   console.log("deleting", event);
+      //   const event = await http_getOne(Permission, _id);
+      //   console.log("deleting", event);
       const isConfirmed = await alert_delete(
         `Xoá sự kiện`,
         `Bạn có chắc chắn muốn xoá quyền ${data.name} không ?`
@@ -188,11 +215,55 @@ export default {
         const result = await http_deleteOne(Permission, _id);
         alert_success(
           `Xoá quyền`,
-          `Bạn đã xoá thành công quyền ${
-            result.document.name
-          }.`
+          `Bạn đã xoá thành công quyền ${result.document.name}.`
         );
         refresh();
+      }
+    };
+
+    const deleteMany = async () => {
+      try {
+        const deleteArray = data.items.filter((value, index) => {
+          return value.checked == true;
+        });
+        let name, phone, email;
+        let contentAlert = `<p>Bạn có muốn xoá tất cả quyền này không?</p><p>Tổng số quyền sẽ xoá là: <span style="color: blue;">${deleteArray.length}</span></p>
+          <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Tên quyền</th>
+        </tr>
+      </thead> <tbody>`;
+        console.log("deleteArray", deleteArray[0].Customer);
+        for (let value of deleteArray) {
+          contentAlert += `<tr>
+          <td>${value.name}</td>
+        </tr>`;
+        }
+        contentAlert += `</tbody>
+    </table>`;
+        const isConfirmed = await alert_delete_wide(
+          `Xoá nhiều quyền`,
+          contentAlert
+        );
+        if (isConfirmed) {
+          let checkDeleteAll = false;
+          for (let valueDelete of deleteArray) {
+            const result = await http_deleteOne(Permission, valueDelete._id);
+            if (result.error) {
+              alert_error("Lổi ", result.msg);
+              checkDeleteAll = false;
+            } else {
+              checkDeleteAll = true;
+            }
+          }
+          if (checkDeleteAll) {
+            refresh();
+            alert_success("Thành công", "Xóa quyền thành công");
+          }
+        }
+      } catch (error) {
+        console.log(error);
       }
     };
 
@@ -209,11 +280,27 @@ export default {
 
     const view = (_id) => {
       console.log("view", _id);
-      router.push({ name: "Event.view", params: { id: _id } });
+      // router.push({ name: "Event.view", params: { id: _id } });
     };
 
     const refresh = async () => {
       data.items = await http_getAll(Permission);
+      for (let value of data.items) {
+        value.checked = false;
+      }
+    };
+
+    const handleSelectAll = (value) => {
+      console.log("cccc", value);
+      if (value == false) {
+        for (let value1 of data.items) {
+          value1.checked = true;
+        }
+      } else {
+        for (let value1 of data.items) {
+          value1.checked = false;
+        }
+      }
     };
 
     const delete_a = async (objectData) => {
@@ -224,10 +311,8 @@ export default {
       try {
         const result = await http_getOne(Permission, _id);
         return result;
-      } catch (error) {
-        
-      }
-    }
+      } catch (error) {}
+    };
 
     // handle http methods
 
@@ -249,6 +334,9 @@ export default {
       delete_a,
       refresh,
       getOne,
+      handleSelectAll,
+      deleteMany,
+      removeItem,
     };
   },
 };
@@ -258,24 +346,27 @@ export default {
   <div class="border-box d-flex flex-column ml-2">
     <!-- Menu -->
     <div class="d-flex menu my-3 mx-3 justify-content-end">
-      <a
+      <router-link
+        :to="{ name: 'Account' }"
         @click="activeMenu = 1"
         :class="[activeMenu == 1 ? 'active-menu' : 'none-active-menu']"
-        href="#"
-        >Tài khoản</a
       >
-      <a
+        <span class="size-17">Tài khoản</span>
+      </router-link>
+      <router-link
+        :to="{ name: 'Role' }"
         @click="activeMenu = 2"
         :class="[activeMenu == 2 ? 'active-menu' : 'none-active-menu']"
-        href="#"
-        >Vai trò</a
       >
-      <a
+        <span class="size-18">Vai trò</span>
+      </router-link>
+      <router-link
+        :to="{ name: 'Permission' }"
         @click="activeMenu = 3"
         :class="[activeMenu == 3 ? 'active-menu' : 'none-active-menu']"
-        href="#"
-        >Quyền</a
       >
+        <span class="size-18">Quyền</span>
+      </router-link>
     </div>
     <!-- Filter -->
     <!-- <div class="border-hr mb-3"></div> -->
@@ -302,18 +393,32 @@ export default {
               name: 30,
               value: 30,
             },
-            {
-              name: 'All',
-              value: 'All',
-            },
           ]"
+          style="width: 125px"
+          :title="`Số bản ghi`"
           @update:entryValue="(value) => (data.entryValue = value)"
           :entryValue="data.entryValue"
+          @refresh="data.entryValue = 'All'"
         />
         <Search
           class="ml-3"
           style="width: 300px"
           @update:searchText="(value) => (data.searchText = value)"
+          :entryValue="data.searchText"
+          @choseSearch="
+            async (value) => (
+              console.log('search ........'),
+              (data.choseSearch = value),
+              (data.currentPage = 1)
+            )
+          "
+          @refresh="(data.entryValue = 'All'), (data.currentPage = 1)"
+          :options="[
+            {
+              _id: 'name',
+              name: 'Tìm kiếm theo tên',
+            },
+          ]"
         />
       </div>
       <div class="d-flex align-items-start">
@@ -323,7 +428,7 @@ export default {
           data-toggle="modal"
           data-target="#model-delete-all"
         >
-          <span id="delete-all" class="mx-2">Xoá</span>
+          <span id="delete-all" class="mx-2" @click="deleteMany()">Xoá</span>
         </button>
         <!-- <DeleteAll :items="data.items" /> -->
         <button
@@ -334,7 +439,7 @@ export default {
         >
           <span id="add" class="mx-2">Thêm</span>
         </button>
-        <Add :item="data.itemAdd" @create="create" />
+        <Add :items="data.itemAdd" @create="create" @remove="removeItem"/>
       </div>
     </div>
     <!-- Table -->
@@ -343,11 +448,13 @@ export default {
       :fields="['Tên quyền']"
       :labels="['name']"
       :showActionList="[false, true, true]"
+      :startRow="data.startRow"
+      :selectAll="data.selectAll"
+      @selectAll="(value) => handleSelectAll(value)"
       @delete="(value, value1) => deleteOne(value, value1)"
       @edit="
         async (value, value1) => (
-          (data.editValue = await getOne(value._id)),
-          (data.activeEdit = value1)
+          (data.editValue = await getOne(value._id)), (data.activeEdit = value1)
         )
       "
       @view="(value) => view(value)"

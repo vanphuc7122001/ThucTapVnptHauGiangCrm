@@ -881,31 +881,31 @@ export default {
               <div class="d-flex justify-content-end mt-3">
                 <span
                   v-if="
+                    data.activeStep > 1 &&
+                    data.activeStep <= data.stepList.length
+                  "
+                  class="btn-prev d-flex align-items-center px-3 py-1 mr-3"
+                  @click="data.activeStep = data.activeStep - 1"
+                  ><span
+                    class="material-symbols-outlined d-flex align-items-center"
+                  >
+                    navigate_before </span
+                  >Trang trước</span
+                >
+                <span
+                  v-if="
                     data.activeStep >= 1 &&
                     data.activeStep < data.stepList.length
                   "
                   class="btn-next d-flex align-items-center px-3 py-1"
                   @click="data.activeStep = data.activeStep + 1"
-                  >Next
+                  >Trang tiếp theo
                   <span
                     class="material-symbols-outlined d-flex align-items-center"
                   >
                     navigate_next
                   </span>
                 </span>
-                <span
-                  v-if="
-                    data.activeStep > 1 &&
-                    data.activeStep <= data.stepList.length
-                  "
-                  class="btn-prev d-flex align-items-center px-3 py-1"
-                  @click="data.activeStep = data.activeStep - 1"
-                  ><span
-                    class="material-symbols-outlined d-flex align-items-center"
-                  >
-                    navigate_before </span
-                  >Previous</span
-                >
               </div>
             </div>
           </div>

@@ -21,7 +21,7 @@
     />
     <!-- options -->
     <div
-      v-if="entryValue.length == 0 && data.activeSelect == true"
+      v-if="entryValue.length == 0 && data.activeSelect == true && options.length > 1"
       class="select-content overflow-auto d-flex flex-column align-items-start justify-content-start"
     >
       <span

@@ -67,6 +67,7 @@ export default {
     const data = reactive({
       positionList: [],
       permissionList: [],
+      role_permissionList: [],
     });
     const create = async () => {
       try {
@@ -79,7 +80,11 @@ export default {
             });
             console.log("result", result);
             if (result.error == true) {
-              alert_error(`Tạo quyền`, `Đã tồn tại quyền ${value.name}.`);
+              alert_error(
+                `Tạo quyền`,
+                `Đã tồn tại quyền ${value.name} trong vai trò ${props.item.name}.`
+              );
+              break;
             } else {
               isSuccess = true;
             }
@@ -92,14 +97,24 @@ export default {
         console.log(error);
       }
     };
+
+    const isStringFound = (_id) => {
+      return data.role_permissionList.some(
+        (item) =>
+          item.PermissionId.toString() == _id && item.RoleId == props.item._id
+      );
+    };
+
     onBeforeMount(async () => {
       data.positionList = await http_getAll(Position);
       data.permissionList = await http_getAll(Permission);
+      data.role_permissionList = await http_getAll(Role_Permission);
     });
     onMounted(() => {});
     return {
       create,
       data,
+      isStringFound,
     };
   },
 };
@@ -132,6 +147,7 @@ export default {
                   type="checkbox"
                   class="form-check-input"
                   value=""
+                  :checked="isStringFound(value._id) == true"
                   v-model="value.checked"
                 />&emsp;{{ value.name }}
               </label>

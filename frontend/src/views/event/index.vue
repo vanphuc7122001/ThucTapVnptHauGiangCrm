@@ -14,6 +14,7 @@ import {
   Search,
   DeleteAll,
   Select_Advanced,
+  Input_Datetime,
   // compositions
   reactive,
   computed,
@@ -56,6 +57,7 @@ import {
   alert_delete,
   alert_warning,
   alert_info,
+  alert_delete_wide,
 } from "../common/import.js";
 
 export default {
@@ -73,6 +75,7 @@ export default {
     FormWizard,
     setEvent,
     AddAppointment,
+    Input_Datetime,
   },
   setup(ctx) {
     const data = reactive({
@@ -108,6 +111,14 @@ export default {
       },
       eventValue: {},
       showSetEvent: false,
+      choseSearch: "",
+      selectAll: [
+        {
+          checked: false,
+        },
+      ],
+      startTimeValue: "",
+      endTimeValue: "",
     });
     const toString = computed(() => {
       console.log("Starting search");
@@ -196,7 +207,10 @@ export default {
         }
       }
       if (data.showSetEvent == false) {
-        alert_warning(`Thêm khách hàng áp dụng sự kiện`, `Vui lòng chọn sự kiện.`);
+        alert_warning(
+          `Thêm khách hàng áp dụng sự kiện`,
+          `Vui lòng chọn sự kiện.`
+        );
       }
     };
 
@@ -219,6 +233,54 @@ export default {
           } lúc ${formatDateTime(result.document.time_duration)}.`
         );
         refresh();
+      }
+    };
+
+    const deleteMany = async () => {
+      try {
+        const deleteArray = data.items.filter((value, index) => {
+          return value.checked == true;
+        });
+        let name, phone, email;
+        let contentAlert = `<p>Bạn có muốn xoá tất cả các sự kiện này không?</p><p>Tổng số sự kiện sẽ xoá là: <span style="color: blue;">${deleteArray.length}</span></p>
+          <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Tên sự kiện</th>
+          <th>Ngày diễn ra sự kiện</th>
+        </tr>
+      </thead> <tbody>`;
+        console.log("deleteArray", deleteArray[0].Customer);
+        for (let value of deleteArray) {
+          contentAlert += `<tr>
+          <td>${value.name}</td>
+          <td>${value.time_duration_format}</td>
+        </tr>`;
+        }
+        contentAlert += `</tbody>
+    </table>`;
+        const isConfirmed = await alert_delete_wide(
+          `Xoá nhiều sự kiện`,
+          contentAlert
+        );
+        if (isConfirmed) {
+          let checkDeleteAll = false;
+          for (let valueDelete of deleteArray) {
+            const result = await http_deleteOne(Event, valueDelete._id);
+            if (result.error) {
+              alert_error("Lổi ", result.msg);
+              checkDeleteAll = false;
+            } else {
+              checkDeleteAll = true;
+            }
+          }
+          if (checkDeleteAll) {
+            refresh();
+            alert_success("Thành công", "Xóa sự kiện thành công");
+          }
+        }
+      } catch (error) {
+        console.log(error);
       }
     };
 
@@ -254,6 +316,42 @@ export default {
         value.checked = false;
       }
       console.log(data.items);
+
+      // filter
+      if (data.startTimeValue.length > 0) {
+        if (data.endTimeValue.length == 0) {
+          data.items = data.items.filter((value, index) => {
+            console.log(
+              value.time_duration == data.startTimeValue.toLocaleLowerCase()
+            );
+            return (
+              value.time_duration == data.startTimeValue.toLocaleLowerCase()
+            );
+          });
+        } else {
+          data.items = data.items.filter((value, index) => {
+            return (
+              new Date(value.time_duration.toUpperCase()) >=
+                new Date(data.startTimeValue) &&
+              new Date(value.time_duration.toUpperCase()) <=
+                new Date(data.endTimeValue)
+            );
+          });
+        }
+      }
+    };
+
+    const handleSelectAll = (value) => {
+      console.log("cccc", value);
+      if (value == false) {
+        for (let value1 of data.items) {
+          value1.checked = true;
+        }
+      } else {
+        for (let value1 of data.items) {
+          value1.checked = false;
+        }
+      }
     };
 
     const delete_a = async (objectData) => {
@@ -281,6 +379,8 @@ export default {
       refresh,
       getOne,
       setEvent,
+      handleSelectAll,
+      deleteMany,
     };
   },
 };
@@ -290,18 +390,20 @@ export default {
   <div class="border-box d-flex flex-column ml-2">
     <!-- Menu -->
     <div class="d-flex menu my-3 mx-3 justify-content-end">
-      <a
+      <router-link
+        :to="{ name: 'Event' }"
         @click="activeMenu = 1"
         :class="[activeMenu == 1 ? 'active-menu' : 'none-active-menu']"
-        href="#"
-        >Sự kiện</a
       >
-      <a
+        <span class="size-17">Sự kiện</span>
+      </router-link>
+      <router-link
+        :to="{ name: 'Habit' }"
         @click="activeMenu = 2"
         :class="[activeMenu == 2 ? 'active-menu' : 'none-active-menu']"
-        href="#"
-        >Thói quen</a
       >
+        <span class="size-18">Thói quen</span>
+      </router-link>
     </div>
     <!-- Filter -->
     <div class="border-hr mb-3"></div>
@@ -309,23 +411,33 @@ export default {
       <span class="mx-3 mb-3 h6">Lọc sự kiện</span>
       <div class="d-flex mx-3">
         <div class="form-group w-100">
-          <Select
-            :title="`Khoảng thời gian`"
-            :entryValue="`Khoảng thời gian`"
-            :options="[
-              { name: '1 tuần', value: '1 tuần' },
-              { name: '1 tháng', value: '1 tháng' },
-              { name: '1 năm', value: '1 năm' },
-            ]"
+          <Input_Datetime
+            :title="`Thời gian bắt đầu`"
+            :entryValue="data.startTimeValue"
+            @update:entryValue="
+              (value) => (
+                console.log('value', value),
+                (data.startTimeValue = value),
+                refresh()
+              )
+            "
+            @refresh="(data.startTimeValue = ''), refresh()"
+            style="height: 35px"
           />
         </div>
-        <div class="d-flex form-group w-100">
-          <input
-            style=""
-            class="input px-2 w-100 ml-3"
-            type="date"
-            name=""
-            id=""
+        <div class="d-flex form-group w-100 ml-3">
+          <Input_Datetime
+            :title="`Thời gian kết thúc`"
+            :entryValue="data.endTimeValue"
+            @update:entryValue="
+              (value) => (
+                console.log('value', value),
+                (data.endTimeValue = value),
+                refresh()
+              )
+            "
+            @refresh="(data.endTimeValue = ''), refresh()"
+            style="height: 35px"
           />
         </div>
 
@@ -356,18 +468,32 @@ export default {
               name: 30,
               value: 30,
             },
-            {
-              name: 'All',
-              value: 'All',
-            },
           ]"
+          style="width: 125px"
+          :title="`Số bản ghi`"
           @update:entryValue="(value) => (data.entryValue = value)"
           :entryValue="data.entryValue"
+          @refresh="data.entryValue = 'All'"
         />
         <Search
           class="ml-3"
           style="width: 300px"
           @update:searchText="(value) => (data.searchText = value)"
+          :entryValue="data.searchText"
+          @choseSearch="
+            async (value) => (
+              console.log('search ........'),
+              (data.choseSearch = value),
+              (data.currentPage = 1)
+            )
+          "
+          @refresh="(data.entryValue = 'All'), (data.currentPage = 1)"
+          :options="[
+            {
+              _id: 'name',
+              name: 'Tìm kiếm theo tên',
+            },
+          ]"
         />
       </div>
       <div class="d-flex align-items-start">
@@ -376,6 +502,7 @@ export default {
           class="btn btn-danger mr-3"
           data-toggle="modal"
           data-target="#model-delete-all"
+          @click="deleteMany()"
         >
           <span id="delete-all" class="mx-2">Xoá</span>
         </button>
@@ -407,6 +534,9 @@ export default {
       :fields="['Tên sự kiện', 'Nội dung sự kiện', 'Thời gian diễn ra']"
       :labels="['name', 'content', 'time_duration_format']"
       @delete="(value) => deleteOne(value)"
+      :startRow="data.startRow"
+      :selectAll="data.selectAll"
+      @selectAll="(value) => handleSelectAll(value)"
       @edit="
         async (value, value1) => (
           (data.editValue = await getOne(value._id)),

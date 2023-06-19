@@ -1,61 +1,31 @@
 <script>
 import { reactive } from "vue";
-import {
-  http_getAll,
-  http_create,
-  http_deleteOne,
-  alert_success,
-  alert_error,
-  alert_delete,
-  alert_warning,
-  Pagination,
-  Dropdown,
-  Select,
-  Search,
-  Select_Advanced,
-  DeleteAll,
-  Company_KH,
-  Customer_Work,
-  Customer,
-  formatDateTime,
-  formatDate,
-  Habit,
-  Customer_Habit,
-} from "../common/import";
 export default {
   props: {
-    item: {
+    items: {
       type: Object,
-      default: {},
+      default: [],
     },
   },
   setup(props, ctx) {
-    const data = reactive({
-      itemAdd: {
+    const data = reactive({});
+    const create = () => {
+      ctx.emit("create");
+    };
+    const addInput = () => {
+      props.items.push({
         name: "",
-      },
-    });
-    const create = async () => {
-      console.log('starting');
-      const result = await http_create(Habit, data.itemAdd);
-      if (!result.error) {
-        const result1 = await http_create(Customer_Habit, {
-          customerId: props.item.Customer._id,
-          habitId: result.document._id,
-        });
-        if (result1.error == false) {
-          alert_success(
-            `Thêm thói quen khách hàng`,
-            `Thói quen ${result.document.name} đã được tạo thành công.`
-          );
-        }
-      } else if (result.error) {
-        alert_error(`Thêm thói quen khách hàng`, `${result.msg}`);
+      });
+    };
+    const removeInput = (index) => {
+      if (props.items.length > 1) {
+        ctx.emit("remove", index);
       }
     };
     return {
       create,
-      data,
+      addInput,
+      removeInput,
     };
   },
 };
@@ -63,14 +33,13 @@ export default {
 
 <template>
   <!-- The Modal -->
-  <div class="modal" id="model-addHabit">
+  <div class="modal" id="model-add">
     <div class="modal-dialog">
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
           <h4 class="modal-title" style="font-size: 15px">
-            Thêm thói quen cho khách hàng
-            <span style="color: blue">{{ item.Customer.name }}</span>
+            Thêm thói quen mới
           </h4>
           <button type="button" class="close" data-dismiss="modal">
             &times;
@@ -79,17 +48,35 @@ export default {
 
         <!-- Modal body -->
         <div class="modal-body">
-          <form action="/action_page.php" class="was-validated">
-            <div class="form-group">
-              <label for="name"
-                >Tên thói quen(<span style="color: red">*</span>):</label
-              >
+          <form action="" class="was-validated">
+            <div class="form-group" v-for="(value, index) in items">
+              <div class="d-flex justify-content-between">
+                <label for="name"
+                  >Tên thói quen {{ items.length == 1 ? "" : index + 1 }}(<span
+                    style="color: red"
+                    >*</span
+                  >):</label
+                >
+                <label for="" class="d-flex flex-row-reverse"
+                  ><span
+                    @click="addInput()"
+                    class="material-symbols-outlined size-16 btn format-btn ml-2"
+                  >
+                    add </span
+                  ><span
+                    class="material-symbols-outlined size-16 btn format-btn"
+                    @click="removeInput(index)"
+                  >
+                    remove
+                  </span></label
+                >
+              </div>
               <input
                 type="text"
                 class="form-control"
                 id="name"
                 name="name"
-                v-model="data.itemAdd.name"
+                v-model="value.name"
                 required
               />
             </div>
@@ -109,4 +96,9 @@ export default {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.tooltip::before {
+  content: attr(data-tooltip);
+  /* ... */
+}
+</style>

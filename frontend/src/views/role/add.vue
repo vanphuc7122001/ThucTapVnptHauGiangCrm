@@ -1,79 +1,31 @@
 <script>
-import {
-  // components
-  Table,
-  Pagination,
-  Dropdown,
-  Select,
-  Search,
-  DeleteAll,
-  Select_Advanced,
-  // compositions
-  reactive,
-  computed,
-  watch,
-  ref,
-  onBeforeMount,
-  // router
-  useRouter,
-  // format date or datetime
-  formatDateTime,
-  formatDate,
-  // service
-  Event,
-  Habit,
-  Account,
-  Appointment,
-  Center_VNPT,
-  Company_KH,
-  Customer_Types,
-  Customer_Work,
-  Customer,
-  Cycle,
-  Department,
-  Employee,
-  Log,
-  Permission,
-  Position,
-  Role,
-  Task,
-  Unit,
-  // http service
-  http_getAll,
-  http_create,
-  http_getOne,
-  http_deleteOne,
-  http_update,
-  // alert
-  alert_success,
-  alert_error,
-  alert_delete,
-  alert_warning,
-  alert_info,
-} from "../common/import.js";
+import { reactive } from "vue";
 export default {
   props: {
-    item: {
+    items: {
       type: Object,
-      default: {},
+      default: [],
     },
   },
-  components: {
-    Select,
-  },
   setup(props, ctx) {
-    const data = reactive({
-      positionList: [],
-    });
+    const data = reactive({});
     const create = () => {
       ctx.emit("create");
     };
-    onBeforeMount(async () => {
-      data.positionList = await http_getAll(Position);
-    });
+    const addInput = () => {
+      props.items.push({
+        name: "",
+      });
+    };
+    const removeInput = (index) => {
+      if (props.items.length > 1) {
+        ctx.emit("remove", index);
+      }
+    };
     return {
       create,
-      data
+      addInput,
+      removeInput,
     };
   },
 };
@@ -86,7 +38,9 @@ export default {
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title" style="font-size: 15px">Thêm vai trò</h4>
+          <h4 class="modal-title" style="font-size: 15px">
+            Thêm vai trờ mới mới
+          </h4>
           <button type="button" class="close" data-dismiss="modal">
             &times;
           </button>
@@ -95,16 +49,34 @@ export default {
         <!-- Modal body -->
         <div class="modal-body">
           <form action="" class="was-validated">
-            <div class="form-group">
-              <label for="name"
-                >Tên vai trò(<span style="color: red">*</span>):</label
-              >
+            <div class="form-group" v-for="(value, index) in items">
+              <div class="d-flex justify-content-between">
+                <label for="name"
+                  >Tên vai trò {{ items.length == 1 ? "" : index + 1 }}(<span
+                    style="color: red"
+                    >*</span
+                  >):</label
+                >
+                <label for="" class="d-flex flex-row-reverse"
+                  ><span
+                    @click="addInput()"
+                    class="material-symbols-outlined size-16 btn format-btn ml-2"
+                  >
+                    add </span
+                  ><span
+                    class="material-symbols-outlined size-16 btn format-btn"
+                    @click="removeInput(index)"
+                  >
+                    remove
+                  </span></label
+                >
+              </div>
               <input
                 type="text"
                 class="form-control"
                 id="name"
                 name="name"
-                v-model="item.name"
+                v-model="value.name"
                 required
               />
             </div>
@@ -124,4 +96,9 @@ export default {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.tooltip::before {
+  content: attr(data-tooltip);
+  /* ... */
+}
+</style>

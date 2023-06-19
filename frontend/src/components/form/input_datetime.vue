@@ -10,11 +10,6 @@ import {
 } from "vue";
 export default {
   props: {
-    options: {
-      type: Array,
-      required: true,
-      default: [],
-    },
     entryValue: {
       type: String,
       required: true,
@@ -30,40 +25,11 @@ export default {
       activeSelect: false,
       activeClose: false,
     });
-    watch(
-      () => props.entryValue,
-      (newValue, oldValue) => {
-        console.log("dang lang nghe");
-        // for (let value of props.options) {
-        //   console.log(value.name);
-        //   console.log(props.entryValue);
-        //   if (value.name == props.entryValue) {
-        //     data.activeClose = true;
-        //     break;
-        //   }
-        //   data.activeClose = false;
-        // }
-        console.log(data.activeClose);
-        checkShowClose();
-      }
-    );
     const selectRef = ref(null);
 
     const handleClickOutside = (event) => {
       if (!selectRef.value.contains(event.target)) {
         data.activeSelect = false;
-      }
-    };
-
-    const checkShowClose = () => {
-      if (props.options.length > 0) {
-        for (let value of props.options) {
-          if (value.name == props.entryValue) {
-            data.activeClose = true;
-            break;
-          }
-          data.activeClose = false;
-        }
       }
     };
 
@@ -84,7 +50,6 @@ export default {
       props,
       data,
       selectRef,
-      checkShowClose,
     };
   },
 };
@@ -97,22 +62,15 @@ export default {
     style=""
   >
     <!-- title -->
-    <div v-if="title != entryValue" class="select-title mx-auto">
+    <div class="select-title mx-auto">
       <span class="d-flex justify-content-center"
         ><span>{{ title }}</span></span
       >
     </div>
     <!-- content -->
-    <div class="d-flex flex-row-reverse">
+    <div class="d-flex">
       <span
-        class="material-symbols-outlined px-2 d-flex align-items-center"
-        style="font-size: 20px; cursor: pointer"
-        @click="data.activeSelect = !data.activeSelect"
-      >
-        {{ data.activeSelect == true ? "expand_less" : "expand_more" }}</span
-      >
-      <span
-        v-if="data.activeClose == true"
+        v-if="entryValue.length > 0"
         class="material-symbols-outlined d-flex align-items-center"
         style="font-size: 20px; cursor: pointer"
         @click="$emit('refresh')"
@@ -121,44 +79,14 @@ export default {
       >
     </div>
     <input
-      type="text"
+      type="datetime-local"
       class="px-2"
       :value="entryValue"
+      @input="$emit('update:entryValue', $event.target.value)"
       style="font-size: 16px"
       @focus="data.activeSelect = true"
     />
     <!-- options -->
-    <div
-      v-if="data.activeSelect"
-      class="select-content overflow-auto d-flex flex-column align-items-start justify-content-start"
-    >
-      <span
-        v-for="(option, index) in options"
-        :key="index"
-        class="select-option py-1 px-2 d-flex align-items-center justify-content-between"
-      >
-        <span
-          @click="
-            [
-              $emit('update:entryValue', option.value, option),
-              (data.activeSelect = false),
-              (entryValue = option.name),
-            ]
-          "
-          class="mr-2"
-          style="cursor: pointer; font-size: 15px"
-          onmouseover="this.style.color='green';"
-          onmouseout="this.style.color='';"
-          >{{ option.name }}</span
-        >
-        <span
-          v-if="option.name == entryValue"
-          class="material-symbols-outlined d-flex align-items-center"
-          style="cursor: pointer; font-size: 15px"
-          >check</span
-        >
-      </span>
-    </div>
   </div>
   <!-- <div class="">
     <select

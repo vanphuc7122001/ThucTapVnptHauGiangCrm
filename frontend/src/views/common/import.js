@@ -2,6 +2,7 @@ import Table from "../../components/table/table_duy.vue";
 import Pagination from "../../components/table/pagination_duy.vue";
 import Dropdown from "../../components/form/dropdown.vue";
 import Select from "../../components/form/select.vue";
+import Input_Datetime from "../../components/form/input_datetime.vue";
 import Search from "../../components/form/search.vue";
 import DeleteAll from "../../components/form/delete-all.vue";
 import Select_Advanced from "../../components/form/select_advanced.vue";
@@ -63,6 +64,7 @@ export {
     DeleteAll,
     Select_Advanced,
     form_wizard_customer,
+    Input_Datetime,
     // compositions
     reactive,
     computed,

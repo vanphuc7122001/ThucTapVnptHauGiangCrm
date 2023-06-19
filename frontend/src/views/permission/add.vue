@@ -2,9 +2,9 @@
 import { reactive } from "vue";
 export default {
   props: {
-    item: {
+    items: {
       type: Object,
-      default: {},
+      default: [],
     },
   },
   setup(props, ctx) {
@@ -12,8 +12,20 @@ export default {
     const create = () => {
       ctx.emit("create");
     };
+    const addInput = () => {
+      props.items.push({
+        name: "",
+      });
+    };
+    const removeInput = (index) => {
+      if (props.items.length > 1) {
+        ctx.emit("remove", index);
+      }
+    };
     return {
       create,
+      addInput,
+      removeInput,
     };
   },
 };
@@ -35,14 +47,34 @@ export default {
         <!-- Modal body -->
         <div class="modal-body">
           <form action="" class="was-validated">
-            <div class="form-group">
-              <label for="name">Tên quyền(<span style="color: red">*</span>):</label>
+            <div class="form-group" v-for="(value, index) in items">
+              <div class="d-flex justify-content-between">
+                <label for="name"
+                  >Tên quyền {{ items.length == 1 ? "" : index + 1 }}(<span
+                    style="color: red"
+                    >*</span
+                  >):</label
+                >
+                <label for="" class="d-flex flex-row-reverse"
+                  ><span
+                    @click="addInput"
+                    class="material-symbols-outlined size-16 btn format-btn ml-2"
+                  >
+                    add </span
+                  ><span
+                    class="material-symbols-outlined size-16 btn format-btn"
+                    @click="removeInput(index)"
+                  >
+                    remove
+                  </span></label
+                >
+              </div>
               <input
                 type="text"
                 class="form-control"
                 id="name"
                 name="name"
-                v-model="item.name"
+                v-model="value.name"
                 required
               />
             </div>
@@ -63,5 +95,8 @@ export default {
 </template>
 
 <style scoped>
-
+.tooltip::before {
+  content: attr(data-tooltip);
+  /* ... */
+}
 </style>

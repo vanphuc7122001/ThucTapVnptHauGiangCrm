@@ -84,14 +84,36 @@ export default {
       editValue: {},
       searchSelect: "",
       optionSelect: null,
+      choseSearch: "",
+      selectAll: [
+        {
+          checked: false,
+        },
+      ],
     });
 
-    const entryValueRoleAccount = ref('Vai trò tài khoản')
+    const entryValueRoleAccount = ref("Vai trò tài khoản");
     const toString = computed(() => {
       console.log("Starting search");
-      return data.items.map((value, index) => {
-        return [value.name].join("").toLocaleLowerCase();
-      });
+      if (data.choseSearch == "employee") {
+        return data.items.map((value, index) => {
+          return [value.employee].join("").toLocaleLowerCase();
+        });
+      } else if (data.choseSearch == "userName") {
+        return data.items.map((value, index) => {
+          return [value.user_name].join("").toLocaleLowerCase();
+        });
+      } else if (data.choseSearch == "role") {
+        return data.items.map((value, index) => {
+          return [value.role].join("").toLocaleLowerCase();
+        });
+      } else {
+        return data.items.map((value, index) => {
+          return [value.employee, value.user_name, value.role]
+            .join("")
+            .toLocaleLowerCase();
+        });
+      }
     });
     const filter = computed(() => {
       return data.items.filter((value, index) => {
@@ -179,9 +201,7 @@ export default {
         const result = await http_deleteOne(Account, _id);
         alert_success(
           `Xoá tài khoản`,
-          `Bạn đã xoá thành công tài khoản ${
-            result.document.user_name
-          }.`
+          `Bạn đã xoá thành công tài khoản ${result.document.user_name}.`
         );
         refresh();
       }
@@ -200,34 +220,47 @@ export default {
 
     const view = (_id) => {
       console.log("view", _id);
-      router.push({ name: "Event.view", params: { id: _id } });
+      // router.push({ name: "Event.view", params: { id: _id } });
+      // location.reload();
     };
 
     const refresh = async () => {
       data.items = await http_getAll(Account);
-      console.log('1', data.items);
+      for (let value of data.items) {
+        value.checked = false;
+      }
+      console.log("1", data.items);
       data.items = data.items.map((value, index) => {
         return {
           _id: value._id,
           user_name: value.user_name,
           employee: value.Employee.name,
           role: value.Role.name,
-          permision: [
-            ...value.Role.Permissions
-          ]
+          permision: [...value.Role.Permissions],
         };
       });
-      console.log('2', data.items);
+      // console.log("2", data.items);
 
-      const roles = await http_getAll(Role)
-      data.optionSelect = [
-        ...roles
-      ]
+      const roles = await http_getAll(Role);
+      data.optionSelect = [...roles];
 
-      if(entryValueRoleAccount.value != 'Vai trò tài khoản') {
-        data.items = data.items.filter( (item) => {
-          return item.role == entryValueRoleAccount.value
-        })
+      // if (entryValueRoleAccount.value != "Vai trò tài khoản") {
+      //   data.items = data.items.filter((item) => {
+      //     return item.role == entryValueRoleAccount.value;
+      //   });
+      // }
+    };
+
+    const handleSelectAll = (value) => {
+      console.log("cccc", value);
+      if (value == false) {
+        for (let value1 of data.items) {
+          value1.checked = true;
+        }
+      } else {
+        for (let value1 of data.items) {
+          value1.checked = false;
+        }
       }
     };
 
@@ -236,30 +269,29 @@ export default {
     };
 
     const updateEntryValueRoleAccount = (value) => {
-        entryValueRoleAccount.value = value
-    }
+      entryValueRoleAccount.value = value;
+    };
 
-    //watch 
-    watch( entryValueRoleAccount, (newValue, oldValue) => {
-      if( entryValueRoleAccount.value != 'Vai trò tài khoản'){
+    //watch
+    watch(entryValueRoleAccount, (newValue, oldValue) => {
+      if (entryValueRoleAccount.value != "Vai trò tài khoản") {
         refresh();
-      }else{
+      } else {
         refresh();
       }
-    })
-
+    });
 
     // Hàm callback được gọi trước khi component được mount (load)
     onBeforeMount(async () => {
       refresh();
-      console.log('data.items', data.items);
+      console.log("data.items", data.items);
     });
 
     return {
       data,
       setPages,
       activeMenu,
-      entryValueRoleAccount, 
+      entryValueRoleAccount,
       create,
       update,
       deleteOne,
@@ -267,7 +299,8 @@ export default {
       view,
       delete_a,
       refresh,
-      updateEntryValueRoleAccount
+      updateEntryValueRoleAccount,
+      handleSelectAll,
     };
   },
 };
@@ -277,24 +310,27 @@ export default {
   <div class="border-box d-flex flex-column ml-2">
     <!-- Menu -->
     <div class="d-flex menu my-3 mx-3 justify-content-end">
-      <a
+      <router-link
+        :to="{ name: 'Account' }"
         @click="activeMenu = 1"
         :class="[activeMenu == 1 ? 'active-menu' : 'none-active-menu']"
-        href="#"
-        >Tài khoản</a
       >
-      <a
+        <span class="size-17">Tài khoản</span>
+      </router-link>
+      <router-link
+        :to="{ name: 'Role' }"
         @click="activeMenu = 2"
         :class="[activeMenu == 2 ? 'active-menu' : 'none-active-menu']"
-        href="#"
-        >Vai trò</a
       >
-      <a
+        <span class="size-18">Vai trò</span>
+      </router-link>
+      <router-link
+        :to="{ name: 'Permission' }"
         @click="activeMenu = 3"
         :class="[activeMenu == 3 ? 'active-menu' : 'none-active-menu']"
-        href="#"
-        >Quyền</a
       >
+        <span class="size-18">Quyền</span>
+      </router-link>
     </div>
     <!-- Filter -->
     <div class="border-hr mb-3"></div>
@@ -302,12 +338,12 @@ export default {
       <span class="mx-3 mb-3 h6">Lọc tài khoản</span>
       <div class="d-flex mx-3">
         <div class="form-group w-100">
-          <Select
+          <!-- <Select
             :title="'Vai trò tài khoản'"
             :entryValue="entryValueRoleAccount"
             :options="data.optionSelect"
             @update:entryValue="updateEntryValueRoleAccount"
-          />
+          /> -->
         </div>
         <!-- <div class="form-group ml-3">
         </div> -->
@@ -336,18 +372,40 @@ export default {
               name: 30,
               value: 30,
             },
-            {
-              name: 'All',
-              value: 'All',
-            },
           ]"
+          style="width: 125px"
+          :title="`Số bản ghi`"
           @update:entryValue="(value) => (data.entryValue = value)"
           :entryValue="data.entryValue"
+          @refresh="data.entryValue = 'All'"
         />
         <Search
           class="ml-3"
           style="width: 300px"
           @update:searchText="(value) => (data.searchText = value)"
+          :entryValue="data.searchText"
+          @choseSearch="
+            async (value) => (
+              console.log('search ........'),
+              (data.choseSearch = value),
+              (data.currentPage = 1)
+            )
+          "
+          @refresh="(data.entryValue = 'All'), (data.currentPage = 1)"
+          :options="[
+            {
+              _id: 'employee',
+              name: 'Tìm kiếm theo tên nhân viên',
+            },
+            {
+              _id: 'userName',
+              name: 'Tìm kiếm theo tên tài khoản',
+            },
+            {
+              _id: 'role',
+              name: 'Tìm kiếm theo vai trò tài khoản',
+            },
+          ]"
         />
       </div>
       <div class="d-flex align-items-start">
@@ -377,6 +435,9 @@ export default {
       :fields="['Tên nhân viên', 'Tên tài khoản', 'Vai trò tài khoản', 'Quyền']"
       :labels="['employee', 'user_name', 'role']"
       :showActionList="[false, false, true]"
+      :startRow="data.startRow"
+      :selectAll="data.selectAll"
+      @selectAll="(value) => handleSelectAll(value)"
       @delete="(value) => deleteOne(value)"
       @edit="
         (value, value1) => (
