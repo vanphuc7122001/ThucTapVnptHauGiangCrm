@@ -1,8 +1,6 @@
 <script>
 import { watch, ref } from "vue";
 import Table from "../../components/table/table_employee_task.vue";
-// import { Table } from "../common/import";
-// import Table from "../../components/table/table_duy.vue";
 
 export default {
   props: {
@@ -67,7 +65,7 @@ export default {
                     {{ item.birthday }}
                   </p>
                   <p>
-                    <span class="font-weight-bold">SDT: </span>
+                    <span class="font-weight-bold">SĐT: </span>
                     {{ item.phone }}
                   </p>
                 </div>

@@ -57,7 +57,7 @@ export default {
             {{ item[label] }}
           </td>
           <td>{{ item.Cycles.name }}</td>
-          <td>{{ item.Status.status }}</td>
+          <td>{{ item.Status.name }}</td>
 
           <td v-if="activeAction == true">
             <button

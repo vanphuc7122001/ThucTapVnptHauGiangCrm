@@ -171,8 +171,7 @@ export default {
           },
           Status: {
             _id: "",
-            status: "",
-            reason: "",
+            name: "",
           },
         },
       },
