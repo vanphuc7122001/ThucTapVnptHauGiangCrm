@@ -1081,7 +1081,7 @@ Appointment.sync();
 Task.sync();
 Log.sync();
 Evaluate.sync();
-Comment.sync({ force: true });
+Comment.sync({ alert: true });
 Status_App.sync();
 Status_Task.sync();
 Customer_Event.sync();

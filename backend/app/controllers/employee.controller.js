@@ -140,46 +140,45 @@ exports.findOne = async (req, res, next) => {
         },
       ],
     });
-    // console.log("id:", employee1.dataValues.Tasks[0].cycleId);
+    console.log("id:", employee1.dataValues.Tasks.length);
 
-    var i;
-    console.log("lenght:", employee1.dataValues.Tasks.length);
-    for (i = 0; i < employee1.dataValues.Tasks.length; i++) {
-      // console.log("i=", i, employee1.dataValues.Tasks[i].cycleId);
-      const cycles = await Cycle.findOne({
-        where: {
-          _id: employee1.dataValues.Tasks[i].cycleId,
-        },
-      });
-      cycles.dataValues.name = getDecrypt(cycles.dataValues.name);
-      const customer = await Customer.findOne({
-        where: {
-          _id: employee1.dataValues.Tasks[i].customerId,
-        },
-      });
-      customer.dataValues.name = getDecrypt(customer.dataValues.name);
-      customer.dataValues.avatar = getDecrypt(customer.dataValues.avatar);
-      customer.dataValues.phone = getDecrypt(customer.dataValues.phone);
-      customer.dataValues.email = getDecrypt(customer.dataValues.email);
-      customer.dataValues.address = getDecrypt(customer.dataValues.address);
-      customer.dataValues.birthday = getDecrypt(customer.dataValues.birthday);
-      const status = await Status_Task.findOne({
-        where: {
-          TaskId: employee1.dataValues.Tasks[i]._id,
-        },
-      });
-      status.dataValues.status = getDecrypt(status.dataValues.status);
-      status.dataValues.reason = getDecrypt(status.dataValues.reason);
+    if (employee1.dataValues.Tasks.length > 0) {
+      var i;
+      for (i = 0; i < employee1.dataValues.Tasks.length; i++) {
+        const cycles = await Cycle.findOne({
+          where: {
+            _id: employee1.dataValues.Tasks[i].cycleId,
+          },
+        });
+        cycles.dataValues.name = getDecrypt(cycles.dataValues.name);
+        const customer = await Customer.findOne({
+          where: {
+            _id: employee1.dataValues.Tasks[i].customerId,
+          },
+        });
+        customer.dataValues.name = getDecrypt(customer.dataValues.name);
+        customer.dataValues.avatar = getDecrypt(customer.dataValues.avatar);
+        customer.dataValues.phone = getDecrypt(customer.dataValues.phone);
+        customer.dataValues.email = getDecrypt(customer.dataValues.email);
+        customer.dataValues.address = getDecrypt(customer.dataValues.address);
+        customer.dataValues.birthday = getDecrypt(customer.dataValues.birthday);
+        console.log("STATUSID:");
+        if (employee1.dataValues.Tasks[i].StatusTaskId) {
+          const status = await Status_Task.findOne({
+            where: {
+              _id: employee1.dataValues.Tasks[i].StatusTaskId,
+            },
+          });
+          status.dataValues.name = getDecrypt(status.dataValues.name);
+          employee1.dataValues.Tasks[i].dataValues.Status = status.dataValues;
+        }
 
-      employee1.dataValues.Tasks[i].dataValues.Cycles = cycles.dataValues;
-      employee1.dataValues.Tasks[i].dataValues.Customers = customer.dataValues;
-      employee1.dataValues.Tasks[i].dataValues.Status = status.dataValues;
-
-      // console.log("Employee cyles:", employee1.dataValues.Tasks[i].cycle);
-      // console.log("customer:", customer);
+        employee1.dataValues.Tasks[i].dataValues.Cycles = cycles.dataValues;
+        employee1.dataValues.Tasks[i].dataValues.Customers =
+          customer.dataValues;
+      }
+      documents.dataValues["Tasks"] = employee1.dataValues.Tasks;
     }
-    documents.dataValues["Tasks"] = employee1.dataValues.Tasks;
-    console.log("employee task:", employee1.dataValues.Tasks);
 
     // return res.send(employee1.Tasks);
     return res.send(documents);
