@@ -10,7 +10,7 @@ const routes = [
   {
     path: "/",
     component: () => import("../../src/HomePage.vue"),
-    // meta: { requiresAuth: true }, // Bạn có thể sử dụng meta để đánh dấu các trang yêu cầu xác thực
+    meta: { requiresAuth: true }, // Bạn có thể sử dụng meta để đánh dấu các trang yêu cầu xác thực
     children: [
       {
         path: "/",

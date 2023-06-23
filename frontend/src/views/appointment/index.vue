@@ -162,7 +162,9 @@ export default {
     });
     const filter = computed(() => {
       return data.items.filter((value, index) => {
-        return toString.value[index].includes(data.searchText.toLocaleLowerCase());
+        return toString.value[index].includes(
+          data.searchText.toLocaleLowerCase()
+        );
       });
     });
     const filtered = computed(() => {
@@ -387,12 +389,18 @@ export default {
         }
         contentAlert += `</tbody>
       </table>`;
-        const isConfirmed = await alert_delete_wide(`Xoá nhiều lịch hẹn`, contentAlert);
+        const isConfirmed = await alert_delete_wide(
+          `Xoá nhiều lịch hẹn`,
+          contentAlert
+        );
         if (isConfirmed) {
           let checkDeleteAll = false;
           for (let valueDelete of arrayCheck.data) {
             // 1***** xem thay đổi Appoiment cho phù hợp
-            const rsAppointment = await http_deleteOne(Appointment, valueDelete._id);
+            const rsAppointment = await http_deleteOne(
+              Appointment,
+              valueDelete._id
+            );
             if (rsAppointment.error) {
               alert_error("Lỗi ", rsAppointment.msg);
               checkDeleteAll = false;
@@ -442,6 +450,9 @@ export default {
       <router-link :to="{ name: 'Assignment' }">
         <span class="size-17">Phân công</span>
       </router-link>
+      <router-link :to="{ name: '' }" class="active-menu">
+        <span class="size-17">Lịch hẹn</span>
+      </router-link>
     </div>
     <div class="border-hr mb-3"></div>
 
@@ -457,7 +468,9 @@ export default {
                 updateEntryValueStatus(value), (entryNameStatus = value1.name)
               )
             "
-            @refresh="(entryNameStatus = 'Trạng thái'), updateEntryValueStatus('')"
+            @refresh="
+              (entryNameStatus = 'Trạng thái'), updateEntryValueStatus('')
+            "
             style="height: 35px; width: 200px"
           />
         </div>

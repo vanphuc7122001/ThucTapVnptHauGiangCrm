@@ -1,7 +1,7 @@
 <template>
   <div class="row mx-2 justify-content-around">
     <!-- customer -->
-    <div class="col-6 mb-4" @click="chartName('customer')">
+    <div class="col-4 mb-4" @click="chartName('customer')">
       <div
         class="card border-left-primary shadow h-100 py-2"
         :class="{ 'box-active': name == 'customer' }"
@@ -14,7 +14,9 @@
               >
                 Khách hàng
               </div>
-              <div class="h5 mb-0 font-weight-bold text-gray-800">1000</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">
+                {{ customer }}
+              </div>
             </div>
             <div class="col-auto">
               <span class="material-symbols-outlined">groups</span>
@@ -24,32 +26,8 @@
       </div>
     </div>
 
-    <!-- Staff -->
-    <!-- <div class="col-xl-3 col-md-6 col-6 mb-4" @click="showchart = 'staff'">
-            <div
-              class="card border-left-success shadow h-100 py-2"
-              :class="{ 'box-active': showchart == 'staff' }"
-            >
-              <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                  <div class="col mr-2">
-                    <div
-                      class="text-xs font-weight-bold text-success text-uppercase mb-1"
-                    >
-                      Nhân viên
-                    </div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800">20</div>
-                  </div>
-                  <div class="col-auto">
-                    <span class="material-symbols-outlined">support_agent</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div> -->
-
     <!-- Appointment -->
-    <div class="col-6 mb-4" @click="chartName('appointment')">
+    <div class="col-4 mb-4" @click="chartName('appointment')">
       <div
         class="card border-left-info shadow h-100 py-2"
         :class="{ 'box-active': name == 'appointment' }"
@@ -60,12 +38,12 @@
               <div
                 class="text-xs font-weight-bold text-info text-uppercase mb-1"
               >
-                Lịch hẹn
+                Trạng thái chăm sóc
               </div>
               <div class="row no-gutters align-items-center">
                 <div class="col-auto">
                   <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
-                    50%
+                    {{ progress }}%
                   </div>
                 </div>
                 <div class="col">
@@ -74,7 +52,7 @@
                     <div
                       class="progress-bar bg-info"
                       role="progressbar"
-                      style="width: 50%"
+                      :style="`width: ${progress}%`"
                       aria-valuenow="50"
                       aria-valuemin="0"
                       aria-valuemax="100"
@@ -90,36 +68,68 @@
         </div>
       </div>
     </div>
-
-    <!-- Request -->
-    <!-- <div class="col-xl-3 col-md-6 col-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2">
-              <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                  <div class="col mr-2">
-                    <div
-                      class="text-xs font-weight-bold text-warning text-uppercase mb-1"
-                    >
-                      Pending Requests
-                    </div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
-                  </div>
-                  <div class="col-auto">
-                    <i class="fas fa-comments fa-2x text-gray-300"></i>
-                  </div>
-                </div>
+    <!-- customer care cycle-->
+    <div class="col-4 mb-4" @click="chartName('customerCycle')">
+      <div
+        class="card border-left-success shadow h-100 py-2"
+        :class="{ 'box-active': showchart == 'customerCycle' }"
+      >
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div
+                class="text-xs font-weight-bold text-success text-uppercase mb-1"
+              >
+                Khách hàng gần tới chu kỳ chăm sóc
+              </div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">
+                {{ customerCare }}
               </div>
             </div>
-          </div> -->
+            <div class="col-auto">
+              <span class="material-symbols-outlined">support_agent</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Request -->
+    <!-- <div
+      class="col-xl-3 col-md-6 col-6 mb-4"
+      @click="chartName('customeCycle')"
+    >
+      <div class="card border-left-warning shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div
+                class="text-xs font-weight-bold text-warning text-uppercase mb-1"
+              >
+                Khách hàng chưa chăm sóc
+              </div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-comments fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> -->
   </div>
 </template>
 <script>
 import { onMounted, ref } from "vue";
 export default {
   name: "Box",
-  props: ["showchart"],
+  props: ["showchart", "customer", "progress", "customerCare"],
   setup(props, ctx) {
     const name = ref();
+    const customer = ref(0);
+    const prog = ref(0);
+
+    prog.value = props.progress;
     const chartName = (data) => {
       name.value = data;
       ctx.emit("Chart", data);
@@ -127,12 +137,15 @@ export default {
     onMounted(() => {
       name.value = props.showchart;
     });
-    return { chartName, name };
+    return { chartName, name, prog };
   },
 };
 </script>
 <style>
 .box-active {
-  background: #fdf3f4;
+  border: 2px solid #17a2b8;
+}
+.card {
+  background-color: var(--light);
 }
 </style>
