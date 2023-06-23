@@ -88,22 +88,22 @@ export default {
           <td class="size-16">
             <button class="format-btn d-flex align-items-center">
               <span
-                v-if="!data.activeShow"
-                @click="data.activeShow = !data.activeShow"
+                v-if="data.activeShow != index"
+                @click="data.activeShow = index"
                 class="material-symbols-outlined d-flex align-items-center"
               >
                 arrow_right
               </span>
               <span
-                v-if="data.activeShow"
-                @click="data.activeShow = !data.activeShow"
+                v-if="data.activeShow == index"
+                @click="data.activeShow = -1"
                 class="material-symbols-outlined"
               >
                 arrow_drop_down
               </span>
             </button>
 
-            <div v-if="data.activeShow" class="">
+            <div v-if="data.activeShow == index" class="">
               <p style="margin: 0;" v-for="(value, index) in item.permision" :key="index">
                 {{ index+1 }}.  {{ value.name }}
               </p>

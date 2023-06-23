@@ -554,6 +554,7 @@ export default {
           :refreshTable="data.refreshTable"
           v-if="data.showSetEvent"
           :item="data.eventValue"
+          @refresh="(value) => data.showSetEvent = value"
         />
       </div>
     </div>
