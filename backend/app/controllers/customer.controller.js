@@ -8,7 +8,7 @@ const POSITION_CUT_LINK_IMAGE = 21;
 exports.create = async (req, res, next) => {
   // const documents = await Customer.findAll();
   // check unique name, email, phone
-  console.log('abcxyz');
+  console.log("abcxyz");
   console.log("-------");
   console.log(req.file);
   if (!req.file) {
@@ -70,6 +70,7 @@ exports.findOne = async (req, res, next) => {
         ? "Thông tin khách hàng"
         : "Thông tin khách hàng không tồn tại!!",
       error: documents ? false : true,
+      documents: documents,
     });
   } catch (error) {
     return next(createError(500, error.message));
