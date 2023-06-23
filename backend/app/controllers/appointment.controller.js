@@ -162,26 +162,78 @@ exports.deleteAll = async (req, res, next) => {
   } catch (error) {}
 };
 
+// exports.update = async (req, res, next) => {
+//     console.log("hahaha",req.body.taskId)
+//     const { date_time, content, place, note, StatusAppId } = req.body;
+//     try {
+//         let appointments = [await Appointment.findOne({
+//             where: {
+//                 _id: req.params.id,
+//             }
+//         })];
+//         if(appointments.date_time == date_time){
+//             appointments = appointments.filter(
+//                 (value, index) => {
+//                     return value.date_time == date_time && value.content == content
+//                     && value.place == place && value.note == note && value.StatusAppId == StatusAppId;
+//                 }
+//             )
+//             if (appointments.length == 0) {
+//                 const appointments = await Appointment.findAll({
+//                     where:{
+//                         taskId: req.body.taskId
+//                     }
+//                 });
+
+//                 const document = await Appointment.update({
+//                     date_time: date_time,
+//                     content: content,
+//                     place: place,
+//                     note:  note,
+//                     StatusAppId: StatusAppId,
+//                 }, { where: { _id: req.params.id }, returning: true, })
+//             } else {
+//                 return res.send({
+//                     error: true,
+//                     msg: 'Dữ liệu chưa được thay đổi.'
+//                 })
+//             }
+//             ;
+//         }
+
+//         var test=0;
+//         console.log("app", appointments);
+//         for (let value of appointments) {
+//             value.dataValues.date_time = getDecrypt(value.dataValues.date_time);
+//             value.dataValues.content = getDecrypt(value.dataValues.content);
+//             console.log("gio ",value.dataValues.date_time == date_time )
+//             if (value.dataValues.date_time == date_time) {
+//                 test++;
+//             }
+//         }
+//             console.log("test", test);
+//             if(test !=0)
+//             return res.send({
+//                 error: true,
+//                 msg: `Đã tồn tại cuộc hẹn ${content} lúc ${date_time}.`
+//             })
+//         return res.send({
+//             error: false,
+//             msg: 'Dữ liệu đã được thay đổi thành công.',
+//         })
+
+//     } catch (error) {
+//         console.log(error);
+//         return next(
+//             createError(400, 'Error update')
+//         )
+//     }
+// }
+
 exports.update = async (req, res, next) => {
   console.log("hahaha", req.body.taskId);
   const { date_time, content, place, note, StatusAppId } = req.body;
-  const appointments = await Appointment.findAll({
-    where: {
-      taskId: req.body.taskId,
-    },
-  });
-  console.log("app", appointments);
-  for (let value of appointments) {
-    value.dataValues.date_time = getDecrypt(value.dataValues.date_time);
-    value.dataValues.content = getDecrypt(value.dataValues.content);
-    console.log("gio ", value.dataValues.date_time == date_time);
-    if (value.dataValues.date_time == date_time) {
-      return res.send({
-        error: true,
-        msg: `Đã tồn tại cuộc hẹn ${value.dataValues.content} lúc ${value.dataValues.date_time}.`,
-      });
-    }
-  }
+
   try {
     let appointments = [
       await Appointment.findOne({
@@ -190,36 +242,63 @@ exports.update = async (req, res, next) => {
         },
       }),
     ];
-
-    appointments = appointments.filter((value, index) => {
-      return (
-        value.date_time == date_time &&
-        value.place == place &&
-        value.note == note &&
-        value.StatusAppId == StatusAppId
-      );
-    });
-
-    if (appointments.length == 0) {
-      const document = await Appointment.update(
-        {
-          date_time: date_time,
-          content: content,
-          place: place,
-          note: note,
-          StatusAppId: StatusAppId,
-        },
-        { where: { _id: req.params.id }, returning: true }
-      );
-      return res.send({
-        error: false,
-        msg: "Dữ liệu đã được thay đổi thành công.",
+    console.log("mot minh", appointments[0].dataValues.date_time);
+    var date_time1 = getDecrypt(appointments[0].dataValues.date_time);
+    console.log("kjkjkj", appointments[0].dataValues.date_time == date_time);
+    console.log("kjkjkjkj", appointments[0].dataValues.date_time, date_time);
+    if (date_time1 == date_time) {
+      console.log("vaooooooo");
+      appointments = appointments.filter((value, index) => {
+        return (
+          value.date_time == date_time &&
+          value.place == place &&
+          value.note == note &&
+          value.StatusAppId == StatusAppId &&
+          value.content == content
+        );
       });
+      console.log("chieu dai", appointments.length);
+      if (appointments.length == 0) {
+        const document = await Appointment.update(
+          {
+            date_time: date_time,
+            content: content,
+            place: place,
+            note: note,
+            StatusAppId: StatusAppId,
+          },
+          { where: { _id: req.params.id }, returning: true }
+        );
+        return res.send({
+          error: false,
+          msg: "Dữ liệu đã được thay đổi thành công.",
+        });
+      } else {
+        return res.send({
+          error: true,
+          msg: "Dữ liệu chưa được thay đổi.",
+        });
+      }
     } else {
-      return res.send({
-        error: true,
-        msg: "Dữ liệu chưa được thay đổi.",
+      console.log("Vao else");
+      const appointments = await Appointment.findAll({
+        where: {
+          taskId: req.body.taskId,
+        },
       });
+      console.log("appointment", appointments);
+      for (let value of appointments) {
+        console.log("coi 2 gio ne", value.dataValues.date_time, date_time);
+        value.dataValues.date_time = getDecrypt(value.dataValues.date_time);
+        value.dataValues.content = getDecrypt(value.dataValues.content);
+        console.log("gio ", value.dataValues.date_time == date_time);
+        if (value.dataValues.date_time == date_time) {
+          return res.send({
+            error: true,
+            msg: `Đã tồn tại cuộc hẹn ${value.dataValues.content} lúc ${value.dataValues.date_time}.`,
+          });
+        }
+      }
     }
   } catch (error) {
     console.log(error);

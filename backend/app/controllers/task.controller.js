@@ -501,14 +501,14 @@ exports.update = async (req, res, next) => {
 
       tasks = tasks.filter((value, index) => {
         return (
-          (value.start_date == start_date &&
-            value.end_date == end_date &&
-            value.content == content &&
-            value.cycleId == cycleId &&
-            value.customerId == customerId &&
-            value.leaderId == leaderId &&
-            value.note == note &&
-            value.StatusTaskId == StatusTaskId) ||
+          value.start_date == start_date &&
+          value.end_date == end_date &&
+          value.content == content &&
+          value.cycleId == cycleId &&
+          value.customerId == customerId &&
+          value.leaderId == leaderId &&
+          value.note == note &&
+          value.StatusTaskId == StatusTaskId &&
           value.EvaluateId == EvaluateId
         );
       });
