@@ -1,5 +1,5 @@
 <script>
-import { reactive, onBeforeMount, ref, watch, computed } from "vue";
+import { reactive, onBeforeMount, ref, watch, computed, watchEffect } from "vue";
 import Select_Advanced from "../../components/form/select_advanced.vue";
 import Table from "../../components/table/table_task_employee.vue";
 import Select from "../../components/form/select.vue";
@@ -89,10 +89,6 @@ export default {
       ],
     });
 
-
-
-
-    
     const employees = reactive({ employee: [] });
 
     // computed
@@ -112,17 +108,13 @@ export default {
         });
       } else {
         return data.itemEm.map((value, index) => {
-          return [value.name, value.email, value.phone]
-            .join("")
-            .toLocaleLowerCase();
+          return [value.name, value.email, value.phone].join("").toLocaleLowerCase();
         });
       }
     });
     const filter = computed(() => {
       return data.itemEm.filter((value, index) => {
-        return toString.value[index].includes(
-          data.searchText.toLocaleLowerCase()
-        );
+        return toString.value[index].includes(data.searchText.toLocaleLowerCase());
       });
     });
     const filtered = computed(() => {
@@ -153,7 +145,7 @@ export default {
         });
       } else return data.itemEm.value;
     });
-      //SelectAll
+    //SelectAll
     const arrayCheck = reactive({ data: [] });
     const entryValuePosition = ref(""); //id
     const entryNamePosition = ref("Chức vụ"); //name
@@ -163,11 +155,10 @@ export default {
     const entryNameDepartment = ref("Phòng"); //name
     const entryValueUnit = ref("");
     const entryNameUnit = ref("Tổ");
-    
 
     //watch lọc nhân viên
-     // ******LỌC ******
-     const positions = reactive({ position: [] });
+    // ******LỌC ******
+    const positions = reactive({ position: [] });
     watch(entryValuePosition, async (newValue, oldValue) => {
       if (newValue == "") {
         await refresh();
@@ -194,10 +185,7 @@ export default {
         });
       }
       //2. chọn 1 trung tâm và 1 phòng
-      else if (
-        entryValueCenter.value != "" &&
-        entryValueDepartment.value != ""
-      ) {
+      else if (entryValueCenter.value != "" && entryValueDepartment.value != "") {
         data.itemEm = data.itemEm.filter((value) => {
           return (
             value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value &&
@@ -206,9 +194,7 @@ export default {
         });
       } else if (entryValueCenter.value != "") {
         data.itemEm = data.itemEm.filter((val) => {
-          return (
-            val.Unit.Department.Center_VNPTHG._id == entryValueCenter.value
-          );
+          return val.Unit.Department.Center_VNPTHG._id == entryValueCenter.value;
         });
       }
       //Thay đổi
@@ -273,9 +259,7 @@ export default {
       //2.  chỉ có trung tâm
       else {
         data.itemEm = data.itemEm.filter((value, index) => {
-          return (
-            value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value
-          );
+          return value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value;
         });
       }
       data.selectAll[0].checked = false;
@@ -408,68 +392,70 @@ export default {
       entryValueUnit.value = value;
     };
 
-
     const createTaskEm = async (value) => {
       const dataTaskEm = reactive({ TaskId: " ", EmployeeId: " " });
       dataTaskEm.TaskId = props.item._id;
-      const listEmployees = reactive({ listEmployee: [] });
-      listEmployees.listEmployee = await http_getOne(Task, props.item._id);
-      for (let i =0 ; i< listEmployees.listEmployee; i++) {
-        arrayCheck.data.push(listEmployees.listEmployee[i]);
-      }
-
       if (arrayCheck.data.length == 0) {
         alert_warning("Chưa chọn nhân viên để giao việc", "");
         return;
       }
-      //xóa nhân viên
-      var j;
-      for (j = 0; j < listEmployees.listEmployee.Employees.length; j++) {
-        const dataDel = reactive({
-          data: {
-            TaskId: props.item._id,
-            EmployeeId: listEmployees.listEmployee.Employees[j]._id,
-          },
-        });
-        const result = await EmployeeTask.deleteOne(dataDel.data);
-      }
-      for (let i = 0; i < arrayCheck.data.length; i++) {
-        if (arrayCheck.data[i].checked == true) {
-          try {
-            dataTaskEm.EmployeeId = arrayCheck.data[i]._id;
-            await http_create(EmployeeTask, dataTaskEm);
-          } catch (error) {
-            console.error("Error sending email:", error);
-          }
+      //xóa nhân viên 1**
+      const A = ["A", "B"]; //array
+      const B = ["B", "C", "D"]; //arrayCheck
+      const C = reactive({ data: [] });
+      C.data = array.data.filter((value) => !arrayCheck.data.includes(value));
+      console.log("C:", C.data, C.data.length);
+      console.log("đã giao trước:", array.data, array.data.length);
+      if (C.data.length != 0) {
+        for (let j = 0; j < C.data.length; j++) {
+          const dataDel = reactive({
+            data: {
+              TaskId: props.item._id,
+              EmployeeId: C.data[j]._id,
+            },
+          });
+          const result = await EmployeeTask.deleteOne(dataDel.data);
         }
       }
+      console.log("0", arrayCheck.data.length);
+      for (let i = 0; i < arrayCheck.data.length; i++) {
+        // console.log(arrayCheck.data[i]._id);
+        // if (arrayCheck.data[i].checked == true) {
+        try {
+          dataTaskEm.EmployeeId = arrayCheck.data[i]._id;
+          await http_create(EmployeeTask, dataTaskEm);
+        } catch (error) {
+          console.error("Error sending email:", error);
+        }
+        // }
+      }
       alert_success("Đã giao việc cho nhân viên thành công", "");
+      await refresh();
     };
 
     //tu giao viec
-    const addTaskEm = async () =>{
+    const addTaskEm = async () => {
       const newData = reactive({ TaskId: " ", EmployeeId: " " });
       newData.TaskId = props.item._id;
-      newData.EmployeeId = sessionStorage.getItem("employeeId")
-      console.log('leaderId:',newData.EmployeeId  )
-      console.log('taskid:', newData.TaskId)
+      newData.EmployeeId = sessionStorage.getItem("employeeId");
+      console.log("leaderId:", newData.EmployeeId);
+      console.log("taskid:", newData.TaskId);
       try {
         const result = await http_create(EmployeeTask, newData);
         console.log(result.error);
-        if(result.error == true){
-          alert_warning(
-         `Thêm công việc`,
-         `Công việc đã được giao cho bạn`);
-        }else{
+        if (result.error == true) {
+          alert_warning(`Thêm công việc`, `Công việc đã được giao cho bạn`);
+        } else {
           alert_success(
-         `Thêm công việc`,
-         `Nhận khách hàng ${props.item.Customer.name} thành công`);  
-        }  
+            `Thêm công việc`,
+            `Nhận khách hàng ${props.item.Customer.name} thành công`
+          );
+        }
         await refresh();
       } catch (error) {
-          console.error("Lỗi tạo công việc:", error);
+        console.error("Lỗi tạo công việc:", error);
       }
-    }
+    };
 
     //CHECKALL
     const handleSelectAll = (value) => {
@@ -503,24 +489,27 @@ export default {
       console.log("arrayCheckOne:", arrayCheck.data);
     };
 
-
+    const array = reactive({ data: [] });
     const refresh = async () => {
       // data.cycleSelect = [...rs];
       console.log("REFRESH");
       data.itemEm = await http_getAll(Employee);
-      console.log("ds nv",data.itemEm);
+      console.log("ds nv", data.itemEm);
       // ***
+      arrayCheck.data = [];
+      array.data = [];
       const employeeTask = reactive({ data: [] });
       employeeTask.data = await http_getOne(Task, props.item._id);
-      console.log("list",employeeTask.data);
-      var i;
-      for (i = 0; i < data.itemEm.length; i++) {
+      console.log("list", employeeTask.data);
+      for (let i = 0; i < data.itemEm.length; i++) {
         data.itemEm[i].checked = false;
       }
-      for (i = 0; i < data.itemEm.length; i++) {
-        for (var j = 0; j < employeeTask.data.Employees.length; j++) {
+      for (let i = 0; i < data.itemEm.length; i++) {
+        for (let j = 0; j < employeeTask.data.Employees.length; j++) {
           if (data.itemEm[i]._id == employeeTask.data.Employees[j]._id) {
             data.itemEm[i].checked = true;
+            arrayCheck.data.push(data.itemEm[i]);
+            array.data.push(data.itemEm[i]);
           }
         }
       }
@@ -531,7 +520,7 @@ export default {
       data.center = await CenterServices.getAll();
       data.department = await departmentsServices.getAll();
       data.unit = await unitsServices.getAll();
-      
+
       data.position = data.position.map((value, index) => {
         return {
           ...value,
@@ -564,16 +553,16 @@ export default {
       entryValueDepartment.value = "";
       entryNameUnit.value = "Tổ";
       entryValueUnit.value = "";
-      for (let value of data.items) {
-        for (let array of arrayCheck.data) {
-          console.log("arrayid==value_id", array._id == value._id);
-          if (array._id == value._id) {
-            value.checked = true;
-            break;
-          }
-          value.checked = false;
-        }
-      }
+      // for (let value of data.itemEm) {
+      //   for (let array of arrayCheck.data) {
+      //     console.log("arrayid==value_id", array._id == value._id);
+      //     if (array._id == value._id) {
+      //       value.checked = true;
+      //       break;
+      //     }
+      //     value.checked = false;
+      //   }
+      // }
       data.selectAll[0].checked = false;
     };
     const closeModal = async () => {
@@ -582,8 +571,12 @@ export default {
       await refresh();
       showModal.value = false;
     };
-    onBeforeMount(() => {
-      refresh();
+    onBeforeMount(async () => {
+      await refresh();
+    });
+    watchEffect(async () => {
+      console.log("111TĐ:", props.item._id);
+      await refresh();
     });
 
     return {
@@ -620,15 +613,8 @@ export default {
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title" style="font-size: 15px">
-            Giao việc cho nhân viên
-          </h4>
-          <button
-            type="button"
-            class="close"
-            data-dismiss="modal"
-            @click="closeModal"
-          >
+          <h4 class="modal-title" style="font-size: 15px">Giao việc cho nhân viên</h4>
+          <button type="button" class="close" data-dismiss="modal" @click="closeModal">
             &times;
           </button>
         </div>
@@ -638,9 +624,7 @@ export default {
           <div style="padding: 24px">
             <form action="" class="was-validated">
               <div class="form-group">
-                <label for="name"
-                  >Khách hàng(<span style="color: red">*</span>):</label
-                >
+                <label for="name">Khách hàng(<span style="color: red">*</span>):</label>
                 <input
                   type="text"
                   class="form-control"
@@ -754,13 +738,7 @@ export default {
                 /> -->
                 <Table
                   :items="setPages"
-                  :fields="[
-                    'Tên',
-                    'Chức vụ',
-                    'Đơn vị',
-                    'Phòng',
-                    'Trung tâm',
-                  ]"
+                  :fields="['Tên', 'Chức vụ', 'Đơn vị', 'Phòng', 'Trung tâm']"
                   :selectAll="data.selectAll"
                   :startRow="data.startRow"
                   @selectAll="(value) => handleSelectAll(value)"

@@ -13,5 +13,7 @@ router.route('/:id')
     .get(appointments.findOne)
     .delete(appointments.deleteOne)
 
+router.route('/task/:id').get(appointments.finAllAppointment)
+
 module.exports = router;
 

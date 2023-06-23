@@ -1,5 +1,5 @@
 <script>
-import { reactive } from "vue";
+import { reactive, computed } from "vue";
 export default {
   props: {
     items: {
@@ -36,13 +36,11 @@ export default {
 </script>
 
 <template>
-  <table
-    class="my-table mb-2"
-    :class="[borderTableAll ? 'border-table-all' : '']"
-  >
+  <table class="my-table mb-2" :class="[borderTableAll ? 'border-table-all' : '']">
     <thead>
       <tr>
-        <th><input
+        <th>
+          <input
             type="checkbox"
             name=""
             id=""
@@ -50,7 +48,8 @@ export default {
             v-model="selectAll[0].checked"
             @click="$emit('selectAll', selectAll[0].checked)"
             class="d-flex align-items-center size-16"
-          /></th>
+          />
+        </th>
         <th>Stt</th>
         <th>Khách hàng</th>
         <th>Chu kỳ</th>
@@ -60,18 +59,22 @@ export default {
     </thead>
     <tbody>
       <tr v-for="(item, index) in items" :key="index">
-        <td><input 
+        <td>
+          <input
             type="checkbox"
             :checked="item.checked == true"
             v-model="item.checked"
             @click="$emit('selectOne', item._id, item)"
-            class="d-flex align-items-center size-16" /></td>
+            class="d-flex align-items-center size-16"
+          />
+        </td>
         <td>{{ index + 1 }}</td>
         <td>{{ item.Customer.name }}</td>
         <td>{{ item.Cycle.name }}</td>
         <td v-for="(label, index1) in labels" :key="index1">
           {{ item[label] }}
         </td>
+        <td>{{ item.Evaluate.star }}</td>
         <td>{{ item.Status_Task.name }}</td>
         <td class="" v-if="activeAction == true">
           <div class="d-flex align-items-center">
@@ -106,26 +109,24 @@ export default {
             <span
               id="delete"
               class="material-symbols-outlined"
-              @click="
-                $emit('delete', item._id, item)
-              "
+              @click="$emit('delete', item._id, item)"
             >
               delete
             </span>
             <button
-            type="button"
-            class="mx-2 format-btn"
-            data-toggle="modal"
-            data-target="#modal-addAppointment"
-          >
-            <span
-              id="appointment"
-              class="material-symbols-outlined d-flex align-items-center justify-content-center"
-              @click="$emit('appointment', item._id, item)"
+              type="button"
+              class="mx-2 format-btn"
+              data-toggle="modal"
+              data-target="#modal-addAppointment"
             >
-              schedule
-            </span>
-          </button>
+              <span
+                id="appointment"
+                class="material-symbols-outlined d-flex align-items-center justify-content-center"
+                @click="$emit('appointmentView', item._id, item)"
+              >
+                schedule
+              </span>
+            </button>
           </div>
         </td>
         <!-- <td v-if="activeAction == true">
@@ -229,5 +230,12 @@ export default {
 }
 #delete:hover {
   color: var(--red);
+}
+
+.takingCare {
+  color: green;
+}
+.takeCare {
+  color: red;
 }
 </style>

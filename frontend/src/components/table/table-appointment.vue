@@ -26,51 +26,100 @@ export default {
       type: Boolean,
       default: false,
     },
+    selectAll: {
+      type: Array,
+      default: [],
+    },
+    cus: {
+      type: Array,
+      default: [],
+    },
+    activeCheck: {
+      type: Boolean,
+      default: true,
+    },
   },
   setup(props, ntx) {},
 };
 </script>
 
 <template>
-  <table
-    class="my-table mb-2"
-    :class="[borderTableAll ? 'border-table-all' : '']"
-  >
+  <table class="my-table mb-2" :class="[borderTableAll ? 'border-table-all' : '']">
     <thead>
       <tr>
-        <th></th>
+        <th>
+          <input
+            type="checkbox"
+            name=""
+            id=""
+            :checked="selectAll[0].checked == true"
+            v-model="selectAll[0].checked"
+            @click="$emit('selectAll', selectAll[0].checked)"
+            class="d-flex align-items-center size-16"
+            v-if="activeCheck == true"
+          />
+        </th>
         <th>Stt</th>
-        <th v-for="(value, index) in fields">{{ value }}</th>
+        <th>Khách hàng</th>
+        <th v-for="(value, index) in fields" :key="index">{{ value }}</th>
+        <th>Trạng thái</th>
         <th v-if="activeAction == true">Hành động</th>
       </tr>
     </thead>
     <tbody>
-      <tr v-for="(item, index) in items">
-        <td><input type="checkbox" name="" id="" /></td>
+      <tr v-for="(item, index) in items" :key="index">
+        <td>
+          <input
+            type="checkbox"
+            :checked="item.checked == true"
+            v-model="item.checked"
+            @click="$emit('selectOne', item._id, item)"
+            class="d-flex align-items-center size-16"
+            v-if="activeCheck == true"
+          />
+        </td>
         <td>{{ index + 1 }}</td>
-        <td v-for="(label, index1) in labels">{{ item[label] }}</td>
-        <td v-if="activeAction == true">
-          <button
-            type="button"
-            class="mr-2"
-            data-toggle="modal"
-            data-target="#model-edit"
-          >
-            <span
-              id="edit"
-              class="material-symbols-outlined d-flex align-items-center justify-content-center"
-              @click="$emit('edit', item, true)"
+        <td>{{ cus }}</td>
+        <td v-for="(label, index1) in labels" :key="index1">{{ item[label] }}</td>
+        <td>{{ item.Status_App.name }}</td>
+        <td class="" v-if="activeAction == true">
+          <div class="d-flex align-items-center">
+            <!-- <button
+              type="button"
+              class="format-btn"
+              data-toggle="modal"
+              data-target="#model-view"
             >
-              edit
+              <span
+                id="view"
+                class="material-symbols-outlined d-flex align-content-center"
+                @click="$emit('view', item._id)"
+              >
+                visibility
+              </span>
+            </button> -->
+            <button
+              type="button"
+              class="mx-2 format-btn"
+              data-toggle="modal"
+              data-target="#modal-edit"
+            >
+              <span
+                id="edit"
+                class="material-symbols-outlined d-flex align-content-center"
+                @click="$emit('edit', item, true)"
+              >
+                edit
+              </span>
+            </button>
+            <span
+              id="delete"
+              class="material-symbols-outlined"
+              @click="$emit('delete', item._id, item)"
+            >
+              delete
             </span>
-          </button>
-          <span
-            id="delete"
-            class="material-symbols-outlined"
-            @click="$emit('delete', item._id)"
-          >
-            delete
-          </span>
+          </div>
         </td>
       </tr>
     </tbody>
@@ -106,7 +155,8 @@ export default {
 
 #view,
 #edit,
-#delete {
+#delete,
+#appointment {
   font-size: 18px;
   cursor: pointer;
   border: 1px solid var(--gray);
@@ -121,5 +171,12 @@ export default {
 }
 #delete:hover {
   color: var(--red);
+}
+
+.takingCare {
+  color: green;
+}
+.takeCare {
+  color: red;
 }
 </style>

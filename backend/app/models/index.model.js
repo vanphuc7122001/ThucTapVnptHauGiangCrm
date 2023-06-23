@@ -643,6 +643,30 @@ const Appointment = sequelize.define("Appointment", {
       setEncrypt(value, "content", this);
     },
   },
+  note: {
+    type: DataTypes.TEXT,
+    get() {
+      return getDecrypt("note", this);
+    },
+    set(value) {
+      setEncrypt(value, "note", this);
+    },
+  },
+  place: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+    validate: {
+      notEmpty: {
+        msg: "Địa điểm cuộc hẹn không được bỏ trống.",
+      },
+    },
+    get() {
+      return getDecrypt("place", this);
+    },
+    set(value) {
+      setEncrypt(value, "place", this);
+    },
+  },
 });
 
 const Status_Task = sequelize.define("Status_Task", {

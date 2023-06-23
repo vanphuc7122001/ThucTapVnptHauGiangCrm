@@ -61,6 +61,7 @@ const MailRouter = require("./app/routes/mail.route");
 const LoginRouter = require("./app/routes/login.route");
 const Status_TaskRouter = require("./app/routes/status_task.route");
 const EvaluateRouter = require("./app/routes/evaluate.route");
+const Status_AppRouter = require("./app/routes/status_app.route");
 
 // use router
 app.use("/api/customers", customerRouter);
@@ -89,6 +90,7 @@ app.use("/api/mail", MailRouter);
 app.use("/api/login", LoginRouter);
 app.use("/api/status_tasks", Status_TaskRouter);
 app.use("/api/evaluates", EvaluateRouter);
+app.use("/api/status_apps", Status_AppRouter);
 // // check errors
 app.use((req, res, next) => {
   return next(createError(404, "Resource Not Found"));

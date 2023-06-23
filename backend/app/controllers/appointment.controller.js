@@ -2,11 +2,31 @@ const { Appointment, Status_App } = require('../models/index.model.js');
 const { DataTypes, Op } = require('sequelize');
 const createError = require('http-errors');
 const { v4: uuidv4 } = require('uuid');
+const crypto = require("crypto");
 
+const encryptionKey = "12345678912345678901234567890121";
+const iv = "0123456789abcdef";
+
+const setEncrypt = (value) => {
+  const cipher = crypto.createCipheriv("aes-256-cbc", encryptionKey, iv);
+  let encrypted = cipher.update(value, "utf8", "hex");
+  encrypted += cipher.final("hex");
+  return encrypted;
+};
+const getDecrypt = (name) => {
+  if (name) {
+    const decipher = crypto.createDecipheriv("aes-256-cbc", encryptionKey, iv);
+    let decrypted = decipher.update(name, "hex", "utf8");
+    decrypted += decipher.final("utf8");
+    return decrypted;
+  }
+};
 // checked
 exports.create = async (req, res, next) => {
-    if (Object.keys(req.body).length === 3) {
-        const { date_time, content, taskId } = req.body;
+    console.log("thong tinnnnnn", req.body);
+    if (Object.keys(req.body).length >= 5) {
+        const { date_time, content, note, place, taskId} = req.body;
+        var StatusAppId;
         const appointments = await Appointment.findAll();
         for (let value of appointments) {
             if (value.date_time == date_time && value.taskId == taskId) {
@@ -17,16 +37,55 @@ exports.create = async (req, res, next) => {
             }
         }
         try {
+            const status_apps = await Status_App.findAll()     
+            var a = 0;
+            console.log("chieu dai",status_apps.length)      
+            if(status_apps.length > 0){
+                console.log("vaooooooooooo")
+                console.log("status app", status_apps)
+                console.log("name  dsf",  status_apps.Status_App);
+                for(let value of status_apps){
+                    // console.log("status task hahaha ", value.dataValues.name);
+                    value.dataValues.name = getDecrypt(value.dataValues.name);
+                    console.log("name",value.dataValues.name )
+                    console.log("name ahhahahaha", value.dataValues.name,value.dataValues.name == "chưa xác nhận");
+                    if(value.dataValues.name == "chưa xác nhận"){
+                        console.log("kiem tra", value.dataValues.name);
+                        StatusAppId = value.dataValues._id;
+                        console.log("id status_task hahaahha",StatusAppId )
+                        a = 0;
+                        break;
+                    }
+                    else {
+                        a = 1;
+                    }
+                }
+                console.log("a kkkkkkk", a);
+                if(a != 0){
+                    const status_app = await Status_App.create({
+                        name: "chưa xác nhận",
+                    })
+                    StatusAppId = status_app._id;
+                    console.log("status_app",status_app )
+                }
+                console.log("id status_task hahaahha",StatusAppId )
+                // console.log("status task", statusId);
+            }
+            else{
+                const status_app = await Status_App.create({
+                    name: "chưa xác nhận",
+                })
+                StatusAppId = status_app._id;
+                console.log("status_task",status_app )
+            }        
             const document = await Appointment.create({
                 date_time: date_time,
                 content: content,
+                place: place,
+                note: note,
                 taskId: taskId,
+                StatusAppId: StatusAppId,
             });
-            const status_task = await Status_App.create({
-                AppointmentId: document._id,
-                status: 'false',
-                reason: 'no',
-            })
             return res.send({
                 error: false,
                 msg: `Bạn đã tạo thành công cuộc hẹn ${document.content} lúc ${document.date_time}.`,
@@ -111,7 +170,8 @@ exports.deleteAll = async (req, res, next) => {
 }
 
 exports.update = async (req, res, next) => {
-    const { date_time, content, taskId } = req.body;
+    console.log("hahaha",req.body)
+    const { date_time, content, place, note, StatusAppId } = req.body;
     try {
         let appointments = [await Appointment.findOne({
             where: {
@@ -121,7 +181,8 @@ exports.update = async (req, res, next) => {
 
         appointments = appointments.filter(
             (value, index) => {
-                return value.date_time == date_time && value.taskId == taskId;
+                return value.date_time == date_time
+                && value.place == place && value.note == note && value.StatusAppId == StatusAppId;
             }
         )
 
@@ -129,6 +190,9 @@ exports.update = async (req, res, next) => {
             const document = await Appointment.update({
                 date_time: date_time,
                 content: content,
+                place: place,
+                note:  note,
+                StatusAppId: StatusAppId,
             }, { where: { _id: req.params.id }, returning: true, });
             return res.send({
                 error: false,
@@ -150,6 +214,28 @@ exports.update = async (req, res, next) => {
 }
 
 
+
+exports.finAllAppointment = async (req, res, next) => {
+    try {
+      const document = await Appointment.findAll({
+        where: {
+          taskId: req.params.id,
+        },
+      });
+      for (let i = 0; i < document.length; i++) {
+        var status = await Status_App.findOne({
+            where: {_id: document[i].dataValues.StatusAppId}
+        });
+        status.dataValues.name = getDecrypt(status.dataValues.name);
+        console.log("Status:", status.dataValues.name);
+        document[i].dataValues.Status_App = status.dataValues;
+      }
+      console.log(document);
+      return res.send(document);
+    } catch (error) {
+      return next(createError(400, "Error findOne"));
+    }
+  };
 
 
 

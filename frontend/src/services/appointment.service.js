@@ -22,6 +22,9 @@ class EventService {
     async delete(id) {
         return (await this.api.delete(`/${id}`)).data;
     }
+    async findAllAppointment(id){
+        return (await this.api.get(`/task/${id}`)).data;
+    }
 }
 
 export default new EventService();
