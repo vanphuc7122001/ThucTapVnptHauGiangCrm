@@ -9,6 +9,7 @@ router.route('/')
 
 router.route('/:id')
     .get(customer_events.findOne)
+    .post(customer_events.deleteOne)
 
 module.exports = router;
 

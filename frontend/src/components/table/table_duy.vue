@@ -70,7 +70,13 @@ export default {
     </thead>
     <tbody>
       <tr class="size-16" v-for="(item, index) in items">
-        <td><input type="checkbox" v-model="item.checked" name="" id="" /></td>
+        <td><input @click="() => {
+          if(item.checked) {
+            $emit('refresh_event', true);
+          } else {
+            $emit('refresh_event', false);
+          }
+        }" type="checkbox" v-model="item.checked" name="" id="" /></td>
         <td class="size-16">{{ startRow + index }}</td>
         <td class="size-16" v-for="(label, index1) in labels">
           {{ item[label] }}
@@ -86,6 +92,7 @@ export default {
             >
               <span
                 id="view"
+                @click="$emit('view', item), console.log('cccc')"
                 class="material-symbols-outlined d-flex align-items-center"
               >
                 visibility

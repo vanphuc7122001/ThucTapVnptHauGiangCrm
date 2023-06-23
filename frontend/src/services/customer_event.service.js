@@ -13,6 +13,9 @@ class EventService {
     async get(id) {
         return (await this.api.get(`/${id}`)).data;
     }
+    async update(id, data) {
+        return (await this.api.post(`/${id}`, data)).data;
+    }
 }
 
 export default new EventService();

@@ -4,6 +4,7 @@ const { v4: uuidv4 } = require("uuid");
 const { sequelize } = require("../config/index");
 
 exports.create = async (req, res, next) => {
+    console.log(req.body);
     if (Object.keys(req.body).length === 2) {
         const { customerId, eventId } = req.body;
         const permissions = await Customer_Event.findAll();
@@ -17,8 +18,8 @@ exports.create = async (req, res, next) => {
         }
         try {
             const document = await Customer_Event.create({
-                customerId: customerId,
-                eventId: eventId,
+                CustomerId: customerId,
+                EventId: eventId,
             });
             return res.send({
                 error: false,
@@ -44,8 +45,6 @@ exports.findAll = async (req, res, next) => {
     try {
         const documents = await Customer_Event.findAll({
             include: [
-                Permission,
-                Role,
             ]
         });
         return res.send(documents);
@@ -65,5 +64,27 @@ exports.findOne = async (req, res, next) => {
         return res.send(documents);
     } catch (error) {
         return next(createError(400, "Error finding permission !"));
+    }
+};
+
+exports.deleteOne = async (req, res, next) => {
+    try {
+        const result = await Customer_Event.destroy({
+            where: {
+                CustomerId: req.body.CustomerId,
+                EventId: req.body.EventId,
+            },
+        });
+
+        if (result === 0) {
+            // If no records were deleted, return an error
+            return next(createError(404, "Role not found"));
+        }
+        return res.send({
+            document: result,
+        });
+    } catch (error) {
+        console.log(error);
+        return next(createError(400, "Error deleting role"));
     }
 };

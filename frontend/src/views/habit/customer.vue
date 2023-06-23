@@ -1,10 +1,15 @@
 <script>
 import Table from "../../components/table/table_customer.vue";
-import Add from "./add.vue";
-import Edit from "./edit.vue";
-import View from "./view.vue";
-import AddHabit from "./addHabit.vue";
-import { reactive, computed, ref, onBeforeMount, watch } from "vue";
+import View from "../customer/view.vue";
+import {
+  reactive,
+  computed,
+  ref,
+  onBeforeMount,
+  watch,
+  watchEffect,
+  onMounted,
+} from "vue";
 import {
   http_getAll,
   http_deleteOne,
@@ -24,23 +29,38 @@ import {
   Customer,
   Customer_Types,
   Status_Task,
+  Customer_Event,
 } from "../common/import";
 
 export default {
   components: {
     Table,
     Pagination,
-    Dropdown,
     Select,
     Search,
-    Add,
     DeleteAll,
-    Edit,
-    View,
-    AddHabit,
     Select_Advanced,
+    View,
   },
-  setup(ctx) {
+  props: {
+    _customerList: {
+      type: Array,
+      default: [],
+    },
+    item: {
+      type: Object,
+      default: [],
+    },
+    customer_eventListObject: {
+      type: Array,
+      default: [],
+    },
+    refreshTable: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  setup(props, ctx) {
     const data = reactive({
       items: [],
       entryValue: 5,
@@ -110,16 +130,7 @@ export default {
         },
       ],
       viewCareCus: null,
-      habitAdd: [
-        {
-          name: "",
-        },
-      ],
-      eventAdd: {
-        name: "",
-        content: "",
-        time_duration: "",
-      },
+      customer_eventList: [],
     });
 
     const entryValueCustomerType = ref("");
@@ -175,6 +186,19 @@ export default {
           );
         });
       }
+
+      //   setCheckbox
+      for (let value of data.items) {
+        console.log("value.Customer._id", value.Customer._id);
+        console.log(
+          "isStringFound(value.Customer._id)",
+          isStringFound(value.Customer._id)
+        );
+        if (isStringFound(value.Customer._id)) {
+          console.log("ghgdhsjakdhsjakdhsj");
+          value.checked = true;
+        }
+      }
     };
 
     const showAddHabit = () => {
@@ -193,10 +217,20 @@ export default {
       }
     };
 
-    onBeforeMount(() => {
+    onBeforeMount(async () => {
       reFresh();
+      console.log(
+        "props.customer_eventListObject",
+        props.customer_eventListObject
+      );
+      //   data.customer_eventList = await http_getAll(Customer_Event);
     });
-
+    onMounted(() => {
+      console.log(
+        "props.customer_eventListObject",
+        props.customer_eventListObject
+      );
+    });
     // computed
     const toString = computed(() => {
       console.log("Starting search");
@@ -394,6 +428,11 @@ export default {
           value1.checked = false;
         }
       }
+
+      for (let value of data.items) {
+        props._customerList.push(value);
+        console.log(props._customerList);
+      }
     };
 
     const deleteMany = async () => {
@@ -452,6 +491,13 @@ export default {
       }
     };
 
+    const isStringFound = (_id) => {
+      return data.customer_eventList.some(
+        (item) =>
+          item.CustomerId.toString() == _id && item.HabitId == props.item._id
+      );
+    };
+
     watch(entryValueCustomerType, (newValue, oldValue) => {
       if (newValue != "") {
         reFresh();
@@ -469,11 +515,26 @@ export default {
       }
     });
 
-    const removeItem = (index) => {
-      data.habitAdd = data.habitAdd.filter((value1, index1) => {
-        return index1 != index;
-      });
-    };
+    watch(
+      () => props.customer_eventListObject, // Theo dõi props cần load dữ liệu
+      (newValue, oldValue) => {
+        // Hành động sau khi props đã load dữ liệu
+        console.log(
+          "props.customer_eventListObject",
+          props.customer_eventListObject
+        );
+        data.customer_eventList = props.customer_eventListObject;
+      },
+      { immediate: true } // Bật cờ immediate để hành động được gọi ngay từ ban đầu
+    );
+
+    watch(
+      () => props.refreshTable,
+      () => {
+        console.log('chay chayyayayaya');
+        reFresh();
+      }
+    );
 
     return {
       update,
@@ -495,29 +556,14 @@ export default {
       handleSelectAll,
       deleteMany,
       reFresh,
-      removeItem,
+      isStringFound,
     };
   },
 };
 </script>
 
 <template>
-  <div class="border-box d-flex flex-column ml-2" style="margin-right: -3px">
-    <!-- Menu -->
-    <div class="d-flex menu my-3 mx-3 justify-content-end">
-      <router-link
-        to="/customer"
-        @click="activeMenu = 1"
-        :class="[activeMenu == 1 ? 'active-menu' : 'none-active-menu']"
-        ><span class="size-18">Khách hàng</span>
-      </router-link>
-      <router-link
-        to="/customer_types"
-        @click="activeMenu = 2"
-        :class="[activeMenu == 2 ? 'active-menu' : 'none-active-menu']"
-        ><span class="size-18">Loại khách hàng</span>
-      </router-link>
-    </div>
+  <div class="border-box d-flex flex-column" style="margin-right: -3px">
     <!-- Filter -->
     <div class="border-hr mb-3"></div>
     <div class="d-flex flex-column">
@@ -587,7 +633,7 @@ export default {
               value: 30,
             },
           ]"
-          style="width: 125px"
+          style="width: 125px; height: 35px"
           :title="`Số bản ghi`"
           @update:entryValue="(value) => (data.entryValue = value)"
           :entryValue="data.entryValue"
@@ -622,48 +668,6 @@ export default {
           ]"
         />
       </div>
-      <div class="d-flex align-items-start">
-        <button
-          type="button"
-          class="btn btn-danger mr-3"
-          data-toggle="modal"
-          data-target="#model-delete-all"
-          @click="deleteMany()"
-        >
-          <span id="delete-all" class="mx-2"
-            ><span class="size-16">Xoá</span></span
-          >
-        </button>
-        <!-- <DeleteAll :items="data.items" /> -->
-        <button
-          type="button"
-          class="btn btn-primary"
-          data-toggle="modal"
-          data-target="#model-add"
-        >
-          <span id="add" class="mx-2"><span class="size-16">Thêm</span></span>
-        </button>
-        <Add @refresh_customer="refresh_customer" />
-        <button
-          type="button"
-          class="btn btn-secondary ml-3"
-          data-toggle="modal"
-          data-target="#model-addHabit"
-          @click="showAddHabit()"
-        >
-          <span id="add" class="mx-2"
-            ><span class="size-16">Thêm thói quen</span></span
-          >
-        </button>
-        <AddHabit
-          v-if="data.showAddHabit"
-          :item="data.customerValue"
-          :habitAdd="data.habitAdd"
-          :eventAdd="data.eventAdd"
-          @freshHabitAdd="data.habitAdd = [{ name: '' }]"
-          @remove="removeItem"
-        />
-      </div>
     </div>
     <!-- Table -->
     <Table
@@ -678,6 +682,8 @@ export default {
       ]"
       :selectAll="data.selectAll"
       :startRow="data.startRow"
+      :activeAction="true"
+      :showActionList="[true, false, false]"
       @selectAll="(value) => handleSelectAll(value)"
       @delete="handleDelete"
       @edit="edit"
@@ -693,14 +699,17 @@ export default {
       @update:currentPage="(value) => (data.currentPage = value)"
       class="mx-3"
     />
-    <Edit
-      :item="data.viewValue"
-      :class="[data.activeEdit ? 'show-modal' : 'd-none']"
-      @cancel="data.activeEdit = false"
-      @refresh_customer="refresh_customer"
-    />
     <View :item="data.viewValue" :itemViewCareCus="data.viewCareCus" />
   </div>
+  <button
+    type="button"
+    class="btn btn-primary px-3 py-2 mt-3"
+    style="font-size: 14px"
+    id="add"
+    @click="$emit('create', data.items)"
+  >
+    <span>Thêm</span>
+  </button>
 </template>
 
 <style scoped>

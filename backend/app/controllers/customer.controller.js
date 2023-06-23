@@ -8,6 +8,7 @@ const POSITION_CUT_LINK_IMAGE = 21;
 exports.create = async (req, res, next) => {
   // const documents = await Customer.findAll();
   // check unique name, email, phone
+  console.log('abcxyz');
   console.log("-------");
   console.log(req.file);
   if (!req.file) {

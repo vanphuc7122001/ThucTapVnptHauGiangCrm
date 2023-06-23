@@ -68,12 +68,15 @@ export default {
       positionList: [],
       permissionList: [],
       role_permissionList: [],
+      permissionId: "",
+      roleId: "",
+      role_permissionId: "",
     });
     const create = async () => {
       try {
         let isSuccess = false;
         for (let value of data.permissionList) {
-          if (value.checked == true) {
+          if (value.checked == true && !isStringFound(value._id)) {
             let result = await http_create(Role_Permission, {
               RoleId: props.item._id,
               PermissionId: value._id,
@@ -84,8 +87,15 @@ export default {
                 `Tạo quyền`,
                 `Đã tồn tại quyền ${value.name} trong vai trò ${props.item.name}.`
               );
-              break;
             } else {
+              isSuccess = true;
+            }
+          } else if (value.checked == false) {
+            if (isStringFound(value._id)) {
+              await Role_Permission.update(data.role_permissionId, {
+                RoleId: data.roleId,
+                PermissionId: data.permissionId,
+              });
               isSuccess = true;
             }
           }
@@ -93,22 +103,37 @@ export default {
         if (isSuccess) {
           alert_success(`Tạo quyền`, `Bạn đã tạo quyền thành công.`);
         }
+        refresh();
       } catch (error) {
         console.log(error);
       }
     };
 
     const isStringFound = (_id) => {
-      return data.role_permissionList.some(
-        (item) =>
+      return data.role_permissionList.some((item) => {
+        if (
+          item.PermissionId.toString() == _id &&
+          item.RoleId == props.item._id
+        ) {
+          console.log("item", item);
+          data.permissionId = item.PermissionId;
+          data.roleId = item.RoleId;
+          data.role_permissionId = data.permissionId + data.roleId;
+        }
+        return (
           item.PermissionId.toString() == _id && item.RoleId == props.item._id
-      );
+        );
+      });
     };
 
-    onBeforeMount(async () => {
+    const refresh = async () => {
       data.positionList = await http_getAll(Position);
       data.permissionList = await http_getAll(Permission);
       data.role_permissionList = await http_getAll(Role_Permission);
+    };
+
+    onBeforeMount(async () => {
+      refresh();
     });
     onMounted(() => {});
     return {

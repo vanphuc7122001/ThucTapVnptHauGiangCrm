@@ -1,4 +1,4 @@
-const { Event } = require('../models/index.model.js');
+const { Event, Customer } = require('../models/index.model.js');
 const { DataTypes, Op } = require('sequelize');
 const createError = require('http-errors');
 const { v4: uuidv4 } = require('uuid');
@@ -45,7 +45,9 @@ exports.create = async (req, res, next) => {
 // checked
 exports.findAll = async (req, res, next) => {
     try {
-        const documents = await Event.findAll();
+        const documents = await Event.findAll({
+            include: Customer,
+        });
         return res.send(documents);
     } catch (error) {
         console.log(error);

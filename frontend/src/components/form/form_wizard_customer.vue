@@ -206,6 +206,7 @@ export default {
 
     // handle create customer
     const create = async (event) => {
+      console.log('starting')
       event.preventDefault();
       let isCheck = false;
       refresh();

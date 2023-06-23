@@ -33,7 +33,7 @@ export default {
 
 <template>
   <!-- The Modal -->
-  <div class="modal" id="model-add">
+  <div class="modal" id="model-addHabit">
     <div class="modal-dialog">
       <div class="modal-content">
         <!-- Modal Header -->

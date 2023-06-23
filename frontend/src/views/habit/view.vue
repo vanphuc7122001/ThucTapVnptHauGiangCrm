@@ -1,4 +1,22 @@
-<script></script>
+<script>
+import { reactive } from "vue";
+import Table_Customer from "./view_customer.vue";
+export default {
+  props: {
+    item: {
+      type: Object,
+      default: {},
+    },
+  },
+  components: {
+    Table_Customer,
+  },
+  setup(props, ctx) {
+    const data = reactive({});
+    return {};
+  },
+};
+</script>
 
 <template>
   <div class="modal" id="model-view">
@@ -6,7 +24,7 @@
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title">Thông tin chi tiết khách hàng</h4>
+          <h4 class="modal-title">Thông tin chi tiết thói quen</h4>
           <button type="button" class="close" data-dismiss="modal">
             &times;
           </button>
@@ -14,53 +32,27 @@
 
         <!-- Modal body -->
         <div class="modal-body">
-          <div class="">
-            <button data-toggle="collapse" class="px-3 py-2 h6" data-target="#personal-info">
-              Thông tin cá nhân
-            </button>
-            <div id="personal-info" class="collapse mx-2">
-              Lorem ipsum dolor text....
+          <form class="was-validated">
+            <div class="form-group">
+              <label for="name">Tên thói quen(<span style="color: red">*</span>):</label>
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                name="name"
+                v-model="item.name"
+                disabled
+              />
             </div>
+          </form>
+          <div class="form-group">
+            <label for="duration"
+              >Danh sách khách hàng cùng thói quen:</label
+            >
+            <Table_Customer :customer_event="item.Customers" />
+
           </div>
-          <div class=" mt-2">
-            <button data-toggle="collapse" class="px-3 py-2 h6" data-target="#customer-type">
-              Loại khách hàng
-            </button>
-            <div id="customer-type" class="collapse mx-2">
-              Lorem ipsum dolor text....
-            </div>
-          </div>
-          <div class=" mt-2">
-            <button data-toggle="collapse" class="px-3 py-2 h6" data-target="#customer-work">
-              Công việc
-            </button>
-            <div id="customer-work" class="collapse mx-2">
-              Lorem ipsum dolor text....
-            </div>
-          </div>
-          <div class=" mt-2">
-            <button data-toggle="collapse" class="px-3 py-2 h6" data-target="#assignment">
-              Danh sách chăm sóc khách hàng
-            </button>
-            <div id="assignment" class="collapse mx-2">
-              Lorem ipsum dolor text....
-            </div>
-          </div>
-          <div class=" mt-2">
-            <button data-toggle="collapse" class="px-3 py-2 h6" data-target="#event">
-              Danh sách sự kiện
-            </button>
-            <div id="event" class="collapse mx-2">
-              Lorem ipsum dolor text....
-            </div>
-          </div>
-          <div class=" mt-2">
-            <button data-toggle="collapse" class="px-3 py-2 h6" data-target="#habit">
-              Danh sách thói quen khách hàng
-            </button>
-            <div id="habit" class="collapse mx-2">
-              Lorem ipsum dolor text....
-            </div>
+          <div class="mt-2">
           </div>
         </div>
       </div>
@@ -68,4 +60,8 @@
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+label {
+  font-size: 18px;
+}
+</style>

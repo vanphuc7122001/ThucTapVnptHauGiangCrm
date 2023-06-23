@@ -17,7 +17,7 @@
         <th v-for="(value, index) in fields" :key="index">
           <span class="size-16">{{ value }}</span>
         </th>
-        <th><span class="size-16">Hành động</span></th>
+        <th v-if="activeAction"><span class="size-16">Hành động</span></th>
       </tr>
     </thead>
     <tbody>
@@ -40,13 +40,14 @@
         <td class="size-16">{{ item.Company_KH.name }}</td>
         <td class="size-16">{{ item.Customer.Customer_Type.name }}</td>
 
-        <td class="">
+        <td v-if="activeAction" class="">
           <div class="d-flex align-items-center">
             <button
               type="button"
               class="format-btn"
               data-toggle="modal"
               data-target="#model-view"
+              v-if="showActionList[0]"
             >
               <span
                 id="view"
@@ -61,6 +62,7 @@
               class="mx-2 format-btn"
               data-toggle="modal"
               data-target="#model-edit"
+              v-if="showActionList[1]"
             >
               <span
                 id="edit"
@@ -73,6 +75,7 @@
             <span
               id="delete"
               class="material-symbols-outlined"
+              v-if="showActionList[2]"
               @click="
                 $emit('delete', item.Customer._id, item.Company_KH._id, item)
               "
@@ -108,6 +111,14 @@ export default {
     selectAll: {
       type: Array,
       default: [],
+    },
+    activeAction: {
+      type: Boolean,
+      default: true,
+    },
+    showActionList: {
+      type: Array,
+      default: [true, true, true],
     },
   },
   setup(props, ntx) {

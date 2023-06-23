@@ -9,6 +9,7 @@ router.route('/')
 
 router.route('/:id')
     .get(role_permissions.findOne)
+    .post(role_permissions.deleteOne)
 
 module.exports = router;
 

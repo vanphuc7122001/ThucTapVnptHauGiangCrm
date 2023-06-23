@@ -67,3 +67,25 @@ exports.findOne = async (req, res, next) => {
         return next(createError(400, "Error finding permission !"));
     }
 };
+
+exports.deleteOne = async (req, res, next) => {
+    try {
+        const result = await Customer_Habit.destroy({
+            where: {
+                CustomerId: req.body.CustomerId,
+                HabitId: req.body.HabitId,
+            },
+        });
+
+        if (result === 0) {
+            // If no records were deleted, return an error
+            return next(createError(404, "Role not found"));
+        }
+        return res.send({
+            document: result,
+        });
+    } catch (error) {
+        console.log(error);
+        return next(createError(400, "Error deleting role"));
+    }
+};

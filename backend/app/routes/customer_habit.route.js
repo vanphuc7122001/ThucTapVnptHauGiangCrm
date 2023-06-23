@@ -9,6 +9,8 @@ router.route('/')
 
 router.route('/:id')
     .get(customer_habits.findOne)
+    .post(customer_habits.deleteOne)
+
 
 module.exports = router;
 

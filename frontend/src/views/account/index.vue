@@ -333,22 +333,7 @@ export default {
       </router-link>
     </div>
     <!-- Filter -->
-    <div class="border-hr mb-3"></div>
-    <div class="d-flex flex-column">
-      <span class="mx-3 mb-3 h6">Lọc tài khoản</span>
-      <div class="d-flex mx-3">
-        <div class="form-group w-100">
-          <!-- <Select
-            :title="'Vai trò tài khoản'"
-            :entryValue="entryValueRoleAccount"
-            :options="data.optionSelect"
-            @update:entryValue="updateEntryValueRoleAccount"
-          /> -->
-        </div>
-        <!-- <div class="form-group ml-3">
-        </div> -->
-      </div>
-    </div>
+    <!-- <div class="border-hr mb-3"></div> -->
     <!-- Search -->
     <div class="border-hr mb-3"></div>
     <div class="d-flex justify-content-between mx-3 mb-3">

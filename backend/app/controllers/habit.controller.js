@@ -1,4 +1,4 @@
-const { Habit } = require('../models/index.model.js');
+const { Habit, Customer } = require('../models/index.model.js');
 const { DataTypes, Op } = require('sequelize');
 const createError = require('http-errors');
 const { v4: uuidv4 } = require('uuid');
@@ -12,7 +12,8 @@ exports.create = async (req, res, next) => {
             if (value.name == name) {
                 return res.send({
                     error: true,
-                    msg: `Đã tồn tại thói quen ${value.name}.`
+                    msg: `Đã tồn tại thói quen ${value.name}.`,
+                    document: value,
                 })
             }
         }
@@ -43,7 +44,9 @@ exports.create = async (req, res, next) => {
 // checked
 exports.findAll = async (req, res, next) => {
     try {
-        const documents = await Habit.findAll();
+        const documents = await Habit.findAll({
+            include: Customer,
+        });
         return res.send(documents);
     } catch (error) {
         console.log(error);
@@ -115,7 +118,7 @@ exports.update = async (req, res, next) => {
 
         habits = habits.filter(
             (value, index) => {
-                return value.name == name ;
+                return value.name == name;
             }
         )
 

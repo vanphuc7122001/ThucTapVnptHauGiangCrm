@@ -82,8 +82,13 @@ export default {
         },
       ],
     });
+
+    const setActiveMenu = (value) => {
+      sessionStorage.setItem("activeMenu", value);
+    };
     return {
       data,
+      setActiveMenu,
     };
   },
 };
@@ -109,7 +114,7 @@ export default {
                 ? 'border-nav-item'
                 : 'none-border-nav-item',
             ]"
-            @click="activeIndex = index + 1"
+            @click="(activeIndex = index + 1), setActiveMenu(activeIndex)"
           >
             <div class="d-flex py-1 align-items-center">
               <span
@@ -122,7 +127,7 @@ export default {
               >
                 {{ sidebarTask.icon }}
               </span>
-              <span class="d-flex align-items-center" style="font-size: 18px;">{{
+              <span class="d-flex align-items-center" style="font-size: 18px">{{
                 sidebarTask.name_icon
               }}</span>
             </div>
@@ -175,5 +180,4 @@ export default {
 .none-border-icon {
   border: none;
 }
-
 </style>

@@ -1,6 +1,8 @@
 <script>
 import Add from "./add.vue";
 import Edit from "./edit.vue";
+import setHabit from "./setHabit.vue";
+import View from "./view.vue";
 import {
   // components
   Table,
@@ -63,6 +65,8 @@ export default {
     Add,
     DeleteAll,
     Edit,
+    setHabit,
+    View,
   },
   setup(ctx) {
     const data = reactive({
@@ -87,6 +91,11 @@ export default {
           checked: false,
         },
       ],
+      refreshTable: false,
+      habitValue: {},
+      showSetHabit: false,
+      viewValue: {},
+      showView: false,
     });
 
     // computed
@@ -190,9 +199,11 @@ export default {
     };
 
     const router = useRouter();
-    const view = (_id) => {
-      console.log("view", _id);
-      router.push({ name: "Event.view", params: { id: _id } });
+    const view = (item) => {
+      console.log("view", item);
+      data.viewValue = item;
+      data.showView = true;
+      // router.push({ name: "Event.view", params: { id: _id } });
     };
 
     const getOne = async (_id) => {
@@ -202,10 +213,41 @@ export default {
       } catch (error) {}
     };
 
+    const setHabit = () => {
+      data.habitValue = {};
+      data.showSetHabit = false;
+      for (let value of data.items) {
+        if (value.checked == true) {
+          data.habitValue = value;
+          data.showSetHabit = true;
+          break;
+        }
+      }
+      if (data.showSetHabit == false) {
+        alert_warning(
+          `Thêm khách hàng cùng thói quen`,
+          `Vui lòng chọn thói quen.`
+        );
+      }
+    };
+
+    const setHabit1 = () => {
+      data.habitValue = {};
+      data.showSetHabit = false;
+      for (let value of data.items) {
+        if (value.checked == true) {
+          data.habitValue = value;
+          data.showSetHabit = true;
+          break;
+        }
+      }
+    };
+
     const refresh = async () => {
       data.items = await http_getAll(Habit);
       for (let value of data.items) {
         value.checked = false;
+        value.totalCustomer = value.Customers.length;
       }
     };
 
@@ -298,6 +340,8 @@ export default {
       handleSelectAll,
       deleteMany,
       removeItem,
+      setHabit,
+      setHabit1,
     };
   },
 };
@@ -389,22 +433,37 @@ export default {
           type="button"
           class="btn btn-primary"
           data-toggle="modal"
-          data-target="#model-add"
+          data-target="#model-addHabit"
         >
           <span id="add" class="mx-2">Thêm</span>
         </button>
         <Add :items="data.itemAdd" @create="create" @remove="removeItem" />
+        <button
+          type="button"
+          class="btn btn-secondary ml-3"
+          data-toggle="modal"
+          data-target="#model-setHabit"
+          @click="setHabit()"
+        >
+          <span id="add" class="mx-2">Áp dụng</span>
+        </button>
+        <setHabit
+          :refreshTable="data.refreshTable"
+          v-if="data.showSetHabit"
+          :item="data.habitValue"
+        />
       </div>
     </div>
     <!-- Table -->
     <Table
       :items="setPages"
-      :fields="['Tên thói quen']"
-      :labels="['name']"
+      :fields="['Tên thói quen', 'Khách hàng']"
+      :labels="['name', 'totalCustomer']"
       @delete="(value) => deleteOne(value)"
       :startRow="data.startRow"
       :selectAll="data.selectAll"
       @selectAll="(value) => handleSelectAll(value)"
+      @refresh_event="((value) => (data.refreshTable = !value), setHabit1())"
       @edit="
         async (value, value1) => (
           (data.editValue = await getOne(value._id)), (data.activeEdit = value1)
@@ -429,6 +488,7 @@ export default {
     @cancel="data.activeEdit = false"
     @edit="edit(data.editValue)"
   />
+  <View v-if="data.showView" :item="data.viewValue" />
 </template>
 
 <style scoped>

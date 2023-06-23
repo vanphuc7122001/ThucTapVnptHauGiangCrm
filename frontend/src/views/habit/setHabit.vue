@@ -52,6 +52,7 @@ import {
   alert_delete,
   alert_warning,
   alert_info,
+  Customer_Habit,
 } from "../common/import.js";
 export default {
   props: {
@@ -72,32 +73,41 @@ export default {
     const data = reactive({
       customerList: [],
       customerId: "",
-      eventId: "",
-      customer_eventId: "",
-      customer_eventList: [],
+      habitId: "",
+      customer_habitId: "",
+      customer_habitList: [],
     });
     const create = async () => {
       try {
+        console.log("strategy");
         let isSuccess = false;
+        console.log("data.customerList", data.customerList);
         for (let value of data.customerList) {
-          if (value.checked == true && !isStringFound(value.Customer._id)) {
-            let result = await http_create(Customer_Event, {
+          console.log("value.checked ", value.checked == true);
+          console.log(isStringFound(value.Customer._id));
+          if (
+            value.checked == true &&
+            isStringFound(value.Customer._id) == false
+          ) {
+            console.log("ccc");
+            let result = await http_create(Customer_Habit, {
               customerId: value.Customer._id,
-              eventId: props.item._id,
+              habitId: props.item._id,
             });
             console.log("result", result);
             if (result.error == true) {
               alert_error(
-                `Áp dụng sự kiện`,
-                `Đã áp dụng sự kiện ${props.item.name} với khách hàng ${value.Customer.name}`
+                `Thêm khách hàng cùng thói quen`,
+                `Đã thêm thói quen ${props.item.name} với khách hàng ${value.Customer.name}`
               );
             } else {
               isSuccess = true;
             }
           } else if (value.checked == false) {
+            console.log("dddd");
             if (isStringFound(value.Customer._id)) {
-              await Customer_Event.update(data.customer_eventId, {
-                EventId: data.eventId,
+              await Customer_Habit.update(data.customer_habitId, {
+                HabitId: data.habitId,
                 CustomerId: data.customerId,
               });
               isSuccess = true;
@@ -106,8 +116,8 @@ export default {
         }
         if (isSuccess) {
           alert_success(
-            `Áp dụng sự kiện`,
-            `Bạn đã áp dụng sự kiện đối với khách hàng thành công thành công.`
+            `Thêm khách hàng cùng thói quen`,
+            `Bạn đã thêm thành công.`
           );
         }
         refresh();
@@ -116,55 +126,24 @@ export default {
         console.log(error);
       }
     };
-    // const create = async () => {
-    //   try {
-    //     let isFlase = false;
-    //     for (let value of data.customerList) {
-    //       // console.log(value.Customer._id)
-    //       // console.log(props.item._id);
-    //       const result = await http_create(Customer_Event, {
-    //         customerId: value.Customer._id,
-    //         eventId: props.item._id,
-    //       });
-    //       if (result.error) {
-    //         isFlase = false;
-    //         alert_error(
-    //           `Áp đụng sự kiện`,
-    //           `Đã áp dụng sự kiện ${props.item.name} với khách hàng ${value.Customer.name}`
-    //         );
-    //         break;
-    //       } else {
-    //         isFlase = true;
-    //       }
-    //     }
-    //     if (isFlase) {
-    //       alert_success(
-    //         `Áp dụng sự kiện`,
-    //         `Đã áp dụng sự kiện cho các khách hàng thành công.`
-    //       );
-    //     }
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // };
     const isStringFound = (_id) => {
-      return data.customer_eventList.some((item) => {
+      return data.customer_habitList.some((item) => {
         if (
           item.CustomerId.toString() == _id &&
-          item.EventId == props.item._id
+          item.HabitId == props.item._id
         ) {
           console.log("item", item);
           data.customerId = item.CustomerId;
-          data.eventId = item.EventId;
-          data.customer_eventId = data.customerId + data.eventId;
+          data.habitId = item.HabitId;
+          data.customer_habitId = data.customerId + data.habitId;
         }
         return (
-          item.CustomerId.toString() == _id && item.EventId == props.item._id
+          item.CustomerId.toString() == _id && item.HabitId == props.item._id
         );
       });
     };
     const refresh = async () => {
-      data.customer_eventList = await http_getAll(Customer_Event);
+      data.customer_habitList = await http_getAll(Customer_Habit);
     };
     onBeforeMount(async () => {
       // data.customerList = await http_getAll(Customer);
@@ -181,13 +160,13 @@ export default {
 
 <template>
   <!-- The Modal -->
-  <div class="modal" id="model-setEvent">
+  <div class="modal" id="model-setHabit">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
           <h4 class="modal-title" style="font-size: 15px">
-            Thêm khách hàng áp dụng sự kiện
+            Thêm khách hàng cùng thói quen
           </h4>
           <button type="button" class="close" data-dismiss="modal">
             &times;
@@ -198,7 +177,7 @@ export default {
           <form action="" class="was-validated">
             <div class="form-group">
               <label for="name"
-                >Tên sự kiện(<span style="color: red">*</span>):</label
+                >Tên thói quen(<span style="color: red">*</span>):</label
               >
               <input
                 type="text"
@@ -211,39 +190,14 @@ export default {
             </div>
             <div class="form-group">
               <label for="content"
-                >Nội dung sự kiện(<span style="color: red">*</span>):</label
-              >
-              <textarea
-                id="content"
-                disabled
-                class="form-control"
-                rows="5"
-                v-model="item.content"
-              ></textarea>
-            </div>
-            <div class="form-group">
-              <label for="content"
-                >Thời gian diễn ra sự kiện(<span style="color: red">*</span
+                >Khách hàng cùng thói quen(<span style="color: red">*</span
                 >):</label
-              >
-              <input
-                type="datetime-local"
-                class="form-control"
-                id="time_duration"
-                name="time_duration"
-                v-model="item.time_duration"
-                disabled
-              />
-            </div>
-            <div class="form-group">
-              <label for="content"
-                >Khách hàng áp dụng(<span style="color: red">*</span>):</label
               >
               <div class="">
                 <Customer_Table
                   :refreshTable="refreshTable"
                   :item="item"
-                  :customer_eventListObject="data.customer_eventList"
+                  :customer_eventListObject="data.customer_habitList"
                   @create="
                     (value) => {
                       data.customerList = value;

@@ -12,6 +12,7 @@ export default {
   setup() {
     const data = reactive({
       activeMenuResponsive: false,
+      activeIndex: sessionStorage.getItem("activeMenu") || 1,
     });
     const updateMenuResponsive = () => {
       console.log("Received event from child component:");
@@ -31,7 +32,7 @@ export default {
   </nav>
   <div class="sidebar">
     <!-- Sidebar content goes here -->
-    <Sidebar />
+    <Sidebar :activeIndex="data.activeIndex" />
   </div>
   <div class="content">
     <!-- Content goes here -->

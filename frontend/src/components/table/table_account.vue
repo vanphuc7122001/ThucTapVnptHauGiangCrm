@@ -86,11 +86,7 @@ export default {
             {{ item[label] }}
           </td>
           <td class="size-16">
-            <button
-              class="format-btn d-flex align-items-center"
-              data-toggle="collapse"
-              data-target="#demo"
-            >
+            <button class="format-btn d-flex align-items-center">
               <span
                 v-if="!data.activeShow"
                 @click="data.activeShow = !data.activeShow"
@@ -107,9 +103,9 @@ export default {
               </span>
             </button>
 
-            <div id="demo" class="collapse">
-              <p v-for="(value, index) in item.permision" :key="index">
-                {{ value.name }}
+            <div v-if="data.activeShow" class="">
+              <p style="margin: 0;" v-for="(value, index) in item.permision" :key="index">
+                {{ index+1 }}.  {{ value.name }}
               </p>
             </div>
           </td>
@@ -214,5 +210,6 @@ export default {
 
 .format-btn {
   background-color: var(--light);
+  outline: none;
 }
 </style>

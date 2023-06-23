@@ -119,6 +119,9 @@ export default {
       ],
       startTimeValue: "",
       endTimeValue: "",
+      refreshTable: false,
+      viewValue: {},
+      showView: false,
     });
     const toString = computed(() => {
       console.log("Starting search");
@@ -202,6 +205,8 @@ export default {
       for (let value of data.items) {
         if (value.checked == true) {
           data.eventValue = value;
+          data.eventValue.time_duration =
+            data.eventValue.time_duration.toUpperCase();
           data.showSetEvent = true;
           break;
         }
@@ -211,6 +216,20 @@ export default {
           `Thêm khách hàng áp dụng sự kiện`,
           `Vui lòng chọn sự kiện.`
         );
+      }
+    };
+
+    const setEvent1 = () => {
+      data.eventValue = {};
+      data.showSetEvent = false;
+      for (let value of data.items) {
+        if (value.checked == true) {
+          data.eventValue = value;
+          data.eventValue.time_duration =
+            data.eventValue.time_duration.toUpperCase();
+          data.showSetEvent = true;
+          break;
+        }
       }
     };
 
@@ -295,9 +314,12 @@ export default {
       }
     };
 
-    const view = (_id) => {
-      console.log("view", _id);
-      router.push({ name: "Event.view", params: { id: _id } });
+    const view = (item) => {
+      console.log("view", item);
+      item.time_duration = item.time_duration.toUpperCase();
+      data.viewValue = item;
+      data.showView = true;
+      // router.push({ name: "Event.view", params: { id: _id } });
     };
 
     const getOne = async (_id) => {
@@ -314,6 +336,7 @@ export default {
       }
       for (let value of data.items) {
         value.checked = false;
+        value.totalCustomer = value.Customers.length;
       }
       console.log(data.items);
 
@@ -381,6 +404,8 @@ export default {
       setEvent,
       handleSelectAll,
       deleteMany,
+      setEvent,
+      setEvent1,
     };
   },
 };
@@ -525,18 +550,28 @@ export default {
         >
           <span id="add" class="mx-2">Áp dụng</span>
         </button>
-        <setEvent v-if="data.showSetEvent" :item="data.eventValue" />
+        <setEvent
+          :refreshTable="data.refreshTable"
+          v-if="data.showSetEvent"
+          :item="data.eventValue"
+        />
       </div>
     </div>
     <!-- Table -->
     <Table
       :items="setPages"
-      :fields="['Tên sự kiện', 'Nội dung sự kiện', 'Thời gian diễn ra']"
-      :labels="['name', 'content', 'time_duration_format']"
+      :fields="[
+        'Tên sự kiện',
+        'Nội dung sự kiện',
+        'Thời gian diễn ra',
+        'Khách hàng',
+      ]"
+      :labels="['name', 'content', 'time_duration_format', 'totalCustomer']"
       @delete="(value) => deleteOne(value)"
       :startRow="data.startRow"
       :selectAll="data.selectAll"
       @selectAll="(value) => handleSelectAll(value)"
+      @refresh_event="((value) => (data.refreshTable = !value), setEvent1())"
       @edit="
         async (value, value1) => (
           (data.editValue = await getOne(value._id)),
@@ -564,7 +599,7 @@ export default {
     @cancel="data.activeEdit = false"
     @edit="edit(data.editValue)"
   />
-  <View />
+  <View v-if="data.showView" :item="data.viewValue" />
 </template>
 
 <style scoped>
