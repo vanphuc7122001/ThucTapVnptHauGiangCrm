@@ -105,25 +105,39 @@ export default {
             `Nhân viên "${result.document.name}" đã được tạo thành công.`
           );
           await mailService.sendmail(dataMail);
+          ctx.emit("create");
 
-          refresh();
+          data.item = {
+            name: "",
+            birthday: "",
+            phone: "",
+            email: "",
+            address: "",
+          };
+          data.modelValue = "";
+          data.modelDep = "";
+          data.modelUnit = "";
+          data.modelPos = "";
+          data.modelRole = "";
+          data.item.password = setAccount();
+          await refresh();
         } else if (result.error) {
           alert_error(`Thêm nhân viên`, `${result.msg}`);
         }
-        ctx.emit("create");
-        data.item = {
-          name: "",
-          birthday: "",
-          phone: "",
-          email: "",
-          address: "",
-        };
-        data.modelValue = "";
-        data.modelDep = "";
-        data.modelUnit = "";
-        data.modelPos = "";
-        data.modelRole = "";
-        data.item.password = setAccount();
+        // ctx.emit("create");
+        // data.item = {
+        //   name: "",
+        //   birthday: "",
+        //   phone: "",
+        //   email: "",
+        //   address: "",
+        // };
+        // data.modelValue = "";
+        // data.modelDep = "";
+        // data.modelUnit = "";
+        // data.modelPos = "";
+        // data.modelRole = "";
+        // data.item.password = setAccount();
       } else if (account.user_name == false) {
         alert_error(`Thêm nhân viên`, `${account.msg}`);
       }
@@ -873,7 +887,6 @@ export default {
                   style="font-size: 14px"
                   @click="create"
                   id="add"
-                  data-dismiss="modal"
                 >
                   <span>Thêm</span>
                 </b-button>

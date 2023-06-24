@@ -1066,7 +1066,7 @@ export default {
           data-target="#model-form-mail"
           @click="showMail"
         >
-          <span class="mx-2">Mail</span>
+          <span class="mx-2" style="color: white">Mail</span>
         </button>
         <Mail v-if="mail" @sendEmail="(value) => sendEmail(value)"></Mail>
       </div>

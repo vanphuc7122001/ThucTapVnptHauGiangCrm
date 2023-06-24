@@ -1,97 +1,102 @@
 <template>
-  <table class="my-table mb-2">
-    <thead>
-      <tr class="">
-        <!-- <th>
-          <input
-            type="checkbox"
-            name=""
-            id=""
-            :checked="selectAll[0].checked == true"
-            v-model="selectAll[0].checked"
-            @click="$emit('selectAll', selectAll[0].checked)"
-            class="d-flex align-items-center size-16"
-          />
-        </th> -->
-        <th><span class="size-16">Stt</span></th>
-        <th v-for="(value, index) in fields" :key="index">
-          <span class="size-16">{{ value }}</span>
-        </th>
-        <!-- <th><span class="size-16">Hành động</span></th> -->
-      </tr>
-    </thead>
-    <tbody>
-      <tr class="size-16" v-for="(item, index) in items" :key="index">
-        <!-- <td>
-          <input
-            type="checkbox"
-            :checked="item.checked == true"
-            v-model="item.checked"
-            @click="$emit('selectOne', item._id, item)"
-            class="d-flex align-items-center size-16"
-          />
-        </td> -->
-        <td class="size-16">{{ startRow + index }}</td>
-        <td class="size-16">{{ item.customer.name }}</td>
-        <td class="size-16">{{ item.customer.phone }}</td>
-        <td class="size-16">{{ item.customer.email }}</td>
-        <td class="size-16">{{ item.cycle }}</td>
-        <td class="size-16">{{ item.content }}</td>
-        <td class="size-16">{{ item.start_date }}</td>
-        <td class="size-16">{{ item.end_date }}</td>
+  <div>
+    <table class="my-table mb-2">
+      <thead>
+        <tr class="">
+          <!-- <th>
+            <input
+              type="checkbox"
+              name=""
+              id=""
+              :checked="selectAll[0].checked == true"
+              v-model="selectAll[0].checked"
+              @click="$emit('selectAll', selectAll[0].checked)"
+              class="d-flex align-items-center size-16"
+            />
+          </th> -->
+          <th><span class="size-16">Stt</span></th>
+          <th v-for="(value, index) in fields" :key="index">
+            <span class="size-16">{{ value }}</span>
+          </th>
+          <!-- <th><span class="size-16">Hành động</span></th> -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="size-16" v-for="(item, index) in items" :key="index">
+          <!-- <td>
+            <input
+              type="checkbox"
+              :checked="item.checked == true"
+              v-model="item.checked"
+              @click="$emit('selectOne', item._id, item)"
+              class="d-flex align-items-center size-16"
+            />
+          </td> -->
+          <td class="size-16">{{ startRow + index }}</td>
+          <td class="size-16">{{ item.customer.name }}</td>
+          <td class="size-16">{{ item.customer.phone }}</td>
+          <td class="size-16">{{ item.customer.email }}</td>
+          <td class="size-16">{{ item.cycle }}</td>
+          <td class="size-16">{{ item.content }}</td>
+          <td class="size-16">{{ item.start_date }}</td>
+          <td class="size-16">{{ item.end_date }}</td>
 
-        <!-- 
-        <td class="">
-          <div class="d-flex align-items-center"> -->
-        <!-- view -->
-        <!-- <button
-              type="button"
-              class="format-btn"
-              data-toggle="modal"
-              data-target="#model-view"
-            >
-              <span
-                id="view"
-                class="material-symbols-outlined d-flex align-content-center"
-                @click="$emit('view', item._id, item)"
+          <!-- 
+          <td class="">
+            <div class="d-flex align-items-center"> -->
+          <!-- view -->
+          <!-- <button
+                type="button"
+                class="format-btn"
+                data-toggle="modal"
+                data-target="#model-view"
               >
-                visibility
-              </span>
-            </button> -->
-        <!-- edit -->
-        <!-- <button
-              type="button"
-              class="mx-2 format-btn"
-              data-toggle="modal"
-              data-target="#model-edit"
-            >
-              <span
-                id="edit"
-                class="material-symbols-outlined d-flex align-content-center"
-                @click="$emit('edit', item, true)"
+                <span
+                  id="view"
+                  class="material-symbols-outlined d-flex align-content-center"
+                  @click="$emit('view', item._id, item)"
+                >
+                  visibility
+                </span>
+              </button> -->
+          <!-- edit -->
+          <!-- <button
+                type="button"
+                class="mx-2 format-btn"
+                data-toggle="modal"
+                data-target="#model-edit"
               >
-                edit
-              </span>
-            </button> -->
-        <!-- <button
-              type="button"
-              class="mx-2 format-btn"
-              data-toggle="modal"
-              data-target="#modal-addAppointmentDash"
-            >
-              <span
-                id="appointment"
-                class="material-symbols-outlined d-flex align-items-center justify-content-center"
-                @click="$emit('appointment', item, true)"
+                <span
+                  id="edit"
+                  class="material-symbols-outlined d-flex align-content-center"
+                  @click="$emit('edit', item, true)"
+                >
+                  edit
+                </span>
+              </button> -->
+          <!-- <button
+                type="button"
+                class="mx-2 format-btn"
+                data-toggle="modal"
+                data-target="#modal-addAppointmentDash"
               >
-                Assignment
-              </span>
-            </button> -->
-        <!-- </div>
-        </td> -->
-      </tr>
-    </tbody>
-  </table>
+                <span
+                  id="appointment"
+                  class="material-symbols-outlined d-flex align-items-center justify-content-center"
+                  @click="$emit('appointment', item, true)"
+                >
+                  Assignment
+                </span>
+              </button> -->
+          <!-- </div>
+          </td> -->
+        </tr>
+      </tbody>
+    </table>
+    <p v-if="items.length == 0" class="text-center mt-2">
+      Không tồn tại bản ghi.
+    </p>
+  </div>
 </template>
 
 <script>
