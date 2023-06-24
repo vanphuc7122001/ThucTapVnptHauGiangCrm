@@ -173,10 +173,10 @@ exports.create = async (req, res, next) => {
         document: document,
       });
     } catch (error) {
-      console.log(error.errors[0].message);
+      // console.log(error.errors[0].message);
       return res.send({
         error: true,
-        msg: error.errors[0].message,
+        // msg: error.errors[0].message,
       });
     }
   } else {

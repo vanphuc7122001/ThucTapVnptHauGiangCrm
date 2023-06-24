@@ -1,4 +1,4 @@
-const { Appointment, Status_App } = require("../models/index.model.js");
+const { Appointment, Status_App, Task } = require("../models/index.model.js");
 const { DataTypes, Op } = require("sequelize");
 const createError = require("http-errors");
 const { v4: uuidv4 } = require("uuid");
@@ -88,16 +88,17 @@ exports.create = async (req, res, next) => {
         taskId: taskId,
         StatusAppId: StatusAppId,
       });
+
       return res.send({
         error: false,
         msg: `Bạn đã tạo thành công cuộc hẹn ${document.content} lúc ${document.date_time}.`,
         document: document,
       });
     } catch (error) {
-      console.log(error.errors[0].message);
+      // console.log(error.errors[0].message);
       return res.send({
         error: true,
-        msg: error.errors[0].message,
+        // msg: error.errors[0].message,
       });
     }
   } else {
