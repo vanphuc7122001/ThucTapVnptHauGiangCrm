@@ -1,5 +1,12 @@
 <script>
-import { reactive, onBeforeMount, ref, watch, computed, watchEffect } from "vue";
+import {
+  reactive,
+  onBeforeMount,
+  ref,
+  watch,
+  computed,
+  watchEffect,
+} from "vue";
 import Select_Advanced from "../../components/form/select_advanced.vue";
 import Table from "../../components/table/table_task_employee.vue";
 import Select from "../../components/form/select.vue";
@@ -108,13 +115,17 @@ export default {
         });
       } else {
         return data.itemEm.map((value, index) => {
-          return [value.name, value.email, value.phone].join("").toLocaleLowerCase();
+          return [value.name, value.email, value.phone]
+            .join("")
+            .toLocaleLowerCase();
         });
       }
     });
     const filter = computed(() => {
       return data.itemEm.filter((value, index) => {
-        return toString.value[index].includes(data.searchText.toLocaleLowerCase());
+        return toString.value[index].includes(
+          data.searchText.toLocaleLowerCase()
+        );
       });
     });
     const filtered = computed(() => {
@@ -164,7 +175,7 @@ export default {
         await refresh();
         return;
       }
-      data.items = await http_getAll(Employee);
+      data.itemEm = await http_getAll(Employee);
       //1.lấy danh sách nhân viên chức vụ x
       if (entryValuePosition.value.length > 0) {
         data.itemEm = data.itemEm.filter((val) => {
@@ -185,7 +196,10 @@ export default {
         });
       }
       //2. chọn 1 trung tâm và 1 phòng
-      else if (entryValueCenter.value != "" && entryValueDepartment.value != "") {
+      else if (
+        entryValueCenter.value != "" &&
+        entryValueDepartment.value != ""
+      ) {
         data.itemEm = data.itemEm.filter((value) => {
           return (
             value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value &&
@@ -194,7 +208,9 @@ export default {
         });
       } else if (entryValueCenter.value != "") {
         data.itemEm = data.itemEm.filter((val) => {
-          return val.Unit.Department.Center_VNPTHG._id == entryValueCenter.value;
+          return (
+            val.Unit.Department.Center_VNPTHG._id == entryValueCenter.value
+          );
         });
       }
       //Thay đổi
@@ -259,7 +275,9 @@ export default {
       //2.  chỉ có trung tâm
       else {
         data.itemEm = data.itemEm.filter((value, index) => {
-          return value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value;
+          return (
+            value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value
+          );
         });
       }
       data.selectAll[0].checked = false;
@@ -391,12 +409,56 @@ export default {
     const updateEntryValueUnit = (value) => {
       entryValueUnit.value = value;
     };
+    //2***
+    const arraysAreEqual = (arr1, arr2) => {
+      if (arr1.length !== arr2.length) {
+        return false;
+      }
+
+      const set1 = new Set(arr1);
+      const set2 = new Set(arr2);
+
+      // Kiểm tra sự đa dạng của các phần tử trong hai mảng
+      if (set1.size !== set2.size) {
+        return false;
+      }
+
+      for (const item of set1) {
+        if (!set2.has(item)) {
+          return false;
+        }
+      }
+      return true;
+    };
+    //2****
+    const getArrayC = (arrayA, arrayB) => {
+      // Tạo một bản sao của mảng A
+      const arrayC = [...arrayA];
+
+      // Lọc các phần tử chỉ có trong mảng C và không có trong mảng B
+      const setB = new Set(arrayB);
+      return arrayC.filter((item) => !setB.has(item));
+    };
+
+    // // Ví dụ sử dụng
+    // const arrayA = ["B", "C", "D"];
+    // const arrayB = ["A", "B"];
+
+    // const arrayC = getArrayC(arrayA, arrayB);
+    // console.log(arrayC); // ['C', 'D']
 
     const createTaskEm = async (value) => {
       const dataTaskEm = reactive({ TaskId: " ", EmployeeId: " " });
       dataTaskEm.TaskId = props.item._id;
       if (arrayCheck.data.length == 0) {
         alert_warning("Chưa chọn nhân viên để giao việc", "");
+        return;
+      }
+
+      const check = arraysAreEqual(arrayCheck.data, array.data);
+      console.log("Kiểm tra 2 mảng:", check);
+      if (check) {
+        alert_warning("Bạn đã phân công cho các nhân viên này rồi !", "");
         return;
       }
       //xóa nhân viên 1**
@@ -417,16 +479,18 @@ export default {
           const result = await EmployeeTask.deleteOne(dataDel.data);
         }
       }
-      console.log("0", arrayCheck.data.length);
-      for (let i = 0; i < arrayCheck.data.length; i++) {
-        // console.log(arrayCheck.data[i]._id);
-        // if (arrayCheck.data[i].checked == true) {
+      //2***
+      const add = reactive({ data: [] });
+      add.data = getArrayC(arrayCheck.data, array.data);
+      // console.log("add.data:", add.data, add.data.length);
+      for (let i = 0; i < add.data.length; i++) {
         try {
-          dataTaskEm.EmployeeId = arrayCheck.data[i]._id;
+          dataTaskEm.EmployeeId = add.data[i]._id;
           await http_create(EmployeeTask, dataTaskEm);
         } catch (error) {
-          console.error("Error sending email:", error);
+          console.error("Lỗi khi giao phân công:", error);
         }
+
         // }
       }
       alert_success("Đã giao việc cho nhân viên thành công", "");
@@ -490,36 +554,33 @@ export default {
     };
 
     const array = reactive({ data: [] });
+
+    //FRESH
     const refresh = async () => {
-      // data.cycleSelect = [...rs];
-      console.log("REFRESH");
       data.itemEm = await http_getAll(Employee);
-      console.log("ds nv", data.itemEm);
-      // ***
-      arrayCheck.data = [];
-      array.data = [];
-      const employeeTask = reactive({ data: [] });
-      employeeTask.data = await http_getOne(Task, props.item._id);
-      console.log("list", employeeTask.data);
-      for (let i = 0; i < data.itemEm.length; i++) {
-        data.itemEm[i].checked = false;
+      for (let value of data.itemEm) {
+        value.checked = false;
       }
-      for (let i = 0; i < data.itemEm.length; i++) {
-        for (let j = 0; j < employeeTask.data.Employees.length; j++) {
-          if (data.itemEm[i]._id == employeeTask.data.Employees[j]._id) {
-            data.itemEm[i].checked = true;
-            arrayCheck.data.push(data.itemEm[i]);
-            array.data.push(data.itemEm[i]);
-          }
-        }
-      }
-      console.log("check:", data.itemEm);
-
       data.position = await http_getAll(Position);
-
       data.center = await CenterServices.getAll();
-      data.department = await departmentsServices.getAll();
-      data.unit = await unitsServices.getAll();
+      if (entryValueCenter.value != "") {
+        data.department = await departmentsServices.getAll();
+        data.department = data.department.map((value, index) => {
+          return {
+            ...value,
+            value: value._id,
+          };
+        });
+      }
+      if (entryValueDepartment.value != "") {
+        data.unit = await unitsServices.getAll();
+        data.unit = data.unit.map((value, index) => {
+          return {
+            ...value,
+            value: value._id,
+          };
+        });
+      }
 
       data.position = data.position.map((value, index) => {
         return {
@@ -533,18 +594,13 @@ export default {
           value: value._id,
         };
       });
-      data.department = data.department.map((value, index) => {
-        return {
-          ...value,
-          value: value._id,
-        };
-      });
-      data.unit = data.unit.map((value, index) => {
-        return {
-          ...value,
-          value: value._id,
-        };
-      });
+
+      // if (entryValuePosition.value.length > 0) {
+      //   data.itemEm = data.itemEm.filter((val) => {
+      //     return val.postionId == entryValuePosition.value;
+      //   });
+      // }
+      // ***
       entryNamePosition.value = "Chức vụ";
       entryValuePosition.value = "";
       entryNameCenter.value = "Trung tâm";
@@ -553,18 +609,96 @@ export default {
       entryValueDepartment.value = "";
       entryNameUnit.value = "Tổ";
       entryValueUnit.value = "";
-      // for (let value of data.itemEm) {
-      //   for (let array of arrayCheck.data) {
-      //     console.log("arrayid==value_id", array._id == value._id);
-      //     if (array._id == value._id) {
-      //       value.checked = true;
-      //       break;
-      //     }
-      //     value.checked = false;
-      //   }
-      // }
+
+      //***thay đổi
+      for (let value of data.itemEm) {
+        for (let array of arrayCheck.data) {
+          console.log("arrayid==value_id", array._id == value._id);
+          if (array._id == value._id) {
+            value.checked = true;
+            break;
+          }
+          value.checked = false;
+        }
+      }
       data.selectAll[0].checked = false;
     };
+
+    // const refresh = async () => {
+    //   // data.cycleSelect = [...rs];
+    //   console.log("REFRESH");
+    //   data.itemEm = await http_getAll(Employee);
+    //   console.log("ds nv", data.itemEm);
+    //   // ***
+    //   arrayCheck.data = [];
+    //   array.data = [];
+    //   const employeeTask = reactive({ data: [] });
+    //   employeeTask.data = await http_getOne(Task, props.item._id);
+    //   console.log("list", employeeTask.data);
+    //   for (let i = 0; i < data.itemEm.length; i++) {
+    //     data.itemEm[i].checked = false;
+    //   }
+    //   for (let i = 0; i < data.itemEm.length; i++) {
+    //     for (let j = 0; j < employeeTask.data.Employees.length; j++) {
+    //       if (data.itemEm[i]._id == employeeTask.data.Employees[j]._id) {
+    //         data.itemEm[i].checked = true;
+    //         arrayCheck.data.push(data.itemEm[i]);
+    //         array.data.push(data.itemEm[i]);
+    //       }
+    //     }
+    //   }
+    //   console.log("check:", data.itemEm);
+
+    //   data.position = await http_getAll(Position);
+
+    //   data.center = await CenterServices.getAll();
+    //   data.department = await departmentsServices.getAll();
+    //   data.unit = await unitsServices.getAll();
+
+    //   data.position = data.position.map((value, index) => {
+    //     return {
+    //       ...value,
+    //       value: value._id,
+    //     };
+    //   });
+    //   data.center = data.center.map((value, index) => {
+    //     return {
+    //       ...value,
+    //       value: value._id,
+    //     };
+    //   });
+    //   data.department = data.department.map((value, index) => {
+    //     return {
+    //       ...value,
+    //       value: value._id,
+    //     };
+    //   });
+    //   data.unit = data.unit.map((value, index) => {
+    //     return {
+    //       ...value,
+    //       value: value._id,
+    //     };
+    //   });
+    //   entryNamePosition.value = "Chức vụ";
+    //   entryValuePosition.value = "";
+    //   entryNameCenter.value = "Trung tâm";
+    //   entryValueCenter.value = "";
+    //   entryNameDepartment.value = "Phòng";
+    //   entryValueDepartment.value = "";
+    //   entryNameUnit.value = "Tổ";
+    //   entryValueUnit.value = "";
+    //   // for (let value of data.itemEm) {
+    //   //   for (let array of arrayCheck.data) {
+    //   //     console.log("arrayid==value_id", array._id == value._id);
+    //   //     if (array._id == value._id) {
+    //   //       value.checked = true;
+    //   //       break;
+    //   //     }
+    //   //     value.checked = false;
+    //   //   }
+    //   // }
+    //   data.selectAll[0].checked = false;
+    // };
     const closeModal = async () => {
       console.log("close modal");
 
@@ -613,8 +747,15 @@ export default {
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title" style="font-size: 15px">Giao việc cho nhân viên</h4>
-          <button type="button" class="close" data-dismiss="modal" @click="closeModal">
+          <h4 class="modal-title" style="font-size: 15px">
+            Giao việc cho nhân viên
+          </h4>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            @click="closeModal"
+          >
             &times;
           </button>
         </div>
@@ -624,7 +765,9 @@ export default {
           <div style="padding: 24px">
             <form action="" class="was-validated">
               <div class="form-group">
-                <label for="name">Khách hàng(<span style="color: red">*</span>):</label>
+                <label for="name"
+                  >Khách hàng(<span style="color: red">*</span>):</label
+                >
                 <input
                   type="text"
                   class="form-control"
@@ -659,7 +802,8 @@ export default {
                         )
                       "
                       @refresh="
-                        (entryNamePosition = 'Chọn chức vụ'), updateEntryValuePosition('')
+                        (entryNamePosition = 'Chọn chức vụ'),
+                          updateEntryValuePosition('')
                       "
                       style="height: 35px"
                     />
@@ -671,11 +815,13 @@ export default {
                       :options="data.center"
                       @update:entryValue="
                         (value, value1) => (
-                          updateEntryValueCenter(value), (entryNameCenter = value1.name)
+                          updateEntryValueCenter(value),
+                          (entryNameCenter = value1.name)
                         )
                       "
                       @refresh="
-                        (entryNameCenter = 'Chọn trung tâm'), updateEntryValueCenter('')
+                        (entryNameCenter = 'Chọn trung tâm'),
+                          updateEntryValueCenter('')
                       "
                       style="height: 35px"
                     />
@@ -708,10 +854,13 @@ export default {
                       :options="data.unit"
                       @update:entryValue="
                         (value, value1) => (
-                          updateEntryValueUnit(value), (entryNameUnit = value1.name)
+                          updateEntryValueUnit(value),
+                          (entryNameUnit = value1.name)
                         )
                       "
-                      @refresh="(entryNameUnit = 'Chọn tổ'), updateEntryValueUnit('')"
+                      @refresh="
+                        (entryNameUnit = 'Chọn tổ'), updateEntryValueUnit('')
+                      "
                       style="height: 35px"
                     />
                   </div>

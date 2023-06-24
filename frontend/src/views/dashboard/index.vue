@@ -73,11 +73,35 @@ export default {
     });
     var uniqueTasks = {};
     const toString = computed(() => {
-      console.log("Starting search");
-      return data.items.map((value, index) => {
-        console.log("value.name", value.lev_name);
-        return [value.cus_name].join("").toLocaleLowerCase();
-      });
+      console.log("Starting search", data.choseSearch);
+      if (data.choseSearch == "name") {
+        return data.items.map((value, index) => {
+          console.log("name:", value.customer.name);
+          return [value.customer.name].join("").toLocaleLowerCase();
+        });
+      } else if (data.choseSearch == "email") {
+        return data.items.map((value, index) => {
+          return [value.customer.email].join("").toLocaleLowerCase();
+        });
+      } else if (data.choseSearch == "phone") {
+        return data.items.map((value, index) => {
+          return [value.customer.phone].join("").toLocaleLowerCase();
+        });
+      } else if (data.choseSearch == "cycle") {
+        return data.items.map((value, index) => {
+          return [value.cycle].join("").toLocaleLowerCase();
+        });
+      } else {
+        return data.items.map((value, index) => {
+          return [
+            value.customer.name,
+            value.customer.email,
+            value.customer.phone,
+          ]
+            .join("")
+            .toLocaleLowerCase();
+        });
+      }
     });
     const filter = computed(() => {
       return data.items.filter((value, index) => {
@@ -130,8 +154,6 @@ export default {
         { _id: "năm", name: "năm" },
       ];
       data.customerCycle = await http_getAll(Task);
-
-      // console.log("Cus:", data.customerCare, data.items);
     };
 
     // table customer
@@ -203,7 +225,6 @@ export default {
     //Map tính lại chu kỳ tiếp theo cho tất cả trường hợp chu kỳ
     const handleCycle = (nameCycle, date) => {
       let coming_day = moment(date, "YYYY-MM-DD");
-      // console.log("Ngày bắt đầu:", coming_day.format("YYYY-MM-DD"));
       var parts = nameCycle.split(" ");
       var number = parseInt(parts[0]);
       var string = parts[1];
@@ -240,16 +261,7 @@ export default {
 
       return coming_day.format("YYYY-MM-DD");
     };
-    //kiểm tra năm nhuận
-    const isLeapYear = (year) => {
-      return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
-    };
 
-    // Lấy ngày cuối cùng của tháng
-    const getLastDayOfMonth = (month, year) => {
-      var date = new Date(year, month + 1, 0);
-      return date.getDate();
-    };
     const initCustomer = async (start, end) => {
       // await refresh();
       data.items = [];
@@ -286,10 +298,26 @@ export default {
           start_date_new: handleCycle(value.Cycle.name, value.start_date),
         };
       });
+      // const abc = reactive({ data: [] });
+      data.customerCycle = data.customerCycle.map((value, index) => {
+        if (value.start_date_new == value.end_date) {
+          return {
+            ...value,
+            start_date_new: handleCycle("1 ngày", value.start_date_new),
+          };
+        } else {
+          return {
+            ...value,
+          };
+        }
+      });
+      // console.log("ABC:", data.customerCycle);
 
       data.customerCycle = data.customerCycle.filter((item) => {
         return item.start_date_new >= start && item.start_date_new <= end;
       });
+      // console.log("ABCD:", data.customerCycle);
+
       for (let value of data.customerCycle) {
         let customer = await http_getOne(Customer, value.customerId);
         let cus = {
@@ -623,44 +651,74 @@ export default {
         data.items.push(cus);
       }
       data.customerCare = data.items.length;
-      //biểu đồ
+      //
+      data.progress = 0;
       data.task = data.task.filter((value, index) => {
         return (
           value.start_date >= firstDayOfWeek &&
           value.start_date <= lastDayOfWeek
         );
       });
-
+      // console.log(data.task);
       for (let i = 0; i < data.statusTask.length; i++) {
         var count = 0;
         chartOptionsAppointment1.labels[i] = data.statusTask[i].name;
         chartSeriesAppointment1.value[i] = 0;
+
         for (let task of data.task) {
           if (task.StatusTaskId == data.statusTask[i]._id) {
             count++;
             chartSeriesAppointment1.value[i]++;
           }
-          if (data.statusTask[i].name == "đã chăm sóc") {
-            data.progress = count;
-          }
         }
+        if (data.statusTask[i].name == "đã chăm sóc") {
+          data.progress = count;
+        }
+
         chartSeriesAppointment.data[i] = {
           name: data.statusTask[i].name,
           data: [count],
         };
       }
+      //biểu đồ
+      await refresh();
+      data.progress = 0;
+      data.task = data.task.filter((item) => {
+        return (
+          (item.start_date >= firstDayOfWeek &&
+            item.start_date <= lastDayOfWeek) ||
+          (item.end_date >= firstDayOfWeek && item.end_date <= lastDayOfWeek)
+        );
+      });
+      console.log(data.task);
+      for (let i = 0; i < data.statusTask.length; i++) {
+        var count = 0;
+        chartOptionsAppointment1.labels[i] = data.statusTask[i].name;
+        chartSeriesAppointment1.value[i] = 0;
 
+        for (let task of data.task) {
+          if (task.StatusTaskId == data.statusTask[i]._id) {
+            count++;
+            chartSeriesAppointment1.value[i]++;
+          }
+        }
+        if (data.statusTask[i].name == "đã chăm sóc") {
+          data.progress = count;
+        }
+
+        chartSeriesAppointment.data[i] = {
+          name: data.statusTask[i].name,
+          data: [count],
+        };
+      }
       data.progress = (data.progress / data.task.length) * 100;
       data.progress = data.progress.toFixed(2);
-      data.items = [];
     });
 
     //****
     watch(takeCare, (newValue, oldValue) => {
       console.log("takecare", newValue);
     });
-    // const handleSelectAll = (value) => {};
-    // const handleSelectOne = (value) => {};
     return {
       data,
       overview,
@@ -688,12 +746,23 @@ export default {
 </script>
 <template>
   <div class="border-box ml-2">
-    <!-- select_option - overview+detail -->
-    <div class="d-flex my-2 mx-4 menu justify-content-end" style="border: none">
-      <!-- select cycles -->
+    <div class="d-flex my-2 mx-3 menu justify-content-end" style="border: none">
       <!-- BTN tổng quan chi tiêt -->
+      <div class="d-flex menu mx-2 my-2 justify-content-end">
+        <a
+          @click="
+            () => {
+              detail = false;
+              overview = true;
+            }
+          "
+          class="active-menu"
+        >
+          <span class="size-17 active-menu">Tổng quan</span>
+        </a>
+      </div>
       <div class="">
-        <button
+        <!-- <button
           class="btn m-0"
           :class="{ 'btn-primary': overview }"
           @click="
@@ -704,7 +773,7 @@ export default {
           "
         >
           Tổng quan
-        </button>
+        </button> -->
         <!--<button
           class="btn mr-4"
           @click="
@@ -733,151 +802,105 @@ export default {
       :customerCare="data.customerCare"
     ></Box>
 
-    <!-- search, select, take care -->
-    <div class="row justify-content-between" v-if="detail">
-      <div class="col-6 row">
-        <div class="d-flex justify-content-start">
-          <Select
-            class="d-flex justify-content-start"
-            :options="[
-              {
-                name: 5,
-                value: 5,
-              },
-              {
-                name: 10,
-                value: 10,
-              },
-              {
-                name: 20,
-                value: 20,
-              },
-              {
-                name: 30,
-                value: 30,
-              },
-            ]"
-            style="width: 125px"
-            :title="`Số bản ghi`"
-            @update:entryValue="(value) => (data.entryValue = value)"
-            :entryValue="data.entryValue"
-            @refresh="data.entryValue = 'All'"
-          />
-          <Search
-            class="ml-3"
-            style="width: 300px"
-            @update:searchText="(value) => (data.searchText = value)"
-            :entryValue="data.searchText"
-            @choseSearch="
-              async (value) => (
-                console.log('search ........'),
-                (data.choseSearch = value),
-                (data.currentPage = 1)
-              )
-            "
-            @refresh="(data.entryValue = 'All'), (data.currentPage = 1)"
-            :options="[
-              {
-                _id: 'nameCus',
-                name: 'Tìm kiếm theo tên khách hàng',
-              },
-              {
-                _id: 'statustask',
-                name: 'Tìm kiếm theo trạng thái',
-              },
-              {
-                _id: 'cycle',
-                name: 'Tìm kiếm theo chu kỳ',
-              },
-            ]"
-          />
-          <Select
-            class="ml-3 w-100"
-            :title="`Trạng thái`"
-            :entryValue="entryNameStatusTask"
-            @update:entryValue="
-              (value, value1) => (
-                updateEntryValueStatusTask(value),
-                (entryNameStatusTask = value1.name)
-              )
-            "
-            @refresh="
-              (entryNameStatusTask = 'Trạng thái'),
-                updateEntryValueStatusTask('')
-            "
-            style="height: 35px"
-          />
-        </div>
+    <!-- search, select -->
+    <div class="d-flex justify-content-between mx-4 mb-3">
+      <div
+        class="d-flex justify-content-start"
+        v-if="showchart == 'customerCycle'"
+      >
+        <Select
+          class="d-flex justify-content-start"
+          :options="[
+            {
+              name: 5,
+              value: 5,
+            },
+            {
+              name: 10,
+              value: 10,
+            },
+            {
+              name: 20,
+              value: 20,
+            },
+            {
+              name: 30,
+              value: 30,
+            },
+          ]"
+          style="width: 125px"
+          :title="`Số bản ghi`"
+          @update:entryValue="(value) => (data.entryValue = value)"
+          :entryValue="data.entryValue"
+          @refresh="data.entryValue = 'All'"
+        />
+        <Search
+          class="ml-3"
+          style="width: 300px"
+          @update:searchText="(value) => (data.searchText = value)"
+          :entryValue="data.searchText"
+          @choseSearch="
+            async (value) => (
+              console.log('search ........'),
+              (data.choseSearch = value),
+              (data.currentPage = 1)
+            )
+          "
+          @refresh="(data.entryValue = 'All'), (data.currentPage = 1)"
+          :options="[
+            {
+              _id: 'name',
+              name: 'Tìm kiếm theo tên',
+            },
+            {
+              _id: 'email',
+              name: 'Tìm kiếm theo email',
+            },
+            {
+              _id: 'phone',
+              name: 'Tìm kiếm theo số điện thoại',
+            },
+            {
+              _id: 'cycle',
+              name: 'Tìm kiếm theo chu kỳ',
+            },
+          ]"
+        />
       </div>
-      <!--  -->
-      <div class="col-6 row justify-content-end mr-2">
-        <button
-          class="btn col-md-3 col-6 pad"
-          :class="{ 'btn-primary': !takeCare }"
-          @click="takeCare = !takeCare"
-          v-if="showchart == 'appointment'"
-        >
-          Chưa chăm sóc</button
-        ><button
-          class="btn col-md-3 col-6 pad"
-          :class="{ 'btn-primary': takeCare }"
-          @click="takeCare = !takeCare"
-          v-if="showchart == 'appointment'"
-          :app_day="`false`"
-        >
-          Đã chăm sóc
-        </button>
-        <button
-          class="btn col-md-3 col-6 pad"
-          :class="{ 'btn-primary': !assign }"
-          @click="assign = !assign"
-          v-if="showchart == 'customer'"
-        >
-          Chưa phân công</button
-        ><button
-          class="btn col-md-3 col-6 pad"
-          :class="{ 'btn-primary': assign }"
-          @click="assign = !assign"
-          v-if="showchart == 'customer'"
-          :app_day="`false`"
-        >
-          Đã phân công
-        </button>
+      <div
+        class="d-flex align-items-start float-right"
+        style="width: 98px"
+        :style="{ marginLeft: showchart === 'appointment' ? '92%' : '0px' }"
+        v-if="showchart == 'appointment' || showchart == 'customerCycle'"
+      >
+        <Select_Advanced
+          required
+          :options="data.cycle"
+          :modelValue="data.modelCycle"
+          style="height: 40px"
+          @searchSelect="
+            async (value) => (
+              await refresh(),
+              (data.cycle = data.cycle.filter((value1, index) => {
+                console.log(value1, value);
+                return value1.name.includes(value) || value.length == 0;
+              })),
+              console.log('searchSlect', value.length)
+            )
+          "
+          @chose="
+            (value, value1) => (
+              (selectedOptionCycle = value), (data.modelCycle = value1.name)
+            )
+          "
+        />
       </div>
     </div>
 
     <!--CHART -->
-    <div
-      class="float-right mx-4"
-      style="width: 100px"
-      v-if="showchart == 'appointment' || showchart == 'customerCycle'"
-    >
-      <Select_Advanced
-        required
-        :options="data.cycle"
-        :modelValue="data.modelCycle"
-        style="height: 40px"
-        @searchSelect="
-          async (value) => (
-            await refresh(),
-            (data.cycle = data.cycle.filter((value1, index) => {
-              console.log(value1, value);
-              return value1.name.includes(value) || value.length == 0;
-            })),
-            console.log('searchSlect', value.length)
-          )
-        "
-        @chose="
-          (value, value1) => (
-            (selectedOptionCycle = value), (data.modelCycle = value1.name)
-          )
-        "
-      />
-    </div>
-    <div class="mb-5 p-0 mx-4">
-      <div class="mt-2" v-if="showchart == 'appointment'">
-        <!-- CYCLE -->
 
+    <div class="p-0 mx-4">
+      <div class="mt-2" v-if="showchart == 'appointment'">
         <!--Chart Appointment -->
         <div class="mt-5" v-if="overview && showchart == 'appointment'">
           <div class="border-box">
@@ -950,13 +973,10 @@ export default {
           </div>
         </div>
       </div>
-
       <!-- End Chart -->
     </div>
-    <!--Detail -->
+    <!-- Table -->
     <div v-if="showchart == 'customerCycle'">
-      <!-- <h4 class="text-center my-2">Danh sách khách hàng gần tới chu kỳ</h4> -->
-      <!--Table Cus -->
       <Table
         :items="setPages"
         :fields="[
@@ -990,21 +1010,6 @@ export default {
           }
         "
       />
-
-      <!-- <Add
-        :item="data.addValue"
-        :class="[data.activeEdit ? 'show-modal' : 'd-none']"
-        @cancel="data.activeEdit = false"
-        @edit="add(data.addValue)"
-        @refresh="
-          async () => {
-            await refresh();
-          }
-        "
-      /> -->
-      <!--End Table Cus -->
-
-      <!-- Pagination -->
       <Pagination
         :numberOfPages="data.numberOfPages"
         :totalRow="data.totalRow"
@@ -1019,7 +1024,7 @@ export default {
   </div>
 </template>
 
-<style>
+<style scoped>
 * {
   box-sizing: border-box;
 }
@@ -1031,9 +1036,19 @@ export default {
 .border-hr {
   border-top: 1px solid var(--gray);
 }
+
 .menu {
   /* border: 1px solid var(--gray); */
   border-collapse: collapse;
+}
+.menu a {
+  border: 1px solid var(--gray);
+  border-radius: 0px;
+  padding: 8px 12px;
+  font-size: 15px;
+}
+.active-menu {
+  color: blue;
 }
 select {
   background-color: #f6f6f6;

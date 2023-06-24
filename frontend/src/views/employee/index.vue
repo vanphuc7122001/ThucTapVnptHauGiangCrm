@@ -40,6 +40,7 @@ import SelectCDU from "../../components/box_lananh/select_cdu.vue";
 import { Task } from "../common/import";
 import employeeService from "../../services/employee.service";
 import cycleService from "../../services/cycle.service";
+import center_vnptService from "../../services/center_vnpt.service";
 export default {
   components: {
     Table,
@@ -275,8 +276,24 @@ export default {
       }
       data.position = await http_getAll(Position);
       data.center = await CenterServices.getAll();
-      data.department = await departmentsServices.getAll();
-      data.unit = await unitsServices.getAll();
+      if (entryValueCenter.value != "") {
+        data.department = await departmentsServices.getAll();
+        data.department = data.department.map((value, index) => {
+          return {
+            ...value,
+            value: value._id,
+          };
+        });
+      }
+      if (entryValueDepartment.value != "") {
+        data.unit = await unitsServices.getAll();
+        data.unit = data.unit.map((value, index) => {
+          return {
+            ...value,
+            value: value._id,
+          };
+        });
+      }
 
       data.position = data.position.map((value, index) => {
         return {
@@ -290,18 +307,7 @@ export default {
           value: value._id,
         };
       });
-      data.department = data.department.map((value, index) => {
-        return {
-          ...value,
-          value: value._id,
-        };
-      });
-      data.unit = data.unit.map((value, index) => {
-        return {
-          ...value,
-          value: value._id,
-        };
-      });
+
       // if (entryValuePosition.value.length > 0) {
       //   data.items = data.items.filter((val) => {
       //     return val.postionId == entryValuePosition.value;
@@ -352,7 +358,6 @@ export default {
 
     // ******LỌC ******
     //POSITION
-    const positions = reactive({ position: [] });
     watch(entryValuePosition, async (newValue, oldValue) => {
       if (newValue == "") {
         await refresh();
@@ -425,7 +430,9 @@ export default {
       //Lấy tất cả nhân viên
       data.items = await http_getAll(Employee);
       //Lấy tất cả phòng của 1 trung tâm
+      console.log("newValueCenter:", newValue);
       data.department = await departmentsServices.findAllDepOfACenter(newValue);
+      console.log("dataDepartment:", data.department);
       data.department = data.department.map((value, index) => {
         return {
           ...value,
@@ -706,23 +713,52 @@ export default {
     };
 
     // ***
+    const updateCenter = async (value) => {
+      data.center = await center_vnptService.getAll();
+      data.center = data.center.map((value, index) => {
+        return {
+          ...value,
+          value: value._id,
+        };
+      });
+    };
     const updateDepartment = async (value) => {
       if (entryValueCenter.value != "") {
         data.department = await departmentsServices.findAllDepOfACenter(
           entryValueCenter.value
         );
-        return;
+        data.department = data.department.map((value, index) => {
+          return {
+            ...value,
+            value: value._id,
+          };
+        });
       }
-      data.department = value;
+
+      // data.department = value;
     };
     const updateUnit = async (value) => {
       if (entryValueDepartment.value != "") {
         data.unit = await unitsServices.findAllUnitsOfADep(
           entryValueDepartment.value
         );
-        return;
+        data.unit = data.unit.map((value, index) => {
+          return {
+            ...value,
+            value: value._id,
+          };
+        });
       }
-      data.unit = value;
+      // data.unit = value;
+    };
+    const updatePosition = async (value) => {
+      data.position = await Position.getAll();
+      data.position = data.position.map((value, index) => {
+        return {
+          ...value,
+          value: value._id,
+        };
+      });
     };
     const mail = ref(false);
     const showMail = () => {
@@ -742,9 +778,9 @@ export default {
       const dataMail = reactive({ title: "", content: "", mail: "" });
       dataMail.title = value.title;
       dataMail.content = value.content;
+      alert_success("Mail đã được gửi", "");
       for (let i = 0; i < arrayCheck.data.length; i++) {
         if (arrayCheck.data[i].checked == true) {
-          alert_success("Mail đã được gửi", "");
           try {
             dataMail.mail = arrayCheck.data[i].email;
             await mailService.sendmail(dataMail);
@@ -771,8 +807,10 @@ export default {
       refresh,
       // mail,
       sendEmail,
+      updateCenter,
       updateDepartment,
       updateUnit,
+      updatePosition,
       mail,
       showMail,
       view,
@@ -961,12 +999,12 @@ export default {
           @create="create"
           @newPosition="
             (value) => {
-              data.position = value;
+              updatePosition(value);
             }
           "
           @newCenter="
             (value) => {
-              data.center = value;
+              updateCenter(value);
             }
           "
           @newDep="(value) => updateDepartment(value)"
