@@ -112,7 +112,7 @@ export default {
           },
         },
       ],
-      entryValue: 2,
+      entryValue: 5,
       numberOfPages: 1,
       totalRow: 0,
       startRow: 0,
@@ -371,9 +371,11 @@ export default {
         });
       }
       if (
-        entryNameCenter.value != "" &&
-        entryNameDepartment.value != "" &&
-        entryValueUnit.value != ""
+        entryValueCenter.value != "" &&
+        entryValueDepartment.value != "" &&
+        entryValueDepartment.value != "1" &&
+        entryValueUnit.value != "" &&
+        entryValueUnit.value != "1"
       ) {
         data.items = data.items.filter((value) => {
           return (
@@ -386,7 +388,8 @@ export default {
       //2. chọn 1 trung tâm và 1 phòng
       else if (
         entryValueCenter.value != "" &&
-        entryValueDepartment.value != ""
+        entryValueDepartment.value != "" &&
+        entryValueDepartment.value != "1"
       ) {
         data.items = data.items.filter((value) => {
           return (
@@ -427,6 +430,10 @@ export default {
         await refresh();
         return;
       }
+      entryValueDepartment.value = "1"; //id
+      entryNameDepartment.value = "Phòng"; //name
+      entryValueUnit.value = "1"; //id
+      entryNameUnit.value = "Tổ"; //name
       //Lấy tất cả nhân viên
       data.items = await http_getAll(Employee);
       //Lấy tất cả phòng của 1 trung tâm
@@ -439,22 +446,31 @@ export default {
           value: value._id,
         };
       });
+      console.log("start1", data.department[0]._id);
+      data.unit = [];
       //Lấy tất cả tổ của 1 trung tâm
       for (let value of data.department) {
+        console.log("id", value._id);
         var newUnit = await unitsServices.findAllUnitsOfADep(value._id);
         for (let value of newUnit) {
+          console.log("new:", value);
           data.unit.push(value);
         }
+        // console.log("start2", data.unit);
       }
+      console.log("start2");
       data.unit = data.unit.map((value, index) => {
         return {
           ...value,
           value: value._id,
         };
       });
+      console.log("start3");
+
       //Lọc
       // 1. có chức vụ và trung tâm
       if (entryValueCenter.value != "" && entryValuePosition.value != "") {
+        console.log("cả 2");
         data.items = data.items.filter((value, index) => {
           return (
             value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value &&
@@ -464,6 +480,7 @@ export default {
       }
       //2.  chỉ có trung tâm
       else {
+        console.log("1");
         data.items = data.items.filter((value, index) => {
           return (
             value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value
@@ -497,7 +514,12 @@ export default {
       if (newValue == "") {
         await refresh();
         return;
+      } else if (newValue == "1") {
+        return;
       }
+      entryValueUnit.value = "1"; //id
+      entryNameUnit.value = "Tổ"; //name
+
       //Lấy tất cả nhân vien
       data.items = await http_getAll(Employee);
       //Lấy tất cả tổ của 1 phòng
@@ -553,6 +575,8 @@ export default {
       if (newValue == "") {
         await refresh();
         return;
+      } else if (newValue == "1") {
+        return;
       }
       //Lấy tất cả nhân vien
       data.items = await http_getAll(Employee);
@@ -596,6 +620,7 @@ export default {
       }
       console.log("items:", data.items);
     });
+
     const updateEntryValueUnit = (value) => {
       entryValueUnit.value = value;
     };
@@ -778,7 +803,30 @@ export default {
       const dataMail = reactive({ title: "", content: "", mail: "" });
       dataMail.title = value.title;
       dataMail.content = value.content;
-      alert_success("Mail đã được gửi", "");
+
+      let timerInterval;
+      Swal.fire({
+        title: "Mail đang gửi",
+        html: "Bạn vui lòng đợi <b></b> mili giây.",
+        timer: arrayCheck.data.length * 2000,
+        timerProgressBar: true,
+        didOpen: () => {
+          Swal.showLoading();
+          const b = Swal.getHtmlContainer().querySelector("b");
+          timerInterval = setInterval(() => {
+            b.textContent = Swal.getTimerLeft();
+          }, 100);
+        },
+        willClose: () => {
+          clearInterval(timerInterval);
+        },
+      }).then((result) => {
+        /* Read more about handling dismissals below */
+        if (result.dismiss === Swal.DismissReason.timer) {
+          console.log("I was closed by the timer");
+        }
+      });
+
       for (let i = 0; i < arrayCheck.data.length; i++) {
         if (arrayCheck.data[i].checked == true) {
           try {
@@ -791,6 +839,7 @@ export default {
         }
         await refresh();
       }
+      alert_success("Mail đã được gửi", "");
     };
 
     onBeforeMount(async () => {

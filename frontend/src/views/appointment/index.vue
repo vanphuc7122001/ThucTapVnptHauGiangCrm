@@ -302,6 +302,13 @@ export default {
       for (let value of data.items) {
         value.checked = false;
       }
+      for (let value of data.items) {
+        for (let value1 of arrayCheck.data) {
+          if (value._id == value1._id) {
+            value.checked = true;
+          }
+        }
+      }
       arrayCheck.data = [];
       data.selectAll[0].checked = false;
     };

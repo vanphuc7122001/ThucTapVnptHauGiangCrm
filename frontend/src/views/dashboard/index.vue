@@ -20,7 +20,8 @@ import {
   http_getOne,
   alert_success,
 } from "../common/import";
-import { Select_Advanced } from "../common/import";
+// import { Select_Advanced } from "../common/import";
+import Select_Advanced from "../../components/form/select_cycle.vue";
 import moment from "moment";
 export default {
   components: {
@@ -40,7 +41,7 @@ export default {
       items: [],
 
       activeEdit: false,
-      entryValue: 2,
+      entryValue: 5,
       numberOfPages: 1,
       totalRow: 0,
       startRow: 0,
@@ -807,6 +808,7 @@ export default {
       <div
         class="d-flex justify-content-start"
         v-if="showchart == 'customerCycle'"
+        style="z-index: 99999"
       >
         <Select
           class="d-flex justify-content-start"
@@ -877,6 +879,7 @@ export default {
           required
           :options="data.cycle"
           :modelValue="data.modelCycle"
+          data.activeClose
           style="height: 40px"
           @searchSelect="
             async (value) => (
