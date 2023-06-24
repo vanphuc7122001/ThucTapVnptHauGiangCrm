@@ -169,7 +169,6 @@ export default {
 
     //watch lọc nhân viên
     // ******LỌC ******
-    const positions = reactive({ position: [] });
     watch(entryValuePosition, async (newValue, oldValue) => {
       if (newValue == "") {
         await refresh();
@@ -183,9 +182,11 @@ export default {
         });
       }
       if (
-        entryNameCenter.value != "" &&
-        entryNameDepartment.value != "" &&
-        entryValueUnit.value != ""
+        entryValueCenter.value != "" &&
+        entryValueDepartment.value != "" &&
+        entryValueDepartment.value != "1" &&
+        entryValueUnit.value != "" &&
+        entryValueUnit.value != "1"
       ) {
         data.itemEm = data.itemEm.filter((value) => {
           return (
@@ -198,7 +199,8 @@ export default {
       //2. chọn 1 trung tâm và 1 phòng
       else if (
         entryValueCenter.value != "" &&
-        entryValueDepartment.value != ""
+        entryValueDepartment.value != "" &&
+        entryValueDepartment.value != "1"
       ) {
         data.itemEm = data.itemEm.filter((value) => {
           return (
@@ -228,7 +230,7 @@ export default {
           value.checked = false;
         }
       }
-      console.log("itemEm:", data.itemEm);
+      console.log("items:", data.itemEm);
     });
     const updateEntryValuePosition = (value) => {
       entryValuePosition.value = value;
@@ -239,32 +241,47 @@ export default {
         await refresh();
         return;
       }
+      entryValueDepartment.value = "1"; //id
+      entryNameDepartment.value = "Phòng"; //name
+      entryValueUnit.value = "1"; //id
+      entryNameUnit.value = "Tổ"; //name
       //Lấy tất cả nhân viên
       data.itemEm = await http_getAll(Employee);
       //Lấy tất cả phòng của 1 trung tâm
+      console.log("newValueCenter:", newValue);
       data.department = await departmentsServices.findAllDepOfACenter(newValue);
+      console.log("dataDepartment:", data.department);
       data.department = data.department.map((value, index) => {
         return {
           ...value,
           value: value._id,
         };
       });
+      console.log("start1", data.department[0]._id);
+      data.unit = [];
       //Lấy tất cả tổ của 1 trung tâm
       for (let value of data.department) {
+        console.log("id", value._id);
         var newUnit = await unitsServices.findAllUnitsOfADep(value._id);
         for (let value of newUnit) {
+          console.log("new:", value);
           data.unit.push(value);
         }
+        // console.log("start2", data.unit);
       }
+      console.log("start2");
       data.unit = data.unit.map((value, index) => {
         return {
           ...value,
           value: value._id,
         };
       });
+      console.log("start3");
+
       //Lọc
       // 1. có chức vụ và trung tâm
       if (entryValueCenter.value != "" && entryValuePosition.value != "") {
+        console.log("cả 2");
         data.itemEm = data.itemEm.filter((value, index) => {
           return (
             value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value &&
@@ -274,6 +291,7 @@ export default {
       }
       //2.  chỉ có trung tâm
       else {
+        console.log("1");
         data.itemEm = data.itemEm.filter((value, index) => {
           return (
             value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value
@@ -294,7 +312,7 @@ export default {
           value.checked = false;
         }
       }
-      console.log("itemEm:", data.itemEm);
+      console.log("items:", data.itemEm);
       console.log("Array:", arrayCheck.data);
     });
     //UpdateEntryValueCenter
@@ -307,7 +325,12 @@ export default {
       if (newValue == "") {
         await refresh();
         return;
+      } else if (newValue == "1") {
+        return;
       }
+      entryValueUnit.value = "1"; //id
+      entryNameUnit.value = "Tổ"; //name
+
       //Lấy tất cả nhân vien
       data.itemEm = await http_getAll(Employee);
       //Lấy tất cả tổ của 1 phòng
@@ -352,7 +375,7 @@ export default {
           value.checked = false;
         }
       }
-      console.log("itemEm:", data.itemEm);
+      console.log("items:", data.itemEm);
     });
     const updateEntryValueDepartment = (value) => {
       entryValueDepartment.value = value;
@@ -362,6 +385,8 @@ export default {
     watch(entryValueUnit, async (newValue, oldValue) => {
       if (newValue == "") {
         await refresh();
+        return;
+      } else if (newValue == "1") {
         return;
       }
       //Lấy tất cả nhân vien
@@ -404,61 +429,18 @@ export default {
           value.checked = false;
         }
       }
-      console.log("itemEm:", data.itemEm);
+      console.log("items:", data.itemEm);
     });
+
     const updateEntryValueUnit = (value) => {
       entryValueUnit.value = value;
     };
-    //2***
-    const arraysAreEqual = (arr1, arr2) => {
-      if (arr1.length !== arr2.length) {
-        return false;
-      }
-
-      const set1 = new Set(arr1);
-      const set2 = new Set(arr2);
-
-      // Kiểm tra sự đa dạng của các phần tử trong hai mảng
-      if (set1.size !== set2.size) {
-        return false;
-      }
-
-      for (const item of set1) {
-        if (!set2.has(item)) {
-          return false;
-        }
-      }
-      return true;
-    };
-    //2****
-    const getArrayC = (arrayA, arrayB) => {
-      // Tạo một bản sao của mảng A
-      const arrayC = [...arrayA];
-
-      // Lọc các phần tử chỉ có trong mảng C và không có trong mảng B
-      const setB = new Set(arrayB);
-      return arrayC.filter((item) => !setB.has(item));
-    };
-
-    // // Ví dụ sử dụng
-    // const arrayA = ["B", "C", "D"];
-    // const arrayB = ["A", "B"];
-
-    // const arrayC = getArrayC(arrayA, arrayB);
-    // console.log(arrayC); // ['C', 'D']
 
     const createTaskEm = async (value) => {
       const dataTaskEm = reactive({ TaskId: " ", EmployeeId: " " });
       dataTaskEm.TaskId = props.item._id;
       if (arrayCheck.data.length == 0) {
         alert_warning("Chưa chọn nhân viên để giao việc", "");
-        return;
-      }
-
-      const check = arraysAreEqual(arrayCheck.data, array.data);
-      console.log("Kiểm tra 2 mảng:", check);
-      if (check) {
-        alert_warning("Bạn đã phân công cho các nhân viên này rồi !", "");
         return;
       }
       //xóa nhân viên 1**
@@ -479,18 +461,16 @@ export default {
           const result = await EmployeeTask.deleteOne(dataDel.data);
         }
       }
-      //2***
-      const add = reactive({ data: [] });
-      add.data = getArrayC(arrayCheck.data, array.data);
-      // console.log("add.data:", add.data, add.data.length);
-      for (let i = 0; i < add.data.length; i++) {
+      console.log("0", arrayCheck.data.length);
+      for (let i = 0; i < arrayCheck.data.length; i++) {
+        // console.log(arrayCheck.data[i]._id);
+        // if (arrayCheck.data[i].checked == true) {
         try {
-          dataTaskEm.EmployeeId = add.data[i]._id;
+          dataTaskEm.EmployeeId = arrayCheck.data[i]._id;
           await http_create(EmployeeTask, dataTaskEm);
         } catch (error) {
-          console.error("Lỗi khi giao phân công:", error);
+          console.error("Error sending email:", error);
         }
-
         // }
       }
       alert_success("Đã giao việc cho nhân viên thành công", "");
@@ -554,33 +534,36 @@ export default {
     };
 
     const array = reactive({ data: [] });
-
-    //FRESH
     const refresh = async () => {
+      // data.cycleSelect = [...rs];
+      console.log("REFRESH");
       data.itemEm = await http_getAll(Employee);
-      for (let value of data.itemEm) {
-        value.checked = false;
+      console.log("ds nv", data.itemEm);
+      // ***
+      arrayCheck.data = [];
+      array.data = [];
+      const employeeTask = reactive({ data: [] });
+      employeeTask.data = await http_getOne(Task, props.item._id);
+      console.log("list", employeeTask.data);
+      for (let i = 0; i < data.itemEm.length; i++) {
+        data.itemEm[i].checked = false;
       }
+      for (let i = 0; i < data.itemEm.length; i++) {
+        for (let j = 0; j < employeeTask.data.Employees.length; j++) {
+          if (data.itemEm[i]._id == employeeTask.data.Employees[j]._id) {
+            data.itemEm[i].checked = true;
+            arrayCheck.data.push(data.itemEm[i]);
+            array.data.push(data.itemEm[i]);
+          }
+        }
+      }
+      console.log("check:", data.itemEm);
+
       data.position = await http_getAll(Position);
+
       data.center = await CenterServices.getAll();
-      if (entryValueCenter.value != "") {
-        data.department = await departmentsServices.getAll();
-        data.department = data.department.map((value, index) => {
-          return {
-            ...value,
-            value: value._id,
-          };
-        });
-      }
-      if (entryValueDepartment.value != "") {
-        data.unit = await unitsServices.getAll();
-        data.unit = data.unit.map((value, index) => {
-          return {
-            ...value,
-            value: value._id,
-          };
-        });
-      }
+      data.department = await departmentsServices.getAll();
+      data.unit = await unitsServices.getAll();
 
       data.position = data.position.map((value, index) => {
         return {
@@ -594,13 +577,18 @@ export default {
           value: value._id,
         };
       });
-
-      // if (entryValuePosition.value.length > 0) {
-      //   data.itemEm = data.itemEm.filter((val) => {
-      //     return val.postionId == entryValuePosition.value;
-      //   });
-      // }
-      // ***
+      data.department = data.department.map((value, index) => {
+        return {
+          ...value,
+          value: value._id,
+        };
+      });
+      data.unit = data.unit.map((value, index) => {
+        return {
+          ...value,
+          value: value._id,
+        };
+      });
       entryNamePosition.value = "Chức vụ";
       entryValuePosition.value = "";
       entryNameCenter.value = "Trung tâm";
@@ -609,96 +597,18 @@ export default {
       entryValueDepartment.value = "";
       entryNameUnit.value = "Tổ";
       entryValueUnit.value = "";
-
-      //***thay đổi
-      for (let value of data.itemEm) {
-        for (let array of arrayCheck.data) {
-          console.log("arrayid==value_id", array._id == value._id);
-          if (array._id == value._id) {
-            value.checked = true;
-            break;
-          }
-          value.checked = false;
-        }
-      }
+      // for (let value of data.itemEm) {
+      //   for (let array of arrayCheck.data) {
+      //     console.log("arrayid==value_id", array._id == value._id);
+      //     if (array._id == value._id) {
+      //       value.checked = true;
+      //       break;
+      //     }
+      //     value.checked = false;
+      //   }
+      // }
       data.selectAll[0].checked = false;
     };
-
-    // const refresh = async () => {
-    //   // data.cycleSelect = [...rs];
-    //   console.log("REFRESH");
-    //   data.itemEm = await http_getAll(Employee);
-    //   console.log("ds nv", data.itemEm);
-    //   // ***
-    //   arrayCheck.data = [];
-    //   array.data = [];
-    //   const employeeTask = reactive({ data: [] });
-    //   employeeTask.data = await http_getOne(Task, props.item._id);
-    //   console.log("list", employeeTask.data);
-    //   for (let i = 0; i < data.itemEm.length; i++) {
-    //     data.itemEm[i].checked = false;
-    //   }
-    //   for (let i = 0; i < data.itemEm.length; i++) {
-    //     for (let j = 0; j < employeeTask.data.Employees.length; j++) {
-    //       if (data.itemEm[i]._id == employeeTask.data.Employees[j]._id) {
-    //         data.itemEm[i].checked = true;
-    //         arrayCheck.data.push(data.itemEm[i]);
-    //         array.data.push(data.itemEm[i]);
-    //       }
-    //     }
-    //   }
-    //   console.log("check:", data.itemEm);
-
-    //   data.position = await http_getAll(Position);
-
-    //   data.center = await CenterServices.getAll();
-    //   data.department = await departmentsServices.getAll();
-    //   data.unit = await unitsServices.getAll();
-
-    //   data.position = data.position.map((value, index) => {
-    //     return {
-    //       ...value,
-    //       value: value._id,
-    //     };
-    //   });
-    //   data.center = data.center.map((value, index) => {
-    //     return {
-    //       ...value,
-    //       value: value._id,
-    //     };
-    //   });
-    //   data.department = data.department.map((value, index) => {
-    //     return {
-    //       ...value,
-    //       value: value._id,
-    //     };
-    //   });
-    //   data.unit = data.unit.map((value, index) => {
-    //     return {
-    //       ...value,
-    //       value: value._id,
-    //     };
-    //   });
-    //   entryNamePosition.value = "Chức vụ";
-    //   entryValuePosition.value = "";
-    //   entryNameCenter.value = "Trung tâm";
-    //   entryValueCenter.value = "";
-    //   entryNameDepartment.value = "Phòng";
-    //   entryValueDepartment.value = "";
-    //   entryNameUnit.value = "Tổ";
-    //   entryValueUnit.value = "";
-    //   // for (let value of data.itemEm) {
-    //   //   for (let array of arrayCheck.data) {
-    //   //     console.log("arrayid==value_id", array._id == value._id);
-    //   //     if (array._id == value._id) {
-    //   //       value.checked = true;
-    //   //       break;
-    //   //     }
-    //   //     value.checked = false;
-    //   //   }
-    //   // }
-    //   data.selectAll[0].checked = false;
-    // };
     const closeModal = async () => {
       console.log("close modal");
 
