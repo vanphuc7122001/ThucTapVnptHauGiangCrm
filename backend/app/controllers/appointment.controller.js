@@ -231,7 +231,7 @@ exports.deleteAll = async (req, res, next) => {
 // }
 
 exports.update = async (req, res, next) => {
-  console.log("hahaha", req.body.taskId);
+  console.log("hahaha1111", req.body.taskId);
   const { date_time, content, place, note, StatusAppId } = req.body;
 
   try {
@@ -281,23 +281,48 @@ exports.update = async (req, res, next) => {
       }
     } else {
       console.log("Vao else");
-      const appointments = await Appointment.findAll({
+      const appointments1 = await Appointment.findAll({
         where: {
           taskId: req.body.taskId,
         },
       });
-      console.log("appointment", appointments);
-      for (let value of appointments) {
-        console.log("coi 2 gio ne", value.dataValues.date_time, date_time);
+      console.log("appointment1", appointments1);
+      var test = 0;
+      for (let value of appointments1) {
         value.dataValues.date_time = getDecrypt(value.dataValues.date_time);
         value.dataValues.content = getDecrypt(value.dataValues.content);
+        console.log("coi 2 gio ne", value.dataValues.date_time, date_time);
+
         console.log("gio ", value.dataValues.date_time == date_time);
         if (value.dataValues.date_time == date_time) {
-          return res.send({
-            error: true,
-            msg: `Đã tồn tại cuộc hẹn ${value.dataValues.content} lúc ${value.dataValues.date_time}.`,
-          });
+          test++;
         }
+        console.log("test:", test);
+      }
+      if (test != 0) {
+        return res.send({
+          error: true,
+          msg: `Đã tồn tại cuộc hẹn ${content} lúc ${date_time}.`,
+        });
+      }
+      try {
+        const document = await Appointment.update(
+          {
+            date_time: date_time,
+            content: content,
+            place: place,
+            note: note,
+            StatusAppId: StatusAppId,
+          },
+          { where: { _id: req.params.id }, returning: true }
+        );
+        return res.send({
+          error: false,
+          msg: "Dữ liệu đã được thay đổi thành công.",
+        });
+      } catch (error) {
+        console.log(error);
+        return next(createError(400, "Error update"));
       }
     }
   } catch (error) {
