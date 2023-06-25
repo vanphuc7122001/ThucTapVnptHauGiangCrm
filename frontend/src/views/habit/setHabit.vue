@@ -119,6 +119,7 @@ export default {
             `Thêm khách hàng cùng thói quen`,
             `Bạn đã thêm thành công.`
           );
+          ctx.emit('refresh1')
         }
         refresh();
         props.refreshTable = true;

@@ -531,7 +531,7 @@ export default {
     watch(
       () => props.refreshTable,
       () => {
-        console.log('chay chayyayayaya');
+        console.log("chay chayyayayaya");
         reFresh();
       }
     );
@@ -583,6 +583,7 @@ export default {
             "
             @refresh="
               (entryNameCustomerType = 'Loại khách hàng'),
+                (data.currentPage = 1),
                 updateEntryValueCustomerType('')
             "
             style="height: 35px"
@@ -601,6 +602,7 @@ export default {
             "
             @refresh="
               (entryNameStatusTask = 'Trạng thái chăm sóc'),
+                (data.currentPage = 1),
                 updateEntryValueStatusTask('')
             "
             style="height: 35px"
@@ -637,7 +639,7 @@ export default {
           :title="`Số bản ghi`"
           @update:entryValue="(value) => (data.entryValue = value)"
           :entryValue="data.entryValue"
-          @refresh="data.entryValue = 'All'"
+          @refresh="(data.entryValue = 'All'), (data.currentPage = 1)"
         />
         <Search
           class="ml-3"

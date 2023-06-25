@@ -169,20 +169,16 @@ export default {
         let isFlase = false;
         for (let value of data.itemAdd) {
           const result = await http_create(Permission, value);
-          if (result.error){
+          if (result.error) {
             alert_error(`Thêm quyền`, `${result.msg}`);
             break;
-          }
-          else if (!result.error) isFlase = true;
+          } else if (!result.error) isFlase = true;
         }
         if (isFlase) {
-        alert_success(
-          `Thêm quyền`,
-          `Quyền đã được tạo thành công.`
-        );
-        refresh();
-        data.itemAdd = [{name: ''}];
-      } 
+          alert_success(`Thêm quyền`, `Quyền đã được tạo thành công.`);
+          refresh();
+          data.itemAdd = [{ name: "" }];
+        }
       } catch (error) {
         console.log(error);
       }
@@ -398,7 +394,7 @@ export default {
           :title="`Số bản ghi`"
           @update:entryValue="(value) => (data.entryValue = value)"
           :entryValue="data.entryValue"
-          @refresh="data.entryValue = 'All'"
+          @refresh="(data.entryValue = 'All'), (data.currentPage = 1)"
         />
         <Search
           class="ml-3"
@@ -439,7 +435,7 @@ export default {
         >
           <span id="add" class="mx-2">Thêm</span>
         </button>
-        <Add :items="data.itemAdd" @create="create" @remove="removeItem"/>
+        <Add :items="data.itemAdd" @create="create" @remove="removeItem" />
       </div>
     </div>
     <!-- Table -->

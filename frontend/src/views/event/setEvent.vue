@@ -109,7 +109,7 @@ export default {
             `Áp dụng sự kiện`,
             `Bạn đã áp dụng sự kiện đối với khách hàng thành công thành công.`
           );
-          ctx.emit('refresh',false);
+          ctx.emit('refresh1');
         }
         refresh();
         props.refreshTable = true;

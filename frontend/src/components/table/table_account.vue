@@ -41,7 +41,7 @@ export default {
   },
   setup(props, ntx) {
     const data = reactive({
-      activeShow: false,
+      activeShow: -1,
     });
     return {
       data,

@@ -184,7 +184,7 @@ export default {
             `Vai trò đã được tạo thành công.`
           );
           refresh();
-          data.itemAdd = [{name: ''}]
+          data.itemAdd = [{ name: "" }];
         }
       } catch (error) {
         console.log(error);
@@ -353,7 +353,7 @@ export default {
       setPermission,
       handleSelectAll,
       deleteMany,
-      removeItem
+      removeItem,
     };
   },
 };
@@ -415,7 +415,7 @@ export default {
           :title="`Số bản ghi`"
           @update:entryValue="(value) => (data.entryValue = value)"
           :entryValue="data.entryValue"
-          @refresh="data.entryValue = 'All'"
+          @refresh="(data.entryValue = 'All'), (data.currentPage = 1)"
         />
         <Search
           class="ml-3"

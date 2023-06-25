@@ -243,6 +243,22 @@ export default {
       }
     };
 
+    const refresh1 = async () => {
+      const habits = await http_getAll(Habit);
+      for (var i = 0; i < habits.length; i++) {
+        data.items[i].totalCustomer = habits[i].Customers.length;
+        data.items[i].Customers = habits[i].Customers;
+        // data.items[i].checked = false;
+      }
+      console.log("habits[0].Customers", habits[0].Customers);
+      // for (const value of data.items) {
+      //   value.time_duration_format = formatDateTime(value.time_duration);
+      // }
+      // for (let value of data.items) {
+      //   value.totalCustomer = value.Customers.length;
+      // }
+    };
+
     const refresh = async () => {
       data.items = await http_getAll(Habit);
       for (let value of data.items) {
@@ -342,6 +358,7 @@ export default {
       removeItem,
       setHabit,
       setHabit1,
+      refresh1,
     };
   },
 };
@@ -395,7 +412,7 @@ export default {
           :title="`Số bản ghi`"
           @update:entryValue="(value) => (data.entryValue = value)"
           :entryValue="data.entryValue"
-          @refresh="data.entryValue = 'All'"
+          @refresh="(data.entryValue = 'All'), (data.currentPage = 1)"
         />
         <Search
           class="ml-3"
@@ -451,6 +468,7 @@ export default {
           :refreshTable="data.refreshTable"
           v-if="data.showSetHabit"
           :item="data.habitValue"
+          @refresh1="refresh1()"
         />
       </div>
     </div>

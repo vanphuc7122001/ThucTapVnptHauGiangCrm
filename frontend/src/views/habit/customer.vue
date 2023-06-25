@@ -531,7 +531,7 @@ export default {
     watch(
       () => props.refreshTable,
       () => {
-        console.log('chay chayyayayaya');
+        console.log("chay chayyayayaya");
         reFresh();
       }
     );
@@ -578,6 +578,7 @@ export default {
             @update:entryValue="
               (value, value1) => (
                 updateEntryValueCustomerType(value),
+                (data.currentPage = 1),
                 (entryNameCustomerType = value1.name)
               )
             "
@@ -596,6 +597,7 @@ export default {
             @update:entryValue="
               (value, value1) => (
                 updateEntryValueStatusTask(value),
+                (data.currentPage = 1),
                 (entryNameStatusTask = value1.name)
               )
             "
@@ -637,7 +639,7 @@ export default {
           :title="`Số bản ghi`"
           @update:entryValue="(value) => (data.entryValue = value)"
           :entryValue="data.entryValue"
-          @refresh="data.entryValue = 'All'"
+          @refresh="(data.entryValue = 'All'), (data.currentPage = 1)"
         />
         <Search
           class="ml-3"

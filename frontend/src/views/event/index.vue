@@ -314,8 +314,9 @@ export default {
       }
     };
 
-    const view = (item) => {
+    const view = async (item) => {
       console.log("view", item);
+      await refresh();
       item.time_duration = item.time_duration.toUpperCase();
       data.viewValue = item;
       data.showView = true;
@@ -364,6 +365,22 @@ export default {
       }
     };
 
+    const refresh1 = async () => {
+      const events = await http_getAll(Event);
+      for (var i = 0; i < events.length; i++) {
+        data.items[i].totalCustomer = events[i].Customers.length;
+        data.items[i].Customers = events[i].Customers;
+        // data.items[i].checked = false;
+      }
+      console.log("events[0].Customers", events[0].Customers);
+      // for (const value of data.items) {
+      //   value.time_duration_format = formatDateTime(value.time_duration);
+      // }
+      // for (let value of data.items) {
+      //   value.totalCustomer = value.Customers.length;
+      // }
+    };
+
     const handleSelectAll = (value) => {
       console.log("cccc", value);
       if (value == false) {
@@ -406,6 +423,7 @@ export default {
       deleteMany,
       setEvent,
       setEvent1,
+      refresh1,
     };
   },
 };
@@ -443,10 +461,13 @@ export default {
               (value) => (
                 console.log('value', value),
                 (data.startTimeValue = value),
+                (data.currentPage = 1),
                 refresh()
               )
             "
-            @refresh="(data.startTimeValue = ''), refresh()"
+            @refresh="
+              (data.startTimeValue = ''), refresh(), (data.currentPage = 1)
+            "
             style="height: 35px"
           />
         </div>
@@ -461,7 +482,9 @@ export default {
                 refresh()
               )
             "
-            @refresh="(data.endTimeValue = ''), refresh()"
+            @refresh="
+              (data.endTimeValue = ''), refresh(), (data.currentPage = 1)
+            "
             style="height: 35px"
           />
         </div>
@@ -498,7 +521,7 @@ export default {
           :title="`Số bản ghi`"
           @update:entryValue="(value) => (data.entryValue = value)"
           :entryValue="data.entryValue"
-          @refresh="data.entryValue = 'All'"
+          @refresh="(data.entryValue = 'All'), (data.currentPage = 1)"
         />
         <Search
           class="ml-3"
@@ -554,7 +577,7 @@ export default {
           :refreshTable="data.refreshTable"
           v-if="data.showSetEvent"
           :item="data.eventValue"
-          @refresh="(value) => data.showSetEvent = value"
+          @refresh1="refresh1()"
         />
       </div>
     </div>
