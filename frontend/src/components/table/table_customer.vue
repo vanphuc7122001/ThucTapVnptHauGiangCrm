@@ -1,4 +1,5 @@
 <template>
+<div>
   <table class="my-table mb-2">
     <thead>
       <tr class="">
@@ -87,6 +88,10 @@
       </tr>
     </tbody>
   </table>
+  <p v-if="items.length == 0" class="text-center mt-2">
+    Không tồn tại bản ghi.
+  </p>
+</div>
 </template>
 
 <script>

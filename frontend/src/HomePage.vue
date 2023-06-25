@@ -26,7 +26,8 @@ export default {
 </script>
 
 <template>
-  <nav class="navbar">
+  <div>
+    <nav class="navbar">
     <!-- Navbar content goes here -->
     <Navbar />
   </nav>
@@ -42,21 +43,8 @@ export default {
     <!-- Footer goes here -->
     <Footer />
   </div>
-  <!-- <div class="w-100">
-    <div class="row">
-      <div
-        class=""
-        :class="[data.activeMenuResponsive ? 'd-block' : 'col-lg-2 d-none d-xl-block']"
-      >
-        <Sidebar />
-      </div>
-      <div class="col-lg-10">
-        <Navbar @showMenu="data.activeMenuResponsive = true" />
-        <router-view></router-view>
-        <Footer />
-      </div>
-    </div>
-  </div> -->
+  </div>
+
 </template>
 
 <style scoped></style>

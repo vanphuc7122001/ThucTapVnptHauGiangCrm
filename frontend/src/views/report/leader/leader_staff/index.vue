@@ -1,7 +1,6 @@
 <template>
     <div class="border-box d-flex flex-column ml-2">
       <!-- Menu -->
-  
       <div class="report_container">
         <div
           class="mx-1 report__item"
@@ -172,7 +171,7 @@
         </div>
         <div class="d-flex align-items-start">
           <button
-            class="btn btn-warning mx-2"
+            class="btn btn-warning"
             data-toggle="modal"
             data-target="#model-form-mail"
           >
@@ -180,33 +179,28 @@
           </button>
           <button
             type="button"
-            class="btn btn-primary"
+            class="btn btn-primary mx-2"
             @click="handlePrintReport"
           >
-            <span id="add" class="">In</span>
+            <span id="printrp" class="">In</span>
           </button>
         </div>
       </div>
-  
-      <!-- Table -->
+      <!-- nameEmployee: item.Employee.name,
+              phoneEmployee: item.Employee.phone,
+              emailEmployee: item.Employee.email,
+              addressEmployee: item.Employee.address,
+              birthdayEmployee: item.Employee.birthday, -->
       <Table
         :items="setPages"
         :fields="[
-          'Tên',
-          'Email',
-          'Sdt',
-          'Công việc',
-          'Công ty',
-          'Loại khách hàng',
+          'Tên nhân viên',
+          'Email nhân viên',
+          'Số điện thoại nhân viên',
+          'Địa chỉ',
+          'Ngày sinh',
         ]"
-        :labels="[
-          'nameCustomer',
-          'emailCustomer',
-          'phoneCustomer',
-          'current_position',
-          'nameCompany',
-          'nameCustomerType',
-        ]"
+        :labels="['name', 'email', 'phone', 'address', 'birthday']"
         @delete="handleDelete"
         @edit="EditEmit"
         :showActionList="[true, false, false]"
@@ -225,9 +219,9 @@
         class="mx-3"
       />
   
-      <div class="container pdf-content" ref="pdfContent">
+      <div class="container pdf-content" v-show="true" ref="pdfContent">
         <img
-          src="../../assets/images/vnpt-logo1.png"
+          src="../../../../assets/images/vnpt-logo1.png"
           class="rounded-circle"
           alt="Cinque Terre"
           style="height: 70px"
@@ -244,9 +238,9 @@
           <p>....ngày....tháng....năm</p>
         </div>
         <div class="text-center mt-4 font-weight-bold">
-          <h3 class="font-weight-bold text-center">
+          <h3 class="font-weight-bold">
             Báo Cáo <br />
-            Danh Sách Khách Hàng Đã Lâu Chưa Chăm Sóc
+            Danh Sách Nhân Viên Do Lãnh Đạo Phụ Trách
           </h3>
         </div>
         <div class="">
@@ -256,45 +250,64 @@
           <br />
           <span>Bộ phận công tác</span>
         </div>
+  
         <table class="table table-bordered mt-4">
           <thead>
             <tr>
-              <th v-for="(value, index) in labels" :key="index">{{ value }}</th>
+              <th
+                v-for="(value, index) in [
+                  'Stt',
+                  'Họ tên',
+                  'Sdt',
+                  'Email',
+                  'Địa chỉ',
+                  'Ngày sinh',
+                ]"
+                :key="index"
+              >
+                {{ value }}
+              </th>
             </tr>
           </thead>
+  
           <tbody>
             <tr v-for="(item, index) in data.items" :key="index">
               <td>{{ index + 1 }}</td>
-              <td>{{ item.nameCustomer }}</td>
-              <td>{{ item.emailCustomer }}</td>
-              <td>{{ item.phoneCustomer }}</td>
-              <td>{{ item.nameCustomerType }}</td>
+              <td>{{ item.name }}</td>
+              <td>{{ item.phone }}</td>
+              <td>{{ item.email }}</td>
+              <td>{{ item.address }}</td>
+              <td>{{ item.birthday }}</td>
             </tr>
           </tbody>
         </table>
+  
         <div class="d-flex justify-content-around mt-4">
           <p>Phụ trách bộ phận</p>
           <p>Người Báo Cáo</p>
         </div>
       </div>
-      <View :item="data.viewValue" :itemViewCareCus="data.viewCareCus" />
+      <View :item="data.viewValue" />
       <Mail />
     </div>
   </template>
   
   <script>
   import { reactive, computed, ref, onBeforeMount } from "vue";
-  import Table from "../../components/table/table-report.vue";
-  import Mail from "./mail.vue";
+  import Table from "../../../../components/table/table-report.vue";
+  import Mail from "../../mail.vue";
+  
+  import View from "./view.vue";
   import {
+    Task,
     http_getAll,
     Pagination,
     Select,
     Search,
-    Customer_Work,
-  } from "../common/import";
-  
-  import { isEqual, isBefore, isAfter, isSameDay } from "date-fns";
+    http_getOne,
+  } from "../../../common/import";
+  import jsPDF from "jspdf"; //in
+  import html2canvas from "html2canvas";
   
   import {
     countCustomer,
@@ -304,11 +317,7 @@
     countElementReportAssignmentStaff,
     countElementReportLeaderCustomer,
     countElementReportLeaderStaff,
-  } from "./use/index";
-  
-  import jsPDF from "jspdf";
-  import html2canvas from "html2canvas";
-  import View from "./view.vue";
+  } from "../../use/index";
   
   export default {
     components: {
@@ -329,58 +338,44 @@
         countLeaderCustomer: 0,
         countleaderStaff: 0,
       });
+  
+      const options = [
+        {
+          name: 5,
+          value: 5,
+        },
+        {
+          name: 10,
+          value: 10,
+        },
+        {
+          name: 20,
+          value: 20,
+        },
+        {
+          name: 30,
+          value: 30,
+        },
+        {
+          name: "All",
+          value: "All",
+        },
+      ];
+  
       const data = reactive({
         items: [],
-        entryValue: 5, // total record in page
+        entryValue: 5,
         numberOfPages: 1,
-        totalRow: 0, // total row data
+        totalRow: 0,
         startRow: 0,
         endRow: 0,
         currentPage: 1,
         searchText: "",
-        activeMenu: 2,
-        viewValue: {
-          Customer: {
-            name: "",
-            birthday: "",
-            avatar: "",
-            phone: "",
-            email: "",
-            address: "",
-          },
-          Customer_Type: {
-            name: "",
-          },
-          Company_KH: {
-            name: "",
-          },
-          Events: [
-            {
-              name: "",
-              content: "",
-              time_duration: "",
-            },
-          ],
-          Habits: [
-            {
-              name: "",
-            },
-          ],
-          current_workplace: "",
-          work_history: "",
-          current_position: "",
-          work_temp: "",
-        },
-        viewCareCus: null,
-        lengthCustomer: 0,
+        activeMenu: 4,
+        viewValue: {},
+        lengthEmpoyee: 0,
+        employee: [],
       });
-  
-      const labels = [
-        "Tên khách hàng",
-        "Email",
-        "Số điện thoại",
-        "Loại khách hàng",
-      ];
   
       const reFresh = async () => {
         store.countCustomer = await countCustomer();
@@ -393,183 +388,67 @@
         store.countLeaderCustomer = await countElementReportLeaderCustomer();
         store.countleaderStaff = await countElementReportLeaderStaff();
   
-        const cusWork = await http_getAll(Customer_Work);
-        data.lengthCustomer = cusWork.documents.length;
-        data.items = cusWork.documents.filter((cusWork) => {
-          const taskCusCared = cusWork.Customer.Tasks.filter((task) => {
-            if (task.Status_Task.name == "đã chăm sóc") {
-              // lấy các khách hàng đã chăm sóc
-              const cycle = task.Cycle.name; // lấy chu kì
-              let start_date = task.start_date; // lấy ngày bắt đầu
-              let end_date = task.end_date; 
-              start_date = new Date(start_date); // chuyển chuổi sang date
+        const leaderId = sessionStorage.getItem("employeeId");
+        const tasks = await http_getAll(Task);
   
-              end_date = new Date(end_date);
+        const ListTaskId = [];
+        tasks.map((task) => {
+          ListTaskId.push(task._id);
+        });
   
-              end_date =
-                end_date.getFullYear() +
-                "-" +
-                (end_date.getMonth() + 1) +
-                "-" +
-                end_date.getDate();
+        for (const _id of ListTaskId) {
+          const rs = await http_getOne(Task, _id);
+          data.items.push(rs);
+        }
   
-              let numberOfCycle = cycle.replace(/\D/g, ""); // lấy số trong chu kì
-  
-              numberOfCycle = +numberOfCycle; // ép kiểu sang số nguyên
-  
-              var cycleDate = 0;
-              var cycleMonth = 0;
-              var cycleYear = 0;
-              switch (true) {
-                case cycle.includes("ngày"):
-                  cycleDate = numberOfCycle; // Nửa sửa bỏ nhân 2
-                  break;
-                case cycle.includes("tháng"):
-                  cycleMonth = numberOfCycle; // Nửa sửa bỏ nhân 2
-                  break;
-                case cycle.includes("năm"):
-                  cycleYear = numberOfCycle; // Nửa sửa bỏ nhân 2
-                  break;
-                case cycle.includes("tuần"):
-                  cycleDate = numberOfCycle * 7;
-                  break;
-              }
-  
-              // lần bắt đầu đầu tiên
-              start_date.setDate(start_date.getDate() + cycleDate);
-              start_date.setMonth(start_date.getMonth() + cycleMonth);
-              start_date.setFullYear(start_date.getFullYear() + cycleYear);
-              const year = start_date.getFullYear();
-              const month = start_date.getMonth() + 1;
-              const day = start_date.getDate();
-              let dayStartNewCycle = year + "-" + month + "-" + day; // ngày bắt đầu chu kì mới
-              // console.log('So sanh dayStartNewCycle', dayStartNewCycle , 'End date',end_date);
-  
-              // cycleDate = ((cycleDate) * 2);
-  
-              if(isAfter(new Date(dayStartNewCycle), new Date(end_date))){
-                cycleDate = ((cycleDate) * 2);
-              }
-  
-              if(dayStartNewCycle == end_date) { // nếu ngày bắt đầu chu kì mới == end_date thì + 1
-                dayStartNewCycle = year + "-" + month + "-" + (day + 1)
-                cycleDate = ((cycleDate) * 2);
-              }
-  
-              if(isBefore(new Date(dayStartNewCycle), new Date(end_date))){
-                let end_day = new Date(end_date)
-                dayStartNewCycle = end_day.getFullYear() +
-                "-" +
-                (end_day.getMonth() + 1) +
-                "-" +
-                (end_day.getDate() + 1);
-                cycleDate = ((cycleDate) * 2) + 1;
-              }
-  
-              // console.log('So sanh dayStartNewCycle ++ ', dayStartNewCycle , 'End date ++ ',end_date);
-  
-              // lần bắt đầu thứ 2
-              cycleMonth = cycleMonth * 2;
-              cycleYear = cycleYear * 2;
-              start_date.setDate(start_date.getDate() + cycleDate);
-              start_date.setMonth(start_date.getMonth() + cycleMonth);
-              start_date.setFullYear(start_date.getFullYear() + cycleYear);
-              const year2 = start_date.getFullYear();
-              const month2 = start_date.getMonth() + 1;
-              const day2 = start_date.getDate();
-              const dayStartNewCycle2 = year2 + "-" + month2 + "-" + day2;
-  
-              task.dayStartNewCycle2 = dayStartNewCycle2;
-              task.dayStartNewCycle = dayStartNewCycle;
-              return task;
-            }
-          });
-  
-          // import { isEqual, isBefore, isAfter } from 'date-fns';
-  
-          const rsTaskCusCared = taskCusCared.filter((value, index) => {
-            let dayStartNewCycle2 = new Date(value.dayStartNewCycle2);
-            let dayStartNewCycle = new Date(value.dayStartNewCycle);
-            console.log('Index', index);
-            console.log('Day 1', dayStartNewCycle);
-            console.log('Day 2',  dayStartNewCycle2);
-  
-            let currentDay = new Date();
-            if (value.customerId == cusWork.Customer._id) {
-              return cusWork.Customer.Tasks.filter((task) => {
-                let start_date = new Date(task.start_date);
-                
-                if (
-                  (isAfter(dayStartNewCycle2, currentDay) ||
-                  isEqual(dayStartNewCycle2, currentDay)) 
-                  &&
-                  !isSameDay(dayStartNewCycle2, start_date) 
-                  &&
-                  !isSameDay(dayStartNewCycle, start_date)  
-                ) {
-                  return task;
-                } else {
-                  console.log('Run task');
-                }
-              });
-            }
-          });
-  
-          if (rsTaskCusCared.length > 0) {
-            return rsTaskCusCared;
+        data.items = data.items.map((task) => {
+          if (task.leaderId == leaderId) {
+            return [...task.Employees];
           }
         });
   
-        // format lại data items
-        data.items = data.items.map((item) => {
+        data.items = data.items.filter((task) => {
+          return task != undefined;
+        });
+  
+        const newArray = [];
+  
+        // chuyển mảng 2 chiều thành mảng 1 chiều
+        for (let i = 0; i < data.items.length; i++) {
+          for (let j = 0; j < data.items[i].length; j++) {
+            newArray.push(data.items[i][j]);
+          }
+        }
+  
+        data.items = newArray.map((item) => {
           return {
-            nameCustomer: item.Customer.name,
-            emailCustomer: item.Customer.email,
-            phoneCustomer: item.Customer.phone,
-            current_position: item.current_position,
-            nameCustomerType: item.Customer.Customer_Type.name,
-            nameCompany: item.Company_KH.name,
-            Events: [...item.Customer.Events],
-            Tasks: [...item.Customer.Tasks],
-            Habits: {
-              ...item.Customer.Habits,
-            },
             ...item,
           };
         });
       };
   
-      // handle update entry value
-      const handleUpdateEntryValue = (value) => {
-        data.entryValue = value;
-      };
+      onBeforeMount(() => {
+        reFresh();
+      });
   
-      //handle update search text
-      const handleUpdateSearchText = (value) => {
-        data.searchText = value;
-      };
-  
-      // nameCustomer: item.Customer.name,
-      //       emailCustomer: item.Customer.email,
-      //       phoneCustomer: item.Customer.phone,
-      // // handle pagination
+      // computed
       const toString = computed(() => {
         console.log("Starting search");
         if (data.choseSearch == "name") {
           return data.items.map((value, index) => {
-            return [value.nameCustomer].join("").toLocaleLowerCase();
+            return [value.name].join("").toLocaleLowerCase();
           });
         } else if (data.choseSearch == "email") {
           return data.items.map((value, index) => {
-            return [value.emailCustomer].join("").toLocaleLowerCase();
+            return [value.email].join("").toLocaleLowerCase();
           });
         } else if (data.choseSearch == "phone") {
           return data.items.map((value, index) => {
-            return [value.phoneCustomer].join("").toLocaleLowerCase();
+            return [value.phone].join("").toLocaleLowerCase();
           });
         } else {
           return data.items.map((value, index) => {
-            return [value.nameCustomer, value.emailCustomer, value.phoneCustomer]
+            return [value.name, value.email, value.phone]
               .join("")
               .toLocaleLowerCase();
           });
@@ -611,9 +490,17 @@
         } else return data.items.value;
       });
   
-      // handle print data
+      // methods
+      const update = (item) => {
+        console.log("updating", item);
+      };
+  
+      const handleUpdateSearchText = (value) => {
+        data.searchText = value;
+      };
+  
       const pdfContent = ref(null);
-      const handlePrintReport = async () => {
+      const handlePrintReport = () => {
         const doc = new jsPDF();
   
         if (pdfContent.value) {
@@ -633,7 +520,7 @@
               doc.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight); // Đặt kích thước ảnh là kích thước trang PDFF
   
               // Tải xuống tệp PDF
-              doc.save("DanhSachKhachHangLauChuaChamSoc.pdf");
+              doc.save("NhanVienDoLanhDaoPhuTrach.pdf");
             };
   
             // Thiết lập nguồn dữ liệu cho hình ảnh và kích hoạt sự kiện onload
@@ -643,65 +530,20 @@
       };
   
       const view = (item) => {
+        console.log("Item", item);
         data.viewValue = {
-          Customer: {
-            _id: item.Customer._id,
-            name: item.Customer.name,
-            birthday: item.Customer.birthday,
-            avatar: item.Customer.avatar,
-            phone: item.Customer.phone,
-            email: item.Customer.email,
-            address: item.Customer.address,
-          },
-          Customer_Type: {
-            _id: item.Customer.Customer_Type._id,
-            name: item.Customer.Customer_Type.name,
-          },
-          Company_KH: {
-            _id: item.Company_KH._id,
-            name: item.Company_KH.name,
-          },
-          Events: [...item.Customer.Events],
-          Tasks: [...item.Customer.Tasks],
-          Habits: {
-            ...item.Customer.Habits,
-          },
-          _id: item._id,
-          current_workplace: item.current_workplace,
-          work_history: item.work_history,
-          current_position: item.current_position,
-          work_temp: item.work_temp,
+          ...item,
         };
-  
-        data.viewCareCus = item.Customer.Tasks.map((value) => {
-          console.log("Value:", value);
-          return {
-            start_date: value.start_date,
-            end_date: value.end_date,
-            content: value.content,
-            customerName: item.Customer.name,
-            cycleName: value.Cycle.name, // join bản sao
-            statusName: value.Status_Task.name,
-            EvaluateStar: value.Evaluate.star,
-            comment:
-              value.Comment == null ? "Chưa cập nhật" : value.Comment.content,
-          };
-        });
       };
   
-      onBeforeMount(() => {
-        reFresh();
-      });
-  
       return {
+        options,
         data,
         setPages,
-        handleUpdateEntryValue,
         handleUpdateSearchText,
         handlePrintReport,
         pdfContent,
         view,
-        labels,
         store,
       };
     },
@@ -715,14 +557,6 @@
     top: -9999px;
   }
   
-  .material-symbols-outlined {
-    font-size: 18px;
-  }
-  
-  .navbar {
-    margin-top: -8px;
-  }
-  
   .border-box {
     border: 1px solid var(--gray);
     border-radius: 5px;
@@ -731,13 +565,6 @@
   .menu {
     /* border: 1px solid var(--gray); */
     border-collapse: collapse;
-  }
-  
-  .menu a {
-    border: 1px solid var(--gray);
-    border-collapse: collapse;
-    padding: 8px 12px;
-    font-size: 15px;
   }
   
   .active-menu {

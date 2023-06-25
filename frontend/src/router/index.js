@@ -144,6 +144,33 @@ const routes = [
         name: "Report",
         component: () => import("../views/report/index.vue"),
       },
+      {
+        path: "report_assignment_staff",
+        name: "ReportAssignment",
+        component: () =>
+          import("../views/report/report_assignment_staff/index.vue"),
+      },
+      // Report customer cycle
+      {
+        path: "report_customer_cycle",
+        name: "ReportCustomerCycle",
+        component: () =>
+          import("../views/report/report_customer_cycle/index.vue"),
+      },
+      // Reporting customer is managed by the leader
+      {
+        path: "report_leader_customer",
+        name: "ReportLeaderCustomer",
+        component: () =>
+          import("../views/report/leader/leader_customer/index.vue"),
+      },
+      // Reporting staff is managed by the leader
+      {
+        path: "report_leader_staff",
+        name: "ReportLeaderStaff",
+        component: () =>
+          import("../views/report/leader/leader_staff/index.vue"),
+      },
       // Setting
       {
         path: "setting",
