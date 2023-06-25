@@ -350,6 +350,12 @@ exports.findOne = async (req, res, next) => {
                 },
               ],
             },
+            {
+              model: Event,
+            },
+            {
+              model: Habit,
+            },
           ],
         },
         {
@@ -405,6 +411,8 @@ exports.findOne = async (req, res, next) => {
       employee.dataValues.name = getDecrypt(employee.dataValues.name);
       employee.dataValues.phone = getDecrypt(employee.dataValues.phone);
       employee.dataValues.email = getDecrypt(employee.dataValues.email);
+      employee.dataValues.address = getDecrypt(employee.dataValues.address);
+      employee.dataValues.birthday = getDecrypt(employee.dataValues.birthday);
       position.dataValues.name = getDecrypt(position.dataValues.name);
       unit.dataValues.name = getDecrypt(unit.dataValues.name);
       department.dataValues.name = getDecrypt(department.dataValues.name);
@@ -445,59 +453,63 @@ exports.update = async (req, res, next) => {
   // console.log(req.body.Status_Task.reason);
   if (req.body.fb == true) {
     console.log("dooooooooooooo");
-    try{
-      let tasks1 = [await Task.findOne({
+    try {
+      let tasks1 = [
+        await Task.findOne({
           where: {
-              _id: req.params.id,
+            _id: req.params.id,
           },
-          include: [{
+          include: [
+            {
               model: Status_Task,
-          },
-          {
+            },
+            {
               model: Cycle,
-          },
-          {
+            },
+            {
               model: Comment,
-          }
-          ]
-      })];
+            },
+          ],
+        }),
+      ];
 
-      tasks1 = tasks1.filter(
-          (value, index) => {
-              return value.EvaluateId == req.body.EvaluateId && value.Comment.content == req.body.Comment.content;
-          }
-      )
-      if(tasks1.length == 0){
-          const comment = await Comment.update({
-              content: req.body.Comment.content,
-          }, { where: { TaskId: req.params.id }, returning: true, });
-          console.log("abchg")
-          const task = await Task.update({
-              EvaluateId: req.body.EvaluateId,
+      tasks1 = tasks1.filter((value, index) => {
+        return (
+          value.EvaluateId == req.body.EvaluateId &&
+          value.Comment.content == req.body.Comment.content
+        );
+      });
+      if (tasks1.length == 0) {
+        const comment = await Comment.update(
+          {
+            content: req.body.Comment.content,
+          },
+          { where: { TaskId: req.params.id }, returning: true }
+        );
+        console.log("abchg");
+        const task = await Task.update(
+          {
+            EvaluateId: req.body.EvaluateId,
           },
           {
-              where: { _id: req.params.id }, returning: true, 
-          });
-          console.log("ne ne ne")
-          return res.send({
-              error: false,
-              msg: 'Dữ liệu đã được thay đổi thành công.',
-          })  
+            where: { _id: req.params.id },
+            returning: true,
+          }
+        );
+        console.log("ne ne ne");
+        return res.send({
+          error: false,
+          msg: "Dữ liệu đã được thay đổi thành công.",
+        });
+      } else {
+        return res.send({
+          error: true,
+          msg: "Dữ liệu chưa được thay đổi.",
+        });
       }
-      else {
-          return res.send({
-              error: true,
-              msg: 'Dữ liệu chưa được thay đổi.'
-          })
-      }
-
-     
-  }
-  catch (error) {
-      return next(
-          createError(400, 'Error update')
-      )
-  }
+    } catch (error) {
+      return next(createError(400, "Error update"));
+    }
   } else {
     console.log("ELSE:");
     const {
