@@ -1026,6 +1026,16 @@ export default {
       <div class="d-flex align-items-start">
         <button
           type="button"
+          class="btn btn-warning ml-3 mr-3"
+          data-toggle="modal"
+          data-target="#model-form-mail"
+          @click="showMail"
+        >
+          <span class="mx-2" style="color: white">Mail</span>
+        </button>
+        <Mail v-if="mail" @sendEmail="(value) => sendEmail(value)"></Mail>
+        <button
+          type="button"
           class="btn btn-danger mr-3"
           data-toggle="modal"
           data-target="#model-delete-all"
@@ -1059,16 +1069,6 @@ export default {
           @newDep="(value) => updateDepartment(value)"
           @newUnit="(value) => updateUnit(value)"
         />
-        <button
-          type="button"
-          class="btn btn-warning ml-3"
-          data-toggle="modal"
-          data-target="#model-form-mail"
-          @click="showMail"
-        >
-          <span class="mx-2" style="color: white">Mail</span>
-        </button>
-        <Mail v-if="mail" @sendEmail="(value) => sendEmail(value)"></Mail>
       </div>
     </div>
     <!-- Table -->

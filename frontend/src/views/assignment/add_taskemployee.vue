@@ -538,6 +538,9 @@ export default {
       // data.cycleSelect = [...rs];
       console.log("REFRESH");
       data.itemEm = await http_getAll(Employee);
+      for (let i = 0; i < data.itemEm.length; i++) {
+        data.itemEm[i].checked = false;
+      }
       console.log("ds nv", data.itemEm);
       // ***
       arrayCheck.data = [];
@@ -545,9 +548,7 @@ export default {
       const employeeTask = reactive({ data: [] });
       employeeTask.data = await http_getOne(Task, props.item._id);
       console.log("list", employeeTask.data);
-      for (let i = 0; i < data.itemEm.length; i++) {
-        data.itemEm[i].checked = false;
-      }
+
       for (let i = 0; i < data.itemEm.length; i++) {
         for (let j = 0; j < employeeTask.data.Employees.length; j++) {
           if (data.itemEm[i]._id == employeeTask.data.Employees[j]._id) {
@@ -562,8 +563,24 @@ export default {
       data.position = await http_getAll(Position);
 
       data.center = await CenterServices.getAll();
-      data.department = await departmentsServices.getAll();
-      data.unit = await unitsServices.getAll();
+      if (entryValueCenter.value != "") {
+        data.department = await departmentsServices.getAll();
+        data.department = data.department.map((value, index) => {
+          return {
+            ...value,
+            value: value._id,
+          };
+        });
+      }
+      if (entryValueDepartment.value != "") {
+        data.unit = await unitsServices.getAll();
+        data.unit = data.unit.map((value, index) => {
+          return {
+            ...value,
+            value: value._id,
+          };
+        });
+      }
 
       data.position = data.position.map((value, index) => {
         return {
@@ -577,18 +594,7 @@ export default {
           value: value._id,
         };
       });
-      data.department = data.department.map((value, index) => {
-        return {
-          ...value,
-          value: value._id,
-        };
-      });
-      data.unit = data.unit.map((value, index) => {
-        return {
-          ...value,
-          value: value._id,
-        };
-      });
+
       entryNamePosition.value = "Chức vụ";
       entryValuePosition.value = "";
       entryNameCenter.value = "Trung tâm";
@@ -821,7 +827,7 @@ export default {
                 @click="createTaskEm"
                 id="add"
               >
-                <span>Giao việc</span>
+                <span style="color: white">Giao việc</span>
               </button>
               <button
                 type="button"

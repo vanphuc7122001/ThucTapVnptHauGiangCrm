@@ -64,6 +64,7 @@ export default {
     const statustasks = reactive({ statustask: [] });
     let selectedOptionStatus = ref("0");
     watch(selectedOptionStatus, async (newValue, oldValue) => {
+      if (newValue == "") return;
       if (newValue == "other") {
         const showSweetAlert = async () => {
           const { value: statusTask } = await Swal.fire({
@@ -97,7 +98,9 @@ export default {
         showSweetAlert();
         selectedOptionStatus.value = 0;
       }
+      console.log("THAYDOI:", selectedOptionStatus.value);
       props.item.StatusTaskId = selectedOptionStatus.value;
+      selectedOptionStatus.value = "";
     });
 
     const deleteStatusTask = async (_id) => {

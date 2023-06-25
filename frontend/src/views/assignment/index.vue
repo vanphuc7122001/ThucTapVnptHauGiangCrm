@@ -1221,13 +1221,15 @@ export default {
       }
     };
     const edit = async (editValue) => {
+      // editValue["StatusTaskId"] = editValue.Status_Task._id;
       console.log("edit", editValue);
+      console.log("Id:", editValue._id);
       const result = await http_update(Task, editValue._id, editValue);
       console.log("ne", result);
       // thêm phân công khi có sự thay đổi status thành Đã chăm sóc
       if (!result.error) {
         alert_success(`Sửa phân công`, `${result.msg}`);
-        refresh();
+        await refresh();
       } else if (result.error) {
         alert_error(`Sửa phân công`, `${result.msg}`);
       }
@@ -1381,6 +1383,7 @@ export default {
         value.checked = false;
       }
       // 2*****
+      console.log("Data items tasks:", data.items);
       for (let value of data.items) {
         for (let value1 of arrayCheck.data) {
           if (value._id == value1._id) {
