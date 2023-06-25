@@ -469,25 +469,11 @@ export default {
       positions.position.push({ _id: "other", name: "khác" });
       centers.center = await CenterServices.getAll();
       centers.center.push({ _id: "other", name: "khác" });
-      console.log("Center:", selectedOptionCenter.value);
-      if (selectedOptionCenter.value != "") {
-        departments.department = await departmentsServices.findAllDepOfACenter(
-          selectedOptionCenter.value
-        );
-        departments.department.push({ _id: "other", name: "khác" });
-      } else {
-        departments.department = await departmentsServices.getAll();
-        departments.department.push({ _id: "other", name: "khác" });
-      }
-      if (selectedOptionDepartment.value != "") {
-        units.unit = await unitsServices.findAllUnitsOfADep(
-          selectedOptionDepartment.value
-        );
-        units.unit.push({ _id: "other", name: "khác" });
-      } else {
-        units.unit = await unitsServices.getAll();
-        units.unit.push({ _id: "other", name: "khác" });
-      }
+      departments.department = await departmentsServices.getAll();
+      departments.department.push({ _id: "other", name: "khác" });
+
+      units.unit = await unitsServices.getAll();
+      units.unit.push({ _id: "other", name: "khác" });
     };
     const onDeletePosition = async (value) => {
       console.log("Value delete:", value);

@@ -112,7 +112,7 @@ export default {
           },
         },
       ],
-      entryValue: 5,
+      entryValue: 2,
       numberOfPages: 1,
       totalRow: 0,
       startRow: 0,
@@ -360,9 +360,12 @@ export default {
     //POSITION
     watch(entryValuePosition, async (newValue, oldValue) => {
       if (newValue == "") {
+        data.currentPage = 1;
         await refresh();
         return;
       }
+      data.currentPage = 1;
+
       data.items = await http_getAll(Employee);
       //1.lấy danh sách nhân viên chức vụ x
       if (entryValuePosition.value.length > 0) {
@@ -427,9 +430,11 @@ export default {
     //  CENTER
     watch(entryValueCenter, async (newValue, oldValue) => {
       if (newValue == "") {
+        data.currentPage = 1;
         await refresh();
         return;
       }
+      data.currentPage = 1;
       entryValueDepartment.value = "1"; //id
       entryNameDepartment.value = "Phòng"; //name
       entryValueUnit.value = "1"; //id
@@ -512,11 +517,13 @@ export default {
     //DEP
     watch(entryValueDepartment, async (newValue, oldValue) => {
       if (newValue == "") {
+        data.currentPage = 1;
         await refresh();
         return;
       } else if (newValue == "1") {
         return;
       }
+      data.currentPage = 1;
       entryValueUnit.value = "1"; //id
       entryNameUnit.value = "Tổ"; //name
 
@@ -573,11 +580,13 @@ export default {
     //UNIT
     watch(entryValueUnit, async (newValue, oldValue) => {
       if (newValue == "") {
+        data.currentPage = 1;
         await refresh();
         return;
       } else if (newValue == "1") {
         return;
       }
+      data.currentPage = 1;
       //Lấy tất cả nhân vien
       data.items = await http_getAll(Employee);
       //Lọc
@@ -908,7 +917,9 @@ export default {
               )
             "
             @refresh="
-              (entryNamePosition = 'Chọn chức vụ'), updateEntryValuePosition('')
+              (entryNamePosition = 'Chọn chức vụ'),
+                updateEntryValuePosition(''),
+                (data.currentPage = 1)
             "
             style="height: 35px"
           />
@@ -924,7 +935,9 @@ export default {
               )
             "
             @refresh="
-              (entryNameCenter = 'Chọn trung tâm'), updateEntryValueCenter('')
+              (entryNameCenter = 'Chọn trung tâm'),
+                updateEntryValueCenter(''),
+                (data.currentPage = 1)
             "
             style="height: 35px"
           />
@@ -943,7 +956,8 @@ export default {
             "
             @refresh="
               (entryNameDepartment = 'Chọn phòng'),
-                updateEntryValueDepartment('')
+                updateEntryValueDepartment(''),
+                (data.currentPage = 1)
             "
             style="height: 35px"
           />
@@ -958,7 +972,11 @@ export default {
                 updateEntryValueUnit(value), (entryNameUnit = value1.name)
               )
             "
-            @refresh="(entryNameUnit = 'Chọn tổ'), updateEntryValueUnit('')"
+            @refresh="
+              (entryNameUnit = 'Chọn tổ'),
+                updateEntryValueUnit(''),
+                (data.currentPage = 1)
+            "
             style="height: 35px"
           />
         </div>
@@ -992,7 +1010,7 @@ export default {
           :title="`Số bản ghi`"
           @update:entryValue="(value) => (data.entryValue = value)"
           :entryValue="data.entryValue"
-          @refresh="data.entryValue = 'All'"
+          @refresh="(data.entryValue = 'All'), (data.currentPage = 1)"
         />
         <Search
           class="ml-3"
