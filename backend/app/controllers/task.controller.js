@@ -440,11 +440,11 @@ exports.deleteAll = async (req, res, next) => {};
 
 exports.update = async (req, res, next) => {
   console.log("update", req.body);
-  console.log("coo", req.body.EvaluateId);
+  // console.log("coo", req.body._id);
   // console.log(req.body.Status_Task.status);
   // console.log(req.body.Status_Task.reason);
-  if (req.body.fb) {
-    console.log("dooooooooooooo");
+  if (req.body.fb == true) {
+    console.log("vào cập nhật sao ");
     try {
       const comment = await Comment.update(
         {
@@ -471,6 +471,7 @@ exports.update = async (req, res, next) => {
       return next(createError(400, "Error update"));
     }
   } else {
+    console.log("ELSE:");
     const {
       start_date,
       end_date,
@@ -482,36 +483,51 @@ exports.update = async (req, res, next) => {
       StatusTaskId,
       EvaluateId,
     } = req.body;
+    console.log("Body:", req.body);
+    console.log("StatusTaskID:", req.body.StatusTaskId);
+
     try {
       let tasks = [
         await Task.findOne({
           where: {
             _id: req.params.id,
           },
-          include: [
-            {
-              model: Status_Task,
-            },
-            {
-              model: Cycle,
-            },
-          ],
+          // include: [
+          //   {
+          //     model: Status_Task,
+          //   },
+          //   {
+          //     model: Cycle,
+          //   },
+          // ],
         }),
       ];
+      // for (let value of tasks) {
+      //   console.log(value);
+      tasks[0].dataValues.start_date = getDecrypt(
+        tasks[0].dataValues.start_date
+      );
+      tasks[0].dataValues.end_date = getDecrypt(tasks[0].dataValues.end_date);
+      tasks[0].dataValues.content = getDecrypt(tasks[0].dataValues.content);
+      tasks[0].dataValues.note = getDecrypt(tasks[0].dataValues.note);
+      // }
+      console.log("Giải mã:", tasks);
+      console.log("chiều dài:", tasks.length);
 
       tasks = tasks.filter((value, index) => {
         return (
-          value.start_date == start_date &&
-          value.end_date == end_date &&
-          value.content == content &&
-          value.cycleId == cycleId &&
-          value.customerId == customerId &&
-          value.leaderId == leaderId &&
-          value.note == note &&
-          value.StatusTaskId == StatusTaskId &&
-          value.EvaluateId == EvaluateId
+          value.dataValues.start_date == start_date &&
+          value.dataValues.end_date == end_date &&
+          value.dataValues.content == content &&
+          value.dataValues.cycleId == cycleId &&
+          value.dataValues.customerId == customerId &&
+          value.dataValues.leaderId == leaderId &&
+          value.dataValues.note == note &&
+          value.dataValues.StatusTaskId == StatusTaskId &&
+          value.dataValues.EvaluateId == EvaluateId
         );
       });
+      console.log("chiều dài:", tasks.length);
 
       if (tasks.length == 0) {
         const document = await Task.update(
