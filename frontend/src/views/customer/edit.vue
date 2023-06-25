@@ -8,6 +8,7 @@ import {
   alert_error,
   http_create,
   http_deleteOne,
+  http_getOne,
   alert_delete,
   Company_KH,
   Customer_Work,
@@ -99,9 +100,35 @@ export default {
       reader.readAsDataURL(files);
     };
 
+    // const handleAddCustometType = async () => {
+    //   if (props.item.Customer_Type._id == "Add") {
+    //     const { value: customerType } = await Swal.fire({
+    //       title: "Thêm loại khách hàng",
+    //       input: "text",
+    //       inputLabel: "Tên loại khách hàng",
+    //       inputValidator: (value) => {
+    //         if (!value) {
+    //           return "Bạn không được phép để trường này trống!";
+    //         }
+    //       },
+    //     });
+
+    //     const res = await http_create(Customer_Types, { name: customerType });
+    //     if (res.error) {
+    //       alert_error(`Thêm loại khách hàng`, `${res.msg}`);
+    //     } else {
+    //       props.item.Customer_Type._id = res.document._id;
+    //       refresh();
+    //       alert_success(
+    //         `Thêm loại khách hàng`,
+    //         `Loại khách hàng ${customerType}  đã được tạo thành công.`
+    //       );
+    //     }
+    //   }
+    // };
     const handleAddCustometType = async () => {
       if (props.item.Customer_Type._id == "Add") {
-        const { value: customerType } = await Swal.fire({
+        const { value: customerType, dismiss } = await Swal.fire({
           title: "Thêm loại khách hàng",
           input: "text",
           inputLabel: "Tên loại khách hàng",
@@ -110,18 +137,29 @@ export default {
               return "Bạn không được phép để trường này trống!";
             }
           },
+          showCancelButton: true,
+          cancelButtonText: "Cancel",
+          allowOutsideClick: false,
+          didClose: () => {
+            if (dismiss === "cancel") {
+              props.item.Customer_Type._id = "1";
+              refresh();
+            }
+          },
         });
 
-        const res = await http_create(Customer_Types, { name: customerType });
-        if (res.error) {
-          alert_error(`Thêm loại khách hàng`, `${res.msg}`);
-        } else {
-          props.item.Customer_Type._id = res.document._id;
-          refresh();
-          alert_success(
-            `Thêm loại khách hàng`,
-            `Loại khách hàng ${customerType}  đã được tạo thành công.`
-          );
+        if (customerType) {
+          const res = await http_create(Customer_Types, { name: customerType });
+          if (res.error) {
+            alert_error(`Thêm loại khách hàng`, `${res.msg}`);
+          } else {
+            props.item.Customer_Type._id = res.document._id;
+            refresh();
+            alert_success(
+              `Thêm loại khách hàng`,
+              `Loại khách hàng ${customerType} đã được tạo thành công.`
+            );
+          }
         }
       }
     };
@@ -162,6 +200,8 @@ export default {
           );
         }
       } else {
+        const rs = await http_getOne(Company_KH, _id)
+        data.modelValue = rs.name
         props.item.Company_KH._id = _id;
         console.log(props.item.Company_KH._id);
       }
@@ -371,6 +411,7 @@ export default {
                       id="phone"
                       v-model="item.Customer.phone"
                       required
+                      disabled
                     />
                   </div>
                   <div class="form-row">
@@ -384,6 +425,7 @@ export default {
                         id="email"
                         v-model="item.Customer.email"
                         required
+                        disabled
                       />
                     </div>
                     <div class="form-group col-md-6">
@@ -402,7 +444,7 @@ export default {
                           :key="index"
                           :value="value._id"
                         >
-                          {{ value.name }}
+                          {{ value.name || item.Customer_Type.name}}
                         </option>
                         <option value="Add">Thêm</option>
                       </select>
@@ -444,7 +486,7 @@ export default {
                         :options="data.items"
                         @searchSelect="searchSelect"
                         @delete="deleted"
-                        @choosed="choosed"
+                        @chose="choosed"
                       />
                     </div>
                   </div>

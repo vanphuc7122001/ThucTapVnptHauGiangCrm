@@ -9,17 +9,15 @@ import {
   http_create,
   http_deleteOne,
   alert_delete,
-  http_getOne,
   Company_KH,
   Customer_Work,
   Customer,
   Event,
-  Habit,
+  http_getOne,
 } from "../../views/common/import";
 
 import Swal from "sweetalert2";
 import Select_Advanced from "./select_advanced.vue";
-import axios from "axios";
 
 export default {
   components: {
@@ -117,9 +115,36 @@ export default {
     };
 
     // handle create customer type
+    // const handleAddCustometType = async () => {
+    //   if (viewData.customerInfo.customerTypesId === "Add") {
+    //     const { value: customerType } = await Swal.fire({
+    //       title: "Thêm loại khách hàng",
+    //       input: "text",
+    //       inputLabel: "Tên loại khách hàng",
+    //       inputValidator: (value) => {
+    //         if (!value) {
+    //           return "Bạn không được phép để trường này trống!";
+    //         }
+    //       },
+    //     });
+
+    //     const res = await http_create(Customer_Types, { name: customerType });
+    //     if (res.error) {
+    //       alert_error(`Thêm loại khách hàng`, `${res.msg}`);
+    //     } else {
+    //       viewData.customerInfo.customerTypesId = res.document._id;
+    //       refresh();
+    //       alert_success(
+    //         `Thêm loại khách hàng`,
+    //         `Loại khách hàng ${customerType}  đã được tạo thành công.`
+    //       );
+    //     }
+    //   }
+    // };
+
     const handleAddCustometType = async () => {
       if (viewData.customerInfo.customerTypesId === "Add") {
-        const { value: customerType } = await Swal.fire({
+        const { value: customerType, dismiss } = await Swal.fire({
           title: "Thêm loại khách hàng",
           input: "text",
           inputLabel: "Tên loại khách hàng",
@@ -128,18 +153,29 @@ export default {
               return "Bạn không được phép để trường này trống!";
             }
           },
+          showCancelButton: true,
+          cancelButtonText: "Cancel",
+          allowOutsideClick: false,
+          didClose: () => {
+            if (dismiss === "cancel") {
+              viewData.customerInfo.customerTypesId = "1";
+              refresh();
+            }
+          },
         });
 
-        const res = await http_create(Customer_Types, { name: customerType });
-        if (res.error) {
-          alert_error(`Thêm loại khách hàng`, `${res.msg}`);
-        } else {
-          viewData.customerInfo.customerTypesId = res.document._id;
-          refresh();
-          alert_success(
-            `Thêm loại khách hàng`,
-            `Loại khách hàng ${customerType}  đã được tạo thành công.`
-          );
+        if (customerType) {
+          const res = await http_create(Customer_Types, { name: customerType });
+          if (res.error) {
+            alert_error(`Thêm loại khách hàng`, `${res.msg}`);
+          } else {
+            viewData.customerInfo.customerTypesId = res.document._id;
+            refresh();
+            alert_success(
+              `Thêm loại khách hàng`,
+              `Loại khách hàng ${customerType} đã được tạo thành công.`
+            );
+          }
         }
       }
     };
@@ -181,6 +217,8 @@ export default {
           );
         }
       } else {
+        const rs = await http_getOne(Company_KH, _id)
+        data.modelValue = rs.name
         viewData.customerCompany._id = _id;
         console.log(viewData.customerCompany._id);
       }
@@ -206,13 +244,12 @@ export default {
 
     // handle create customer
     const create = async (event) => {
-      console.log('starting')
+      console.log("starting");
       event.preventDefault();
       let isCheck = false;
       refresh();
       for (const value of data.customer) {
         if (
-          value.name == viewData.customerInfo.name &&
           value.phone == viewData.customerInfo.phone &&
           value.email == viewData.customerInfo.email
         ) {
@@ -500,16 +537,14 @@ export default {
                     ></textarea>
                   </div>
                   <div class="form-group">
-                    <label for="wor_work_temp"
-                      >Nhiệm kỳ</label
-                    >
+                    <label for="wor_work_temp">Nhiệm kỳ</label>
                     <input
                       type="text"
                       class="form-control"
                       id="wor_work_temp"
                       v-model="viewData.customerWork.work_temp"
                       required
-                      style="border-color: #28a745;"
+                      style="border-color: #28a745"
                     />
                   </div>
                 </div>

@@ -315,9 +315,9 @@ export default {
         },
         Events: [...item.Customer.Events],
         Tasks: [...item.Customer.Tasks],
-        Habits: {
+        Habits: [
           ...item.Customer.Habits,
-        },
+        ],
         _id: item._id,
         current_workplace: item.current_workplace,
         work_history: item.work_history,
@@ -454,8 +454,10 @@ export default {
 
     watch(entryValueCustomerType, (newValue, oldValue) => {
       if (newValue != "") {
+        data.currentPage = 1
         reFresh();
       } else {
+        data.currentPage = 1
         reFresh();
       }
     });
@@ -463,8 +465,10 @@ export default {
     watch(entryValueStatusTask, (newValue, oldValue) => {
       // console.log('status', newValue);
       if (newValue != "") {
+        data.currentPage = 1
         reFresh();
       } else {
+        data.currentPage = 1
         reFresh();
       }
     });
@@ -537,7 +541,7 @@ export default {
             "
             @refresh="
               (entryNameCustomerType = 'Loại khách hàng'),
-                updateEntryValueCustomerType('')
+                updateEntryValueCustomerType(''),data.currentPage = 1
             "
             style="height: 35px"
           />
@@ -555,7 +559,7 @@ export default {
             "
             @refresh="
               (entryNameStatusTask = 'Trạng thái chăm sóc'),
-                updateEntryValueStatusTask('')
+                updateEntryValueStatusTask(''),data.currentPage = 1
             "
             style="height: 35px"
           />
@@ -591,7 +595,7 @@ export default {
           :title="`Số bản ghi`"
           @update:entryValue="(value) => (data.entryValue = value)"
           :entryValue="data.entryValue"
-          @refresh="data.entryValue = 'All'"
+          @refresh="(data.entryValue = 'All') ,(data.currentPage = 1)"
         />
         <Search
           class="ml-3"

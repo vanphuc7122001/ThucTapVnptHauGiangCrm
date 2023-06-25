@@ -817,6 +817,74 @@ const Log = sequelize.define("Log", {
   },
 });
 
+const Notification = sequelize.define('Notification', {
+  _id: setPrimary,
+  title: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+      validate: {
+          notEmpty: {
+              msg: 'Tiêu đề thông báo không được bỏ trống.',
+          },
+      },
+      get() {
+          return getDecrypt('title', this);
+      },
+      set(value) {
+          setEncrypt(value, 'title', this);
+      },
+  },
+  content: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+      validate: {
+          notEmpty: {
+              msg: 'Nội dung thông báo không được bỏ trống.',
+          },
+      },
+      get() {
+          return getDecrypt('content', this);
+      },
+      set(value) {
+          setEncrypt(value, 'content', this);
+      },
+  },
+  isRead: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+  },
+  recipient: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+      validate: {
+          notEmpty: {
+              msg: 'Người nhận không được bỏ trống.',
+          },
+      },
+      get() {
+          return getDecrypt('recipient', this);
+      },
+      set(value) {
+          setEncrypt(value, 'recipient', this);
+      },
+  },
+  sender: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+      get() {
+          return getDecrypt('sender', this);
+      },
+      set(value) {
+          setEncrypt(value, 'sender', this);
+      },
+  },
+  idRecipient: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+  }
+});
+
 // relationships
 
 //one-to-many relationships
@@ -1103,6 +1171,7 @@ Customer_Event.sync();
 Customer_Habit.sync();
 Employee_Task.sync();
 Role_Permission.sync();
+Notification.sync();
 
 module.exports = {
   Customer_Types,
@@ -1131,4 +1200,5 @@ module.exports = {
   Status_Task,
   Evaluate,
   Comment,
+  Notification
 };
