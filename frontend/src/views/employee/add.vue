@@ -338,6 +338,10 @@ export default {
         showSweetAlert();
         selectedOptionDepartment.value = 0;
       }
+      departments.department = await departmentsServices.findAllDepOfACenter(
+        selectedOptionCenter.value
+      );
+      departments.department.push({ _id: "other", name: "khác" });
     });
 
     //UNITS
@@ -345,7 +349,7 @@ export default {
       unit: [],
     });
     let selectedOptionUnit = ref("Đơn vị");
-    watch(selectedOptionUnit, (newValue, oldValue) => {
+    watch(selectedOptionUnit, async (newValue, oldValue) => {
       console.log("New Unit:", newValue);
       if (newValue == "other") {
         const showSweetAlert = async () => {
@@ -449,7 +453,7 @@ export default {
             }
             alert_success(`Đã thêm `, `${formValues.inputValue}`);
 
-            await refresh("unit");
+            await refresh_add();
             units.unit.push({ _id: "other", name: "khác" });
 
             ctx.emit("newUnit", units.unit);
@@ -462,6 +466,10 @@ export default {
         showSweetAlert();
         selectedOptionUnit.value = 0;
       }
+      units.unit = await unitsServices.findAllUnitsOfADep(
+        selectedOptionDepartment.value
+      );
+      units.unit.push({ _id: "other", name: "khác" });
     });
 
     const refresh_add = async () => {
@@ -469,11 +477,16 @@ export default {
       positions.position.push({ _id: "other", name: "khác" });
       centers.center = await CenterServices.getAll();
       centers.center.push({ _id: "other", name: "khác" });
-      departments.department = await departmentsServices.getAll();
+      departments.department = await departmentsServices.findAllDepOfACenter(
+        selectedOptionCenter.value
+      );
       departments.department.push({ _id: "other", name: "khác" });
 
-      units.unit = await unitsServices.getAll();
+      units.unit = await unitsServices.findAllUnitsOfADep(
+        selectedOptionDepartment.value
+      );
       units.unit.push({ _id: "other", name: "khác" });
+      console.log("DEP:", departments.department);
     };
     const onDeletePosition = async (value) => {
       console.log("Value delete:", value);

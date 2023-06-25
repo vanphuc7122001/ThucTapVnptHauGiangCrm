@@ -256,9 +256,15 @@ export default {
             index + 1 <= data.currentPage * data.entryValue
           );
         });
-      } else return data.items.value;
+      } else {
+        //không tồn tại dữ liệu
+        data.startRow = 0;
+        data.endRow = 0;
+        data.totalRow = 0;
+        data.numberOfPages = 1;
+        return data.items.value;
+      }
     });
-
     const entryValuePosition = ref(""); //id
     const entryNamePosition = ref("Chức vụ"); //name
     const entryValueCenter = ref("");
