@@ -146,7 +146,7 @@ export default {
 
         <!-- Modal body -->
         <div class="modal-body">
-          <div class="">
+          <div class="mt-2">
             <button
               data-toggle="collapse"
               class="px-3 py-2 h6 border-none"
@@ -206,6 +206,7 @@ export default {
               class="px-3 py-2 h6 border-none"
               data-target="#customer-work"
               @click="handleActiveCus"
+              style="margin-bottom: 0"
             >
               Thông tin khách hàng
             </button>
@@ -251,7 +252,7 @@ export default {
               </div>
             </div>
           </div>
-          <div class="">
+          <div class="mt-2">
             <button
               style="margin-bottom: 0px"
               data-toggle="collapse"

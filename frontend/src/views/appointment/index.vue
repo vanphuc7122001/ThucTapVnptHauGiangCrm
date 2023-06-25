@@ -162,9 +162,7 @@ export default {
     });
     const filter = computed(() => {
       return data.items.filter((value, index) => {
-        return toString.value[index].includes(
-          data.searchText.toLocaleLowerCase()
-        );
+        return toString.value[index].includes(data.searchText.toLocaleLowerCase());
       });
     });
     const filtered = computed(() => {
@@ -217,6 +215,14 @@ export default {
           return value.Status_App._id == entryValueStatus.value;
         });
       }
+      for (let value of data.items) {
+        for (let value1 of arrayCheck.data) {
+          if (value._id == value1._id) {
+            value.checked = true;
+          }
+        }
+      }
+      data.currentPage = 1;
     });
 
     // // methods
@@ -385,9 +391,12 @@ export default {
           </tr>
         </thead> <tbody>`;
         for (let value of arrayCheck.data) {
+          for (const value of data.items) {
+            value.date_time_format = formatDateTime(value.date_time);
+          }
           console.log(value);
           contentAlert += `<tr>
-            <td>${value.date_time}</td>
+            <td>${value.date_time_format}</td>
             <td>${value.content}</td>
             <td>  ${value.place} </td>
             <td>  ${value.note}</td>
@@ -396,18 +405,12 @@ export default {
         }
         contentAlert += `</tbody>
       </table>`;
-        const isConfirmed = await alert_delete_wide(
-          `Xoá nhiều lịch hẹn`,
-          contentAlert
-        );
+        const isConfirmed = await alert_delete_wide(`Xoá nhiều lịch hẹn`, contentAlert);
         if (isConfirmed) {
           let checkDeleteAll = false;
           for (let valueDelete of arrayCheck.data) {
             // 1***** xem thay đổi Appoiment cho phù hợp
-            const rsAppointment = await http_deleteOne(
-              Appointment,
-              valueDelete._id
-            );
+            const rsAppointment = await http_deleteOne(Appointment, valueDelete._id);
             if (rsAppointment.error) {
               alert_error("Lỗi ", rsAppointment.msg);
               checkDeleteAll = false;
@@ -475,9 +478,7 @@ export default {
                 updateEntryValueStatus(value), (entryNameStatus = value1.name)
               )
             "
-            @refresh="
-              (entryNameStatus = 'Trạng thái'), updateEntryValueStatus('')
-            "
+            @refresh="(entryNameStatus = 'Trạng thái'), updateEntryValueStatus('')"
             style="height: 35px; width: 200px"
           />
         </div>
@@ -519,7 +520,7 @@ export default {
           :title="`Số bản ghi`"
           @update:entryValue="(value) => (data.entryValue = value)"
           :entryValue="data.entryValue"
-          @refresh="data.entryValue = 'All'"
+          @refresh="(data.entryValue = 'All'), (data.currentPage = 1)"
         />
         <Search
           class="ml-3"

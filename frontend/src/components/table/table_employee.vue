@@ -18,7 +18,7 @@
           <th v-for="(value, index) in fields" :key="index">
             <span class="size-16">{{ value }}</span>
           </th>
-          <th><span class="size-16">Hành động</span></th>
+          <th><span class="size-16" v-if="activeAction == true">Hành động</span></th>
         </tr>
       </thead>
       <tbody>
@@ -40,7 +40,7 @@
           <td class="size-16">{{ item.Unit.name }}</td>
           <td class="size-16">{{ item.Unit.Department.name }}</td>
           <td class="size-16">{{ item.Unit.Department.Center_VNPTHG.name }}</td>
-          <td class="">
+          <td class="" v-if="activeAction == true">
             <div class="d-flex align-items-center">
               <button
                 type="button"
@@ -82,9 +82,7 @@
         </tr>
       </tbody>
     </table>
-    <p v-if="items.length == 0" class="text-center mt-2">
-      Không tồn tại bản ghi.
-    </p>
+    <p v-if="items.length == 0" class="text-center mt-2">Không tồn tại bản ghi.</p>
   </div>
 </template>
 
@@ -110,6 +108,10 @@ export default {
     selectAll: {
       type: Array,
       default: [],
+    },
+    activeAction: {
+      type: Boolean,
+      default: true,
     },
   },
   setup(props, ntx) {

@@ -95,7 +95,7 @@ export default {
           )} đã được tạo thành công.`
         );
       } else if (result.error) {
-        alert_error(`Thêm lịch hẹn`, `${result.msg}`);
+        alert_error(`Thêm lịch hẹn`, `Đã tồn tại lịch hẹn`);
       }
       data.item = {};
       ctx.emit("create");

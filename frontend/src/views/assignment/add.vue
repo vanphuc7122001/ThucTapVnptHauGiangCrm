@@ -130,10 +130,8 @@ export default {
         customerId: "",
         cycleId: "",
         leaderId: "",
-        modelCus: "",
-        modelValue: "",
       };
-      ctx.emit("create");
+      (data.modelCus = ""), (data.modelValue = ""), ctx.emit("create");
     };
 
     //xoa phan cong
@@ -173,6 +171,10 @@ export default {
       cycles.cycle = await http_getAll(Cycle);
       customers.customer = await http_getAll(Customer);
       customers.customer = customers.customer.documents;
+      for (let value of customers.customer) {
+        value.name += " - " + value.phone + " - " + value.email;
+        console.log("name", value.name);
+      }
       employees.employee = await http_getAll(Employee);
       statustasks.statustask = await http_getAll(StatusTask);
       evaluates.evaluate = await http_getAll(Evaluate);
@@ -221,7 +223,7 @@ export default {
 
         <!-- Modal body -->
         <div class="modal-body">
-          <form action="/action_page.php" class="was-validated">
+          <form class="was-validated">
             <div class="form-group">
               <label for="name">Khách hàng(<span style="color: red">*</span>):</label>
               <Select_Advanced

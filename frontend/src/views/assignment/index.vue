@@ -118,6 +118,10 @@ export default {
         content: "",
         customerId: "",
         cycleId: "",
+        Cycle: {
+          _id: "",
+          name: "",
+        },
         leaderId: "",
         Status_Task: {
           _id: "",
@@ -330,10 +334,7 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (
-        entryValueEval.value != "" &&
-        entryValueStatusTask.value != ""
-      ) {
+      } else if (entryValueEval.value != "" && entryValueStatusTask.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -357,10 +358,7 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (
-        entryValueStatusTask.value != "" &&
-        startdateValue.value != ""
-      ) {
+      } else if (entryValueStatusTask.value != "" && startdateValue.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -408,8 +406,7 @@ export default {
       } else if (enddateValue.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
-            value.cycleId == entryValueCycle.value &&
-            value.end_date == enddateValue.value
+            value.cycleId == entryValueCycle.value && value.end_date == enddateValue.value
           );
         });
       } else {
@@ -419,6 +416,14 @@ export default {
           return value.Cycle._id == entryValueCycle.value;
         });
       }
+      for (let value of data.items) {
+        for (let value1 of arrayCheck.data) {
+          if (value._id == value1._id) {
+            value.checked = true;
+          }
+        }
+      }
+      data.currentPage = 1;
     });
     watch(entryValueStatusTask, async (newValue, oldValue) => {
       if (newValue == "") {
@@ -586,6 +591,14 @@ export default {
           return value.Status_Task._id == entryValueStatusTask.value;
         });
       }
+      for (let value of data.items) {
+        for (let value1 of arrayCheck.data) {
+          if (value._id == value1._id) {
+            value.checked = true;
+          }
+        }
+      }
+      data.currentPage = 1;
     });
 
     watch(startdateValue, async (newValue, oldValue) => {
@@ -666,10 +679,7 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (
-        entryValueCycle.value != "" &&
-        entryValueStatusTask.value != ""
-      ) {
+      } else if (entryValueCycle.value != "" && entryValueStatusTask.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -685,10 +695,7 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (
-        entryValueStatusTask.value != "" &&
-        entryValueEval.value != ""
-      ) {
+      } else if (entryValueStatusTask.value != "" && entryValueEval.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
@@ -750,6 +757,14 @@ export default {
           return value.start_date == startdateValue.value;
         });
       }
+      for (let value of data.items) {
+        for (let value1 of arrayCheck.data) {
+          if (value._id == value1._id) {
+            value.checked = true;
+          }
+        }
+      }
+      data.currentPage = 1;
     });
 
     watch(enddateValue, async (newValue, oldValue) => {
@@ -834,10 +849,7 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (
-        entryValueCycle.value != "" &&
-        entryValueStatusTask.value != ""
-      ) {
+      } else if (entryValueCycle.value != "" && entryValueStatusTask.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -845,10 +857,7 @@ export default {
             value.end_date == enddateValue.value
           );
         });
-      } else if (
-        entryValueStatusTask.value != "" &&
-        startdateValue.value != ""
-      ) {
+      } else if (entryValueStatusTask.value != "" && startdateValue.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
@@ -880,10 +889,7 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (
-        entryValueStatusTask.value != "" &&
-        entryValueEval.value != ""
-      ) {
+      } else if (entryValueStatusTask.value != "" && entryValueEval.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
@@ -894,8 +900,7 @@ export default {
       } else if (entryValueCycle.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
-            value.cycleId == entryValueCycle.value &&
-            value.end_date == enddateValue.value
+            value.cycleId == entryValueCycle.value && value.end_date == enddateValue.value
           );
         });
       } else if (entryValueStatusTask.value != "") {
@@ -924,6 +929,14 @@ export default {
           return value.end_date == enddateValue.value;
         });
       }
+      for (let value of data.items) {
+        for (let value1 of arrayCheck.data) {
+          if (value._id == value1._id) {
+            value.checked = true;
+          }
+        }
+      }
+      data.currentPage = 1;
     });
 
     watch(entryValueEval, async (newValue, oldValue) => {
@@ -1004,10 +1017,7 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (
-        entryValueCycle.value != "" &&
-        entryValueStatusTask.value != ""
-      ) {
+      } else if (entryValueCycle.value != "" && entryValueStatusTask.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -1015,10 +1025,7 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (
-        entryValueStatusTask.value != "" &&
-        startdateValue.value != ""
-      ) {
+      } else if (entryValueStatusTask.value != "" && startdateValue.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
@@ -1092,6 +1099,14 @@ export default {
           return value.Evaluate._id == entryValueEval.value;
         });
       }
+      for (let value of data.items) {
+        for (let value1 of arrayCheck.data) {
+          if (value._id == value1._id) {
+            value.checked = true;
+          }
+        }
+      }
+      data.currentPage = 1;
     });
 
     // computed
@@ -1119,9 +1134,7 @@ export default {
     });
     const filter = computed(() => {
       return data.items.filter((value, index) => {
-        return toString.value[index].includes(
-          data.searchText.toLocaleLowerCase()
-        );
+        return toString.value[index].includes(data.searchText.toLocaleLowerCase());
       });
     });
     const filtered = computed(() => {
@@ -1171,10 +1184,7 @@ export default {
         }
       }
       if (data.showFeedback == false) {
-        alert_warning(
-          `Thêm đánh giá`,
-          `Vui lòng chọn phân công để thêm đánh giá.`
-        );
+        alert_warning(`Thêm đánh giá`, `Vui lòng chọn phân công để thêm đánh giá.`);
       }
     };
     const showTask_Employee = () => {
@@ -1338,10 +1348,7 @@ export default {
         }
         contentAlert += `</tbody>
       </table>`;
-        const isConfirmed = await alert_delete_wide(
-          `Xoá nhiều phân công`,
-          contentAlert
-        );
+        const isConfirmed = await alert_delete_wide(`Xoá nhiều phân công`, contentAlert);
         if (isConfirmed) {
           let checkDeleteAll = false;
           for (let valueDelete of arrayCheck.data) {
@@ -1395,14 +1402,12 @@ export default {
         value.end_date_format = formatDate(value.end_date);
         value.start_date_format = formatDate(value.start_date);
       }
-      status_tasks.status_task = status_tasks.status_task.map(
-        (value, index) => {
-          return {
-            ...value,
-            value: value._id,
-          };
-        }
-      );
+      status_tasks.status_task = status_tasks.status_task.map((value, index) => {
+        return {
+          ...value,
+          value: value._id,
+        };
+      });
       cycles.cycle = cycles.cycle.map((value, index) => {
         return {
           ...value,
@@ -1511,13 +1516,11 @@ export default {
             :options="status_tasks.status_task"
             @update:entryValue="
               (value, value1) => (
-                updateEntryValueStatusTask(value),
-                (entryNameStatusTask = value1.name)
+                updateEntryValueStatusTask(value), (entryNameStatusTask = value1.name)
               )
             "
             @refresh="
-              (entryNameStatusTask = 'Trạng thái'),
-                updateEntryValueStatusTask('')
+              (entryNameStatusTask = 'Trạng thái'), updateEntryValueStatusTask('')
             "
             style="height: 35px"
           />
@@ -1568,7 +1571,7 @@ export default {
           :title="`Số bản ghi`"
           @update:entryValue="(value) => (data.entryValue = value)"
           :entryValue="data.entryValue"
-          @refresh="data.entryValue = 'All'"
+          @refresh="(data.entryValue = 'All'), (data.currentPage = 1)"
         />
         <Search
           class="ml-3"
@@ -1600,10 +1603,7 @@ export default {
         />
       </div>
       <div class="d-flex align-items-start">
-        <Add_TaskEmployee
-          v-if="data.showTask_Employee"
-          :item="data.taskEmployee"
-        />
+        <Add_TaskEmployee v-if="data.showTask_Employee" :item="data.taskEmployee" />
         <FeedBack v-if="data.showFeedback" :item="data.taskEmployee" />
         <button
           type="button"
@@ -1674,11 +1674,7 @@ export default {
       @selectAll="(value) => handleSelectAll(value)"
       @selectOne="(id, item) => handlSelectOne(id, item)"
       @delete="handleDelete"
-      @edit="
-        (value, value1) => (
-          (data.editValue = value), (data.activeEdit = value1)
-        )
-      "
+      @edit="(value, value1) => ((data.editValue = value), (data.activeEdit = value1))"
       @view="(value) => view(value)"
       @appointmentView="
         (value, value1) => {

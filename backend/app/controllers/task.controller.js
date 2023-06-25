@@ -43,7 +43,7 @@ const getDecrypt = (name) => {
 
 exports.create = async (req, res, next) => {
   console.log(req.body);
-  if (Object.keys(req.body).length === 9) {
+  if (Object.keys(req.body).length >= 7) {
     const {
       start_date,
       end_date,
@@ -444,32 +444,60 @@ exports.update = async (req, res, next) => {
   // console.log(req.body.Status_Task.status);
   // console.log(req.body.Status_Task.reason);
   if (req.body.fb == true) {
-    console.log("vào cập nhật sao ");
-    try {
-      const comment = await Comment.update(
-        {
-          content: req.body.Comment.content,
-        },
-        { where: { TaskId: req.params.id }, returning: true }
-      );
-      console.log("abchg");
-      const task = await Task.update(
-        {
-          EvaluateId: req.body.EvaluateId,
-        },
-        {
-          where: { _id: req.params.id },
-          returning: true,
-        }
-      );
-      console.log("ne ne ne");
-      return res.send({
-        error: false,
-        msg: "Dữ liệu đã được thay đổi thành công.",
-      });
-    } catch (error) {
-      return next(createError(400, "Error update"));
-    }
+    console.log("dooooooooooooo");
+    try{
+      let tasks1 = [await Task.findOne({
+          where: {
+              _id: req.params.id,
+          },
+          include: [{
+              model: Status_Task,
+          },
+          {
+              model: Cycle,
+          },
+          {
+              model: Comment,
+          }
+          ]
+      })];
+
+      tasks1 = tasks1.filter(
+          (value, index) => {
+              return value.EvaluateId == req.body.EvaluateId && value.Comment.content == req.body.Comment.content;
+          }
+      )
+      if(tasks1.length == 0){
+          const comment = await Comment.update({
+              content: req.body.Comment.content,
+          }, { where: { TaskId: req.params.id }, returning: true, });
+          console.log("abchg")
+          const task = await Task.update({
+              EvaluateId: req.body.EvaluateId,
+          },
+          {
+              where: { _id: req.params.id }, returning: true, 
+          });
+          console.log("ne ne ne")
+          return res.send({
+              error: false,
+              msg: 'Dữ liệu đã được thay đổi thành công.',
+          })  
+      }
+      else {
+          return res.send({
+              error: true,
+              msg: 'Dữ liệu chưa được thay đổi.'
+          })
+      }
+
+     
+  }
+  catch (error) {
+      return next(
+          createError(400, 'Error update')
+      )
+  }
   } else {
     console.log("ELSE:");
     const {
