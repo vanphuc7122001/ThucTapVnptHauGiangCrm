@@ -1,6 +1,6 @@
 <script>
 import Notification from "../../services/notification.service";
-import socket from '../../../socket';
+import socket from "../../../socket";
 import { reactive, onBeforeMount, ref, watch, computed, watchEffect } from "vue";
 import Select_Advanced from "../../components/form/select_advanced.vue";
 import Table from "../../components/table/table_employee.vue";
@@ -249,15 +249,16 @@ export default {
       console.log("start1", data.department[0]._id);
       data.unit = [];
       //Lấy tất cả tổ của 1 trung tâm
-      for (let value of data.department) {
-        console.log("id", value._id);
-        var newUnit = await unitsServices.findAllUnitsOfADep(value._id);
-        for (let value of newUnit) {
-          console.log("new:", value);
-          data.unit.push(value);
-        }
-        // console.log("start2", data.unit);
-      }
+      // for (let value of data.department) {
+      //   console.log("id", value._id);
+
+      //   var newUnit = await unitsServices.findAllUnitsOfADep(value._id);
+      //   for (let value of newUnit) {
+      //     console.log("new:", value);
+      //     data.unit.push(value);
+      //   }
+      //   // console.log("start2", data.unit);
+      // }
       console.log("start2");
       data.unit = data.unit.map((value, index) => {
         return {
@@ -446,25 +447,30 @@ export default {
             },
           });
           const result = await EmployeeTask.deleteOne(dataDel.data);
-          ////////////////////////////
-          const token = sessionStorage.getItem('token')
+          const token = sessionStorage.getItem("token");
           if (token) {
             const _idEmployee = sessionStorage.getItem("employeeId");
             const _nameEmployee = sessionStorage.getItem("employeeName");
             const object = {
               _id: _idEmployee,
-              name: _nameEmployee
-            }     
-            const TaskCus = await http_getOne(Task,dataDel.data.TaskId)  
-            const notiAssignment = reactive ({title:"Huỷ giao việc",content:`đã huỷ phân công khách hàng "${TaskCus.Customer.name}" cho bạn`,isRead: false,recipient:"", sender:"",idRecipient:""});
-            notiAssignment.recipient = C.data[j].name
-            notiAssignment.sender = _nameEmployee
-            notiAssignment.idRecipient = C.data[j]._id
+              name: _nameEmployee,
+            };
+            const TaskCus = await http_getOne(Task, dataDel.data.TaskId);
+            const notiAssignment = reactive({
+              title: "Huỷ giao việc",
+              content: `đã huỷ phân công khách hàng "${TaskCus.Customer.name}" cho bạn`,
+              isRead: false,
+              recipient: "",
+              sender: "",
+              idRecipient: "",
+            });
+            notiAssignment.recipient = C.data[j].name;
+            notiAssignment.sender = _nameEmployee;
+            notiAssignment.idRecipient = C.data[j]._id;
             const result1 = await http_create(Notification, notiAssignment);
-            console.log("giao viec",notiAssignment)
-            socket.emit('assignmentTask')
+            console.log("giao viec", notiAssignment);
+            socket.emit("assignmentTask");
           }
-          ////////////////////////////
         }
       }
       console.log("0", arrayCheck.data.length);
@@ -474,26 +480,32 @@ export default {
         try {
           dataTaskEm.EmployeeId = arrayCheck.data[i]._id;
           await http_create(EmployeeTask, dataTaskEm);
-          ////////////////////////////
-          const token = sessionStorage.getItem('token')
+
+          const token = sessionStorage.getItem("token");
           if (token) {
             const _idEmployee = sessionStorage.getItem("employeeId");
             const _nameEmployee = sessionStorage.getItem("employeeName");
             const object = {
               _id: _idEmployee,
-              name: _nameEmployee
-            }         
-            const TaskCus = await http_getOne(Task,dataTaskEm.TaskId) 
-            console.log("Khach hang dươc phan cong", TaskCus.Customer.name)
-            const notiAssignment = reactive ({title:"Phân công mới",content:`đã phân công khách hàng "${TaskCus.Customer.name}" cho bạn`,isRead: false,recipient:"", sender:"",idRecipient:""});
-            notiAssignment.recipient = arrayCheck.data[i].name
-            notiAssignment.sender = _nameEmployee
-            notiAssignment.idRecipient = arrayCheck.data[i]._id
+              name: _nameEmployee,
+            };
+            const TaskCus = await http_getOne(Task, dataTaskEm.TaskId);
+            console.log("Khach hang dươc phan cong", TaskCus.Customer.name);
+            const notiAssignment = reactive({
+              title: "Phân công mới",
+              content: `đã phân công khách hàng "${TaskCus.Customer.name}" cho bạn`,
+              isRead: false,
+              recipient: "",
+              sender: "",
+              idRecipient: "",
+            });
+            notiAssignment.recipient = arrayCheck.data[i].name;
+            notiAssignment.sender = _nameEmployee;
+            notiAssignment.idRecipient = arrayCheck.data[i]._id;
             const result1 = await http_create(Notification, notiAssignment);
-            console.log("giao viec",notiAssignment)
-            socket.emit('assignmentTask')
+            console.log("giao viec", notiAssignment);
+            socket.emit("assignmentTask");
           }
-          /////////////////////////////////////
         } catch (error) {
           console.error("Error sending email:", error);
         }
@@ -501,6 +513,7 @@ export default {
       }
       alert_success("Đã giao việc cho nhân viên thành công", "");
       await refresh();
+      ctx.emit("giaoviec");
     };
 
     //tu giao viec
@@ -512,22 +525,30 @@ export default {
       console.log("taskid:", newData.TaskId);
       try {
         const result = await http_create(EmployeeTask, newData);
+
         ////////////////////////////
-        const token = sessionStorage.getItem('token')
+        const token = sessionStorage.getItem("token");
         if (token) {
           const _idEmployee = sessionStorage.getItem("employeeId");
           const _nameEmployee = sessionStorage.getItem("employeeName");
           const object = {
             _id: _idEmployee,
-            name: _nameEmployee
-          }         
-          const TaskCus = await http_getOne(Task,newData.TaskId) 
-          console.log("Khach hang dươc phan cong", TaskCus.Customer.name)
-          const notiAssignment = reactive ({title:"Nhận việc thành công",content:`Khách hàng "${TaskCus.Customer.name}" đã được phân công cho bạn`,isRead: false,recipient:"", sender:"",idRecipient:""});
-          notiAssignment.recipient = _nameEmployee
-          notiAssignment.idRecipient = _idEmployee
+            name: _nameEmployee,
+          };
+          const TaskCus = await http_getOne(Task, newData.TaskId);
+          console.log("Khach hang dươc phan cong", TaskCus.Customer.name);
+          const notiAssignment = reactive({
+            title: "Nhận việc thành công",
+            content: `Khách hàng "${TaskCus.Customer.name}" đã được phân công cho bạn`,
+            isRead: false,
+            recipient: "",
+            sender: "",
+            idRecipient: "",
+          });
+          notiAssignment.recipient = _nameEmployee;
+          notiAssignment.idRecipient = _idEmployee;
           const result1 = await http_create(Notification, notiAssignment);
-          socket.emit('assignmentTask')
+          socket.emit("assignmentTask");
         }
         /////////////////////////////////////
         console.log(result.error);
@@ -543,6 +564,7 @@ export default {
       } catch (error) {
         console.error("Lỗi tạo công việc:", error);
       }
+      ctx.emit("giaoviec");
     };
 
     //CHECKALL
@@ -608,24 +630,29 @@ export default {
 
       data.center = await CenterServices.getAll();
       if (entryValueCenter.value != "") {
-        data.department = await departmentsServices.getAll();
+        data.department = await departmentsServices.findAllDepOfACenter(
+          entryValueCenter.value
+        );
         data.department = data.department.map((value, index) => {
           return {
             ...value,
             value: value._id,
           };
         });
+      } else {
+        data.department = [];
       }
       if (entryValueDepartment.value != "") {
-        data.unit = await unitsServices.getAll();
+        data.unit = await unitsServices.findAllUnitsOfADep(entryValueDepartment.value);
         data.unit = data.unit.map((value, index) => {
           return {
             ...value,
             value: value._id,
           };
         });
+      } else {
+        data.unit = [];
       }
-
       data.position = data.position.map((value, index) => {
         return {
           ...value,

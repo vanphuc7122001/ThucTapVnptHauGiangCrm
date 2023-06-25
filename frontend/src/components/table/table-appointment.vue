@@ -68,7 +68,7 @@ export default {
     </thead>
     <tbody>
       <tr v-for="(item, index) in items" :key="index">
-        <td>
+        <td class="size-16">
           <input
             type="checkbox"
             :checked="item.checked == true"
@@ -78,11 +78,13 @@ export default {
             v-if="activeCheck == true"
           />
         </td>
-        <td>{{ index + 1 }}</td>
-        <td>{{ cus }}</td>
-        <td v-for="(label, index1) in labels" :key="index1">{{ item[label] }}</td>
-        <td>{{ item.Status_App.name }}</td>
-        <td class="" v-if="activeAction == true">
+        <td class="size-16">{{ index + 1 }}</td>
+        <td class="size-16">{{ cus }}</td>
+        <td v-for="(label, index1) in labels" :key="index1" class="size-16">
+          {{ item[label] }}
+        </td>
+        <td class="size-16">{{ item.Status_App.name }}</td>
+        <td class="size-16" v-if="activeAction == true">
           <div class="d-flex align-items-center">
             <!-- <button
               type="button"

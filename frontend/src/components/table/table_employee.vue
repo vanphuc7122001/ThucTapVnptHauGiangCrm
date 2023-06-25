@@ -1,6 +1,6 @@
 <template>
   <div>
-    <table class="my-table mb-2">
+    <table class="my-table">
       <thead>
         <tr class="">
           <th>
@@ -18,18 +18,20 @@
           <th v-for="(value, index) in fields" :key="index">
             <span class="size-16">{{ value }}</span>
           </th>
-          <th><span class="size-16" v-if="activeAction == true">Hành động</span></th>
+          <th>
+            <span class="size-16" v-if="activeAction == true">Hành động</span>
+          </th>
         </tr>
       </thead>
       <tbody>
-        <tr class="size-16" v-for="(item, index) in items" :key="index">
+        <tr class="" v-for="(item, index) in items" :key="index">
           <td>
             <input
               type="checkbox"
               :checked="item.checked == true"
               v-model="item.checked"
               @click="$emit('selectOne', item._id, item)"
-              class="d-flex align-items-center size-16"
+              class="d-flex align-items-center"
             />
           </td>
           <td class="size-16">{{ startRow + index }}</td>
@@ -40,8 +42,8 @@
           <td class="size-16">{{ item.Unit.name }}</td>
           <td class="size-16">{{ item.Unit.Department.name }}</td>
           <td class="size-16">{{ item.Unit.Department.Center_VNPTHG.name }}</td>
-          <td class="" v-if="activeAction == true">
-            <div class="d-flex align-items-center">
+          <td class="">
+            <div class="d-flex align-items-center" v-if="activeAction == true">
               <button
                 type="button"
                 class="format-btn"

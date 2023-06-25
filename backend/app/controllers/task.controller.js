@@ -448,68 +448,102 @@ exports.deleteAll = async (req, res, next) => {};
 
 exports.update = async (req, res, next) => {
   console.log("update", req.body);
-  // console.log("coo", req.body._id);
+  console.log("coo", req.body.fb);
+  console.log("coo", req.body.changeStatus);
   // console.log(req.body.Status_Task.status);
   // console.log(req.body.Status_Task.reason);
-  if (req.body.fb == true) {
-    console.log("dooooooooooooo");
-    try {
-      let tasks1 = [
-        await Task.findOne({
-          where: {
-            _id: req.params.id,
-          },
-          include: [
-            {
-              model: Status_Task,
-            },
-            {
-              model: Cycle,
-            },
-            {
-              model: Comment,
-            },
-          ],
-        }),
-      ];
-
-      tasks1 = tasks1.filter((value, index) => {
-        return (
-          value.EvaluateId == req.body.EvaluateId &&
-          value.Comment.content == req.body.Comment.content
-        );
-      });
-      if (tasks1.length == 0) {
-        const comment = await Comment.update(
-          {
-            content: req.body.Comment.content,
-          },
-          { where: { TaskId: req.params.id }, returning: true }
-        );
-        console.log("abchg");
-        const task = await Task.update(
-          {
-            EvaluateId: req.body.EvaluateId,
-          },
-          {
-            where: { _id: req.params.id },
-            returning: true,
-          }
-        );
-        console.log("ne ne ne");
-        return res.send({
-          error: false,
-          msg: "Dữ liệu đã được thay đổi thành công.",
-        });
-      } else {
-        return res.send({
-          error: true,
-          msg: "Dữ liệu chưa được thay đổi.",
-        });
+  if(req.body.changeStatus){
+    var EditStatusTask;
+    console.log("dayyyyyyy");
+    const statustask = await Status_Task.findAll();
+    var c =0;
+    for(let value of statustask){
+      value.dataValues.name = getDecrypt(value.dataValues.name);
+      console.log("name", value.dataValues.name);
+      if(value.dataValues.name == "đang chăm sóc"){
+        console.log("da co dang cham soc", value.dataValues._id);
+        c = 0;
+        EditStatusTask = value.dataValues._id;
+        break;
       }
-    } catch (error) {
-      return next(createError(400, "Error update"));
+      else{
+        c=1;
+      }
     }
+    if( c != 0){
+      const statustask1 = await Status_Task.create({
+        name: "đang chăm sóc",
+      });
+      EditStatusTask = statustask1._id;
+      console.log("status_task", EditStatusTask);
+    }
+    console.log("status can chinh", EditStatusTask);
+    const document = await Task.update(
+      {
+        StatusTaskId: EditStatusTask,
+      },
+      { where: { _id: req.params.id }, returning: true }
+    );
+    return res.send({
+      error: false,
+      msg: 'Dữ liệu đã được thay đổi thành công.',
+    })  
+  }
+  else if (req.body.fb == true) {
+    console.log("dooooooooooooo");
+    try{
+      let tasks1 = [await Task.findOne({
+          where: {
+              _id: req.params.id,
+          },
+          include: [{
+              model: Status_Task,
+          },
+          {
+              model: Cycle,
+          },
+          {
+              model: Comment,
+          }
+          ]
+      })];
+
+      tasks1 = tasks1.filter(
+          (value, index) => {
+              return value.EvaluateId == req.body.EvaluateId && value.Comment.content == req.body.Comment.content;
+          }
+      )
+      if(tasks1.length == 0){
+          const comment = await Comment.update({
+              content: req.body.Comment.content,
+          }, { where: { TaskId: req.params.id }, returning: true, });
+          console.log("abchg")
+          const task = await Task.update({
+              EvaluateId: req.body.EvaluateId,
+          },
+          {
+              where: { _id: req.params.id }, returning: true, 
+          });
+          console.log("ne ne ne")
+          return res.send({
+              error: false,
+              msg: 'Dữ liệu đã được thay đổi thành công.',
+          })  
+      }
+      else {
+          return res.send({
+              error: true,
+              msg: 'Dữ liệu chưa được thay đổi.'
+          })
+      }
+
+     
+  }
+  catch (error) {
+      return next(
+          createError(400, 'Error update')
+      )
+  }
   } else {
     console.log("ELSE:");
     const {

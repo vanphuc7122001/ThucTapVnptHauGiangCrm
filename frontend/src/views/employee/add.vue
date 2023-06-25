@@ -71,20 +71,17 @@ export default {
     const create = async () => {
       const dataMail = reactive({
         title: "Thông tin tài khoản nhân viên",
-        content: `<h2>Trân trọng gửi đến Quý Ông/Bà ${data.item.name},</h2>
-                  <p>Xin chúc mừng Ông/Bà đã trở thành một nhân viên chính thức của công ty chúng tôi. Chúng tôi rất vui mừng và tin tưởng vào khả năng và sự đóng góp của Ông/Bà trong vai trò Quản lý Chăm sóc Khách hàng.</p>
-                  <p>Dưới đây là thông tin tài khoản để Ông/Bà có thể đăng nhập vào hệ thống và tiếp tục nhiệm vụ chăm sóc khách hàng trong suốt quá trình làm việc tại công ty:</p>
-                  <ul>
-                    <li><strong>Tài khoản:</strong> ${data.item.user_name}</li>
-                    <li><strong>Mật khẩu:</strong> ${data.item.password}</li>
-                  </ul>
-                  <p>Rất mong rằng thông tin trên sẽ giúp Ông/Bà truy cập vào hệ thống một cách thuận tiện và nhanh chóng. Nếu có bất kỳ câu hỏi hoặc cần hỗ trợ nào, xin vui lòng liên hệ với bộ phận Quản lý nhân sự.</p>
-                  <p>Chúng tôi tin rằng Ông/Bà sẽ đóng góp và phát triển tốt trong công việc mới và góp phần xây dựng sự thành công của công ty. Chúng tôi hy vọng mối quan hệ làm việc của chúng ta sẽ được xây dựng trên sự tín nhiệm, cống hiến và hợp tác lâu dài.</p>
-                  <p>Xin chân thành cảm ơn Ông/Bà và chúc mừng một lần nữa.</p>
-                  <p>Trân trọng,</p>
-                  <p>Trần Tuấn Duy</p>
-                  <p>HR</p>
-                  <p>VNPT Hậu Giang</p>`,
+        content: `<div>
+                    <h3>Dear ${data.item.name}</h3>
+                    <p>Chào mừng bạn đã trở thành nhân viên chính thức của công ty.</p>
+                    <p>Và đây là thông tin tài khoản của bạn để đăng nhập vào hệ thống</p>
+                    <p>quản lý chăm sóc khách hàng trong suốt quá trình làm việc tại công ty</p>
+                    <p>Tài khoản: ${data.item.user_name}</p>
+                    <p>Mật Khẩu: ${data.item.password} </p>
+                    <p>-----------------------------------------------------------------------</p>
+                    <p><span style="font-weight: bold;">Địa chỉ:</span> 61 Võ Văn Kiệt, Phường 5, Vị Thanh, Hậu Giang 95000</p>
+                    <p><span style="font-weight: bold;">Điện thoại:</span> 097 747 42 44</p>
+	                </div>`,
         mail: data.item.email,
       });
 
@@ -147,8 +144,7 @@ export default {
     };
 
     const setAccount = () => {
-      const charset =
-        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
       let password = "";
 
       for (let i = 0; i < 9; i++) {
@@ -224,9 +220,7 @@ export default {
     let selectedOptionCenter = ref("0");
     watch(selectedOptionCenter, async (newValue, oldValue) => {
       console.log("selectedOptionCenter", selectedOptionCenter.value);
-      departments.department = await departmentsServices.findAllDepOfACenter(
-        newValue
-      );
+      departments.department = await departmentsServices.findAllDepOfACenter(newValue);
       units.unit = [];
       for (let val of departments.department) {
         var newData = await unitsServices.findAllUnitsOfADep(val._id);
@@ -379,10 +373,9 @@ export default {
             focusConfirm: false,
             showCancelButton: true,
             preConfirm: () => {
-              const selectedOptionCenter =
-                document.getElementById("my-select-center").value;
-              const selectedOptionDep =
-                document.getElementById("my-select-dep").value;
+              const selectedOptionCenter = document.getElementById("my-select-center")
+                .value;
+              const selectedOptionDep = document.getElementById("my-select-dep").value;
 
               const inputValue = document.getElementById("my-input").value;
               if (!selectedOptionCenter || !inputValue || !selectedOptionDep) {
@@ -409,9 +402,7 @@ export default {
             .map(
               (option) =>
                 `<option value="${option._id}"
-                ${
-                  option._id == selectedOptionDepartment.value ? "selected" : ""
-                }
+                ${option._id == selectedOptionDepartment.value ? "selected" : ""}
 
                 >${option.name}</option>`
             )
@@ -439,10 +430,7 @@ export default {
 
           if (formValues) {
             // Xử lý giá trị selectedOption và giá trị inputValue
-            console.log(
-              "Selected Option Center:",
-              formValues.selectedOptionCenter
-            );
+            console.log("Selected Option Center:", formValues.selectedOptionCenter);
             console.log("Selected Option dep:", formValues.selectedOptionDep);
 
             console.log("Input Value:", formValues.inputValue);
@@ -469,9 +457,7 @@ export default {
         showSweetAlert();
         selectedOptionUnit.value = 0;
       }
-      units.unit = await unitsServices.findAllUnitsOfADep(
-        selectedOptionDepartment.value
-      );
+      units.unit = await unitsServices.findAllUnitsOfADep(selectedOptionDepartment.value);
       units.unit.push({ _id: "other", name: "khác" });
     });
 
@@ -485,9 +471,7 @@ export default {
       );
       departments.department.push({ _id: "other", name: "khác" });
 
-      units.unit = await unitsServices.findAllUnitsOfADep(
-        selectedOptionDepartment.value
-      );
+      units.unit = await unitsServices.findAllUnitsOfADep(selectedOptionDepartment.value);
       units.unit.push({ _id: "other", name: "khác" });
       console.log("DEP:", departments.department);
     };
@@ -619,9 +603,7 @@ export default {
                 style="width: 100%"
               >
                 <div class="form-group flex-grow-1">
-                  <label for="name"
-                    >Họ và tên(<span style="color: red">*</span>):</label
-                  >
+                  <label for="name">Họ và tên(<span style="color: red">*</span>):</label>
                   <input
                     type="text"
                     class="form-control"
@@ -658,9 +640,7 @@ export default {
                   />
                 </div> -->
                 <div class="form-group flex-grow-1">
-                  <label for="address"
-                    >Địa chỉ(<span style="color: red">*</span>):</label
-                  >
+                  <label for="address">Địa chỉ(<span style="color: red">*</span>):</label>
                   <input
                     type="text"
                     class="form-control"
@@ -684,9 +664,7 @@ export default {
                   />
                 </div>
                 <div class="form-group flex-grow-1">
-                  <label for="email"
-                    >Email(<span style="color: red">*</span>):</label
-                  >
+                  <label for="email">Email(<span style="color: red">*</span>):</label>
                   <input
                     type="text"
                     class="form-control"
@@ -705,9 +683,7 @@ export default {
                 style="width: 100%"
               >
                 <div class="form-group flex-grow-1">
-                  <label for=""
-                    >Chức vụ(<span style="color: red">*</span>):</label
-                  >
+                  <label for="">Chức vụ(<span style="color: red">*</span>):</label>
                   <div class="form-group w-100">
                     <Select_Advanced
                       required
@@ -720,9 +696,7 @@ export default {
                           (positions.position = positions.position.filter(
                             (value1, index) => {
                               console.log(value1, value);
-                              return (
-                                value1.name.includes(value) || value.length == 0
-                              );
+                              return value1.name.includes(value) || value.length == 0;
                             }
                           )),
                           console.log('searchSlect', value.length)
@@ -731,17 +705,14 @@ export default {
                       @delete="(value) => onDeletePosition(value)"
                       @chose="
                         (value, value1) => (
-                          (selectedOptionPosition = value),
-                          (data.modelPos = value1.name)
+                          (selectedOptionPosition = value), (data.modelPos = value1.name)
                         )
                       "
                     />
                   </div>
                 </div>
                 <div class="form-group flex-grow-1">
-                  <label for=""
-                    >Trung tâm(<span style="color: red">*</span>):</label
-                  >
+                  <label for="">Trung tâm(<span style="color: red">*</span>):</label>
                   <div class="form-group w-100">
                     <Select_Advanced
                       required
@@ -751,31 +722,24 @@ export default {
                       @searchSelect="
                         async (value) => (
                           await refresh_add(),
-                          (centers.center = centers.center.filter(
-                            (value1, index) => {
-                              console.log(value1, value);
-                              return (
-                                value1.name.includes(value) || value.length == 0
-                              );
-                            }
-                          )),
+                          (centers.center = centers.center.filter((value1, index) => {
+                            console.log(value1, value);
+                            return value1.name.includes(value) || value.length == 0;
+                          })),
                           console.log('searchSlect', value.length)
                         )
                       "
                       @delete="(value) => onDeleteCenter(value)"
                       @chose="
                         (value, value1) => (
-                          (selectedOptionCenter = value),
-                          (data.modelValue = value1.name)
+                          (selectedOptionCenter = value), (data.modelValue = value1.name)
                         )
                       "
                     />
                   </div>
                 </div>
                 <div class="form-group flex-grow-1">
-                  <label for=""
-                    >Phòng(<span style="color: red">*</span>):</label
-                  >
+                  <label for="">Phòng(<span style="color: red">*</span>):</label>
                   <Select_Advanced
                     required
                     :options="departments.department"
@@ -787,9 +751,7 @@ export default {
                         (departments.department = departments.department.filter(
                           (value1, index) => {
                             console.log(value1, value);
-                            return (
-                              value1.name.includes(value) || value.length == 0
-                            );
+                            return value1.name.includes(value) || value.length == 0;
                           }
                         )),
                         console.log('searchSlect', value.length)
@@ -798,8 +760,7 @@ export default {
                     @delete="(value) => onDeleteDep(value)"
                     @chose="
                       (value, value1) => (
-                        (selectedOptionDepartment = value),
-                        (data.modelDep = value1.name)
+                        (selectedOptionDepartment = value), (data.modelDep = value1.name)
                       )
                     "
                   />
@@ -815,9 +776,7 @@ export default {
                         await refresh_add(),
                         (units.unit = units.unit.filter((value1, index) => {
                           console.log(value1, value);
-                          return (
-                            value1.name.includes(value) || value.length == 0
-                          );
+                          return value1.name.includes(value) || value.length == 0;
                         })),
                         console.log('searchSlect', value.length)
                       )
@@ -867,9 +826,7 @@ export default {
                   />
                 </div>
                 <div class="form-group flex-grow-1">
-                  <label for="avatar"
-                    >Vai trò(<span style="color: red">*</span>):</label
-                  >
+                  <label for="avatar">Vai trò(<span style="color: red">*</span>):</label>
                   <Select_Advanced
                     required
                     :options="data.roles"
@@ -881,9 +838,7 @@ export default {
                         (positions.position = positions.position.filter(
                           (value1, index) => {
                             console.log(value1, value);
-                            return (
-                              value1.name.includes(value) || value.length == 0
-                            );
+                            return value1.name.includes(value) || value.length == 0;
                           }
                         )),
                         console.log('searchSlect', value.length)
@@ -891,8 +846,7 @@ export default {
                     "
                     @chose="
                       (value, value1) => (
-                        (data.item.roleId = value),
-                        (data.modelRole = value1.name)
+                        (data.item.roleId = value), (data.modelRole = value1.name)
                       )
                     "
                   />
@@ -909,29 +863,19 @@ export default {
               </form>
               <div class="d-flex justify-content-end mt-3">
                 <span
-                  v-if="
-                    data.activeStep > 1 &&
-                    data.activeStep <= data.stepList.length
-                  "
+                  v-if="data.activeStep > 1 && data.activeStep <= data.stepList.length"
                   class="btn-prev d-flex align-items-center px-3 py-1 mr-3"
                   @click="data.activeStep = data.activeStep - 1"
-                  ><span
-                    class="material-symbols-outlined d-flex align-items-center"
-                  >
+                  ><span class="material-symbols-outlined d-flex align-items-center">
                     navigate_before </span
                   >Trang trước</span
                 >
                 <span
-                  v-if="
-                    data.activeStep >= 1 &&
-                    data.activeStep < data.stepList.length
-                  "
+                  v-if="data.activeStep >= 1 && data.activeStep < data.stepList.length"
                   class="btn-next d-flex align-items-center px-3 py-1"
                   @click="data.activeStep = data.activeStep + 1"
                   >Trang tiếp theo
-                  <span
-                    class="material-symbols-outlined d-flex align-items-center"
-                  >
+                  <span class="material-symbols-outlined d-flex align-items-center">
                     navigate_next
                   </span>
                 </span>

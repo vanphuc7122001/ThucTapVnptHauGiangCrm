@@ -103,7 +103,7 @@ export default {
           },
         },
       ],
-      entryValue: 5,
+      entryValue: 2,
       numberOfPages: 1,
       totalRow: 0,
       startRow: 0,
@@ -416,8 +416,14 @@ export default {
           return value.Cycle._id == entryValueCycle.value;
         });
       }
+      var employees = reactive({ data: {} });
       for (let value of data.items) {
+        employees.data = await http_getOne(Task, value._id);
+        console.log("count:", employees.data.Employees.length);
+        value.count = employees.data.Employees.length;
+
         for (let value1 of arrayCheck.data) {
+          // value.count = employees.Employees.length;
           if (value._id == value1._id) {
             value.checked = true;
           }
@@ -591,8 +597,14 @@ export default {
           return value.Status_Task._id == entryValueStatusTask.value;
         });
       }
+      var employees = reactive({ data: {} });
       for (let value of data.items) {
+        employees.data = await http_getOne(Task, value._id);
+        console.log("count:", employees.data.Employees.length);
+        value.count = employees.data.Employees.length;
+
         for (let value1 of arrayCheck.data) {
+          // value.count = employees.Employees.length;
           if (value._id == value1._id) {
             value.checked = true;
           }
@@ -757,8 +769,14 @@ export default {
           return value.start_date == startdateValue.value;
         });
       }
+      var employees = reactive({ data: {} });
       for (let value of data.items) {
+        employees.data = await http_getOne(Task, value._id);
+        console.log("count:", employees.data.Employees.length);
+        value.count = employees.data.Employees.length;
+
         for (let value1 of arrayCheck.data) {
+          // value.count = employees.Employees.length;
           if (value._id == value1._id) {
             value.checked = true;
           }
@@ -929,8 +947,14 @@ export default {
           return value.end_date == enddateValue.value;
         });
       }
+      var employees = reactive({ data: {} });
       for (let value of data.items) {
+        employees.data = await http_getOne(Task, value._id);
+        console.log("count:", employees.data.Employees.length);
+        value.count = employees.data.Employees.length;
+
         for (let value1 of arrayCheck.data) {
+          // value.count = employees.Employees.length;
           if (value._id == value1._id) {
             value.checked = true;
           }
@@ -1099,8 +1123,14 @@ export default {
           return value.Evaluate._id == entryValueEval.value;
         });
       }
+      var employees = reactive({ data: {} });
       for (let value of data.items) {
+        employees.data = await http_getOne(Task, value._id);
+        console.log("count:", employees.data.Employees.length);
+        value.count = employees.data.Employees.length;
+
         for (let value1 of arrayCheck.data) {
+          // value.count = employees.Employees.length;
           if (value._id == value1._id) {
             value.checked = true;
           }
@@ -1250,6 +1280,8 @@ export default {
     const view = async (id) => {
       console.log(id);
       data.viewValue = await http_getOne(Task, id);
+
+      data.viewValue.Customer.birthday = formatDate(data.viewValue.Customer.birthday);
       console.log(data.viewValue);
       // router.push({ name: "Assignment.view", params: { id: _id } });
     };
@@ -1302,7 +1334,10 @@ export default {
           alert_error("Lỗi ", rsTask.msg);
         } else {
           await refresh();
-          alert_success("Thành công", "Xóa khách hàng thành công");
+          alert_success(
+            "Thành công",
+            `Bạn đã xóa phân công khách hàng ${rsTask.documents.Customer.name} `
+          );
         }
       }
     };
@@ -1391,13 +1426,21 @@ export default {
       }
       // 2*****
       console.log("Data items tasks:", data.items);
+      var employees = reactive({ data: {} });
       for (let value of data.items) {
+        employees.data = await http_getOne(Task, value._id);
+        console.log("count:", employees.data.Employees.length);
+        value.count = employees.data.Employees.length;
+
         for (let value1 of arrayCheck.data) {
+          // value.count = employees.Employees.length;
           if (value._id == value1._id) {
             value.checked = true;
           }
         }
       }
+      console.log("Data items tasks:", data.items);
+
       for (const value of data.items) {
         value.end_date_format = formatDate(value.end_date);
         value.start_date_format = formatDate(value.start_date);
@@ -1424,7 +1467,10 @@ export default {
       // console.log("evaluate", evaluates.evaluate);
       data.selectAll[0].checked = false;
     };
-
+    const giaoviec = async () => {
+      console.log("giao việc");
+      await refresh();
+    };
     // handle http methods
 
     // Hàm callback được gọi trước khi component được mount (load)
@@ -1468,6 +1514,7 @@ export default {
       handleSelectAll,
       evaluates,
       appointmentView,
+      giaoviec,
     };
   },
 };
@@ -1603,7 +1650,11 @@ export default {
         />
       </div>
       <div class="d-flex align-items-start">
-        <Add_TaskEmployee v-if="data.showTask_Employee" :item="data.taskEmployee" />
+        <Add_TaskEmployee
+          v-if="data.showTask_Employee"
+          :item="data.taskEmployee"
+          @giaoviec="giaoviec"
+        />
         <FeedBack v-if="data.showFeedback" :item="data.taskEmployee" />
         <button
           type="button"
@@ -1621,7 +1672,7 @@ export default {
           data-target="#model-form-task_em"
           @click="showTask_Employee()"
         >
-          <span class="mx-2">Giao việc</span>
+          <span class="mx-2" style="color: white">Giao việc</span>
         </button>
         <button
           type="button"
@@ -1663,14 +1714,15 @@ export default {
     <Table
       :items="setPages"
       :fields="[
-        'Ngày bắt đầu',
-        'Ngày kết thúc',
+        'Bắt đầu',
+        'Kết thúc',
         'Nội dung chăm sóc',
+        'SLNV',
         'Đánh giá',
         'Trạng thái',
       ]"
       :selectAll="data.selectAll"
-      :labels="['start_date_format', 'end_date_format', 'content']"
+      :labels="['start_date_format', 'end_date_format', 'content', 'count']"
       @selectAll="(value) => handleSelectAll(value)"
       @selectOne="(id, item) => handlSelectOne(id, item)"
       @delete="handleDelete"

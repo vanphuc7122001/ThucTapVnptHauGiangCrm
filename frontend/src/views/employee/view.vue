@@ -32,9 +32,7 @@ export default {
         <!-- Modal Header -->
         <div class="modal-header">
           <h4 class="modal-title">Thông tin chi tiết nhân viên</h4>
-          <button type="button" class="close" data-dismiss="modal">
-            &times;
-          </button>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
 
         <!-- Modal body -->
@@ -49,13 +47,9 @@ export default {
             >
               Thông tin cá nhân
             </button>
-            <div
-              v-if="isActive"
-              id="personal-info"
-              class="collapse m-3 border-all"
-            >
-              <div class="d-flex justify-content-around">
-                <div class="mt-3">
+            <div v-if="isActive" id="personal-info" class="collapse my-3 border-all">
+              <div class="d-flex justify-content-around row mx-3">
+                <div class="mt-3 col-6">
                   <p>
                     <span class="font-weight-bold">Họ tên: </span>
                     {{ item.name }}
@@ -69,7 +63,7 @@ export default {
                     {{ item.phone }}
                   </p>
                 </div>
-                <div class="mt-3">
+                <div class="mt-3 col-6">
                   <p>
                     <span class="font-weight-bold">Họ tên: </span>
                     {{ item.address }}
@@ -85,13 +79,13 @@ export default {
           <div class="mt-2">
             <button
               data-toggle="collapse"
-              class="px-3 py-2 h6 border-none"
+              class="py-2 h6 border-none"
               data-target="#customer-type"
               @click="handleActiveCus"
             >
               Công việc
             </button>
-            <div v-if="isActive" id="customer-type" class="collapse border-all" style="margin-bottom: 10px;">
+            <div v-if="isActive" id="customer-type" class="collapse border-all mt-2 mb-3">
               <div
                 class="d-flex justify-content-around align-items-center"
                 style="height: 100px"

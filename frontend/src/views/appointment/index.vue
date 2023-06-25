@@ -285,6 +285,11 @@ export default {
       console.log("Dl", data.task);
       status_apps.status_app = await http_getAll(Status_App);
 
+      for (let value of data.items) {
+        if (value.note == null || value.note.length == 0) {
+          value.note = "không có";
+        } else value.note = value.note;
+      }
       // data.items = await data.items.Appointments;
       // console.log("lich hen", data.items.Status_App._id);
       // for (let value of data.items) {
@@ -350,11 +355,30 @@ export default {
     };
     // handle http methods
     //XÓA 1
+    // const handleDelete = async (id, item) => {
+    //   console.log("D id & item:", id, item);
+    //   const isConfirmed = await alert_delete(
+    //     "Xóa",
+    //     `Bạn có chắc là xóa lịch hẹn này không!!`
+    //   );
+    //   if (isConfirmed) {
+    //     // 1***** xem thay đổi Appoiment cho phù hợp
+    //     const rsAppointment = await http_deleteOne(Appointment, id);
+    //     console.log(rsAppointment);
+    //     if (rsAppointment.error) {
+    //       alert_error("Lỗi ", rsAppointment.msg);
+    //     } else {
+    //       await refresh();
+    //       alert_success("Thành công", "Xóa lịch hẹn thành công");
+    //     }
+    //   }
+    // };
+
     const handleDelete = async (id, item) => {
       console.log("D id & item:", id, item);
       const isConfirmed = await alert_delete(
         "Xóa",
-        `Bạn có chắc là xóa lịch hẹn này không!!`
+        `Bạn có chắc là xóa lịch hẹn ${item.date_time_format} không!!`
       );
       if (isConfirmed) {
         // 1***** xem thay đổi Appoiment cho phù hợp
@@ -364,7 +388,10 @@ export default {
           alert_error("Lỗi ", rsAppointment.msg);
         } else {
           await refresh();
-          alert_success("Thành công", "Xóa lịch hẹn thành công");
+          alert_success(
+            "Thành công",
+            `Xóa lịch hẹn ngày ${rsAppointment.document.date_time} với khách hàng  ${data.customer}`
+          );
         }
       }
     };

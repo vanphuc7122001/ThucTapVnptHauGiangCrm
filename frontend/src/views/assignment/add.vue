@@ -37,6 +37,7 @@ export default {
         leaderId: "",
         EvaluateId: "",
         StatusTaskId: "",
+        note: "",
       },
       modelCus: "",
       modelValue: "",
@@ -308,11 +309,10 @@ export default {
               ></textarea>
             </div>
             <div class="form-group">
-              <label for="content">Chú thích(<span style="color: red">*</span>):</label>
+              <label for="content">Chú thích:</label>
               <textarea
                 v-model="data.itemAdd.note"
                 id="content"
-                required
                 class="form-control w-100"
                 rows="5"
               ></textarea>
@@ -323,7 +323,6 @@ export default {
               style="font-size: 14px"
               @click="create"
               id="create"
-              data-dismiss="modal"
             >
               <span>Thêm</span>
             </button>

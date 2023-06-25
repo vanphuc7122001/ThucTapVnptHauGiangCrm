@@ -84,9 +84,12 @@ export default {
       console.log(data.item.place);
       console.log(data.item.note);
       console.log(data.item);
+      props.task.changeStatus = true;
+
       data.item.taskId = props.taskId;
       console.log("task id", data.item.taskId);
       const result = await http_create(Appointment, data.item);
+      const change = await http_update(Task, props.task._id, props.task);
       if (!result.error) {
         alert_success(
           `Thêm lịch hẹn`,
@@ -110,6 +113,7 @@ export default {
 
 <template>
   <!-- The Modal -->
+
   <div class="modal" id="modal-add">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -129,6 +133,28 @@ export default {
                 id="name"
                 name="name"
                 :value="customer"
+                disabled
+              />
+            </div>
+            <div class="form-group">
+              <label for="name">Ngày bắt đầu(<span style="color: red">*</span>):</label>
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                name="name"
+                :value="task.start_date"
+                disabled
+              />
+            </div>
+            <div class="form-group">
+              <label for="name">Ngày kết thúc(<span style="color: red">*</span>):</label>
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                name="name"
+                :value="task.end_date"
                 disabled
               />
             </div>
@@ -174,7 +200,6 @@ export default {
               <label for="content">Chú thích:</label>
               <textarea
                 id="content"
-                required
                 class="form-control"
                 rows="5"
                 v-model="data.item.note"

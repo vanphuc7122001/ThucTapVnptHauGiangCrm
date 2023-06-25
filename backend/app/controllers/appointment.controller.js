@@ -134,6 +134,30 @@ exports.findOne = async (req, res, next) => {
   }
 };
 
+// exports.deleteOne = async (req, res, next) => {
+//   try {
+//     const appointment = await Appointment.findOne({
+//       where: {
+//         _id: req.params.id,
+//       },
+//     });
+//     const document = await Appointment.destroy({
+//       where: {
+//         _id: req.params.id,
+//       },
+//       returning: true,
+//     });
+
+//     return res.send({
+//       msg: `Đã xoá thành công cuộc hẹn ${appointment.content} lúc ${appointment.date_time}.`,
+//       document: appointment,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     return next(createError(400, "Error deleteOne"));
+//   }
+// };
+
 exports.deleteOne = async (req, res, next) => {
   try {
     const appointment = await Appointment.findOne({
@@ -157,7 +181,6 @@ exports.deleteOne = async (req, res, next) => {
     return next(createError(400, "Error deleteOne"));
   }
 };
-
 exports.deleteAll = async (req, res, next) => {
   try {
   } catch (error) {}

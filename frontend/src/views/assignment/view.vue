@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import Table from "../../components/table/table-appointment.vue";
 import EditAppointment from "../../views/appointment/edit.vue";
+import { formatDate } from "../common/import";
 export default {
   components: {
     Table,
@@ -156,9 +157,12 @@ export default {
             >
               Thông tin phân công
             </button>
-            <div v-if="isActive" id="personal-info" class="collapse m-3 border-all">
-              <div class="d-flex justify-content-around" style="margin-top: 12px">
-                <div>
+            <div v-if="isActive" id="personal-info" class="collapse my-3 border-all">
+              <div
+                class="d-flex justify-content-around row mx-2"
+                style="margin-top: 12px"
+              >
+                <div class="col-6">
                   <p>
                     <span class="font-weight-bold">Khách hàng: </span>
                     {{ viewValue.Customer.name }}
@@ -175,22 +179,24 @@ export default {
                     <span class="font-weight-bold">Chu kỳ chăm sóc: </span>
                     {{ viewValue.Cycle.name }}
                   </p>
-                </div>
-                <div>
                   <p>
-                    <span class="font-weight-bold">Nội dung chăm sóc: </span>
-                    {{ viewValue.content }}
+                    <span class="font-weight-bold">Đánh giá: </span>
+                    {{ viewValue.Evaluate.star }}
                   </p>
+                </div>
+                <div class="col-6">
                   <p>
                     <span class="font-weight-bold">Trạng thái: </span>
                     {{ viewValue.Status_Task.name }}
                   </p>
                   <p>
-                    <span class="font-weight-bold">Lưu ý: </span> {{ viewValue.note }}
+                    <span class="font-weight-bold">Nội dung chăm sóc: </span>
+                    {{ viewValue.content }}
                   </p>
+
                   <p>
-                    <span class="font-weight-bold">Đánh giá: </span>
-                    {{ viewValue.Evaluate.star }}
+                    <span class="font-weight-bold">Lưu ý: </span>
+                    {{ viewValue.note }}
                   </p>
                   <p>
                     <span class="font-weight-bold">Nhận xét: </span>
@@ -210,7 +216,7 @@ export default {
             >
               Thông tin khách hàng
             </button>
-            <div v-if="isActive" id="customer-work" class="collapse border-all">
+            <div v-if="isActive" id="customer-work" class="collapse border-all my-3">
               <img
                 :src="viewValue.Customer.avatar"
                 alt=""
@@ -279,14 +285,16 @@ export default {
                   </thead>
                   <tbody>
                     <tr v-for="(item, index) in viewValue.Employees" :key="index">
-                      <td>{{ Math.ceil(index) + 1 }}</td>
-                      <td>{{ item.name }}</td>
-                      <td>{{ item.phone }}</td>
-                      <td>{{ item.email }}</td>
-                      <td>{{ item.Position.name }}</td>
-                      <td>{{ item.Unit.name }}</td>
-                      <td>{{ item.Unit.Department.name }}</td>
-                      <td>{{ item.Unit.Department.Center.name }}</td>
+                      <td class="size-16">{{ Math.ceil(index) + 1 }}</td>
+                      <td class="size-16">{{ item.name }}</td>
+                      <td class="size-16">{{ item.phone }}</td>
+                      <td class="size-16">{{ item.email }}</td>
+                      <td class="size-16">{{ item.Position.name }}</td>
+                      <td class="size-16">{{ item.Unit.name }}</td>
+                      <td class="size-16">{{ item.Unit.Department.name }}</td>
+                      <td class="size-16">
+                        {{ item.Unit.Department.Center.name }}
+                      </td>
                     </tr>
                   </tbody>
                 </table>
