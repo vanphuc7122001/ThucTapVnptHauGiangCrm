@@ -12,6 +12,9 @@ export default {
     ,
     itemViewCareCus: {
       type: Array
+    },
+    Events: {
+      type: Array
     }
   },
   setup(props, context) {
@@ -117,9 +120,9 @@ export default {
             </button>
             <div v-if="isActive" id="event" class="collapse">
               <Table
-                :items="item.Events"
-                :fields="['Tên sự kiện']"
-                :labels="['name']" 
+                :items="Events"
+                :fields="['Tên sự kiện', 'Thời gian diển ra', 'Nội dung']"
+                :labels="['name','time_duration', 'content']"
                 :borderTableAll="true"
                 :showActionList="[false, false, false]"
                 :activeAction="false"

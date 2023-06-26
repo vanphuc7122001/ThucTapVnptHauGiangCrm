@@ -83,7 +83,7 @@
             <span class="pl-3" style="margin-top: -4px">
               <span class="material-symbols-outlined"> group </span>
               <span class="text-center"
-                >{{ store.countReportCustomerCycle }}/{{
+                >{{ store.countLeaderCustomer }}/{{
                   store.countCustomer
                 }}</span
               >
@@ -200,7 +200,7 @@
           'Địa chỉ',
           'Ngày sinh',
         ]"
-        :labels="['name', 'email', 'phone', 'address', 'birthday']"
+        :labels="['name', 'email', 'phone', 'address', 'birthdayEmployee']"
         @delete="handleDelete"
         @edit="EditEmit"
         :showActionList="[true, false, false]"
@@ -305,6 +305,7 @@
     Select,
     Search,
     http_getOne,
+    formatDate
   } from "../../../common/import";
   import jsPDF from "jspdf"; //in
   import html2canvas from "html2canvas";
@@ -422,9 +423,12 @@
   
         data.items = newArray.map((item) => {
           return {
+            birthdayEmployee: formatDate(item.birthday), 
             ...item,
           };
         });
+
+        console.log('Data items: ' , data.items);
       };
   
       onBeforeMount(() => {

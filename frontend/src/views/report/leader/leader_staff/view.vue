@@ -1,6 +1,7 @@
 <script>
 import { ref } from 'vue'
 import Table from '../../../../components/table/table_customer_types.vue'
+import { formatDate } from '../../../common/import'
 export default {
   components: {
     Table
@@ -24,7 +25,8 @@ export default {
     
     return {
       isActive,
-      handleActiveCus
+      handleActiveCus,
+      formatDate
     }
   }
 }
@@ -57,7 +59,7 @@ export default {
                     <span class="font-weight-bold">Họ tên nhân viên:  </span> {{ item.name }}
                   </p>
                   <p>
-                    <span class="font-weight-bold">Ngày sinh: </span> {{ item.birthday }}
+                    <span class="font-weight-bold">Ngày sinh: </span> {{ formatDate(item.birthday) }}
                   </p>
                   <p> 
                     <span class="font-weight-bold">Số điện thoại:  </span> {{ item.phone }}

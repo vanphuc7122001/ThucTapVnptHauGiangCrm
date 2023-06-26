@@ -74,7 +74,7 @@
           <span class=""> Khách hàng do lãnh đạo phụ trách </span>
           <span class="pl-3" style="margin-top: -4px">
             <span class="material-symbols-outlined"> group </span>
-            <span class="text-center">{{ store.countReportCustomerCycle }}/{{ store.countCustomer }}</span>
+            <span class="text-center">{{ store.countLeaderCustomer }}/{{ store.countCustomer }}</span>
           </span>
         </router-link>
       </div>
@@ -260,7 +260,7 @@
           <p>Người Báo Cáo</p>
         </div>
       </div>
-      <View :item="data.viewValue"/>
+      <View :item="data.viewValue" :Events="data.Events"/>
       <Mail />
     </div>
   </template>
@@ -278,7 +278,8 @@
     Pagination,
     Select,
     Search,
-    Customer
+    Customer,
+formatDate
   } from '../../../common/import'
   import jsPDF from "jspdf"; //in
   import html2canvas from "html2canvas";
@@ -341,6 +342,7 @@
   
   
       const data = reactive({
+        Events: [],
         items: [],
         entryValue: 5,
         numberOfPages: 1,
@@ -501,7 +503,7 @@
             nameCustomer: item.Customer.name,
             phoneCustomer: item.Customer.phone,
             emailCustomer: item.Customer.email,
-            birthdayCustomer: item.Customer.birthday,
+            birthdayCustomer: formatDate(item.Customer.birthday),
             avatarCustomer: item.Customer.avatar,
             addressCustomer: item.Customer.address
           },
@@ -521,6 +523,14 @@
   
           ...item
         }
+
+        data.Events = item.Customer.Events.map( (item) => {
+          return {
+            name: item.name,
+            time_duration: formatDate(item.time_duration),
+            content: item.content
+          }
+        })
       }
   
       return {

@@ -64,7 +64,7 @@ export default {
       <tr  v-for="(item, index) in items" :key="index">
         <td  v-if="isActiveCheckbox" ><input type="checkbox" v-model="item.checked" name="" id="" /></td>
         <td class="size-16" >{{ startRow + index + 1 }}</td>
-        <td class="size-16" v-for="(label, index1) in labels" :key="index1">{{ item[label] }}</td>
+        <td class="size-16" v-for="(label, index1) in labels" :key="index1"><span class="size-16">{{ item[label] }}</span></td>
         <td v-if="activeAction == true">
           <button
               type="button"
@@ -134,7 +134,7 @@ export default {
 
 .my-table th {
   font-weight: 900;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .my-table tbody tr:nth-child(even) {

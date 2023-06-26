@@ -74,7 +74,7 @@
           <span class=""> Khách hàng do lãnh đạo phụ trách </span>
           <span class="pl-3" style="margin-top: -4px">
             <span class="material-symbols-outlined"> group </span>
-            <span class="text-center">{{ store.countReportCustomerCycle }}/{{ store.countCustomer }}</span>
+            <span class="text-center">{{ store.countLeaderCustomer }}/{{ store.countCustomer }}</span>
           </span>
         </router-link>
       </div>
@@ -277,7 +277,7 @@
           <p>Người Báo Cáo</p>
         </div>
       </div>
-      <View :item="data.viewValue"/>
+      <View :item="data.viewValue" :Events="data.Events"/>
       <Mail />
     </div>
   </template>
@@ -297,7 +297,9 @@
     Select,
     Search,
     Customer,
-    http_getOne
+    http_getOne,
+formatDateTime,
+formatDate
   } from "../../common/import";
 
   import {
@@ -311,6 +313,7 @@
 } from "../use/index";
   
   import View from './view.vue'
+import { format } from 'date-fns';
   
   export default {
     components: {
@@ -345,6 +348,7 @@
       ];
   
       const data = reactive({
+        Events: [],
         items: [],
         entryValue: 5,
         numberOfPages: 1,
@@ -519,7 +523,7 @@
         data.viewValue = {
           Customer: {
             name: item.Customer.name,
-            birthday: item.Customer.birthday,
+            birthday: formatDate(item.Customer.birthday),
             avatar: item.Customer.avatar,
             phone: item.Customer.phone,
             email: item.Customer.email,
@@ -538,7 +542,17 @@
           ...item.Customer.Habits,
           ],
           ...item,
+          startdate: formatDate(item.start_date),
+      
       }
+      
+      data.Events = item.Customer.Events.map( (item) => {
+        return {
+          name: item.name,
+          time_duration: formatDateTime(item.time_duration),
+          content: item.content
+        }
+      })
     }
       return {
         data,

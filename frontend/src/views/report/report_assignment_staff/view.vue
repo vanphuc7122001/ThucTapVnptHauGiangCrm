@@ -1,6 +1,7 @@
 <script>
 import { ref } from 'vue'
 import Table from '../../../components/table/table_customer_types.vue'
+import { formatDate } from '../../common/import'
 export default {
   components: {
     Table
@@ -11,6 +12,9 @@ export default {
     }
     ,
     itemViewCareCus: {
+      type: Array
+    },
+    Events: {
       type: Array
     }
   },
@@ -24,7 +28,8 @@ export default {
 
     return {
       isActive,
-      handleActiveCus
+      handleActiveCus,
+      formatDate
     }
   }
 }
@@ -60,7 +65,7 @@ export default {
                   <p><span class="font-weight-bold">Số điện thoại khách hàng: </span> {{ item.Customer.phone }}</p>
                 </div>
                 <div>
-                  <p><span class="font-weight-bold">Ngày sinh khách hàng: </span> {{ item.Customer.birthday }}</p>
+                  <p><span class="font-weight-bold">Ngày sinh khách hàng: </span> {{ formatDate(item.Customer.birthday) }}</p>
                   <p><span class="font-weight-bold">Địa chỉ khách hàng: </span> {{ item.Customer.address }}</p>
                   <p><span class="font-weight-bold">Loại khách hàng: </span> {{ item.customerType }}</p>
                 </div>
@@ -112,8 +117,8 @@ export default {
                   </thead>
                   <tbody>
                     <tr>
-                      <td>{{ item.start_date }}</td>
-                      <td>{{ item.end_date }}</td>
+                      <td>{{ formatDate(item.start_date) }}</td>
+                      <td>{{ formatDate(item.end_date) }}</td>
                       <td>{{ item.content }}</td>
                       <td>{{ item.Customer.name }}</td>
                       <td>{{ item.Cycle.name }}</td>
@@ -131,7 +136,7 @@ export default {
               Danh sách sự kiện
             </button>
             <div v-if="isActive" id="event" class="collapse">
-              <Table :items="item.Events" :fields="['Tên sự kiện']" :labels="['name']" :borderTableAll="true"
+              <Table :items="Events" :fields="['Tên sự kiện','Thời gian diển ra','Nội dung']" :labels="['name', 'time_duration', 'content']" :borderTableAll="true"
                 :showActionList="[false, false, false]" :activeAction="false" :isActiveCheckbox="false" :startRow="0"/>
             </div>
           </div>

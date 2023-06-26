@@ -52,20 +52,20 @@ export default {
     :class="[borderTableAll ? 'border-table-all' : '']"
   >
     <thead>
-      <tr>
-        <th v-if="isActiveCheckbox"></th>
-        <th>Stt</th>
-        <th v-for="(value, index) in fields" :key="index">{{ value }}</th>
-        <th v-if="activeAction == true">Hành động</th>
+      <tr >
+        <th class="size-16" v-if="isActiveCheckbox"></th>
+        <th class="size-16" >Stt</th>
+        <th class="size-16" v-for="(value, index) in fields" :key="index">{{ value }}</th>
+        <th class="size-16" v-if="activeAction == true">Hành động</th>
       </tr>
     </thead>
     <tbody>
       <!-- {{ startRow }} -->
       <tr v-for="(item, index) in items" :key="index">
-        <td  v-if="isActiveCheckbox" ><input type="checkbox" v-model="item.checked" name="" id="" /></td>
-        <td>{{ startRow + index + 1 }}</td>
-        <td v-for="(label, index1) in labels" :key="index1">{{ item[label] }}</td>
-        <td v-if="activeAction == true">
+        <td class="size-16" v-if="isActiveCheckbox" ><input type="checkbox" v-model="item.checked" name="" id="" /></td>
+        <td class="size-16" >{{ startRow + index + 1 }}</td>
+        <td class="size-16" v-for="(label, index1) in labels" :key="index1">{{ item[label] }}</td>
+        <td class="size-16" v-if="activeAction == true">
           <button
             v-if="showActionList[0] == true"
             type="button"

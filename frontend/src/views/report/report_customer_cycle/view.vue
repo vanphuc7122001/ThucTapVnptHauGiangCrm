@@ -118,8 +118,8 @@ export default {
             <div v-if="isActive" id="event" class="collapse">
               <Table
                 :items="item.Events"
-                :fields="['Tên sự kiện']"
-                :labels="['name']" 
+                :fields="['Tên sự kiện','Thời gian diển ra', 'Nội dung']"
+                :labels="['name', 'time_duration', 'content']" 
                 :borderTableAll="true"
                 :showActionList="[false, false, false]"
                 :activeAction="false"

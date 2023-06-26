@@ -24,6 +24,8 @@ import {
   Customer,
   Customer_Types,
   Status_Task,
+  formatDate,
+formatDateTime
 } from "../common/import";
 
 export default {
@@ -42,6 +44,8 @@ export default {
   },
   setup(ctx) {
     const data = reactive({
+      activeShowEdit: false,
+      Events: [],
       items: [],
       entryValue: 5,
       numberOfPages: 1,
@@ -313,7 +317,7 @@ export default {
         Customer: {
           _id: item.Customer._id,
           name: item.Customer.name,
-          birthday: item.Customer.birthday,
+          birthday: formatDate(item.Customer.birthday),
           avatar: item.Customer.avatar,
           phone: item.Customer.phone,
           email: item.Customer.email,
@@ -340,8 +344,8 @@ export default {
       data.viewCareCus = item.Customer.Tasks.map((value) => {
         console.log("Value:", value);
         return {
-          start_date: value.start_date,
-          end_date: value.end_date,
+          start_date: formatDate(value.start_date),
+          end_date: formatDate(value.end_date),
           content: value.content,
           customerName: item.Customer.name,
           cycleName: value.Cycle.name, // join bản sao
@@ -351,11 +355,22 @@ export default {
             value.Comment == null ? "Chưa cập nhật" : value.Comment.content,
         };
       });
+
+      data.Events = item.Customer.Events.map( item => {
+        return {
+          // 'name','time_duration', 'content'
+          name: item.name,
+          time_duration: formatDateTime(item.time_duration),
+          content: item.content
+        }
+      })
     };
 
     //   formatDateTime,
     // formatDate,
     const edit = (item, isCheck) => {
+      data.activeShowEdit = true
+      reFresh();
       console.log(item.Customer);
       data.viewValue = {
         Customer: {
@@ -713,12 +728,13 @@ export default {
       class="mx-3"
     />
     <Edit
+      v-if="data.activeShowEdit"
       :item="data.viewValue"
       :class="[data.activeEdit ? 'show-modal' : 'd-none']"
       @cancel="data.activeEdit = false"
       @refresh_customer="refresh_customer"
     />
-    <View :item="data.viewValue" :itemViewCareCus="data.viewCareCus" />
+    <View :item="data.viewValue" :itemViewCareCus="data.viewCareCus" :Events="data.Events"/>
   </div>
 </template>
 

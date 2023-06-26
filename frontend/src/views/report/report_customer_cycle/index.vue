@@ -83,7 +83,7 @@
             <span class="pl-3" style="margin-top: -4px">
               <span class="material-symbols-outlined"> group </span>
               <span class="text-center"
-                >{{ store.countReportCustomerCycle }}/{{
+                >{{ store.countLeaderCustomer }}/{{
                   store.countCustomer
                 }}</span
               >
@@ -295,7 +295,7 @@
           <p>Người Báo Cáo</p>
         </div>
       </div>
-      <View :item="data.viewValue" :itemViewCareCus="data.viewCareCus" />
+      <View :item="data.viewValue" :itemViewCareCus="data.viewCareCus" :Event="data.Events"/>
       <Mail />
     </div>
   </template>
@@ -310,6 +310,8 @@
     Select,
     Search,
     Customer_Work,
+formatDateTime,
+formatDate,
   } from "../../common/import";
   import {
     countCustomer,
@@ -347,6 +349,7 @@
       });
   
       const data = reactive({
+        Events: [],
         items: [],
         entryValue: 5, // total record in page
         numberOfPages: 1,
@@ -612,7 +615,7 @@
           Customer: {
             _id: item.Customer._id,
             name: item.Customer.name,
-            birthday: item.Customer.birthday,
+            birthday: formatDate(item.Customer.birthday),
             avatar: item.Customer.avatar,
             phone: item.Customer.phone,
             email: item.Customer.email,
@@ -641,8 +644,8 @@
         data.viewCareCus = item.Customer.Tasks.map((value) => {
           console.log("Value:", value);
           return {
-            start_date: value.start_date,
-            end_date: value.end_date,
+            start_date: formatDate(value.start_date),
+            end_date: formatDate(value.end_date),
             content: value.content,
             customerName: item.Customer.name,
             cycleName: value.Cycle.name, // join bản sao
@@ -652,6 +655,14 @@
               value.Comment == null ? "Chưa cập nhật" : value.Comment.content,
           };
         });
+
+        data.Events = item.Customer.Events.map( (item) => {
+          return {
+            name: item.name,
+            time_duration: formatDateTime(item.time_duration),
+            content: item.content
+          }
+        })
       };
   
       onBeforeMount(() => {
