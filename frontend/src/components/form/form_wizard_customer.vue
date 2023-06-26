@@ -466,7 +466,7 @@ export default {
                         class="form-control"
                         name="file"
                         id="imageUpload"
-                        accept=".png, .jpg"
+                        accept=".png, .jpg, jpeg"
                         :maxFileSize="1000000"
                         ref="fileInput"
                         @change="onFileChange"

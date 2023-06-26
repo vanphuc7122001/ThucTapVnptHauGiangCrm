@@ -166,6 +166,7 @@ export default {
             `Áp dụng sự kiện`,
             `Bạn đã áp dụng sự kiện đối với khách hàng thành công thành công.`
           );
+          ctx.emit("freshHabitAdd");
         }
       } else if (result.error) {
         alert_error(`Thêm sự kiện`, `${result.msg}`);
@@ -369,7 +370,7 @@ export default {
                     autocomplete="off"
                   />
                   <ul
-                    v-if="
+                    v-show="
                       data.suggestList.length > 0 &&
                       data.activeSuggest == index &&
                       habitValue.length > 0
@@ -378,10 +379,8 @@ export default {
                   >
                     <li
                       v-for="(value1, index1) in data.suggestList"
-                      class="suggestion-item"
-                      @click="
-                        (value.name = value1.name), (data.activeSuggest = -1)
-                      "
+                      class="suggestion-item w-100"
+                      @click="value.name = value1.name, data.activeSuggest = -1"
                     >
                       {{ value1.name }}
                     </li>

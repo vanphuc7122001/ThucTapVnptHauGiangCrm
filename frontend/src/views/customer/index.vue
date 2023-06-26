@@ -177,11 +177,25 @@ export default {
       }
     };
 
+    const reFresh1 = async () => {
+      const cusWork = await http_getAll(Customer_Work);
+      const customerType = await http_getAll(Customer_Types);
+      const customerStatus = await http_getAll(Status_Task);
+
+      const temp = cusWork.documents;
+      // data.items = [...new Set([...temp, ...data.items])];
+      for (let i = 0; i < data.items.length; i++) {
+        temp[i].checked = data.items[i].checked;
+      }
+      data.items = temp;
+    };
+
     const showAddHabit = () => {
       console.log("ok");
       data.customerValue = {};
       data.showAddHabit = false;
       for (let value of data.items) {
+        console.log(value.checked);
         if (value.checked == true) {
           data.customerValue = value;
           data.showAddHabit = true;
@@ -315,9 +329,7 @@ export default {
         },
         Events: [...item.Customer.Events],
         Tasks: [...item.Customer.Tasks],
-        Habits: [
-          ...item.Customer.Habits,
-        ],
+        Habits: [...item.Customer.Habits],
         _id: item._id,
         current_workplace: item.current_workplace,
         work_history: item.work_history,
@@ -454,10 +466,10 @@ export default {
 
     watch(entryValueCustomerType, (newValue, oldValue) => {
       if (newValue != "") {
-        data.currentPage = 1
+        data.currentPage = 1;
         reFresh();
       } else {
-        data.currentPage = 1
+        data.currentPage = 1;
         reFresh();
       }
     });
@@ -465,10 +477,10 @@ export default {
     watch(entryValueStatusTask, (newValue, oldValue) => {
       // console.log('status', newValue);
       if (newValue != "") {
-        data.currentPage = 1
+        data.currentPage = 1;
         reFresh();
       } else {
-        data.currentPage = 1
+        data.currentPage = 1;
         reFresh();
       }
     });
@@ -500,6 +512,7 @@ export default {
       deleteMany,
       reFresh,
       removeItem,
+      reFresh1,
     };
   },
 };
@@ -541,7 +554,8 @@ export default {
             "
             @refresh="
               (entryNameCustomerType = 'Loại khách hàng'),
-                updateEntryValueCustomerType(''),data.currentPage = 1
+                updateEntryValueCustomerType(''),
+                (data.currentPage = 1)
             "
             style="height: 35px"
           />
@@ -559,7 +573,8 @@ export default {
             "
             @refresh="
               (entryNameStatusTask = 'Trạng thái chăm sóc'),
-                updateEntryValueStatusTask(''),data.currentPage = 1
+                updateEntryValueStatusTask(''),
+                (data.currentPage = 1)
             "
             style="height: 35px"
           />
@@ -595,7 +610,7 @@ export default {
           :title="`Số bản ghi`"
           @update:entryValue="(value) => (data.entryValue = value)"
           :entryValue="data.entryValue"
-          @refresh="(data.entryValue = 'All') ,(data.currentPage = 1)"
+          @refresh="(data.entryValue = 'All'), (data.currentPage = 1)"
         />
         <Search
           class="ml-3"
@@ -664,7 +679,7 @@ export default {
           :item="data.customerValue"
           :habitAdd="data.habitAdd"
           :eventAdd="data.eventAdd"
-          @freshHabitAdd="data.habitAdd = [{ name: '' }]"
+          @freshHabitAdd="(data.habitAdd = [{ name: '' }]), reFresh1()"
           @remove="removeItem"
         />
       </div>
