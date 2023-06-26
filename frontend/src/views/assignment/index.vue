@@ -12,7 +12,9 @@ import Add_TaskEmployee from "./add_taskemployee.vue";
 import Edit from "./edit.vue";
 import View from "./view.vue";
 import FeedBack from "./feedback.vue";
+import RenewTask from "../../views/assignment/renewtask.vue";
 import Select_Advanced from "../../components/form/select_advanced.vue";
+import moment from "moment";
 import { reactive, computed, watch, ref, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
 // services
@@ -58,6 +60,7 @@ export default {
     Add_TaskEmployee,
     Search,
     FeedBack,
+    RenewTask,
   },
   setup(ctx) {
     const data = reactive({
@@ -103,7 +106,7 @@ export default {
           },
         },
       ],
-      entryValue: 2,
+      entryValue: 5,
       numberOfPages: 1,
       totalRow: 0,
       startRow: 0,
@@ -111,6 +114,7 @@ export default {
       currentPage: 1,
       searchText: "",
       activeEdit: false,
+      activeRenew: false,
       editValue: {
         _id: "",
         start_date: "",
@@ -127,6 +131,25 @@ export default {
           _id: "",
           name: "",
         },
+      },
+      renewValue: {
+        _id: "",
+        start_date: "",
+        end_date: "",
+        content: "",
+        customerId: "",
+        cycleId: "",
+        Cycle: {
+          _id: "",
+          name: "",
+        },
+        leaderId: "",
+        Status_Task: {
+          _id: "",
+          name: "",
+        },
+        start_date_new: "",
+        end_date_new: "",
       },
       viewValue: {
         _id: "",
@@ -416,10 +439,15 @@ export default {
           return value.Cycle._id == entryValueCycle.value;
         });
       }
+      for (let value of data.items) {
+        value.checked = false;
+      }
+      // 2*****
+      // console.log("Data items tasks:", data.items);
       var employees = reactive({ data: {} });
       for (let value of data.items) {
         employees.data = await http_getOne(Task, value._id);
-        console.log("count:", employees.data.Employees.length);
+        // console.log("count:", employees.data.Employees.length);
         value.count = employees.data.Employees.length;
 
         for (let value1 of arrayCheck.data) {
@@ -597,10 +625,15 @@ export default {
           return value.Status_Task._id == entryValueStatusTask.value;
         });
       }
+      for (let value of data.items) {
+        value.checked = false;
+      }
+      // 2*****
+      // console.log("Data items tasks:", data.items);
       var employees = reactive({ data: {} });
       for (let value of data.items) {
         employees.data = await http_getOne(Task, value._id);
-        console.log("count:", employees.data.Employees.length);
+        // console.log("count:", employees.data.Employees.length);
         value.count = employees.data.Employees.length;
 
         for (let value1 of arrayCheck.data) {
@@ -769,10 +802,15 @@ export default {
           return value.start_date == startdateValue.value;
         });
       }
+      for (let value of data.items) {
+        value.checked = false;
+      }
+      // 2*****
+      // console.log("Data items tasks:", data.items);
       var employees = reactive({ data: {} });
       for (let value of data.items) {
         employees.data = await http_getOne(Task, value._id);
-        console.log("count:", employees.data.Employees.length);
+        // console.log("count:", employees.data.Employees.length);
         value.count = employees.data.Employees.length;
 
         for (let value1 of arrayCheck.data) {
@@ -947,10 +985,15 @@ export default {
           return value.end_date == enddateValue.value;
         });
       }
+      for (let value of data.items) {
+        value.checked = false;
+      }
+      // 2*****
+      // console.log("Data items tasks:", data.items);
       var employees = reactive({ data: {} });
       for (let value of data.items) {
         employees.data = await http_getOne(Task, value._id);
-        console.log("count:", employees.data.Employees.length);
+        // console.log("count:", employees.data.Employees.length);
         value.count = employees.data.Employees.length;
 
         for (let value1 of arrayCheck.data) {
@@ -1123,10 +1166,15 @@ export default {
           return value.Evaluate._id == entryValueEval.value;
         });
       }
+      for (let value of data.items) {
+        value.checked = false;
+      }
+      // 2*****
+      // console.log("Data items tasks:", data.items);
       var employees = reactive({ data: {} });
       for (let value of data.items) {
         employees.data = await http_getOne(Task, value._id);
-        console.log("count:", employees.data.Employees.length);
+        // console.log("count:", employees.data.Employees.length);
         value.count = employees.data.Employees.length;
 
         for (let value1 of arrayCheck.data) {
@@ -1218,19 +1266,6 @@ export default {
       }
     };
     const showTask_Employee = () => {
-      // console.log("day ne")
-      // data.showTask_Employee = false;
-      // for (let value of data.items) {
-      //   if (value.checked == true) {
-      //     console.log('item', value );
-      //     data.taskEmployee = value;
-      //     data.showTask_Employee = true;
-      //     break;
-      //   }
-      // }
-      // if (data.showTask_Employee == false) {
-      //   alert_warning(`Thêm phân công cho nhân viên`, `Vui lòng chọn phân công để giao việc cho nhân viên.`);
-      // }
       console.log("11ArrayCheck Index:", arrayCheck.data[0]);
       data.showTask_Employee = false;
       if (arrayCheck.data.length > 0) {
@@ -1242,6 +1277,84 @@ export default {
           `Vui lòng chọn phân công để giao việc cho nhân viên.`
         );
       }
+    };
+    const handleCycle = (nameCycle, date) => {
+      let coming_day = moment(date, "YYYY-MM-DD");
+      var parts = nameCycle.split(" ");
+      var number = parseInt(parts[0]);
+      var string = parts[1];
+      switch (string) {
+        case "ngày":
+          console.log(` chu kỳ ${number} ngày`);
+          coming_day = coming_day.add(number, "days");
+          // console.log("Ngày kết thúc:", coming_day.format("YYYY-MM-DD"));
+          break;
+        case "tuần":
+          console.log(` chu kỳ ${number} tuần`);
+          coming_day = coming_day.add(number * 7, "days");
+          // console.log("Ngày kết thúc:", coming_day.format("YYYY-MM-DD"));
+          break;
+        case "tháng":
+          console.log(`chu kỳ ${number} tháng`);
+          coming_day = coming_day.add(number, "months");
+          // console.log("Ngày kết thúc:", coming_day.format("YYYY-MM-DD"));
+          break;
+        case "quý":
+          console.log(` chu kỳ ${number} quý`);
+          coming_day = coming_day.add(number * 3, "months");
+          // console.log("Ngày kết thúc:", coming_day.format("YYYY-MM-DD"));
+          break;
+        case "năm":
+          console.log(` chu kỳ ${number} năm`);
+          coming_day = coming_day.add(number, "years");
+          // console.log("Ngày kết thúc:", coming_day.format("YYYY-MM-DD"));
+          break;
+        default:
+          console.log("Chu kỳ không hợp lệ");
+          break;
+      }
+
+      return coming_day.format("YYYY-MM-DD");
+    };
+
+    const initRenewTask = async (value, value1) => {
+      data.renewValue = value;
+      data.activeRenew = value1;
+      data.renewValue.start_date_new = handleCycle(
+        data.renewValue.Cycle.name,
+        data.renewValue.start_date
+      );
+      if (data.renewValue.start_date_new == data.end_date) {
+        data.renewValue.start_date = handleCycle(
+          "1 ngày",
+          data.renewValue.start_date_new
+        );
+      } else {
+        data.renewValue.start_date = data.renewValue.start_date_new;
+      }
+      data.renewValue.end_date = handleCycle(
+        data.renewValue.Cycle.name,
+        data.renewValue.start_date
+      );
+
+      console.log("ngay bat dau moi", data.renewValue);
+      // const renewTask = await http_create(Task, data.renewValue);
+    };
+    const renewTask = async (value) => {
+      // console.log("lalala", value);
+      const renewTask = await http_create(Task, value);
+      if (!renewTask.error) {
+        const task = await http_getOne(Task, value._id);
+        console.log("task", task);
+        alert_success(
+          `Thêm phân công`,
+          `Phân công khách hàng "${task.Customer.name}" đã được tạo thành công.`
+        );
+        refresh();
+      } else if (renewTask.error) {
+        alert_error(`Thêm phân công`, `${renewTask.msg}`);
+      }
+      await refresh();
     };
 
     const create = async () => {
@@ -1443,6 +1556,7 @@ export default {
           }
         }
       }
+
       // console.log("Data items tasks:", data.items);
 
       for (const value of data.items) {
@@ -1480,11 +1594,6 @@ export default {
     // Hàm callback được gọi trước khi component được mount (load)
     onBeforeMount(async () => {
       await refresh();
-      // console.log("status task", status_tasks.status_task);
-      // console.log("task", data.items);
-      // console.log("cycle", cycles.cycle);
-      // console.log("employee", data.employee);
-      // console.log("customer", data.cus);
     });
 
     return {
@@ -1519,6 +1628,9 @@ export default {
       evaluates,
       appointmentView,
       giaoviec,
+      initRenewTask,
+      handleCycle,
+      renewTask,
     };
   },
 };
@@ -1737,6 +1849,7 @@ export default {
           appointmentView(value, value1);
         }
       "
+      @renewtask="(value, value1) => initRenewTask(value, value1)"
     />
     <!-- Pagination -->
     <Pagination
@@ -1758,6 +1871,14 @@ export default {
       :evaluate="data.evaluate"
       :statustask="status_tasks.status_task"
       @edit="edit(data.editValue)"
+    />
+    <RenewTask
+      :item="data.renewValue"
+      :class="[data.activeRenew ? 'show-modal' : 'd-none']"
+      @cancel="data.activeRenew = false"
+      :cycles="cycles.cycle"
+      :cus="data.cus"
+      @initRenewTask="(value) => renewTask(value)"
     />
     <AddAppointment
       v-if="data.taskId.length > 0"

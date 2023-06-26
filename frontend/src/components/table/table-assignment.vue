@@ -135,6 +135,27 @@ export default {
                   schedule
                 </span>
               </button>
+              <button
+                type="button"
+                class="mx-2 format-btn"
+                data-toggle="modal"
+                data-target="#model-renew"
+              >
+                <!-- <span
+                  id="appointment"
+                  class="material-symbols-outlined d-flex align-items-center justify-content-center"
+                  @click="$emit('renewtask', item._id, item)"
+                >
+                  schedule
+                </span> -->
+                <span
+                  id="appointment"
+                  class="material-symbols-outlined d-flex align-items-center justify-content-center"
+                  @click="$emit('renewtask', item, true)"
+                >
+                  autorenew
+                </span>
+              </button>
             </div>
           </td>
           <!-- <td v-if="activeAction == true">

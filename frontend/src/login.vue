@@ -12,16 +12,9 @@
         <div class="card shadow bg-bray" style="background: #20262e">
           <div class="card-body p-5">
             <h5 class="card-title text-center mb-4">
-              <img
-                src="./assets/images/logo2.png"
-                alt=""
-                style="width: 230px"
-              />
+              <img src="./assets/images/logo2.png" alt="" style="width: 230px" />
             </h5>
-            <h3
-              class="text-center mb-4"
-              style="font-weight: bold; color: white"
-            >
+            <h3 class="text-center mb-4" style="font-weight: bold; color: white">
               ĐĂNG NHẬP
             </h3>
             <form @submit.prevent="login">
@@ -111,13 +104,10 @@ export default {
     const login = async () => {
       try {
         // Gửi yêu cầu POST tới backend để kiểm tra đăng nhập
-        const response = await axios.post(
-          "http://localhost:3000/api/accounts/login",
-          {
-            user_name: user_name.value,
-            password: password.value,
-          }
-        );
+        const response = await axios.post("http://localhost:3000/api/accounts/login", {
+          user_name: user_name.value,
+          password: password.value,
+        });
         console.log("response", response);
         sessionStorage.setItem("token", response.data.token);
 
@@ -129,7 +119,7 @@ export default {
           console.log("PASSWORD:", password.value);
 
           // Đăng nhập thành công, chuyển hướng đến trang chủ
-          alert_success(`Login`, `Đăng nhập thành công`);
+          // alert_success(`Login`, `Đăng nhập thành công`);
           // sessionStorage.setItem("loginInfo", {
           //   customerId: response.data.document.Employee._id,
           //   customerName: response.data.document.Employee.name,

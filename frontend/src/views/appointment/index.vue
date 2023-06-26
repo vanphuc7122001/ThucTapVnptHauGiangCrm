@@ -215,11 +215,18 @@ export default {
           return value.Status_App._id == entryValueStatus.value;
         });
       }
+      data.selectAll[0].checked = false;
       for (let value of data.items) {
-        for (let value1 of arrayCheck.data) {
-          if (value._id == value1._id) {
+        value.checked = false;
+      }
+      for (let value of data.items) {
+        for (let array of arrayCheck.data) {
+          console.log("arrayid==value_id", array._id == value._id);
+          if (array._id == value._id) {
             value.checked = true;
+            break;
           }
+          value.checked = false;
         }
       }
       data.currentPage = 1;
@@ -295,17 +302,47 @@ export default {
           value: value._id,
         };
       });
+
+      // 2*****
+      // console.log("Data items tasks:", data.items);
+      // var employees = reactive({ data: {} });
+      // for (let value of data.items) {
+      //   employees.data = await http_getOne(Task, value._id);
+      //   // console.log("count:", employees.data.Employees.length);
+      //   value.count = employees.data.Employees.length;
+
+      //   for (let value1 of arrayCheck.data) {
+      //     // value.count = employees.Employees.length;
+      //     if (value._id == value1._id) {
+      //       value.checked = true;
+      //     }
+      //   }
+      // }
       for (let value of data.items) {
         value.checked = false;
       }
       for (let value of data.items) {
-        for (let value1 of arrayCheck.data) {
-          if (value._id == value1._id) {
+        for (let array of arrayCheck.data) {
+          console.log("arrayid==value_id", array._id == value._id);
+          if (array._id == value._id) {
             value.checked = true;
+            break;
           }
+          value.checked = false;
         }
       }
-      arrayCheck.data = [];
+
+      // for (let value of data.items) {
+      //   value.checked = false;
+      // }
+      // for (let value of data.items) {
+      //   for (let value1 of arrayCheck.data) {
+      //     if (value._id == value1._id) {
+      //       value.checked = true;
+      //     }
+      //   }
+      // }
+      // arrayCheck.data = [];
       data.selectAll[0].checked = false;
     };
     const handleSelectAll = (value) => {

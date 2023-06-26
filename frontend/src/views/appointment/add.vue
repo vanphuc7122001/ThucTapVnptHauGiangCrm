@@ -83,7 +83,7 @@ export default {
       console.log(data.item.content);
       console.log(data.item.place);
       console.log(data.item.note);
-      console.log(data.item);
+      console.log("day ne", data.item);
       props.task.changeStatus = true;
       data.item.loginId = sessionStorage.getItem("employeeId");
 
@@ -101,7 +101,14 @@ export default {
       } else if (result.error) {
         alert_error(`Thêm lịch hẹn`, `Đã tồn tại lịch hẹn`);
       }
-      data.item = {};
+      data.item = {
+        date_time: "",
+        content: "",
+        place: "",
+        note: "",
+        taskId: "",
+        StatusAppId: "",
+      };
       ctx.emit("create");
     };
     return {
