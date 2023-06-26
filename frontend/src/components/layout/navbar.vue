@@ -76,8 +76,6 @@ export default {
 
     const deleteOne = async (_id) => {
       const notification = await http_getOne(notificationService, _id);
-      console.log("ID ne", _id);
-      console.log("deleting", notification);
       const result = await http_deleteOne(notificationService, _id);
       refresh();
       if (count.value > 0) count.value--;
@@ -86,12 +84,10 @@ export default {
     const deleteAll = async () => {
       const _idEmployee = sessionStorage.getItem("employeeId");
       const notification = await http_getOne(notificationService, _idEmployee);
-      console.log("deleting", notification);
       const isConfirmed = await alert_delete(
         `Xoá thông báo`,
         `Bạn có chắc chắn muốn xoá tất cả thông báo không ?`
       );
-      console.log(isConfirmed);
       if (isConfirmed == true) {
         const result = await notificationService.deleteAll(_idEmployee);
         alert_success(`Xoá thông báo`, `Bạn đã xoá thành công tất cả thông báo`);
@@ -103,16 +99,12 @@ export default {
     const refresh = async () => {
       const _idEmployee = sessionStorage.getItem("employeeId");
       data.List = await employeeService.get(_idEmployee);
-      console.log("Tên khách hàng", data.List.Tasks);
       data.Notice = await notificationService.get(_idEmployee);
-      console.log("Tên thông báo", data.Notice);
       count.value = 0;
       for (const value of data.Notice.documents) {
         if (value.isRead == false) {
           count.value++;
-          console.log("count value", count.value);
         }
-        console.log("đém", value);
       }
     };
 
@@ -128,7 +120,6 @@ export default {
         socket.on("notiTask", async () => {
           const _idEmployee = sessionStorage.getItem("employeeId");
           data.Notice = await notificationService.get(_idEmployee);
-          console.log("notice", data.Notice.documents);
           hasNotification.value = true;
           // for (let i = 0; i <= data.Notice.documents.length; i++) {
           //   if (data.Notice.documents[i].isRead == false)
@@ -138,34 +129,25 @@ export default {
           for (const value of data.Notice.documents) {
             if (value.isRead == false) {
               count.value++;
-              console.log("count value", count.value);
             }
-            console.log("đém", value);
           }
         });
         const employees = await http_getOne(employeeService, _idEmployee);
-        console.log("ID admin", _idEmployee);
-        console.log("nhân viên nào", employees);
         if (employees.Tasks != null) {
           const Tasks = employees.Tasks;
           Tasks.map((value, index) => {
-            // console.log("Task", index, " = ", value.Customers);
             data.customers.push(value.Customers);
           });
           socket.emit("birthday", data.customers, _idEmployee, _nameEmployee);
-          // console.log("birthday", data.customers);
         }
 
         const TasksLD = await http_getAll(taskService);
-        console.log("Task leader", TasksLD);
         for (const value of TasksLD) {
           const TasksLDE = await http_getOne(taskService, value._id);
-          // console.log("LDE neeeee", TasksLDE);
           if (_idEmployee == value.leaderId) {
             data.TaskLD.push(TasksLDE);
           }
         }
-        console.log("Data task leader", data.TaskLD);
         socket.emit("cycleCus", data.TaskLD);
         socket.emit("lateCus", data.TaskLD);
       }
@@ -174,12 +156,10 @@ export default {
     onMounted(async () => {
       const _idEmployee = sessionStorage.getItem("employeeId");
       data.Notice = await notificationService.get(_idEmployee);
-      console.log("Tên thông báo", data.Notice);
       count.value = 0;
       for (const value of data.Notice.documents) {
         if (value.isRead == false) {
           count.value++;
-          console.log("count value", count.value);
         }
       }
       // alert_info(`Chi Tiết Thông Báo`, `aca`)
