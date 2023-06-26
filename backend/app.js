@@ -1,6 +1,10 @@
 //socket
-const notification = require('./app/controllers/notification.controller')
-const { Notification, Event, Customer_Event } = require('./app/models/index.model')
+const notification = require("./app/controllers/notification.controller");
+const {
+  Notification,
+  Event,
+  Customer_Event,
+} = require("./app/models/index.model");
 
 // npm packages
 const createError = require("http-errors");
@@ -12,7 +16,7 @@ const path = require("path");
 //mail
 const nodemailer = require("nodemailer");
 //socket
-const moment = require('moment');
+const moment = require("moment");
 
 // initialize
 const app = express();
@@ -21,76 +25,105 @@ app.use(morgan("dev"));
 app.use(express.json());
 
 //socket
-const http = require('http');
+const http = require("http");
 const server = http.createServer(app);
 const io = require("socket.io")(server, {
   cors: {
-    origin: "*"
-  }
+    origin: "*",
+  },
 });
 
-io.on('connection', (socket) => {
-  console.log('a user connected');
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
+io.on("connection", (socket) => {
+  console.log("a user connected");
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
   });
 
-  socket.on('assignmentTask', () => {
-    io.emit('notiTask')
-  })
+  socket.on("assignmentTask", () => {
+    io.emit("notiTask");
+  });
 
-  socket.on('birthday', async (customers, _id, nameEm) => {
+  socket.on("birthday", async (customers, _id, nameEm) => {
     const today = moment(); // Lấy ngày hiện tại
     const events = await Event.findAll();
     for (const customer of customers) {
-      const birthday = moment(customer.birthday, 'YYYY-MM-DD');
-      const customerBirthday = { year: birthday.year(), month: birthday.month(), date: birthday.date() };
-      const todayDate = { year: today.year(), month: today.month(), date: today.date() };
+      const birthday = moment(customer.birthday, "YYYY-MM-DD");
+      const customerBirthday = {
+        year: birthday.year(),
+        month: birthday.month(),
+        date: birthday.date(),
+      };
+      const todayDate = {
+        year: today.year(),
+        month: today.month(),
+        date: today.date(),
+      };
       const age = todayDate.year - customerBirthday.year;
-      if (todayDate.month === customerBirthday.month && todayDate.date === (customerBirthday.date - 1)) {
+      if (
+        todayDate.month === customerBirthday.month &&
+        todayDate.date === customerBirthday.date - 1
+      ) {
         const documents = await Notification.findAll({
           where: {
             idRecipient: _id,
           },
-        })
-        let count = 0
+        });
+        let count = 0;
         if (documents.length > 0) {
           for (const value of documents) {
-            if (value.title == "Sinh nhật" && value.content == `Ngày mai ${customerBirthday.date}/${customerBirthday.month + 1} là sinh nhật thứ ${age} của khách hàng "${customer.name}"`) {
-              count++
+            if (
+              value.title == "Sinh nhật" &&
+              value.content ==
+                `Ngày mai ${customerBirthday.date}/${
+                  customerBirthday.month + 1
+                } là sinh nhật thứ ${age} của khách hàng "${customer.name}"`
+            ) {
+              count++;
             }
           }
           if (count > 0) {
-            io.emit('notiTask')
+            io.emit("notiTask");
           } else {
-            await Notification.create({ title: "Sinh nhật", content: `Ngày mai ${customerBirthday.date}/${customerBirthday.month + 1} là sinh nhật thứ ${age} của khách hàng "${customer.name}"`, recipient: nameEm, sender: "", isRead: false, idRecipient: _id })
-            io.emit('notiTask')
+            await Notification.create({
+              title: "Sinh nhật",
+              content: `Ngày mai ${customerBirthday.date}/${
+                customerBirthday.month + 1
+              } là sinh nhật thứ ${age} của khách hàng "${customer.name}"`,
+              recipient: nameEm,
+              sender: "",
+              isRead: false,
+              idRecipient: _id,
+            });
+            io.emit("notiTask");
             /////event
             const events = await Event.findAll();
             if (events.length > 0) {
-              let temp = 0
+              let temp = 0;
               for (let value of events) {
                 var time_duration = new Date(value.time_duration);
-                var ngay = (time_duration).getDate();
-                var thang = (time_duration).getMonth() + 1; // Tháng bắt đầu từ 0, nên cộng thêm 1
-                var nam = (time_duration).getFullYear();
-                var timeEvent = ngay + '/' + thang + '/' + nam;
-                
+                var ngay = time_duration.getDate();
+                var thang = time_duration.getMonth() + 1; // Tháng bắt đầu từ 0, nên cộng thêm 1
+                var nam = time_duration.getFullYear();
+                var timeEvent = ngay + "/" + thang + "/" + nam;
+
                 var ngayHienTai = new Date();
                 var ngay = ngayHienTai.getDate();
                 var thang = ngayHienTai.getMonth() + 1; // Tháng bắt đầu từ 0, nên cộng thêm 1
                 var nam = ngayHienTai.getFullYear();
-                var current = ngay + '/' + thang + '/' + nam;
-                if (value.name == "sinh nhật" && timeEvent== current) {
-                  temp++
+                var current = ngay + "/" + thang + "/" + nam;
+                if (value.name == "sinh nhật" && timeEvent == current) {
+                  temp++;
                   ////// có sự kiện r thì thêm khách hàng dô
                   ////Cus_event
                   const cusEvent = await Customer_Event.findAll();
                   if (cusEvent.length > 0) {
-                    let count = 0
+                    let count = 0;
                     for (let val of cusEvent) {
-                      if (val.CustomerId == customer._id && val.EventId == value._id) {
-                        count++
+                      if (
+                        val.CustomerId == customer._id &&
+                        val.EventId == value._id
+                      ) {
+                        count++;
                         break;
                       }
                     }
@@ -111,10 +144,14 @@ io.on('connection', (socket) => {
               if (temp == 0) {
                 const currentDate = new Date();
                 const currentYear = currentDate.getFullYear();
-                const currentMonth = ('0' + (currentDate.getMonth() + 1)).slice(-2);
-                const currentDay = ('0' + currentDate.getDate()).slice(-2);
-                const currentHour = ('0' + currentDate.getHours()).slice(-2);
-                const currentMinute = ('0' + currentDate.getMinutes()).slice(-2);
+                const currentMonth = ("0" + (currentDate.getMonth() + 1)).slice(
+                  -2
+                );
+                const currentDay = ("0" + currentDate.getDate()).slice(-2);
+                const currentHour = ("0" + currentDate.getHours()).slice(-2);
+                const currentMinute = ("0" + currentDate.getMinutes()).slice(
+                  -2
+                );
 
                 const datetimeLocalFormat = `${currentYear}-${currentMonth}-${currentDay}T${currentHour}:${currentMinute}`;
                 const docevent = await Event.create({
@@ -125,10 +162,13 @@ io.on('connection', (socket) => {
                 ////Cus_event
                 const cusEvent = await Customer_Event.findAll();
                 if (cusEvent.length > 0) {
-                  let count = 0
+                  let count = 0;
                   for (let val of cusEvent) {
-                    if (val.CustomerId == customer._id && val.EventId == docevent._id) {
-                      count++
+                    if (
+                      val.CustomerId == customer._id &&
+                      val.EventId == docevent._id
+                    ) {
+                      count++;
                       break;
                     }
                   }
@@ -148,10 +188,12 @@ io.on('connection', (socket) => {
             } else {
               const currentDate = new Date();
               const currentYear = currentDate.getFullYear();
-              const currentMonth = ('0' + (currentDate.getMonth() + 1)).slice(-2);
-              const currentDay = ('0' + currentDate.getDate()).slice(-2);
-              const currentHour = ('0' + currentDate.getHours()).slice(-2);
-              const currentMinute = ('0' + currentDate.getMinutes()).slice(-2);
+              const currentMonth = ("0" + (currentDate.getMonth() + 1)).slice(
+                -2
+              );
+              const currentDay = ("0" + currentDate.getDate()).slice(-2);
+              const currentHour = ("0" + currentDate.getHours()).slice(-2);
+              const currentMinute = ("0" + currentDate.getMinutes()).slice(-2);
 
               const datetimeLocalFormat = `${currentYear}-${currentMonth}-${currentDay}T${currentHour}:${currentMinute}`;
               // const currentDate = new Date();
@@ -164,10 +206,13 @@ io.on('connection', (socket) => {
               ////Cus_event
               const cusEvent = await Customer_Event.findAll();
               if (cusEvent.length > 0) {
-                let count = 0
+                let count = 0;
                 for (let val of cusEvent) {
-                  if (val.CustomerId == customer._id && val.EventId == document._id) {
-                    count++
+                  if (
+                    val.CustomerId == customer._id &&
+                    val.EventId == document._id
+                  ) {
+                    count++;
                     break;
                   }
                 }
@@ -201,37 +246,48 @@ io.on('connection', (socket) => {
             //         <br> Chúc mừng sinh nhật lần thứ ${age} của bạn`,
             // };
 
-            // const info = await transporter.sendMail(mailOptions); 
+            // const info = await transporter.sendMail(mailOptions);
           }
-        }
-        else {
-          await Notification.create({ title: "Sinh nhật", content: `Ngày mai ${customerBirthday.date}/${customerBirthday.month + 1} là sinh nhật thứ ${age} của khách hàng "${customer.name}"`, recipient: nameEm, sender: "", isRead: false, idRecipient: _id })
+        } else {
+          await Notification.create({
+            title: "Sinh nhật",
+            content: `Ngày mai ${customerBirthday.date}/${
+              customerBirthday.month + 1
+            } là sinh nhật thứ ${age} của khách hàng "${customer.name}"`,
+            recipient: nameEm,
+            sender: "",
+            isRead: false,
+            idRecipient: _id,
+          });
           /////event
           const events = await Event.findAll();
           if (events.length > 0) {
-            let temp = 0
+            let temp = 0;
             for (let value of events) {
               var time_duration = new Date(value.time_duration);
-              var ngay = (time_duration).getDate();
-              var thang = (time_duration).getMonth() + 1; // Tháng bắt đầu từ 0, nên cộng thêm 1
-              var nam = (time_duration).getFullYear();
-              var timeEvent = ngay + '/' + thang + '/' + nam;
-              
+              var ngay = time_duration.getDate();
+              var thang = time_duration.getMonth() + 1; // Tháng bắt đầu từ 0, nên cộng thêm 1
+              var nam = time_duration.getFullYear();
+              var timeEvent = ngay + "/" + thang + "/" + nam;
+
               var ngayHienTai = new Date();
               var ngay = ngayHienTai.getDate();
               var thang = ngayHienTai.getMonth() + 1; // Tháng bắt đầu từ 0, nên cộng thêm 1
               var nam = ngayHienTai.getFullYear();
-              var current = ngay + '/' + thang + '/' + nam;
-              if (value.name == "sinh nhật" && timeEvent== current) {
-                temp++
+              var current = ngay + "/" + thang + "/" + nam;
+              if (value.name == "sinh nhật" && timeEvent == current) {
+                temp++;
                 ////// có sự kiện r thì thêm khách hàng dô
                 ////Cus_event
                 const cusEvent = await Customer_Event.findAll();
                 if (cusEvent.length > 0) {
-                  let count = 0
+                  let count = 0;
                   for (let val of cusEvent) {
-                    if (val.CustomerId == customer._id && val.EventId == value._id) {
-                      count++
+                    if (
+                      val.CustomerId == customer._id &&
+                      val.EventId == value._id
+                    ) {
+                      count++;
                       break;
                     }
                   }
@@ -253,10 +309,10 @@ io.on('connection', (socket) => {
             // const currentDate = new Date();
             const currentDate = new Date();
             const currentYear = currentDate.getFullYear();
-            const currentMonth = ('0' + (currentDate.getMonth() + 1)).slice(-2);
-            const currentDay = ('0' + currentDate.getDate()).slice(-2);
-            const currentHour = ('0' + currentDate.getHours()).slice(-2);
-            const currentMinute = ('0' + currentDate.getMinutes()).slice(-2);
+            const currentMonth = ("0" + (currentDate.getMonth() + 1)).slice(-2);
+            const currentDay = ("0" + currentDate.getDate()).slice(-2);
+            const currentHour = ("0" + currentDate.getHours()).slice(-2);
+            const currentMinute = ("0" + currentDate.getMinutes()).slice(-2);
 
             const datetimeLocalFormat = `${currentYear}-${currentMonth}-${currentDay}T${currentHour}:${currentMinute}`;
             const formattedDateTime = currentDate.toISOString();
@@ -268,10 +324,13 @@ io.on('connection', (socket) => {
             ////Cus_event
             const cusEvent = await Customer_Event.findAll();
             if (cusEvent.length > 0) {
-              let count = 0
+              let count = 0;
               for (let val of cusEvent) {
-                if (val.CustomerId == customer._id && val.EventId == document._id) {
-                  count++
+                if (
+                  val.CustomerId == customer._id &&
+                  val.EventId == document._id
+                ) {
+                  count++;
                   break;
                 }
               }
@@ -306,214 +365,311 @@ io.on('connection', (socket) => {
 
           //   const info = await transporter.sendMail(mailOptions);
           //   console.log("Email sent:", info.messageId);
-          //   console.log("Thành công 2");    
-          io.emit('notiTask')
+          //   console.log("Thành công 2");
+          io.emit("notiTask");
         }
       }
-    };
+    }
   });
 
-  socket.on('cycleCus', async (Tasks) => {
+  socket.on("cycleCus", async (Tasks) => {
     for (const value of Tasks) {
       if (value.Status_Task.name == "đã chăm sóc") {
         const today = moment();
-        const todayDate = { year: today.year(), month: today.month(), date: today.date() };
-        const start_day = moment(value.start_date, 'YYYY-MM-DD');
-        let end_day = moment(value.end_date, 'YYYY-MM-DD');
-        value.end_date = moment(value.end_date, 'YYYY-MM-DD');
-        let coming_day = start_day
+        const todayDate = {
+          year: today.year(),
+          month: today.month(),
+          date: today.date(),
+        };
+        const start_day = moment(value.start_date, "YYYY-MM-DD");
+        let end_day = moment(value.end_date, "YYYY-MM-DD");
+        value.end_date = moment(value.end_date, "YYYY-MM-DD");
+        let coming_day = start_day;
         if (start_day.isBefore(today)) {
-          var parts = value.Cycle.name.split(' ');
+          var parts = value.Cycle.name.split(" ");
           var number = parseInt(parts[0]);
           var string = parts[1];
           switch (string) {
-            case 'ngày':
-              coming_day = coming_day.add(number, 'days');
-              end_day = end_day.add(number, 'days');
+            case "ngày":
+              coming_day = coming_day.add(number, "days");
+              end_day = end_day.add(number, "days");
               break;
-            case 'tuần':
-              coming_day = coming_day.add(number * 7, 'days');
-              end_day = end_day.add(number * 7, 'days');
+            case "tuần":
+              coming_day = coming_day.add(number * 7, "days");
+              end_day = end_day.add(number * 7, "days");
               break;
-            case 'tháng':
-              coming_day = coming_day.add(number, 'months');
-              end_day = end_day.add(number, 'months');
+            case "tháng":
+              coming_day = coming_day.add(number, "months");
+              end_day = end_day.add(number, "months");
               break;
-            case 'quý':
-              coming_day = coming_day.add(number * 3, 'months');
-              end_day = end_day.add(number * 3, 'months');
+            case "quý":
+              coming_day = coming_day.add(number * 3, "months");
+              end_day = end_day.add(number * 3, "months");
               break;
-            case 'năm':
-              coming_day = coming_day.add(number, 'years');
-              end_day = end_day.add(number, 'years');
+            case "năm":
+              coming_day = coming_day.add(number, "years");
+              end_day = end_day.add(number, "years");
               break;
             default:
-              console.log("Chu kì k hợp lệ")
+              console.log("Chu kì k hợp lệ");
               break;
           }
           for (const i of Tasks) {
-            if (value.Customer._id == i.Customer._id && value.Employees.length != 0) {
-              const start_dateItem = moment(i.start_date, 'YYYY-MM-DD');
-              const end_dateItem = moment(i.end_date, 'YYYY-MM-DD');
+            if (
+              value.Customer._id == i.Customer._id &&
+              value.Employees.length != 0
+            ) {
+              const start_dateItem = moment(i.start_date, "YYYY-MM-DD");
+              const end_dateItem = moment(i.end_date, "YYYY-MM-DD");
               if (coming_day.isSame(value.end_date)) {
-                if ((start_dateItem).isSame(coming_day.add(1, 'days')) && (end_dateItem).isSame(end_day.add(1, 'days'))) {
-                  coming_day = start_dateItem
-                  value.Employees = i.Employees
-                  value.content = i.content
+                if (
+                  start_dateItem.isSame(coming_day.add(1, "days")) &&
+                  end_dateItem.isSame(end_day.add(1, "days"))
+                ) {
+                  coming_day = start_dateItem;
+                  value.Employees = i.Employees;
+                  value.content = i.content;
                 }
-              } else
-                if ((start_dateItem).isSame(coming_day) && (end_dateItem).isSame(end_day)) {
-                  coming_day = start_dateItem
-                  value.Employees = i.Employees
-                  value.content = i.content
-                }
+              } else if (
+                start_dateItem.isSame(coming_day) &&
+                end_dateItem.isSame(end_day)
+              ) {
+                coming_day = start_dateItem;
+                value.Employees = i.Employees;
+                value.content = i.content;
+              }
             }
           }
-          today.startOf('day');
-          coming_day.startOf('day');
+          today.startOf("day");
+          coming_day.startOf("day");
           if (coming_day.isSame(value.end_date)) {
-            coming_day = coming_day.add(1, 'days');
-            end_day = end_day.add(1, 'days');
+            coming_day = coming_day.add(1, "days");
+            end_day = end_day.add(1, "days");
           }
-          if (coming_day.subtract(1, 'days').isSame(today)) {
+          if (coming_day.subtract(1, "days").isSame(today)) {
             if (!value.Employees.length) {
               const notice = await Notification.findAll({
                 where: {
                   idRecipient: value.leaderId,
-                }
-              })
-              let count = 0
+                },
+              });
+              let count = 0;
               if (notice.length > 0) {
                 for (const item of notice) {
-                  if (item.title == "Phân công chưa được giao" && item.content == `Ngày mai ${todayDate.date + 1}/${todayDate.month + 1} là chu kỳ chăm sóc "${value.Cycle.name}" của khách hàng "${value.Customer.name}" với nội dung chăm sóc: ${value.content}`) {
-                    count++
+                  if (
+                    item.title == "Phân công chưa được giao" &&
+                    item.content ==
+                      `Ngày mai ${todayDate.date + 1}/${
+                        todayDate.month + 1
+                      } là chu kỳ chăm sóc "${
+                        value.Cycle.name
+                      }" của khách hàng "${
+                        value.Customer.name
+                      }" với nội dung chăm sóc: ${value.content}`
+                  ) {
+                    count++;
                   }
                 }
                 if (count > 0) {
-                  io.emit('notiTask')
+                  io.emit("notiTask");
                 } else {
-                  await Notification.create({ title: "Phân công chưa được giao", content: `Ngày mai ${todayDate.date + 1}/${todayDate.month + 1} là chu kỳ chăm sóc "${value.Cycle.name}" của khách hàng "${value.Customer.name}" với nội dung chăm sóc: ${value.content}`, recipient: "Lãnh đạo", sender: "", isRead: false, idRecipient: value.leaderId })
-                  io.emit('notiTask')    
+                  await Notification.create({
+                    title: "Phân công chưa được giao",
+                    content: `Ngày mai ${todayDate.date + 1}/${
+                      todayDate.month + 1
+                    } là chu kỳ chăm sóc "${
+                      value.Cycle.name
+                    }" của khách hàng "${
+                      value.Customer.name
+                    }" với nội dung chăm sóc: ${value.content}`,
+                    recipient: "Lãnh đạo",
+                    sender: "",
+                    isRead: false,
+                    idRecipient: value.leaderId,
+                  });
+                  io.emit("notiTask");
                 }
               } else {
-                await Notification.create({ title: "Phân công chưa được giao", content: `Ngày mai ${todayDate.date + 1}/${todayDate.month + 1} là chu kỳ chăm sóc "${value.Cycle.name}" của khách hàng "${value.Customer.name}" với nội dung chăm sóc: ${value.content}`, recipient: "Lãnh đạo", sender: "", isRead: false, idRecipient: value.leaderId })
+                await Notification.create({
+                  title: "Phân công chưa được giao",
+                  content: `Ngày mai ${todayDate.date + 1}/${
+                    todayDate.month + 1
+                  } là chu kỳ chăm sóc "${value.Cycle.name}" của khách hàng "${
+                    value.Customer.name
+                  }" với nội dung chăm sóc: ${value.content}`,
+                  recipient: "Lãnh đạo",
+                  sender: "",
+                  isRead: false,
+                  idRecipient: value.leaderId,
+                });
                 const notice = await Notification.findAll({
                   where: {
                     idRecipient: value.leaderId,
-                  }
-                })
-                io.emit('notiTask')
+                  },
+                });
+                io.emit("notiTask");
               }
             } else {
               const documents = await Notification.findAll({
                 where: {
                   idRecipient: value.leaderId,
                 },
-              })
-              let count = 0
+              });
+              let count = 0;
               if (documents.length >= 0) {
                 for (const item of documents) {
-                  if (item.title == "Tới chu kỳ" && item.content == `Ngày mai ${todayDate.date + 1}/${todayDate.month + 1} là chu kỳ chăm sóc "${value.Cycle.name}" của khách hàng "${value.Customer.name}" với nội dung chăm sóc: ${value.content}`) {
-                    count++
+                  if (
+                    item.title == "Tới chu kỳ" &&
+                    item.content ==
+                      `Ngày mai ${todayDate.date + 1}/${
+                        todayDate.month + 1
+                      } là chu kỳ chăm sóc "${
+                        value.Cycle.name
+                      }" của khách hàng "${
+                        value.Customer.name
+                      }" với nội dung chăm sóc: ${value.content}`
+                  ) {
+                    count++;
                   }
                 }
                 if (count > 0) {
-                  io.emit('notiTask')
+                  io.emit("notiTask");
                 } else {
-                  await Notification.create({ title: "Tới chu kỳ", content: `Ngày mai ${todayDate.date + 1}/${todayDate.month + 1} là chu kỳ chăm sóc "${value.Cycle.name}" của khách hàng "${value.Customer.name}" với nội dung chăm sóc: ${value.content}`, recipient: "Lãnh đạo", sender: "", isRead: false, idRecipient: value.leaderId })
-                  io.emit('notiTask')   
+                  await Notification.create({
+                    title: "Tới chu kỳ",
+                    content: `Ngày mai ${todayDate.date + 1}/${
+                      todayDate.month + 1
+                    } là chu kỳ chăm sóc "${
+                      value.Cycle.name
+                    }" của khách hàng "${
+                      value.Customer.name
+                    }" với nội dung chăm sóc: ${value.content}`,
+                    recipient: "Lãnh đạo",
+                    sender: "",
+                    isRead: false,
+                    idRecipient: value.leaderId,
+                  });
+                  io.emit("notiTask");
                 }
               } else {
-                await Notification.create({ title: "Tới chu kỳ", content: `Ngày mai ${todayDate.date + 1}/${todayDate.month + 1} là chu kỳ chăm sóc "${value.Cycle.name}" của khách hàng "${value.Customer.name}" với nội dung chăm sóc: ${value.content}`, recipient: "Lãnh đạo", sender: "", isRead: false, idRecipient: value.leaderId })
-                io.emit('notiTask')
+                await Notification.create({
+                  title: "Tới chu kỳ",
+                  content: `Ngày mai ${todayDate.date + 1}/${
+                    todayDate.month + 1
+                  } là chu kỳ chăm sóc "${value.Cycle.name}" của khách hàng "${
+                    value.Customer.name
+                  }" với nội dung chăm sóc: ${value.content}`,
+                  recipient: "Lãnh đạo",
+                  sender: "",
+                  isRead: false,
+                  idRecipient: value.leaderId,
+                });
+                io.emit("notiTask");
               }
             }
           }
         }
       }
     }
-  })
+  });
 
-  socket.on('lateCus', async (Tasks) => {
+  socket.on("lateCus", async (Tasks) => {
     for (const value of Tasks) {
       if (value.Status_Task.name == "đã chăm sóc") {
-        let start_day = moment(value.start_date, 'YYYY-MM-DD');
-        let end_day = moment(value.end_date, 'YYYY-MM-DD');
-        let end_dayold = moment(value.end_date, 'YYYY-MM-DD');
-        let countC = 0
+        let start_day = moment(value.start_date, "YYYY-MM-DD");
+        let end_day = moment(value.end_date, "YYYY-MM-DD");
+        let formatted_end = end_day.format("DD-MM-YYYY");
+        let end_dayold = moment(value.end_date, "YYYY-MM-DD");
+        let countC = 0;
         let shouldBreak = false;
-        while (end_day.isBefore(moment(), 'day') && !shouldBreak) {
-          var parts = value.Cycle.name.split(' ');
+        while (end_day.isBefore(moment(), "day") && !shouldBreak) {
+          var parts = value.Cycle.name.split(" ");
           var number = parseInt(parts[0]);
           var string = parts[1];
           switch (string) {
-            case 'ngày':
-              start_day = start_day.add(number, 'days');
-              end_day = end_day.add(number, 'days');
+            case "ngày":
+              start_day = start_day.add(number, "days");
+              end_day = end_day.add(number, "days");
               break;
-            case 'tuần':
-              start_day = start_day.add(number * 7, 'days');
-              end_day = end_day.add(number * 7, 'days');
+            case "tuần":
+              start_day = start_day.add(number * 7, "days");
+              end_day = end_day.add(number * 7, "days");
               break;
-            case 'tháng':
-              start_day = start_day.add(number, 'months');
-              end_day = end_day.add(number, 'months');
+            case "tháng":
+              start_day = start_day.add(number, "months");
+              end_day = end_day.add(number, "months");
               break;
-            case 'quý':
-              start_day = start_day.add(number * 3, 'months');
-              end_day = end_day.add(number * 3, 'months');
+            case "quý":
+              start_day = start_day.add(number * 3, "months");
+              end_day = end_day.add(number * 3, "months");
               break;
-            case 'năm':
-              start_day = start_day.add(number, 'years');
-              end_day = end_day.add(number, 'years');
+            case "năm":
+              start_day = start_day.add(number, "years");
+              end_day = end_day.add(number, "years");
               break;
             default:
               console.log("Chu kỳ không hợp lệ");
               break;
           }
           if (start_day.isSame(end_dayold)) {
-            end_dayold = end_day
-            start_day = start_day.add(1, 'days');
-            end_day = end_day.add(1, 'days');
+            end_dayold = end_day;
+            start_day = start_day.add(1, "days");
+            end_day = end_day.add(1, "days");
           }
-          countC++
+          countC++;
           for (const i of Tasks) {
             if (start_day.isSame(i.start_date) && end_day.isSame(i.end_date)) {
               shouldBreak = true;
-              break
+              break;
             }
           }
         }
         if (countC > 2) {
-          let count = 0
+          let count = 0;
           const notice = await Notification.findAll({
             where: {
               idRecipient: value.leaderId,
-            }
-          })
+            },
+          });
           if (notice.length > 0) {
             for (const item of notice) {
-              if (item.title == "Cần chú ý" && item.content == `Khách hàng "${value.Customer.name}" đã lâu chưa được chăm sóc kể từ ngày ${value.end_date}`) {
-                count++
+              if (
+                item.title == "Cần chú ý" &&
+                item.content ==
+                  `Khách hàng "${value.Customer.name}" đã lâu chưa được chăm sóc kể từ ngày ${formatted_end}`
+              ) {
+                count++;
               }
             }
             if (count > 0) {
-              io.emit('notiTask')
+              io.emit("notiTask");
             } else {
-              await Notification.create({ title: "Cần chú ý", content: `Khách hàng "${value.Customer.name}" đã lâu chưa được chăm sóc kể từ ngày ${value.end_date}`, recipient: "Lãnh đạo", sender: "", isRead: false, idRecipient: value.leaderId })
-              io.emit('notiTask')
+              await Notification.create({
+                title: "Cần chú ý",
+                content: `Khách hàng "${value.Customer.name}" đã lâu chưa được chăm sóc kể từ ngày ${formatted_end}`,
+                recipient: "Lãnh đạo",
+                sender: "",
+                isRead: false,
+                idRecipient: value.leaderId,
+              });
+              io.emit("notiTask");
             }
           } else {
-            await Notification.create({ title: "Cần chú ý", content: `Khách hàng "${value.Customer.name}" đã lâu chưa được chăm sóc kể từ ngày ${value.end_date}`, recipient: "Lãnh đạo", sender: "", isRead: false, idRecipient: value.leaderId })
-            io.emit('notiTask')
+            await Notification.create({
+              title: "Cần chú ý",
+              content: `Khách hàng "${value.Customer.name}" đã lâu chưa được chăm sóc kể từ ngày ${formatted_end}`,
+              recipient: "Lãnh đạo",
+              sender: "",
+              isRead: false,
+              idRecipient: value.leaderId,
+            });
+            io.emit("notiTask");
           }
         }
       }
     }
-  })
+  });
 });
-
-
 
 server.listen(3000, () => {
   console.log(`Server is listening on port`);
@@ -570,7 +726,7 @@ const LoginRouter = require("./app/routes/login.route");
 const Status_TaskRouter = require("./app/routes/status_task.route");
 const EvaluateRouter = require("./app/routes/evaluate.route");
 const Status_AppRouter = require("./app/routes/status_app.route");
-const notificationRouter = require('./app/routes/notification.route');
+const notificationRouter = require("./app/routes/notification.route");
 
 // use router
 app.use("/api/customers", customerRouter);
@@ -600,7 +756,7 @@ app.use("/api/login", LoginRouter);
 app.use("/api/status_tasks", Status_TaskRouter);
 app.use("/api/evaluates", EvaluateRouter);
 app.use("/api/status_apps", Status_AppRouter);
-app.use('/api/notification', notificationRouter);
+app.use("/api/notification", notificationRouter);
 // // check errors
 app.use((req, res, next) => {
   return next(createError(404, "Resource Not Found"));

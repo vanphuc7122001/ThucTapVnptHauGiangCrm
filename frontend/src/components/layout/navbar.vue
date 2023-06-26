@@ -1,5 +1,5 @@
 <script>
-import { defineEmits, inject, ref, reactive, onMounted, computed, watch } from "vue";
+import { defineEmits, inject, ref, reactive, onMounted, computed, watch, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import socket from "../../../socket";
 import employeeService from "../../services/employee.service";
@@ -49,7 +49,20 @@ export default {
     };
     const hasNotification = ref(false);
     const showNotification = ref(false);
-    const count = ref(0);
+    const count = ref(0)
+    const toggleNotification = () => {
+      showNotification.value = !showNotification.value;
+      hasNotification.value = false;
+    };
+
+    const toggleNotification1 = () => {
+      showNotification.value = false;
+      hasNotification.value = false;
+    };
+
+    const toggleDropdown1 = () => {
+      showDropdown.value = false;
+    };
 
     const isRead = async (item) => {
       data.selectedItem = item;
@@ -153,22 +166,42 @@ export default {
       }
     };
 
+    const selectRef = ref(null);
+    const selectRef1 = ref(null);
+    const handleClickOutside = (event) => {
+      if (!selectRef.value.contains(event.target)) {
+        toggleNotification1();
+        // toggleDropdown1();
+      }
+    };
+
+    const handleClickOutside1 = (event) => {
+      if (!selectRef1.value.contains(event.target)) {
+        // toggleNotification1();
+        toggleDropdown1();
+      }
+    };
+
     onMounted(async () => {
       const _idEmployee = sessionStorage.getItem("employeeId");
       data.Notice = await notificationService.get(_idEmployee);
+      console.log("Tên thông báo", data.Notice);
       count.value = 0;
       for (const value of data.Notice.documents) {
         if (value.isRead == false) {
           count.value++;
+          console.log("count value", count.value);
         }
       }
       // alert_info(`Chi Tiết Thông Báo`, `aca`)
+      document.addEventListener("click", handleClickOutside);
+      document.addEventListener("click", handleClickOutside1);
+    });
+    onUnmounted(() => {
+      document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener("click", handleClickOutside1);
     });
 
-    const toggleNotification = () => {
-      showNotification.value = !showNotification.value;
-      hasNotification.value = false;
-    };
 
     const clearNotification = () => {
       showNotification.value = false;
@@ -280,6 +313,8 @@ export default {
       deleteAll,
       isRead,
       formatDateTime,
+      selectRef, 
+      selectRef1
     };
   },
 };
@@ -293,7 +328,7 @@ export default {
         menu
       </span></a
     >
-    <div class="d-flex align-content-center justify-content-between">
+    <div class="d-flex align-content-center justify-content-between" ref="selectRef">
       <a class="text-dark d-flex align-items-center"
         ><span class="material-symbols-outlined cursor-pointer"> search </span></a
       >
@@ -349,7 +384,7 @@ export default {
 
       <div
         class="d-flex align-content-center mr-3 my-1 cursor-pointer"
-        @click="toggleDropdown"
+        @click="toggleDropdown" ref="selectRef1"
       >
         <img
           class="rounded-circle cursor-pointer"
