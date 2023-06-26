@@ -94,7 +94,11 @@ export default {
         });
       } else {
         return data.items.map((value, index) => {
-          return [value.customer.name, value.customer.email, value.customer.phone]
+          return [
+            value.customer.name,
+            value.customer.email,
+            value.customer.phone,
+          ]
             .join("")
             .toLocaleLowerCase();
         });
@@ -102,7 +106,9 @@ export default {
     });
     const filter = computed(() => {
       return data.items.filter((value, index) => {
-        return toString.value[index].includes(data.searchText.toLocaleLowerCase());
+        return toString.value[index].includes(
+          data.searchText.toLocaleLowerCase()
+        );
       });
     });
     const filtered = computed(() => {
@@ -322,6 +328,7 @@ export default {
           start_date: formatDate1(value.start_date),
           end_date: formatDate1(value.end_date),
           customer: customer.documents,
+          status: value.Status_Task.name,
         };
         data.items.push(cus);
       }
@@ -360,7 +367,8 @@ export default {
         };
       }
       for (let i = 0; i < data.customerType.documents.length; i++) {
-        chartOptionsCustomerType.labels[i] = data.customerType.documents[i].name;
+        chartOptionsCustomerType.labels[i] =
+          data.customerType.documents[i].name;
         chartSeriesCustomerType.value[i] = 0;
 
         for (let j = 0; j < data.customer.documents.length; j++) {
@@ -384,7 +392,8 @@ export default {
         await refresh();
         console.log("show chart customer");
         for (let i = 0; i < data.customerType.documents.length; i++) {
-          chartOptionsCustomerType.labels[i] = data.customerType.documents[i].name;
+          chartOptionsCustomerType.labels[i] =
+            data.customerType.documents[i].name;
           chartSeriesCustomerType.value[i] = 0;
 
           for (let j = 0; j < data.customer.documents.length; j++) {
@@ -428,7 +437,10 @@ export default {
             console.log("aquarter+appointment");
             const currentQuarterDates = reactive({ data: {} });
             currentQuarterDates.data = getCurrentQuarterDates();
-            initChart(currentQuarterDates.data.start, currentQuarterDates.data.end);
+            initChart(
+              currentQuarterDates.data.start,
+              currentQuarterDates.data.end
+            );
           }
           case "năm": {
             const getCurrentYearDates = getCurrentYear();
@@ -469,7 +481,10 @@ export default {
           }
           case "năm": {
             const getCurrentYearDates = getCurrentYear();
-            await initCustomer(getCurrentYearDates.start, getCurrentYearDates.end);
+            await initCustomer(
+              getCurrentYearDates.start,
+              getCurrentYearDates.end
+            );
             console.log("Customer cycle:", data.customerCycle);
             break;
           }
@@ -527,7 +542,11 @@ export default {
       const currentYear = currentDate.getFullYear();
       const currentQuarter = Math.floor(currentDate.getMonth() / 3) + 1;
 
-      const firstDayOfQuarter = new Date(currentYear, (currentQuarter - 1) * 3, 1);
+      const firstDayOfQuarter = new Date(
+        currentYear,
+        (currentQuarter - 1) * 3,
+        1
+      );
       const lastDayOfQuarter = new Date(currentYear, currentQuarter * 3, 0);
 
       const formattedFirstDay = formatDate(firstDayOfQuarter);
@@ -618,7 +637,8 @@ export default {
       // tính trong tuần , khởi tại ban đầu
       data.customerCycle = data.customerCycle.filter((item) => {
         return (
-          item.start_date_new >= firstDayOfWeek && item.start_date_new <= lastDayOfWeek
+          item.start_date_new >= firstDayOfWeek &&
+          item.start_date_new <= lastDayOfWeek
         );
       });
 
@@ -639,7 +659,10 @@ export default {
       //
       data.progress = 0;
       data.task = data.task.filter((value, index) => {
-        return value.start_date >= firstDayOfWeek && value.start_date <= lastDayOfWeek;
+        return (
+          value.start_date >= firstDayOfWeek &&
+          value.start_date <= lastDayOfWeek
+        );
       });
       // console.log(data.task);
       for (let i = 0; i < data.statusTask.length; i++) {
@@ -667,7 +690,8 @@ export default {
       data.progress = 0;
       data.task = data.task.filter((item) => {
         return (
-          (item.start_date >= firstDayOfWeek && item.start_date <= lastDayOfWeek) ||
+          (item.start_date >= firstDayOfWeek &&
+            item.start_date <= lastDayOfWeek) ||
           (item.end_date >= firstDayOfWeek && item.end_date <= lastDayOfWeek)
         );
       });
@@ -791,7 +815,10 @@ export default {
 
     <!-- search, select -->
     <div class="d-flex justify-content-between mx-4 mb-3">
-      <div class="d-flex justify-content-start" v-if="showchart == 'customerCycle'">
+      <div
+        class="d-flex justify-content-start"
+        v-if="showchart == 'customerCycle'"
+      >
         <Select
           class="d-flex justify-content-start"
           :options="[
@@ -889,7 +916,9 @@ export default {
         <!--Chart Appointment -->
         <div class="mt-5" v-if="overview && showchart == 'appointment'">
           <div class="border-box">
-            <h5 class="text-center mt-2">Biểu đồ thể hiện trạng thái chăm sóc</h5>
+            <h5 class="text-center mt-2">
+              Biểu đồ thể hiện trạng thái chăm sóc
+            </h5>
             <apexchart
               :options="chartOptionsAppointment"
               :series="chartSeriesAppointment.data"
@@ -910,7 +939,10 @@ export default {
       </div>
 
       <!--Chart Customer -->
-      <div class="row justify-content-around" v-if="overview && showchart == 'customer'">
+      <div
+        class="row justify-content-around"
+        v-if="overview && showchart == 'customer'"
+      >
         <div class="col-6 mb-4">
           <div
             class="card border-left-primary shadow h-100 py-2"
@@ -965,6 +997,7 @@ export default {
           'Email',
           'Chu kỳ',
           'Nội dung chăm sóc',
+          'Trạng thái',
           'Bắt đầu',
           'Kết thúc',
         ]"
@@ -973,7 +1006,11 @@ export default {
         @selectAll="(value) => handleSelectAll(value)"
         @selectOne="(id, item) => handleSelectOne(id, item)"
         @delete="handleDelete"
-        @edit="(value, value1) => ((data.addValue = value), (data.activeEdit = value1))"
+        @edit="
+          (value, value1) => (
+            (data.addValue = value), (data.activeEdit = value1)
+          )
+        "
         @view="
           (value) => {
             view(value);

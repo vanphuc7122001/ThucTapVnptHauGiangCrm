@@ -35,7 +35,7 @@ export default {
       type: Object,
       default: {},
     },
-    updateAdd: { type: String, default: "" },
+    flag: { type: String, default: "" },
   },
   setup(props, ctx) {
     const data = reactive({
@@ -120,7 +120,9 @@ export default {
     const selectedOptionCenter = ref("");
     watch(selectedOptionCenter, async (newValue, oldValue) => {
       console.log("center:", newValue);
-      departments.department = await departmentsServices.findAllDepOfACenter(newValue);
+      departments.department = await departmentsServices.findAllDepOfACenter(
+        newValue
+      );
       units.unit = [];
       for (let val of departments.department) {
         var newData = await unitsServices.findAllUnitsOfADep(val._id);
@@ -154,7 +156,8 @@ export default {
             }
             alert_success(`Đã thêm trung tâm`, `${CenterName}`);
             await refresh("center");
-            props.item.Unit.Department.Center_VNPTHG.name = document.document.name;
+            props.item.Unit.Department.Center_VNPTHG.name =
+              document.document.name;
             selectedOptionCenter.value = document.document._id;
             centers.center.push({ _id: "other", name: "khác" });
             ctx.emit("newCenter", centers.center);
@@ -273,9 +276,10 @@ export default {
             focusConfirm: false,
             showCancelButton: true,
             preConfirm: () => {
-              const selectedOptionCenter = document.getElementById("my-select-center")
-                .value;
-              const selectedOptionDep = document.getElementById("my-select-dep").value;
+              const selectedOptionCenter =
+                document.getElementById("my-select-center").value;
+              const selectedOptionDep =
+                document.getElementById("my-select-dep").value;
 
               const inputValue = document.getElementById("my-input").value;
               if (!selectedOptionCenter || !inputValue || !selectedOptionDep) {
@@ -302,7 +306,9 @@ export default {
             .map(
               (option) =>
                 `<option value="${option._id}"
-                ${option._id == selectedOptionDepartment.value ? "selected" : ""}
+                ${
+                  option._id == selectedOptionDepartment.value ? "selected" : ""
+                }
 
                 >${option.name}</option>`
             )
@@ -330,7 +336,10 @@ export default {
 
           if (formValues) {
             // Xử lý giá trị selectedOption và giá trị inputValue
-            console.log("Selected Option Center:", formValues.selectedOptionCenter);
+            console.log(
+              "Selected Option Center:",
+              formValues.selectedOptionCenter
+            );
             console.log("Selected Option dep:", formValues.selectedOptionDep);
 
             console.log("Input Value:", formValues.inputValue);
@@ -358,7 +367,9 @@ export default {
         showSweetAlert();
         selectedOptionUnit.value = "";
       }
-      units.unit = await unitsServices.findAllUnitsOfADep(selectedOptionDepartment.value);
+      units.unit = await unitsServices.findAllUnitsOfADep(
+        selectedOptionDepartment.value
+      );
       units.unit.push({ _id: "other", name: "khác" });
       props.item.unitId = selectedOptionUnit.value;
       console.log("U:", props.item.unitId);
@@ -373,7 +384,9 @@ export default {
         selectedOptionCenter.value
       );
       departments.department.push({ _id: "other", name: "khác" });
-      units.unit = await unitsServices.findAllUnitsOfADep(selectedOptionDepartment.value);
+      units.unit = await unitsServices.findAllUnitsOfADep(
+        selectedOptionDepartment.value
+      );
       units.unit.push({ _id: "other", name: "khác" });
     };
     const onDeletePosition = async (value) => {
@@ -417,9 +430,9 @@ export default {
       }
     };
     const update = ref("");
-    update.value = props.updateAdd;
+    update.value = props.flag;
     watchEffect(async () => {
-      if (props.updateAdd) {
+      if (props.flag) {
         await refresh_add();
         ctx.emit("restore", false);
       }
@@ -428,13 +441,13 @@ export default {
     const showModal = ref(false);
 
     const closeModal = async () => {
-      // console.log("close modal");
-      // showModal.value = false;
-      // ctx.emit("refresh");
+      console.log("close modal");
+      showModal.value = false;
+      ctx.emit("refresh", false);
     };
 
     onMounted(async () => {
-      console.log("Mouted updateAdd:", props.updateAdd);
+      console.log("Mouted flag:", props.flag);
       await refresh_add();
     });
     return {
@@ -471,13 +484,18 @@ export default {
           <h4 class="modal-title" style="font-size: 15px">
             Thêm thông tin nhân viên mới
           </h4>
-          <button type="button" class="close" data-dismiss="modal" @click="closeModal">
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            @click="closeModal"
+          >
             &times;
           </button>
         </div>
 
         <!-- Modal body -->
-        <div class="model-body" @click="closeModal">
+        <div class="model-body">
           <div class="d-flex">
             <!-- steps -->
             <div class="d-flex flex-column" style="height: 100%">
@@ -512,7 +530,9 @@ export default {
                 style="width: 100%"
               >
                 <div class="form-group flex-grow-1">
-                  <label for="name">Họ và tên(<span style="color: red">*</span>):</label>
+                  <label for="name"
+                    >Họ và tên(<span style="color: red">*</span>):</label
+                  >
                   <input
                     type="text"
                     class="form-control"
@@ -537,7 +557,9 @@ export default {
                 </div>
 
                 <div class="form-group flex-grow-1">
-                  <label for="address">Địa chỉ(<span style="color: red">*</span>):</label>
+                  <label for="address"
+                    >Địa chỉ(<span style="color: red">*</span>):</label
+                  >
                   <input
                     type="text"
                     class="form-control"
@@ -561,7 +583,9 @@ export default {
                   />
                 </div>
                 <div class="form-group flex-grow-1">
-                  <label for="email">Email(<span style="color: red">*</span>):</label>
+                  <label for="email"
+                    >Email(<span style="color: red">*</span>):</label
+                  >
                   <input
                     type="text"
                     class="form-control"
@@ -580,7 +604,9 @@ export default {
                 style="width: 100%"
               >
                 <div class="form-group flex-grow-1">
-                  <label for="">Chức vụ(<span style="color: red">*</span>):</label>
+                  <label for=""
+                    >Chức vụ(<span style="color: red">*</span>):</label
+                  >
                   <div class="form-group w-100">
                     <Select_Advanced
                       required
@@ -593,7 +619,9 @@ export default {
                           (positions.position = positions.position.filter(
                             (value1, index) => {
                               console.log(value1, value);
-                              return value1.name.includes(value) || value.length == 0;
+                              return (
+                                value1.name.includes(value) || value.length == 0
+                              );
                             }
                           )),
                           console.log('searchSlect', value.length)
@@ -610,7 +638,9 @@ export default {
                   </div>
                 </div>
                 <div class="form-group flex-grow-1">
-                  <label for="">Trung tâm(<span style="color: red">*</span>):</label>
+                  <label for=""
+                    >Trung tâm(<span style="color: red">*</span>):</label
+                  >
                   <div class="form-group w-100">
                     <Select_Advanced
                       required
@@ -620,10 +650,14 @@ export default {
                       @searchSelect="
                         async (value) => (
                           await refresh_add(),
-                          (centers.center = centers.center.filter((value1, index) => {
-                            console.log(value1, value);
-                            return value1.name.includes(value) || value.length == 0;
-                          })),
+                          (centers.center = centers.center.filter(
+                            (value1, index) => {
+                              console.log(value1, value);
+                              return (
+                                value1.name.includes(value) || value.length == 0
+                              );
+                            }
+                          )),
                           console.log('searchSlect', value.length)
                         )
                       "
@@ -631,14 +665,17 @@ export default {
                       @chose="
                         (value, value1) => (
                           (selectedOptionCenter = value),
-                          (item.Unit.Department.Center_VNPTHG.name = value1.name)
+                          (item.Unit.Department.Center_VNPTHG.name =
+                            value1.name)
                         )
                       "
                     />
                   </div>
                 </div>
                 <div class="form-group flex-grow-1">
-                  <label for="">Phòng(<span style="color: red">*</span>):</label>
+                  <label for=""
+                    >Phòng(<span style="color: red">*</span>):</label
+                  >
                   <Select_Advanced
                     required
                     :options="departments.department"
@@ -650,7 +687,9 @@ export default {
                         (departments.department = departments.department.filter(
                           (value1, index) => {
                             console.log(value1, value);
-                            return value1.name.includes(value) || value.length == 0;
+                            return (
+                              value1.name.includes(value) || value.length == 0
+                            );
                           }
                         )),
                         console.log('searchSlect', value.length)
@@ -676,7 +715,9 @@ export default {
                         await refresh_add(),
                         (units.unit = units.unit.filter((value1, index) => {
                           console.log(value1, value);
-                          return value1.name.includes(value) || value.length == 0;
+                          return (
+                            value1.name.includes(value) || value.length == 0
+                          );
                         })),
                         console.log('searchSlect', value.length)
                       )
@@ -684,7 +725,8 @@ export default {
                     @delete="(value) => onDeleteUnit(value)"
                     @chose="
                       (value, value1) => {
-                        (selectedOptionUnit = value), (item.Unit.name = value1.name);
+                        (selectedOptionUnit = value),
+                          (item.Unit.name = value1.name);
                       }
                     "
                   />
@@ -702,19 +744,29 @@ export default {
               </form>
               <div class="d-flex justify-content-end mt-3">
                 <span
-                  v-if="data.activeStep >= 1 && data.activeStep < data.stepList.length"
+                  v-if="
+                    data.activeStep >= 1 &&
+                    data.activeStep < data.stepList.length
+                  "
                   class="btn-next d-flex align-items-center px-3 py-1"
                   @click="data.activeStep = 2"
                   >Trang tiếp theo
-                  <span class="material-symbols-outlined d-flex align-items-center">
+                  <span
+                    class="material-symbols-outlined d-flex align-items-center"
+                  >
                     navigate_next
                   </span>
                 </span>
                 <span
-                  v-if="data.activeStep > 1 && data.activeStep <= data.stepList.length"
+                  v-if="
+                    data.activeStep > 1 &&
+                    data.activeStep <= data.stepList.length
+                  "
                   class="btn-prev d-flex align-items-center px-3 py-1"
                   @click="data.activeStep = 1"
-                  ><span class="material-symbols-outlined d-flex align-items-center">
+                  ><span
+                    class="material-symbols-outlined d-flex align-items-center"
+                  >
                     navigate_before </span
                   >Trang trước</span
                 >

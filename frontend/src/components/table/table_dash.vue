@@ -38,58 +38,10 @@
           <td class="size-16">{{ item.customer.email }}</td>
           <td class="size-16">{{ item.cycle }}</td>
           <td class="size-16">{{ item.content }}</td>
+          <td class="size-16">{{ item.status }}</td>
+
           <td class="size-16">{{ item.start_date }}</td>
           <td class="size-16">{{ item.end_date }}</td>
-
-          <!-- 
-          <td class="">
-            <div class="d-flex align-items-center"> -->
-          <!-- view -->
-          <!-- <button
-                type="button"
-                class="format-btn"
-                data-toggle="modal"
-                data-target="#model-view"
-              >
-                <span
-                  id="view"
-                  class="material-symbols-outlined d-flex align-content-center"
-                  @click="$emit('view', item._id, item)"
-                >
-                  visibility
-                </span>
-              </button> -->
-          <!-- edit -->
-          <!-- <button
-                type="button"
-                class="mx-2 format-btn"
-                data-toggle="modal"
-                data-target="#model-edit"
-              >
-                <span
-                  id="edit"
-                  class="material-symbols-outlined d-flex align-content-center"
-                  @click="$emit('edit', item, true)"
-                >
-                  edit
-                </span>
-              </button> -->
-          <!-- <button
-                type="button"
-                class="mx-2 format-btn"
-                data-toggle="modal"
-                data-target="#modal-addAppointmentDash"
-              >
-                <span
-                  id="appointment"
-                  class="material-symbols-outlined d-flex align-items-center justify-content-center"
-                  @click="$emit('appointment', item, true)"
-                >
-                  Assignment
-                </span>
-              </button> -->
-          <!-- </div>
-          </td> -->
         </tr>
       </tbody>
     </table>

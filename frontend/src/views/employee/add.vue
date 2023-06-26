@@ -34,8 +34,23 @@ export default {
       type: Object,
       default: {},
     },
+    resetData: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, ctx) {
+    watch(
+      () => props.resetData,
+      async (newValue, oldValue) => {
+        console.log("Thay đổi", newValue);
+        await refresh_add();
+        // const data1 = await Position.getAll();
+        // console.log("DT1:", data1);
+      },
+      { immediate: true }
+      //có props
+    );
     const data = reactive({
       stepList: [
         {
@@ -124,27 +139,14 @@ export default {
         } else if (result.error) {
           alert_error(`Thêm nhân viên`, `${result.msg}`);
         }
-        // ctx.emit("create");
-        // data.item = {
-        //   name: "",
-        //   birthday: "",
-        //   phone: "",
-        //   email: "",
-        //   address: "",
-        // };
-        // data.modelValue = "";
-        // data.modelDep = "";
-        // data.modelUnit = "";
-        // data.modelPos = "";
-        // data.modelRole = "";
-        // data.item.password = setAccount();
       } else if (account.user_name == false) {
         alert_error(`Thêm nhân viên`, `${account.msg}`);
       }
     };
 
     const setAccount = () => {
-      const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      const charset =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
       let password = "";
 
       for (let i = 0; i < 9; i++) {
@@ -220,7 +222,9 @@ export default {
     let selectedOptionCenter = ref("0");
     watch(selectedOptionCenter, async (newValue, oldValue) => {
       console.log("selectedOptionCenter", selectedOptionCenter.value);
-      departments.department = await departmentsServices.findAllDepOfACenter(newValue);
+      departments.department = await departmentsServices.findAllDepOfACenter(
+        newValue
+      );
       units.unit = [];
       for (let val of departments.department) {
         var newData = await unitsServices.findAllUnitsOfADep(val._id);
@@ -373,9 +377,10 @@ export default {
             focusConfirm: false,
             showCancelButton: true,
             preConfirm: () => {
-              const selectedOptionCenter = document.getElementById("my-select-center")
-                .value;
-              const selectedOptionDep = document.getElementById("my-select-dep").value;
+              const selectedOptionCenter =
+                document.getElementById("my-select-center").value;
+              const selectedOptionDep =
+                document.getElementById("my-select-dep").value;
 
               const inputValue = document.getElementById("my-input").value;
               if (!selectedOptionCenter || !inputValue || !selectedOptionDep) {
@@ -402,7 +407,9 @@ export default {
             .map(
               (option) =>
                 `<option value="${option._id}"
-                ${option._id == selectedOptionDepartment.value ? "selected" : ""}
+                ${
+                  option._id == selectedOptionDepartment.value ? "selected" : ""
+                }
 
                 >${option.name}</option>`
             )
@@ -430,7 +437,10 @@ export default {
 
           if (formValues) {
             // Xử lý giá trị selectedOption và giá trị inputValue
-            console.log("Selected Option Center:", formValues.selectedOptionCenter);
+            console.log(
+              "Selected Option Center:",
+              formValues.selectedOptionCenter
+            );
             console.log("Selected Option dep:", formValues.selectedOptionDep);
 
             console.log("Input Value:", formValues.inputValue);
@@ -457,12 +467,15 @@ export default {
         showSweetAlert();
         selectedOptionUnit.value = 0;
       }
-      units.unit = await unitsServices.findAllUnitsOfADep(selectedOptionDepartment.value);
+      units.unit = await unitsServices.findAllUnitsOfADep(
+        selectedOptionDepartment.value
+      );
       units.unit.push({ _id: "other", name: "khác" });
     });
 
     const refresh_add = async () => {
       positions.position = await Position.getAll();
+      console.log("DT2:", positions.position);
       positions.position.push({ _id: "other", name: "khác" });
       centers.center = await CenterServices.getAll();
       centers.center.push({ _id: "other", name: "khác" });
@@ -471,7 +484,9 @@ export default {
       );
       departments.department.push({ _id: "other", name: "khác" });
 
-      units.unit = await unitsServices.findAllUnitsOfADep(selectedOptionDepartment.value);
+      units.unit = await unitsServices.findAllUnitsOfADep(
+        selectedOptionDepartment.value
+      );
       units.unit.push({ _id: "other", name: "khác" });
       console.log("DEP:", departments.department);
     };
@@ -518,6 +533,11 @@ export default {
         ctx.emit("newUnit", units.unit);
       }
     };
+    const closeModal = async () => {
+      console.log("close modal");
+      showModal.value = false;
+      ctx.emit("refresh", false);
+    };
 
     onMounted(async () => {
       await refresh_add();
@@ -542,6 +562,7 @@ export default {
       onDeleteCenter,
       onDeleteDep,
       onDeleteUnit,
+      closeModal,
     };
   },
 };
@@ -561,12 +582,12 @@ export default {
             type="button"
             class="close"
             data-dismiss="modal"
-            @click="activeStep = 1"
+            @click="(activeStep = 1), closeModal"
           >
             &times;
           </button>
         </div>
-
+        {{ resetData }}
         <!-- Modal body -->
         <div class="model-body">
           <div class="d-flex">
@@ -603,7 +624,9 @@ export default {
                 style="width: 100%"
               >
                 <div class="form-group flex-grow-1">
-                  <label for="name">Họ và tên(<span style="color: red">*</span>):</label>
+                  <label for="name"
+                    >Họ và tên(<span style="color: red">*</span>):</label
+                  >
                   <input
                     type="text"
                     class="form-control"
@@ -640,7 +663,9 @@ export default {
                   />
                 </div> -->
                 <div class="form-group flex-grow-1">
-                  <label for="address">Địa chỉ(<span style="color: red">*</span>):</label>
+                  <label for="address"
+                    >Địa chỉ(<span style="color: red">*</span>):</label
+                  >
                   <input
                     type="text"
                     class="form-control"
@@ -664,7 +689,9 @@ export default {
                   />
                 </div>
                 <div class="form-group flex-grow-1">
-                  <label for="email">Email(<span style="color: red">*</span>):</label>
+                  <label for="email"
+                    >Email(<span style="color: red">*</span>):</label
+                  >
                   <input
                     type="text"
                     class="form-control"
@@ -683,7 +710,9 @@ export default {
                 style="width: 100%"
               >
                 <div class="form-group flex-grow-1">
-                  <label for="">Chức vụ(<span style="color: red">*</span>):</label>
+                  <label for=""
+                    >Chức vụ(<span style="color: red">*</span>):</label
+                  >
                   <div class="form-group w-100">
                     <Select_Advanced
                       required
@@ -696,7 +725,9 @@ export default {
                           (positions.position = positions.position.filter(
                             (value1, index) => {
                               console.log(value1, value);
-                              return value1.name.includes(value) || value.length == 0;
+                              return (
+                                value1.name.includes(value) || value.length == 0
+                              );
                             }
                           )),
                           console.log('searchSlect', value.length)
@@ -705,14 +736,17 @@ export default {
                       @delete="(value) => onDeletePosition(value)"
                       @chose="
                         (value, value1) => (
-                          (selectedOptionPosition = value), (data.modelPos = value1.name)
+                          (selectedOptionPosition = value),
+                          (data.modelPos = value1.name)
                         )
                       "
                     />
                   </div>
                 </div>
                 <div class="form-group flex-grow-1">
-                  <label for="">Trung tâm(<span style="color: red">*</span>):</label>
+                  <label for=""
+                    >Trung tâm(<span style="color: red">*</span>):</label
+                  >
                   <div class="form-group w-100">
                     <Select_Advanced
                       required
@@ -722,24 +756,31 @@ export default {
                       @searchSelect="
                         async (value) => (
                           await refresh_add(),
-                          (centers.center = centers.center.filter((value1, index) => {
-                            console.log(value1, value);
-                            return value1.name.includes(value) || value.length == 0;
-                          })),
+                          (centers.center = centers.center.filter(
+                            (value1, index) => {
+                              console.log(value1, value);
+                              return (
+                                value1.name.includes(value) || value.length == 0
+                              );
+                            }
+                          )),
                           console.log('searchSlect', value.length)
                         )
                       "
                       @delete="(value) => onDeleteCenter(value)"
                       @chose="
                         (value, value1) => (
-                          (selectedOptionCenter = value), (data.modelValue = value1.name)
+                          (selectedOptionCenter = value),
+                          (data.modelValue = value1.name)
                         )
                       "
                     />
                   </div>
                 </div>
                 <div class="form-group flex-grow-1">
-                  <label for="">Phòng(<span style="color: red">*</span>):</label>
+                  <label for=""
+                    >Phòng(<span style="color: red">*</span>):</label
+                  >
                   <Select_Advanced
                     required
                     :options="departments.department"
@@ -751,7 +792,9 @@ export default {
                         (departments.department = departments.department.filter(
                           (value1, index) => {
                             console.log(value1, value);
-                            return value1.name.includes(value) || value.length == 0;
+                            return (
+                              value1.name.includes(value) || value.length == 0
+                            );
                           }
                         )),
                         console.log('searchSlect', value.length)
@@ -760,7 +803,8 @@ export default {
                     @delete="(value) => onDeleteDep(value)"
                     @chose="
                       (value, value1) => (
-                        (selectedOptionDepartment = value), (data.modelDep = value1.name)
+                        (selectedOptionDepartment = value),
+                        (data.modelDep = value1.name)
                       )
                     "
                   />
@@ -776,7 +820,9 @@ export default {
                         await refresh_add(),
                         (units.unit = units.unit.filter((value1, index) => {
                           console.log(value1, value);
-                          return value1.name.includes(value) || value.length == 0;
+                          return (
+                            value1.name.includes(value) || value.length == 0
+                          );
                         })),
                         console.log('searchSlect', value.length)
                       )
@@ -826,7 +872,9 @@ export default {
                   />
                 </div>
                 <div class="form-group flex-grow-1">
-                  <label for="avatar">Vai trò(<span style="color: red">*</span>):</label>
+                  <label for="avatar"
+                    >Vai trò(<span style="color: red">*</span>):</label
+                  >
                   <Select_Advanced
                     required
                     :options="data.roles"
@@ -838,7 +886,9 @@ export default {
                         (positions.position = positions.position.filter(
                           (value1, index) => {
                             console.log(value1, value);
-                            return value1.name.includes(value) || value.length == 0;
+                            return (
+                              value1.name.includes(value) || value.length == 0
+                            );
                           }
                         )),
                         console.log('searchSlect', value.length)
@@ -846,7 +896,8 @@ export default {
                     "
                     @chose="
                       (value, value1) => (
-                        (data.item.roleId = value), (data.modelRole = value1.name)
+                        (data.item.roleId = value),
+                        (data.modelRole = value1.name)
                       )
                     "
                   />
@@ -863,19 +914,29 @@ export default {
               </form>
               <div class="d-flex justify-content-end mt-3">
                 <span
-                  v-if="data.activeStep > 1 && data.activeStep <= data.stepList.length"
+                  v-if="
+                    data.activeStep > 1 &&
+                    data.activeStep <= data.stepList.length
+                  "
                   class="btn-prev d-flex align-items-center px-3 py-1 mr-3"
                   @click="data.activeStep = data.activeStep - 1"
-                  ><span class="material-symbols-outlined d-flex align-items-center">
+                  ><span
+                    class="material-symbols-outlined d-flex align-items-center"
+                  >
                     navigate_before </span
                   >Trang trước</span
                 >
                 <span
-                  v-if="data.activeStep >= 1 && data.activeStep < data.stepList.length"
+                  v-if="
+                    data.activeStep >= 1 &&
+                    data.activeStep < data.stepList.length
+                  "
                   class="btn-next d-flex align-items-center px-3 py-1"
                   @click="data.activeStep = data.activeStep + 1"
                   >Trang tiếp theo
-                  <span class="material-symbols-outlined d-flex align-items-center">
+                  <span
+                    class="material-symbols-outlined d-flex align-items-center"
+                  >
                     navigate_next
                   </span>
                 </span>
