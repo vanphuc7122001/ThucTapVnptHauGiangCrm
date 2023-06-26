@@ -14,7 +14,7 @@ export default {
     },
     Events: {
       type: Array,
-    }
+    },
   },
   setup(props, context) {
     const isActive = ref(false);
@@ -66,51 +66,44 @@ export default {
                 class="rounded-circle mx-auto d-block border border-dark my-3"
                 height="100"
               />
-              <div class="d-flex justify-content-around">
-                <div class="flex-fill p-2">
-                  <div class="mb-3">
-                    <p class="mb-0">
-                      <span class="font-weight-bold">Họ tên: </span>
-                      {{ item.Customer.name }}
-                    </p>
-                    <p class="mb-0">
-                      <span class="font-weight-bold">Email: </span>
-                      {{ item.Customer.email }}
-                    </p>
-                    <p class="mb-0">
-                      <span class="font-weight-bold">SDT: </span>
-                      {{ item.Customer.phone }}
-                    </p>
+              <div class="container">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <p class="mb-0">
+                        <span class="font-weight-bold">Họ tên: </span
+                        >{{ item.Customer.name }}
+                      </p>
+                      <p class="mb-0">
+                        <span class="font-weight-bold">Email: </span
+                        >{{ item.Customer.email }}
+                      </p>
+                      <p class="mb-0">
+                        <span class="font-weight-bold">SDT: </span
+                        >{{ item.Customer.phone }}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div class="flex-fill p-2">
-                  <div class="mb-3">
-                    <p class="mb-0">
-                      <span class="font-weight-bold">Ngày sinh: </span>
-                      {{ item.Customer.birthday }}
-                    </p>
-                    <p class="mb-0">
-                      <span class="font-weight-bold">Loại: </span>
-                      {{ item.Customer_Type.name }}
-                    </p>
-                    <p class="mb-0">
-                      <span class="font-weight-bold">Địa chỉ: </span>
-                      {{ item.Customer.address }}
-                    </p>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <p class="mb-0">
+                        <span class="font-weight-bold">Ngày sinh: </span
+                        >{{ item.Customer.birthday }}
+                      </p>
+                      <p class="mb-0">
+                        <span class="font-weight-bold">Loại: </span
+                        >{{ item.Customer_Type.name }}
+                      </p>
+                      <p class="mb-0">
+                        <span class="font-weight-bold">Địa chỉ: </span
+                        >{{ item.Customer.address }}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <!-- <div class=" mt-2">
-            <button data-toggle="collapse" class="px-3 py-2 h6 border-none" data-target="#customer-type">
-              Loại khách hàng
-            </button>
-            <div id="customer-type" class="collapse mx-2">
-              Lorem ipsum dolor text....
-              {{ item.Customer_Type.name }}
-            </div>
-          </div> -->
           <div class="mb-2">
             <button
               data-toggle="collapse"
@@ -126,40 +119,44 @@ export default {
               id="customer-work"
               class="collapse border-all my-2"
             >
-              <div
-                class="d-flex justify-content-around"
-                style="min-height: 100px"
-              >
-                <div class="flex-grow-0 flex-shrink-0 flex-basis-200 p-2">
-                  <div
-                    class="d-flex flex-column justify-content-between align-items-start"
-                  >
-                    <p class="mb-0">
-                      <span class="font-weight-bold">Công việc hiện tại: </span>
-                      {{ item.current_workplace }}
-                    </p>
-                    <p class="mb-0">
-                      <span class="font-weight-bold">Vị trí hiện tại: </span>
-                      {{ item.current_position }}
-                    </p>
-                    <p class="mb-0">
-                      <span class="font-weight-bold">Công ty: </span>
-                      {{ item.Company_KH.name }}
-                    </p>
+              <div class="container">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="d-flex justify-content-between">
+                      <div class="p-2">
+                        <p class="mb-0">
+                          <span class="font-weight-bold"
+                            >Công việc hiện tại: </span
+                          >{{ item.current_workplace }}
+                        </p>
+                        <p class="mb-0">
+                          <span class="font-weight-bold">Vị trí hiện tại: </span
+                          >{{ item.current_position }}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div class="flex-grow-0 flex-shrink-0 flex-basis-200 p-2">
-                  <div
-                    class="d-flex flex-column justify-content-center align-items-start"
-                  >
-                    <p class="mb-0">
-                      <span class="font-weight-bold">Nhiệm kỳ: </span>
-                      {{ item.work_temp }}
-                    </p>
-                    <p class="mb-0">
-                      <span class="font-weight-bold">Lịch sử làm việc: </span>
-                      {{ item.work_history }}
-                    </p>
+                  <div class="col-md-6">
+                    <div
+                      class="d-flex justify-content-center align-items-center"
+                      style="min-height: 100px"
+                    >
+                      <div class="p-2">
+                        <p class="mb-0">
+                          <span class="font-weight-bold">Nhiệm kỳ: </span
+                          >{{ item.work_temp }}
+                        </p>
+                        <p class="mb-0">
+                          <span class="font-weight-bold"
+                            >Lịch sử làm việc: </span
+                          >{{ item.work_history }}
+                        </p>
+                        <p class="mb-0">
+                          <span class="font-weight-bold">Công ty: </span
+                          >{{ item.Company_KH.name }}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -225,7 +222,7 @@ export default {
               <Table
                 :items="Events"
                 :fields="['Tên sự kiện', 'Thời gian diển ra', 'Nội dung']"
-                :labels="['name','time_duration', 'content']"
+                :labels="['name', 'time_duration', 'content']"
                 :borderTableAll="true"
                 :showActionList="[false, false, false]"
                 :activeAction="false"

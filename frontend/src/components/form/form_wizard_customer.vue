@@ -14,6 +14,7 @@ import {
   Customer,
   Event,
   http_getOne,
+  watch
 } from "../../views/common/import";
 
 import Swal from "sweetalert2";
@@ -33,8 +34,21 @@ export default {
       type: String,
       default: "model-form-wizard",
     },
+    resetData: {
+      type: Boolean,
+      default: false,
+    }
   },
   setup(props, context) {
+    watch(
+      () => props.resetData,
+      async (newValue, oldValue) => {
+        console.log("Thay đổi", newValue);
+        await refresh();
+      },
+      { immediate: true }
+      //có props
+    );
     // declare variables
     const data = reactive({
       imgSrc: null,

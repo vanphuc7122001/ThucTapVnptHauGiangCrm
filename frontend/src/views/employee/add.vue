@@ -86,17 +86,20 @@ export default {
     const create = async () => {
       const dataMail = reactive({
         title: "Thông tin tài khoản nhân viên",
-        content: `<div>
-                    <h3>Dear ${data.item.name}</h3>
-                    <p>Chào mừng bạn đã trở thành nhân viên chính thức của công ty.</p>
-                    <p>Và đây là thông tin tài khoản của bạn để đăng nhập vào hệ thống</p>
-                    <p>quản lý chăm sóc khách hàng trong suốt quá trình làm việc tại công ty</p>
-                    <p>Tài khoản: ${data.item.user_name}</p>
-                    <p>Mật Khẩu: ${data.item.password} </p>
-                    <p>-----------------------------------------------------------------------</p>
-                    <p><span style="font-weight: bold;">Địa chỉ:</span> 61 Võ Văn Kiệt, Phường 5, Vị Thanh, Hậu Giang 95000</p>
-                    <p><span style="font-weight: bold;">Điện thoại:</span> 097 747 42 44</p>
-	                </div>`,
+        content: `<h2>Trân trọng gửi đến Quý Ông/Bà ${data.item.name},</h2>
+                  <p>Xin chúc mừng Ông/Bà đã trở thành một nhân viên chính thức của công ty chúng tôi. Chúng tôi rất vui mừng và tin tưởng vào khả năng và sự đóng góp của Ông/Bà trong vai trò Quản lý Chăm sóc Khách hàng.</p>
+                  <p>Dưới đây là thông tin tài khoản để Ông/Bà có thể đăng nhập vào hệ thống và tiếp tục nhiệm vụ chăm sóc khách hàng trong suốt quá trình làm việc tại công ty:</p>
+                  <ul>
+                    <li><strong>Tài khoản:</strong> ${data.item.user_name}</li>
+                    <li><strong>Mật khẩu:</strong> ${data.item.password}</li>
+                  </ul>
+                  <p>Rất mong rằng thông tin trên sẽ giúp Ông/Bà truy cập vào hệ thống một cách thuận tiện và nhanh chóng. Nếu có bất kỳ câu hỏi hoặc cần hỗ trợ nào, xin vui lòng liên hệ với bộ phận Quản lý nhân sự.</p>
+                  <p>Chúng tôi tin rằng Ông/Bà sẽ đóng góp và phát triển tốt trong công việc mới và góp phần xây dựng sự thành công của công ty. Chúng tôi hy vọng mối quan hệ làm việc của chúng ta sẽ được xây dựng trên sự tín nhiệm, cống hiến và hợp tác lâu dài.</p>
+                  <p>Xin chân thành cảm ơn Ông/Bà và chúc mừng một lần nữa.</p>
+                  <p>Trân trọng,</p>
+                  <p>Trần Tuấn Duy</p>
+                  <p>HR</p>
+                  <p>VNPT Hậu Giang</p>`,
         mail: data.item.email,
       });
 
@@ -587,7 +590,7 @@ export default {
             &times;
           </button>
         </div>
-        {{ resetData }}
+        <!-- {{ resetData }} -->
         <!-- Modal body -->
         <div class="model-body">
           <div class="d-flex">

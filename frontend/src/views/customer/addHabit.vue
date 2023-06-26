@@ -380,7 +380,9 @@ export default {
                     <li
                       v-for="(value1, index1) in data.suggestList"
                       class="suggestion-item w-100"
-                      @click="value.name = value1.name, data.activeSuggest = -1"
+                      @click="
+                        (value.name = value1.name), (data.activeSuggest = -1)
+                      "
                     >
                       {{ value1.name }}
                     </li>

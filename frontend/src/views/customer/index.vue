@@ -25,7 +25,7 @@ import {
   Customer_Types,
   Status_Task,
   formatDate,
-formatDateTime
+  formatDateTime,
 } from "../common/import";
 
 export default {
@@ -45,6 +45,8 @@ export default {
   setup(ctx) {
     const data = reactive({
       activeShowEdit: false,
+      activeShowAdd: false,
+      resetDataAdd: false,
       Events: [],
       items: [],
       entryValue: 5,
@@ -309,6 +311,7 @@ export default {
     };
 
     const refresh_customer = () => {
+      data.resetDataAdd = false;
       reFresh();
     };
 
@@ -356,20 +359,20 @@ export default {
         };
       });
 
-      data.Events = item.Customer.Events.map( item => {
+      data.Events = item.Customer.Events.map((item) => {
         return {
           // 'name','time_duration', 'content'
           name: item.name,
           time_duration: formatDateTime(item.time_duration),
-          content: item.content
-        }
-      })
+          content: item.content,
+        };
+      });
     };
 
     //   formatDateTime,
     // formatDate,
     const edit = (item, isCheck) => {
-      data.activeShowEdit = true
+      data.activeShowEdit = true;
       reFresh();
       console.log(item.Customer);
       data.viewValue = {
@@ -674,10 +677,15 @@ export default {
           class="btn btn-primary"
           data-toggle="modal"
           data-target="#model-add"
+          @click="(data.resetDataAdd = true), (data.activeShowAdd = true)"
         >
           <span id="add" class="mx-2"><span class="size-16">Thêm</span></span>
         </button>
-        <Add @refresh_customer="refresh_customer" />
+        <Add
+          v-if="data.activeShowAdd"
+          @refresh_customer="refresh_customer"
+          :resetData="data.resetDataAdd"
+        />
         <button
           type="button"
           class="btn btn-secondary ml-3"
@@ -734,7 +742,11 @@ export default {
       @cancel="data.activeEdit = false"
       @refresh_customer="refresh_customer"
     />
-    <View :item="data.viewValue" :itemViewCareCus="data.viewCareCus" :Events="data.Events"/>
+    <View
+      :item="data.viewValue"
+      :itemViewCareCus="data.viewCareCus"
+      :Events="data.Events"
+    />
   </div>
 </template>
 

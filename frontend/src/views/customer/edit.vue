@@ -67,7 +67,7 @@ export default {
         ...company.documents,
         {
           _id: "other",
-          name: "other",
+          name: "khác",
         },
       ];
       data.dataSelect = cusTypes.documents;
@@ -76,7 +76,7 @@ export default {
     };
 
     const onFileChange = (event) => {
-      console.log('qua met moi')
+      console.log("qua met moi");
       props.item.Customer.avatar = event.target.files[0];
 
       // handle display img
@@ -89,13 +89,13 @@ export default {
       console.log(props.item.Customer.avatar);
       const reader = new FileReader();
 
-      console.log('qua met moi1')
+      console.log("qua met moi1");
 
       reader.onload = (event) => {
         data.imgSrc = event.target.result;
       };
 
-      console.log('qua met moi2')
+      console.log("qua met moi2");
 
       reader.readAsDataURL(files);
     };
@@ -200,8 +200,8 @@ export default {
           );
         }
       } else {
-        const rs = await http_getOne(Company_KH, _id)
-        data.modelValue = rs.name
+        const rs = await http_getOne(Company_KH, _id);
+        data.modelValue = rs.name;
         props.item.Company_KH._id = _id;
         console.log(props.item.Company_KH._id);
       }
@@ -279,7 +279,7 @@ export default {
             current_workplace: props.item.current_workplace,
             work_history: props.item.work_history,
             current_position: props.item.current_position,
-            work_temp: props.item.work_temp,
+            work_temp: props.item.work_temp ? props.item.work_temp : " ",
             companyId: props.item.Company_KH._id,
           };
 
@@ -444,7 +444,7 @@ export default {
                           :key="index"
                           :value="value._id"
                         >
-                          {{ value.name || item.Customer_Type.name}}
+                          {{ value.name || item.Customer_Type.name }}
                         </option>
                         <option value="Add">Thêm</option>
                       </select>
@@ -537,16 +537,14 @@ export default {
                     ></textarea>
                   </div>
                   <div class="form-group">
-                    <label for="wor_work_temp"
-                      >Nhiệm kỳ</label
-                    >
+                    <label for="wor_work_temp">Nhiệm kỳ</label>
                     <input
                       type="text"
                       class="form-control"
                       id="wor_work_temp"
                       v-model="item.work_temp"
                       required
-                      style="border-color: #28a745;"
+                      style="border-color: #28a745"
                     />
                   </div>
                 </div>
