@@ -11,9 +11,8 @@ router.route('/')
 router.route('/:id')
     .put(appointments.update)
     .get(appointments.findOne)
-    .delete(appointments.deleteOne)
+    .post(appointments.deleteOne)
 
 router.route('/task/:id').get(appointments.finAllAppointment)
-
 module.exports = router;
 

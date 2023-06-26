@@ -436,6 +436,7 @@ export default {
       const B = ["B", "C", "D"]; //arrayCheck
       const C = reactive({ data: [] });
       C.data = array.data.filter((value) => !arrayCheck.data.includes(value));
+      C.data = [...new Set(C.data)];
       console.log("C:", C.data, C.data.length);
       console.log("đã giao trước:", array.data, array.data.length);
       if (C.data.length != 0) {

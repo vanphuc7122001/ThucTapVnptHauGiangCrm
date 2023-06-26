@@ -1,13 +1,5 @@
 <script>
-import {
-  defineEmits,
-  inject,
-  ref,
-  reactive,
-  onMounted,
-  computed,
-  watch,
-} from "vue";
+import { defineEmits, inject, ref, reactive, onMounted, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import socket from "../../../socket";
 import employeeService from "../../services/employee.service";
@@ -28,7 +20,7 @@ import {
   alert_delete,
   alert_warning,
   alert_info,
-  alert_noti
+  alert_noti,
 } from "../../assets/js/common.alert";
 export default {
   props: {},
@@ -37,7 +29,7 @@ export default {
       return this.data.Notice.documents.sort((a, b) => {
         return new Date(b.createdAt) - new Date(a.createdAt);
       });
-    }
+    },
   },
   setup(props, ctx) {
     const data = reactive({
@@ -49,7 +41,7 @@ export default {
       TaskLD: [],
       TaskLDE: [],
     });
-    
+
     // const emit = inject('emit');
     const updateMenuResponsive = () => {
       console.log("starting");
@@ -61,11 +53,11 @@ export default {
 
     const isRead = async (item) => {
       data.selectedItem = item;
-      if (item.isRead == false){
+      if (item.isRead == false) {
         item.isRead = true;
         const item1 = await http_update(notificationService, item._id);
         if (count.value > 0) count.value--;
-      }      
+      }
       alert_noti(
         "Chi Tiết Thông Báo",
         "Từ: " +
@@ -102,10 +94,7 @@ export default {
       console.log(isConfirmed);
       if (isConfirmed == true) {
         const result = await notificationService.deleteAll(_idEmployee);
-        alert_success(
-          `Xoá thông báo`,
-          `Bạn đã xoá thành công tất cả thông báo`
-        );
+        alert_success(`Xoá thông báo`, `Bạn đã xoá thành công tất cả thông báo`);
         refresh();
         count.value = 0;
       }
@@ -160,25 +149,25 @@ export default {
         if (employees.Tasks != null) {
           const Tasks = employees.Tasks;
           Tasks.map((value, index) => {
-            console.log("Task", index, " = ", value.Customers);
+            // console.log("Task", index, " = ", value.Customers);
             data.customers.push(value.Customers);
           });
           socket.emit("birthday", data.customers, _idEmployee, _nameEmployee);
-          console.log("birthday", data.customers);
+          // console.log("birthday", data.customers);
         }
 
         const TasksLD = await http_getAll(taskService);
         console.log("Task leader", TasksLD);
         for (const value of TasksLD) {
           const TasksLDE = await http_getOne(taskService, value._id);
-          console.log("LDE neeeee", TasksLDE);
-          if (_idEmployee == value.leaderId){
+          // console.log("LDE neeeee", TasksLDE);
+          if (_idEmployee == value.leaderId) {
             data.TaskLD.push(TasksLDE);
           }
         }
         console.log("Data task leader", data.TaskLD);
-        socket.emit('cycleCus', data.TaskLD);
-        socket.emit('lateCus',data.TaskLD)
+        socket.emit("cycleCus", data.TaskLD);
+        socket.emit("lateCus", data.TaskLD);
       }
     };
 
@@ -211,8 +200,8 @@ export default {
         const lastWord = words[words.length - 1];
         const initials = lastWord.charAt(0).toUpperCase();
         const color = getAvatarColor(initials);
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
         const size = 50;
 
         canvas.width = size;
@@ -224,18 +213,34 @@ export default {
         context.fill();
 
         context.font = `${size / 2}px sans-serif`;
-        context.textAlign = 'center';
-        context.textBaseline = 'middle';
-        context.fillStyle = '#FFFFFF';
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillStyle = "#FFFFFF";
         context.fillText(initials, size / 2, size / 2);
 
         return canvas.toDataURL();
       }
-      return '';
+      return "";
     };
 
     const getAvatarColor = (initials) => {
-      const colors = ['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFC107', '#FF9800', '#FF5722'];
+      const colors = [
+        "#F44336",
+        "#E91E63",
+        "#9C27B0",
+        "#673AB7",
+        "#3F51B5",
+        "#2196F3",
+        "#03A9F4",
+        "#00BCD4",
+        "#009688",
+        "#4CAF50",
+        "#8BC34A",
+        "#CDDC39",
+        "#FFC107",
+        "#FF9800",
+        "#FF5722",
+      ];
       const index = initials.charCodeAt(0) % colors.length;
       return colors[index];
     };
@@ -301,43 +306,28 @@ export default {
 </script>
 
 <template>
-  <nav
-    class="w-100 d-flex align-items-center justify-content-between border-nav"
-  >
-    <a class="text-dark h5 my-auto d-none d-xl-block ml-3"
-      >PERSONAL CRM SYSTEM</a
-    >
+  <nav class="w-100 d-flex align-items-center justify-content-between border-nav">
+    <a class="text-dark h5 my-auto d-none d-xl-block ml-3">PERSONAL CRM SYSTEM</a>
     <a class="d-xl-none d-sm-block text-dark h5 my-auto"
-      ><span
-        class="material-symbols-outlined cursor-pointer"
-        @click="$emit('showMenu')"
-      >
+      ><span class="material-symbols-outlined cursor-pointer" @click="$emit('showMenu')">
         menu
       </span></a
     >
     <div class="d-flex align-content-center justify-content-between">
       <a class="text-dark d-flex align-items-center"
-        ><span class="material-symbols-outlined cursor-pointer">
-          search
-        </span></a
+        ><span class="material-symbols-outlined cursor-pointer"> search </span></a
       >
       <a class="text-dark d-flex align-items-center mx-2"
-        ><span class="material-symbols-outlined cursor-pointer">
-          translate
-        </span></a
+        ><span class="material-symbols-outlined cursor-pointer"> translate </span></a
       >
       <a class="text-dark d-flex align-items-center"
-        ><span class="material-symbols-outlined cursor-pointer">
-          light_mode
-        </span></a
+        ><span class="material-symbols-outlined cursor-pointer"> light_mode </span></a
       >
       <a
         class="text-dark d-flex align-items-center mx-2 notification-icon"
         @click="toggleNotification"
       >
-        <span class="material-symbols-outlined cursor-pointer">
-          notifications
-        </span>
+        <span class="material-symbols-outlined cursor-pointer"> notifications </span>
         <span class="notification-dot">{{ count }}</span>
       </a>
       <div v-if="showNotification" class="notification-dropdown">
@@ -366,7 +356,7 @@ export default {
               fiber_manual_record
             </span>
             <span
-              style="font-size: 20px; color:black; cursor: pointer"
+              style="font-size: 20px; color: black; cursor: pointer"
               @click="deleteOne(item._id)"
               class="material-symbols-outlined none"
             >
@@ -374,9 +364,7 @@ export default {
             </span>
           </p>
         </div>
-        <button @click="deleteAll()" class="clearNotification">
-          Xóa Thông Báo
-        </button>
+        <button @click="deleteAll()" class="clearNotification">Xóa Thông Báo</button>
       </div>
 
       <div
@@ -385,7 +373,7 @@ export default {
       >
         <img
           class="rounded-circle cursor-pointer"
-          :src="getAvatarUrl(data.employeeName)" 
+          :src="getAvatarUrl(data.employeeName)"
           alt="Avatar"
         />
         <div
@@ -403,11 +391,9 @@ export default {
       <span class="logout-text">Đăng Xuất</span>
     </span>
   </div>
-  
 </template>
 
 <style scoped>
-
 /* .modal{
   position: absolute;
   opacity: 1;

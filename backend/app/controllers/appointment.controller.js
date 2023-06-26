@@ -1,8 +1,9 @@
-const { Appointment, Status_App, Task } = require("../models/index.model.js");
+const { Appointment, Status_App, Task, Employee , Log} = require("../models/index.model.js");
 const { DataTypes, Op } = require("sequelize");
 const createError = require("http-errors");
 const { v4: uuidv4 } = require("uuid");
 const crypto = require("crypto");
+const { get } = require("http");
 
 const encryptionKey = "12345678912345678901234567890121";
 const iv = "0123456789abcdef";
@@ -54,7 +55,6 @@ exports.create = async (req, res, next) => {
             value.dataValues.name == "chưa xác nhận"
           );
           if (value.dataValues.name == "chưa xác nhận") {
-            console.log("kiem tra", value.dataValues.name);
             StatusAppId = value.dataValues._id;
             console.log("id status_task hahaahha", StatusAppId);
             a = 0;
@@ -88,6 +88,38 @@ exports.create = async (req, res, next) => {
         taskId: taskId,
         StatusAppId: StatusAppId,
       });
+
+      console.log("login id", req.body);
+
+      const user = await Employee.findOne({
+        where: {
+          _id: req.body.loginId,
+        }
+      });
+      console.log("user", user);
+      const task = await Task.findOne({
+        where:{
+          _id: taskId,
+        }
+      });
+      console.log("task",task);
+      user.dataValues.name = getDecrypt(user.dataValues.name);
+      user.dataValues.birthday = getDecrypt(user.dataValues.birthday);
+      user.dataValues.phone = getDecrypt(user.dataValues.phone);
+      const userInfo = `Tên: ${user.dataValues.name} , Ngày sinh: ${user.dataValues.birthday}, SĐT: ${user.dataValues.phone}, Id nhân viên: ${req.body.loginId}` 
+      console.log("userinfo",userInfo);
+      const formattedDateTime = this.dateTime();
+      const contentLog = `Thêm lịch hẹn ngày ${date_time} tại ${place} của phân công  `
+      console.log("content", contentLog),
+      console.log("date time", formattedDateTime);
+      const logCreateTask = await Log.create({
+        created_at: formattedDateTime,
+        created_user: userInfo,
+        content: contentLog,
+      });
+      console.log("logggg", logCreateTask);
+      console.log("user", user);
+
 
       return res.send({
         error: false,
@@ -159,23 +191,50 @@ exports.findOne = async (req, res, next) => {
 // };
 
 exports.deleteOne = async (req, res, next) => {
+  console.log("login id", req.body.loginId);
+  console.log("id", req.body.id);
   try {
     const appointment = await Appointment.findOne({
       where: {
-        _id: req.params.id,
+        _id: req.body.id,
       },
     });
+    console.log("app", appointment);
     const document = await Appointment.destroy({
       where: {
-        _id: req.params.id,
+        _id: req.body.id,
       },
       returning: true,
+    });
+    console.log("doc", document);
+    const user = await Employee.findOne({
+      where: {
+        _id: req.body.loginId,
+      }
+    });
+    console.log("user",user);
+    user.dataValues.name = getDecrypt(user.dataValues.name);
+    user.dataValues.birthday = getDecrypt(user.dataValues.birthday);
+    user.dataValues.phone = getDecrypt(user.dataValues.phone);
+    // task.dataValues.start_date = getDecrypt(task.dataValues.start_date);
+    // task.dataValues.end_date = getDecrypt(task.dataValues.end_date);
+    // appointment.dataValues.date_time = getDecrypt(appointment.dataValues.date_time);
+    // appointment.dataValues.place = getDecrypt(appointment.dataValues.place);
+    const userInfo = `Họ tên: ${user.dataValues.name}, Ngày sinh: ${user.dataValues.birthday}, SĐT: ${user.dataValues.phone}, Id nhân viên: ${req.body.loginId}` 
+    console.log("userinfo",userInfo);
+    const formattedDateTime = this.dateTime();
+    const contentLog = `Xóa lịch hẹn ngày ${appointment.dataValues.date_time} tại ${appointment.dataValues.place}`
+    const logDelTask = await Log.create({
+      created_at: formattedDateTime,
+      created_user: userInfo,
+      content: contentLog,
     });
 
     return res.send({
       msg: `Đã xoá thành công cuộc hẹn ${appointment.content} lúc ${appointment.date_time}.`,
       document: appointment,
     });
+    
   } catch (error) {
     console.log(error);
     return next(createError(400, "Error deleteOne"));
@@ -293,6 +352,36 @@ exports.update = async (req, res, next) => {
           },
           { where: { _id: req.params.id }, returning: true }
         );
+
+        const user = await Employee.findOne({
+          where: {
+            _id: req.body.loginId,
+          }
+        });
+        console.log("user", user);
+        // const task = await Task.findOne({
+        //   where:{
+        //     _id: taskId,
+        //   }
+        // });
+        // console.log("task",task);
+        user.dataValues.name = getDecrypt(user.dataValues.name);
+        user.dataValues.birthday = getDecrypt(user.dataValues.birthday);
+        user.dataValues.phone = getDecrypt(user.dataValues.phone);
+        const userInfo = `Tên: ${user.dataValues.name} , Ngày sinh: ${user.dataValues.birthday}, SĐT: ${user.dataValues.phone}, Id nhân viên: ${req.body.loginId}` 
+        console.log("userinfo",userInfo);
+        const formattedDateTime = this.dateTime();
+        const contentLog = `Chỉnh sửa lịch hẹn ngày ${date_time} tại ${place} của phân công  `
+        console.log("content", contentLog),
+        console.log("date time", formattedDateTime);
+        const logCreateTask = await Log.create({
+          created_at: formattedDateTime,
+          created_user: userInfo,
+          content: contentLog,
+        });
+        console.log("logggg", logCreateTask);
+  
+
         return res.send({
           error: false,
           msg: "Dữ liệu đã được thay đổi thành công.",
@@ -375,4 +464,18 @@ exports.finAllAppointment = async (req, res, next) => {
   } catch (error) {
     return next(createError(400, "Error findOne"));
   }
+};
+
+
+exports.dateTime = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const seconds = String(now.getSeconds()).padStart(2, "0");
+
+  const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  return formattedDateTime;
 };

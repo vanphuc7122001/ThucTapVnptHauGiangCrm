@@ -44,49 +44,50 @@ export default {
 </script>
 
 <template>
-  <table class="my-table mb-2" :class="[borderTableAll ? 'border-table-all' : '']">
-    <thead>
-      <tr>
-        <th>
-          <input
-            type="checkbox"
-            name=""
-            id=""
-            :checked="selectAll[0].checked == true"
-            v-model="selectAll[0].checked"
-            @click="$emit('selectAll', selectAll[0].checked)"
-            class="d-flex align-items-center size-16"
-            v-if="activeCheck == true"
-          />
-        </th>
-        <th>Stt</th>
-        <th>Khách hàng</th>
-        <th v-for="(value, index) in fields" :key="index">{{ value }}</th>
-        <th>Trạng thái</th>
-        <th v-if="activeAction == true">Hành động</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="(item, index) in items" :key="index">
-        <td class="size-16">
-          <input
-            type="checkbox"
-            :checked="item.checked == true"
-            v-model="item.checked"
-            @click="$emit('selectOne', item._id, item)"
-            class="d-flex align-items-center size-16"
-            v-if="activeCheck == true"
-          />
-        </td>
-        <td class="size-16">{{ index + 1 }}</td>
-        <td class="size-16">{{ cus }}</td>
-        <td v-for="(label, index1) in labels" :key="index1" class="size-16">
-          {{ item[label] }}
-        </td>
-        <td class="size-16">{{ item.Status_App.name }}</td>
-        <td class="size-16" v-if="activeAction == true">
-          <div class="d-flex align-items-center">
-            <!-- <button
+  <div>
+    <table class="my-table mb-2" :class="[borderTableAll ? 'border-table-all' : '']">
+      <thead>
+        <tr>
+          <th>
+            <input
+              type="checkbox"
+              name=""
+              id=""
+              :checked="selectAll[0].checked == true"
+              v-model="selectAll[0].checked"
+              @click="$emit('selectAll', selectAll[0].checked)"
+              class="d-flex align-items-center size-16"
+              v-if="activeCheck == true"
+            />
+          </th>
+          <th>Stt</th>
+          <th>Khách hàng</th>
+          <th v-for="(value, index) in fields" :key="index">{{ value }}</th>
+          <th>Trạng thái</th>
+          <th v-if="activeAction == true">Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(item, index) in items" :key="index">
+          <td class="size-16">
+            <input
+              type="checkbox"
+              :checked="item.checked == true"
+              v-model="item.checked"
+              @click="$emit('selectOne', item._id, item)"
+              class="d-flex align-items-center size-16"
+              v-if="activeCheck == true"
+            />
+          </td>
+          <td class="size-16">{{ index + 1 }}</td>
+          <td class="size-16">{{ cus }}</td>
+          <td v-for="(label, index1) in labels" :key="index1" class="size-16">
+            {{ item[label] }}
+          </td>
+          <td class="size-16">{{ item.Status_App.name }}</td>
+          <td class="size-16" v-if="activeAction == true">
+            <div class="d-flex align-items-center">
+              <!-- <button
               type="button"
               class="format-btn"
               data-toggle="modal"
@@ -100,32 +101,34 @@ export default {
                 visibility
               </span>
             </button> -->
-            <button
-              type="button"
-              class="mx-2 format-btn"
-              data-toggle="modal"
-              data-target="#modal-edit"
-            >
-              <span
-                id="edit"
-                class="material-symbols-outlined d-flex align-content-center"
-                @click="$emit('edit', item, true)"
+              <button
+                type="button"
+                class="mx-2 format-btn"
+                data-toggle="modal"
+                data-target="#modal-edit"
               >
-                edit
+                <span
+                  id="edit"
+                  class="material-symbols-outlined d-flex align-content-center"
+                  @click="$emit('edit', item, true)"
+                >
+                  edit
+                </span>
+              </button>
+              <span
+                id="delete"
+                class="material-symbols-outlined"
+                @click="$emit('delete', item._id, item)"
+              >
+                delete
               </span>
-            </button>
-            <span
-              id="delete"
-              class="material-symbols-outlined"
-              @click="$emit('delete', item._id, item)"
-            >
-              delete
-            </span>
-          </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p v-if="items.length == 0" class="text-center mt-2">Không tồn tại bản ghi.</p>
+  </div>
 </template>
 
 <style scoped>

@@ -55,7 +55,7 @@ export default {
                     {{ item.name }}
                   </p>
                   <p>
-                    <span class="font-weight-bold">Email: </span>
+                    <span class="font-weight-bold">Ngày sinh: </span>
                     {{ item.birthday }}
                   </p>
                   <p>
@@ -65,7 +65,7 @@ export default {
                 </div>
                 <div class="mt-3 col-6">
                   <p>
-                    <span class="font-weight-bold">Họ tên: </span>
+                    <span class="font-weight-bold">Địa chỉ: </span>
                     {{ item.address }}
                   </p>
                   <p>

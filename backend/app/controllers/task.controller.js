@@ -18,6 +18,7 @@ const {
   Company_KH,
   Habit,
   Event,
+  Log,
 } = require("../models/index.model.js");
 const createError = require("http-errors");
 const { v4: uuidv4 } = require("uuid");
@@ -160,12 +161,41 @@ exports.create = async (req, res, next) => {
         StatusTaskId: StatusTaskId,
         EvaluateId: EvaluateId,
       });
-      console.log("id", document._id);
-
+      // console.log("id", leaderId);
+      // console.log("id", document._id);
       const comment = await Comment.create({
         content: "Chưa có đánh giá nào",
         TaskId: document._id,
       });
+
+      const user = await Employee.findOne({
+        where: {
+          _id: leaderId,
+        }
+      });
+      const cycleLog = await Cycle.findOne({
+        where: {
+          _id: document.cycleId
+        }
+      });
+      console.log("user",user);
+      user.dataValues.name = getDecrypt(user.dataValues.name);
+      user.dataValues.birthday = getDecrypt(user.dataValues.birthday);
+      user.dataValues.phone = getDecrypt(user.dataValues.phone);
+      const userInfo = `Họ tên:${user.dataValues.name}, Ngày sinh: ${user.dataValues.birthday}, SĐT: ${user.dataValues.phone}, Id nhân viên: ${leaderId}` 
+      console.log("userinfo",userInfo);
+      console.log("kkkkkkkkkkk",leaderId);
+      const formattedDateTime = this.dateTime();
+      const contentLog = `Thêm phân công ngày bắt đầu ${start_date} và ngày kết thúc ${end_date} với chu kỳ ${cycleLog.name}`
+      console.log("content", contentLog),
+      console.log("date time", formattedDateTime);
+      const logCreatTask = await Log.create({
+        created_at: formattedDateTime,
+        created_user: userInfo,
+        content: contentLog,
+      });
+      console.log("logggg", logCreatTask);
+      console.log("user", user);
 
       return res.send({
         error: false,
@@ -258,64 +288,6 @@ exports.findAll = async (req, res, next) => {
         },
       ],
     });
-    // console.log("chieu dai", documents.length);
-    // for(let i =0; i< documents.length; i++){
-    //     console.log("dl neeee",documents[i]);
-    //     console.log("id neeee",documents[i]._id);
-    //     documents[i].dataValues["Emloyees_Task"] = []
-    //     console.log("document thuuuu",documents[i] )
-    //     const task_employee = await Task.findOne({
-    //         where: {
-    //             _id:documents[i]._id
-    //         },
-    //     })
-    //     console.log("task employee", task_employee._id);
-    //     const employee1 = await Employee_Task.findAll({
-    //         where: {
-    //           TaskId: task_employee._id,
-    //         },
-    //       });
-    //       console.log("employee1", employee1);
-    //       task_employee.dataValues["Employees"] = [];
-    //       console.log("task employee sauuuuu", task_employee);
-    //       for (let i = 0; i < employee1.length; i++) {
-    //         console.log("EID:", employee1[i].dataValues.EmployeeId);
-    //         const employee = await Employee.findOne({
-    //           where: { _id: employee1[i].dataValues.EmployeeId },
-    //         });
-    //         console.log("id position",employee.dataValues)
-    //         const position = await Position.findOne({
-    //             where: { _id: employee.dataValues.postionId },
-    //           });
-    //           console.log("id position",employee.dataValues)
-    //         const unit = await Unit.findOne({
-    //             where: { _id: employee.dataValues.unitId },
-    //         });
-    //         const department = await Department.findOne({
-    //             where: { _id: unit.dataValues.departmentId },
-    //         });
-    //         const center = await Center_VNPTHG.findOne({
-    //             where: { _id: department.dataValues.centerVNPTHGId },
-    //         });
-    //         console.log("position:", unit);
-    //         console.log("dep:", department);
-    //         console.log("center:", center);
-    //         console.log("nhân viên:", employee.dataValues);
-    //         employee.dataValues.name = getDecrypt(employee.dataValues.name);
-    //         employee.dataValues.phone = getDecrypt(employee.dataValues.phone);
-    //         employee.dataValues.email = getDecrypt(employee.dataValues.email);
-    //         position.dataValues.name = getDecrypt(position.dataValues.name);
-    //         unit.dataValues.name = getDecrypt(unit.dataValues.name);
-    //         department.dataValues.name = getDecrypt(department.dataValues.name);
-    //         center.dataValues.name = getDecrypt(center.dataValues.name);
-    //         task_employee.dataValues.Employees[i] = employee.dataValues;
-    //         task_employee.dataValues.Employees[i].Position = position.dataValues;
-    //         task_employee.dataValues.Employees[i].Unit = unit.dataValues;
-    //         task_employee.dataValues.Employees[i].Unit.Department = department.dataValues;
-    //         task_employee.dataValues.Employees[i].Unit.Department.Center = center.dataValues;
-    //     }
-    //     documents[i].dataValues = task_employee.dataValues;
-    // }
 
     return res.send(documents);
   } catch (error) {
@@ -430,19 +402,97 @@ exports.findOne = async (req, res, next) => {
     return next(createError(400, "Không tìm thấy phân công !"));
   }
 };
-
 exports.deleteOne = async (req, res, next) => {
   try {
+    const task = await Task.findOne({
+      where: {
+        _id: req.params.id,
+      },
+      include: [
+        {
+          model: Customer,
+        },
+      ],
+    });
+    console.log("11Task", task.dataValues);
     const documents = await Task.destroy({
       where: {
         _id: req.params.id,
       },
     });
-    return res.send(`Đã xóa phân công`);
+
+    const user = await Employee.findOne({
+      where: {
+        _id: task.dataValues.leaderId,
+      }
+    });
+    console.log("user",user);
+    user.dataValues.name = getDecrypt(user.dataValues.name);
+    user.dataValues.birthday = getDecrypt(user.dataValues.birthday);
+    user.dataValues.phone = getDecrypt(user.dataValues.phone);
+    task.dataValues.start_date = getDecrypt(task.dataValues.start_date);
+    task.dataValues.end_date = getDecrypt(task.dataValues.end_date);
+    const userInfo = `${user.dataValues.name} ${user.dataValues.birthday} ${user.dataValues.phone} ${task.dataValues.leaderId}` 
+    console.log("userinfo",userInfo);
+    const formattedDateTime = this.dateTime();
+    const contentLog = `Xóa phân công ngày bắt đầu ${task.dataValues.start_date} và ngày kết thúc ${task.dataValues.end_date}`
+    console.log("content", contentLog),
+    console.log("date time", formattedDateTime);
+    const logDelTask = await Log.create({
+      created_at: formattedDateTime,
+      created_user: userInfo,
+      content: contentLog,
+    });
+
+    return res.json({
+      msg: `Đã xóa phân công`,
+      documents: task.dataValues,
+    });
   } catch (error) {
     return next(createError(400, "Lỗi không xóa được phân công !"));
   }
 };
+
+// exports.deleteOne = async (req, res, next) => {
+//   try {
+//     const taskDel = await Task.findOne({
+//       where:{
+//         _id: req.params.id,
+//       },
+//     });
+//     const documents = await Task.destroy({
+//       where: {
+//         _id: req.params.id,
+//       },
+//     });
+//     console.log("taskDel", taskDel);
+//     const user = await Employee.findOne({
+//       where: {
+//         _id: taskDel.dataValues.leaderId,
+//       }
+//     });
+//     console.log("user",user);
+//     user.dataValues.name = getDecrypt(user.dataValues.name);
+//     user.dataValues.birthday = getDecrypt(user.dataValues.birthday);
+//     user.dataValues.phone = getDecrypt(user.dataValues.phone);
+//     taskDel.dataValues.start_date = getDecrypt(taskDel.dataValues.start_date);
+//     taskDel.dataValues.end_date = getDecrypt(taskDel.dataValues.end_date);
+//     const userInfo = `${user.dataValues.name} ${user.dataValues.birthday} ${user.dataValues.phone} ${taskDel.dataValues.leaderId}` 
+//     console.log("userinfo",userInfo);
+//     const formattedDateTime = this.dateTime();
+//     const contentLog = `Xóa phân công ngày bắt đầu ${taskDel.dataValues.start_date} và ngày kết thúc ${taskDel.dataValues.end_date}`
+//     console.log("content", contentLog),
+//     console.log("date time", formattedDateTime);
+//     const logDelTask = await Log.create({
+//       created_at: formattedDateTime,
+//       created_user: userInfo,
+//       content: contentLog,
+//     });
+//     return res.send(`Đã xóa phân công`);
+//   } catch (error) {
+//     return next(createError(400, "Lỗi không xóa được phân công !"));
+//   }
+// };
 
 exports.deleteAll = async (req, res, next) => {};
 
@@ -450,34 +500,29 @@ exports.update = async (req, res, next) => {
   console.log("update", req.body);
   console.log("coo", req.body.fb);
   console.log("coo", req.body.changeStatus);
-  // console.log(req.body.Status_Task.status);
-  // console.log(req.body.Status_Task.reason);
-  if(req.body.changeStatus){
+  if (req.body.changeStatus) {
     var EditStatusTask;
-    console.log("dayyyyyyy");
     const statustask = await Status_Task.findAll();
-    var c =0;
-    for(let value of statustask){
+    var c = 0;
+    for (let value of statustask) {
       value.dataValues.name = getDecrypt(value.dataValues.name);
       console.log("name", value.dataValues.name);
-      if(value.dataValues.name == "đang chăm sóc"){
-        console.log("da co dang cham soc", value.dataValues._id);
+      if (value.dataValues.name == "đang chăm sóc") {
         c = 0;
         EditStatusTask = value.dataValues._id;
         break;
-      }
-      else{
-        c=1;
+      } else {
+        c = 1;
       }
     }
-    if( c != 0){
+    if (c != 0) {
       const statustask1 = await Status_Task.create({
         name: "đang chăm sóc",
       });
       EditStatusTask = statustask1._id;
       console.log("status_task", EditStatusTask);
     }
-    console.log("status can chinh", EditStatusTask);
+    
     const document = await Task.update(
       {
         StatusTaskId: EditStatusTask,
@@ -486,64 +531,68 @@ exports.update = async (req, res, next) => {
     );
     return res.send({
       error: false,
-      msg: 'Dữ liệu đã được thay đổi thành công.',
-    })  
-  }
-  else if (req.body.fb == true) {
+      msg: "Dữ liệu đã được thay đổi thành công.",
+    });
+  } else if (req.body.fb == true) {
     console.log("dooooooooooooo");
-    try{
-      let tasks1 = [await Task.findOne({
+    try {
+      let tasks1 = [
+        await Task.findOne({
           where: {
-              _id: req.params.id,
+            _id: req.params.id,
           },
-          include: [{
+          include: [
+            {
               model: Status_Task,
-          },
-          {
+            },
+            {
               model: Cycle,
-          },
-          {
+            },
+            {
               model: Comment,
-          }
-          ]
-      })];
+            },
+          ],
+        }),
+      ];
 
-      tasks1 = tasks1.filter(
-          (value, index) => {
-              return value.EvaluateId == req.body.EvaluateId && value.Comment.content == req.body.Comment.content;
-          }
-      )
-      if(tasks1.length == 0){
-          const comment = await Comment.update({
-              content: req.body.Comment.content,
-          }, { where: { TaskId: req.params.id }, returning: true, });
-          console.log("abchg")
-          const task = await Task.update({
-              EvaluateId: req.body.EvaluateId,
+      tasks1 = tasks1.filter((value, index) => {
+        return (
+          value.EvaluateId == req.body.EvaluateId &&
+          value.Comment.content == req.body.Comment.content
+        );
+      });
+      if (tasks1.length == 0) {
+        const comment = await Comment.update(
+          {
+            content: req.body.Comment.content,
+          },
+          { where: { TaskId: req.params.id }, returning: true }
+        );
+        console.log("abchg");
+        const task = await Task.update(
+          {
+            EvaluateId: req.body.EvaluateId,
           },
           {
-              where: { _id: req.params.id }, returning: true, 
-          });
-          console.log("ne ne ne")
-          return res.send({
-              error: false,
-              msg: 'Dữ liệu đã được thay đổi thành công.',
-          })  
-      }
-      else {
-          return res.send({
-              error: true,
-              msg: 'Dữ liệu chưa được thay đổi.'
-          })
-      }
+            where: { _id: req.params.id },
+            returning: true,
+          }
+        );
 
-     
-  }
-  catch (error) {
-      return next(
-          createError(400, 'Error update')
-      )
-  }
+        console.log("ne ne ne");
+        return res.send({
+          error: false,
+          msg: "Dữ liệu đã được thay đổi thành công.",
+        });
+      } else {
+        return res.send({
+          error: true,
+          msg: "Dữ liệu chưa được thay đổi.",
+        });
+      }
+    } catch (error) {
+      return next(createError(400, "Error update"));
+    }
   } else {
     console.log("ELSE:");
     const {
@@ -566,28 +615,14 @@ exports.update = async (req, res, next) => {
           where: {
             _id: req.params.id,
           },
-          // include: [
-          //   {
-          //     model: Status_Task,
-          //   },
-          //   {
-          //     model: Cycle,
-          //   },
-          // ],
         }),
       ];
-      // for (let value of tasks) {
-      //   console.log(value);
       tasks[0].dataValues.start_date = getDecrypt(
         tasks[0].dataValues.start_date
       );
       tasks[0].dataValues.end_date = getDecrypt(tasks[0].dataValues.end_date);
       tasks[0].dataValues.content = getDecrypt(tasks[0].dataValues.content);
       tasks[0].dataValues.note = getDecrypt(tasks[0].dataValues.note);
-      // }
-      console.log("Giải mã:", tasks);
-      console.log("chiều dài:", tasks.length);
-
       tasks = tasks.filter((value, index) => {
         return (
           value.dataValues.start_date == start_date &&
@@ -601,23 +636,42 @@ exports.update = async (req, res, next) => {
           value.dataValues.EvaluateId == EvaluateId
         );
       });
-      console.log("chiều dài:", tasks.length);
-
       if (tasks.length == 0) {
-        const document = await Task.update(
-          {
-            start_date: req.body.start_date,
-            end_date: req.body.end_date,
-            content: req.body.content,
-            cycleId: req.body.cycleId,
-            customerId: req.body.customerId,
-            leaderId: req.body.leaderId,
-            note: req.body.note,
-            StatusTaskId: req.body.StatusTaskId,
-            EvaluateId: req.body.EvaluateId,
-          },
-          { where: { _id: req.params.id }, returning: true }
-        );
+        console.log("Start");
+        let document = {};
+        if (req.body.note == null) {
+          console.log("note underfine");
+          document = await Task.update(
+            {
+              start_date: req.body.start_date,
+              end_date: req.body.end_date,
+              content: req.body.content,
+              cycleId: req.body.cycleId,
+              customerId: req.body.customerId,
+              leaderId: req.body.leaderId,
+              note: "",
+              StatusTaskId: req.body.StatusTaskId,
+              EvaluateId: req.body.EvaluateId,
+            },
+            { where: { _id: req.params.id }, returning: true }
+          );
+        } else if (req.body.note != null) {
+          console.log("note khác underfine");
+          document = await Task.update(
+            {
+              start_date: req.body.start_date,
+              end_date: req.body.end_date,
+              content: req.body.content,
+              cycleId: req.body.cycleId,
+              customerId: req.body.customerId,
+              leaderId: req.body.leaderId,
+              note: req.body.note,
+              StatusTaskId: req.body.StatusTaskId,
+              EvaluateId: req.body.EvaluateId,
+            },
+            { where: { _id: req.params.id }, returning: true }
+          );
+        }
 
         console.log(document);
         console.log("id", req.params.id);
@@ -628,6 +682,24 @@ exports.update = async (req, res, next) => {
           { where: { TaskId: req.params.id }, returning: true }
         );
 
+          console.log("login id", req.body.loginId)
+         const user = await Employee.findOne({
+        where: {
+          _id: req.body.loginId,
+        }
+      });
+      console.log("user",user);
+      user.dataValues.name = getDecrypt(user.dataValues.name);
+      user.dataValues.birthday = getDecrypt(user.dataValues.birthday);
+      user.dataValues.phone = getDecrypt(user.dataValues.phone);
+      const userInfo = `Họ tên: ${user.dataValues.name}, Ngày sinh: ${user.dataValues.birthday}, SĐT: ${user.dataValues.phone},Id nhân viên: ${req.body.loginId}` 
+      const formattedDateTime = this.dateTime();
+      const contentLog = `Chỉnh sửa phân công ngày bắt đầu ${start_date} và ngày kết thúc ${end_date} với nội dung ${content}`
+      const logCreateTask = await Log.create({
+        created_at: formattedDateTime,
+        created_user: userInfo,
+        content: contentLog,
+      });
         return res.send({
           error: false,
           msg: "Dữ liệu đã được thay đổi thành công.",
@@ -643,3 +715,18 @@ exports.update = async (req, res, next) => {
     }
   }
 };
+
+
+exports.dateTime = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const seconds = String(now.getSeconds()).padStart(2, "0");
+
+  const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  return formattedDateTime;
+};
+

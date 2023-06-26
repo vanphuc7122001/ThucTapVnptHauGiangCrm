@@ -19,8 +19,8 @@ class EventService {
     async update(id, data) {
         return (await this.api.put(`/${id}`, data)).data;
     }
-    async delete(id) {
-        return (await this.api.delete(`/${id}`)).data;
+    async deleteOne(id, data) {
+        return (await this.api.post(`/${id}`,data)).data;
     }
     async findAllAppointment(id){
         return (await this.api.get(`/task/${id}`)).data;

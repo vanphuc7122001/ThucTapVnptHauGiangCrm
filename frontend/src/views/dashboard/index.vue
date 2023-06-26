@@ -791,11 +791,7 @@ export default {
 
     <!-- search, select -->
     <div class="d-flex justify-content-between mx-4 mb-3">
-      <div
-        class="d-flex justify-content-start"
-        v-if="showchart == 'customerCycle'"
-        style="z-index: 99999"
-      >
+      <div class="d-flex justify-content-start" v-if="showchart == 'customerCycle'">
         <Select
           class="d-flex justify-content-start"
           :options="[

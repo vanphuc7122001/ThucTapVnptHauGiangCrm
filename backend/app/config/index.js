@@ -7,7 +7,7 @@ const config = {
 };
 
 // Khởi tạo kết nối database
-const sequelize = new Sequelize("personal_crm_system", "root", "Quyber2015", {
+const sequelize = new Sequelize("personal_crm_system", "root", "thanhtruc", {
   host: "localhost",
   dialect: "mysql",
   // port: 6000,

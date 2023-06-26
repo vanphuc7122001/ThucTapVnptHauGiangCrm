@@ -1264,6 +1264,7 @@ export default {
       // editValue["StatusTaskId"] = editValue.Status_Task._id;
       console.log("edit", editValue);
       console.log("Id:", editValue._id);
+      editValue.loginId = sessionStorage.getItem("employeeId");
       const result = await http_update(Task, editValue._id, editValue);
       console.log("ne", result);
       // thêm phân công khi có sự thay đổi status thành Đã chăm sóc
@@ -1325,7 +1326,10 @@ export default {
       console.log("h", id, item);
       const isConfirmed = await alert_delete(
         "Xóa",
-        `Bạn có chắc là xóa phân công<span style="color: blue;"> </span> không!!`
+        `Bạn có chắc là xóa phân công khách hàng 
+        <span style="color: blue;">${item.Customer.name} </span>
+        với nội dung chăm sóc  <span style="color: blue;"> ${item.content}</span>
+         không !!`
       );
       if (isConfirmed) {
         const rsTask = await http_deleteOne(Task, id);
@@ -1425,11 +1429,11 @@ export default {
         value.checked = false;
       }
       // 2*****
-      console.log("Data items tasks:", data.items);
+      // console.log("Data items tasks:", data.items);
       var employees = reactive({ data: {} });
       for (let value of data.items) {
         employees.data = await http_getOne(Task, value._id);
-        console.log("count:", employees.data.Employees.length);
+        // console.log("count:", employees.data.Employees.length);
         value.count = employees.data.Employees.length;
 
         for (let value1 of arrayCheck.data) {
@@ -1439,7 +1443,7 @@ export default {
           }
         }
       }
-      console.log("Data items tasks:", data.items);
+      // console.log("Data items tasks:", data.items);
 
       for (const value of data.items) {
         value.end_date_format = formatDate(value.end_date);

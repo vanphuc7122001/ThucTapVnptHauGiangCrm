@@ -85,6 +85,7 @@ export default {
       console.log(data.item.note);
       console.log(data.item);
       props.task.changeStatus = true;
+      data.item.loginId = sessionStorage.getItem("employeeId");
 
       data.item.taskId = props.taskId;
       console.log("task id", data.item.taskId);

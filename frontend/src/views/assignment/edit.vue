@@ -379,13 +379,10 @@ export default {
                 </div>
 
                 <div class="form-group flex-grow-1">
-                  <label for="content"
-                    >Chú thích(<span style="color: red">*</span>):</label
-                  >
+                  <label for="content">Chú thích:</label>
                   <textarea
                     v-model="item.note"
                     id="content"
-                    required
                     class="form-control w-100"
                     rows="5"
                   ></textarea>

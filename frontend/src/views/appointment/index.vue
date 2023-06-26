@@ -241,23 +241,7 @@ export default {
         alert_error(`Sửa phân công`, `${result.msg}`);
       }
     };
-    // const edit = async (editValue) => {
-    //   console.log("edit", editValue);
-    //   // const status_appId = reactive({ status_appID: "" });
-    //   // status_appId.status_appID = editValue;
-    //   const newData = reactive({ data: {} });
-    //   newData.data = editValue;
-    //   newData.data.StatusAppId = newData.data.StatusAppId.value;
-    //   console.log("newData:", newData.data);
-    //   const result = await http_update(Appointment, editValue._id, editValue);
-    //   console.log("ne", result);
-    //   if (!result.error) {
-    //     alert_success(`Sửa lịch hẹn`, `${result.msg}`);
-    //     refresh();
-    //   } else if (result.error) {
-    //     alert_error(`Sửa lịch hẹn`, `${result.msg}`);
-    //   }
-    // };
+
     const edit = async (editValue) => {
       // const status_appId = reactive({ status_appID: "" });
       // status_appId.status_appID = editValue;
@@ -266,6 +250,7 @@ export default {
       // newData.data.StatusAppId = newData.data.StatusAppId.value;
       // console.log("newData:", newData.data);
       console.log("EDIT:", editValue);
+      editValue.loginId = sessionStorage.getItem("employeeId");
       const result = await http_update(Appointment, editValue._id, editValue);
       console.log("ne", result);
       if (!result.error) {
@@ -381,8 +366,11 @@ export default {
         `Bạn có chắc là xóa lịch hẹn ${item.date_time_format} không!!`
       );
       if (isConfirmed) {
+        const loginId = reactive({ loginId: "", id: "" });
+        loginId.loginId = sessionStorage.getItem("employeeId");
+        loginId.id = id;
         // 1***** xem thay đổi Appoiment cho phù hợp
-        const rsAppointment = await http_deleteOne(Appointment, id);
+        const rsAppointment = await Appointment.deleteOne(id, loginId);
         console.log(rsAppointment);
         if (rsAppointment.error) {
           alert_error("Lỗi ", rsAppointment.msg);
@@ -435,9 +423,12 @@ export default {
         const isConfirmed = await alert_delete_wide(`Xoá nhiều lịch hẹn`, contentAlert);
         if (isConfirmed) {
           let checkDeleteAll = false;
+          const loginId = reactive({ loginId: "", id: "" });
+          loginId.loginId = sessionStorage.getItem("employeeId");
           for (let valueDelete of arrayCheck.data) {
             // 1***** xem thay đổi Appoiment cho phù hợp
-            const rsAppointment = await http_deleteOne(Appointment, valueDelete._id);
+            loginId.id = valueDelete._id;
+            const rsAppointment = await Appointment.deleteOne(valueDelete._id, loginId);
             if (rsAppointment.error) {
               alert_error("Lỗi ", rsAppointment.msg);
               checkDeleteAll = false;

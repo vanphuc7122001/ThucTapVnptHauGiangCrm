@@ -41,6 +41,8 @@ import { Task } from "../common/import";
 import employeeService from "../../services/employee.service";
 import cycleService from "../../services/cycle.service";
 import center_vnptService from "../../services/center_vnpt.service";
+import { da } from "date-fns/locale";
+import { formatDate } from "../common/import";
 export default {
   components: {
     Table,
@@ -193,11 +195,13 @@ export default {
       // FIND ONE employee
       data.viewValue = await employeeService.get(value);
 
-      for (let i = 0; i <= data.viewValue.Tasks.length; i++) {
-        if (data.viewValue.Tasks[i].Status.status == true) {
-          data.viewValue.Tasks[i].Status.status = "Thành công";
-        } else data.viewValue.Tasks[i].Status.status = "Thất bại";
-      }
+      // for (let i = 0; i <= data.viewValue.Tasks.length; i++) {
+      //   if (data.viewValue.Tasks[i].Status.status == true) {
+      //     data.viewValue.Tasks[i].Status.status = "Thành công";
+      //   } else data.viewValue.Tasks[i].Status.status = "Thất bại";
+      // }
+      data.viewValue.birthday = formatDate(data.viewValue.birthday);
+      console.log("sinh nhật:", data.viewValue.birthday);
     };
     // computed
 
