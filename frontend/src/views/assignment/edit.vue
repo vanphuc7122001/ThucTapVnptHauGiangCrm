@@ -45,8 +45,24 @@ export default {
       type: Object,
       default: {},
     },
+    resetData: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, ctx) {
+    watch(
+      () => props.resetData,
+      async (newValue, oldValue) => {
+        console.log("Thay đổi", newValue);
+        await refresh();
+
+        // const data1 = await Position.getAll();
+        console.log("DT1:", cycles.cycle);
+      },
+      { immediate: true }
+      //có props
+    );
     const data = reactive({
       stepList: [
         {

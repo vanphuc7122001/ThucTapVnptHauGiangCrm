@@ -72,6 +72,7 @@ export default {
           start_date: "",
           end_date: "",
           content: "",
+          note: "",
           Customer: {
             _id: "",
             name: "",
@@ -122,6 +123,7 @@ export default {
         start_date: "",
         end_date: "",
         content: "",
+        note: "",
         customerId: "",
         cycleId: "",
         Cycle: {
@@ -139,6 +141,7 @@ export default {
         start_date: "",
         end_date: "",
         content: "",
+        note: "",
         customerId: "",
         Customer: {
           _id: "",
@@ -163,6 +166,7 @@ export default {
         end_date: "",
         content: "",
         leaderId: "",
+        note: "",
         Customer: {
           _id: "",
           name: "",
@@ -212,6 +216,7 @@ export default {
         start_date: "",
         end_date: "",
         content: "",
+        note: "",
         Customer: {
           _id: "",
           name: "",
@@ -256,6 +261,10 @@ export default {
         },
       ],
       showFeedback: false,
+      resetDataAdd: false,
+      resetDataEdit: false,
+      resetDataFb: false,
+      resetRenew: false,
     });
 
     const cycleValue = ref("");
@@ -1242,6 +1251,10 @@ export default {
     const appointmentView = (value, value1) => {
       // data.taskId = value;
       // data.taskObject = value1;
+      if (value1.EmployeesList.length == 0) {
+        alert_warning("Lưu ý", "Phân công chưa được giao cho nhân viên");
+        return;
+      }
       console.log("Id:", value, "Object:", value1);
       router.push({ name: "Task.appointment", params: { id: `${value}` } });
     };
@@ -1313,13 +1326,21 @@ export default {
     };
 
     const initRenewTask = async (value, value1) => {
+      if (value.EmployeesList.length == 0) {
+        alert_warning("Lưu ý", "Phân công chưa được giao cho nhân viên");
+        return;
+      }
+      data.resetRenew = true;
       data.renewValue = value;
       data.activeRenew = value1;
+      if (value.note == null) {
+        data.renewValue.note = "không có";
+      }
       data.renewValue.start_date_new = handleCycle(
         data.renewValue.Cycle.name,
         data.renewValue.start_date
       );
-      if (data.renewValue.start_date_new == data.end_date) {
+      if (data.renewValue.start_date_new == data.renewValue.end_date) {
         data.renewValue.start_date = handleCycle(
           "1 ngày",
           data.renewValue.start_date_new
@@ -1336,6 +1357,7 @@ export default {
       // const renewTask = await http_create(Task, data.renewValue);
     };
     const renewTask = async (value) => {
+      data.resetRenew = false;
       console.log("lalala", value);
       value.loginId = sessionStorage.getItem("employeeId");
       const renewTask = await http_create(Task, value);
@@ -1347,9 +1369,9 @@ export default {
         dataTaskEm.TaskId = renewTask.document._id;
         for (let i = 0; i < value.EmployeesList.length; i++) {
           dataTaskEm.EmployeeId = value.EmployeesList[i].EmployeeId;
-          await http_create(Employees_Task, dataTaskEm);          
+          await http_create(Employees_Task, dataTaskEm);
           /////////////////////////////////
-          const Employ = await http_getOne(Employee, value.EmployeesList[i].EmployeeId)
+          const Employ = await http_getOne(Employee, value.EmployeesList[i].EmployeeId);
           const token = sessionStorage.getItem("token");
           if (token) {
             const _idEmployee = sessionStorage.getItem("employeeId");
@@ -1365,12 +1387,14 @@ export default {
               recipient: "",
               sender: "",
               idRecipient: "",
-            });  
-            if (_idEmployee==dataTaskEm.EmployeeId){
-              notiAssignment.content = `: bạn đã tái phân công khách hàng "${value.Customer.name}" thành công`
-            }           
-            notiAssignment.recipient =Employ.name;
-            notiAssignment.sender = _nameEmployee;
+            });
+            if (_idEmployee == dataTaskEm.EmployeeId) {
+              notiAssignment.content = `Bạn đã tái phân công khách hàng "${value.Customer.name}" thành công`;
+              notiAssignment.sender = "";
+            } else {
+              notiAssignment.sender = _nameEmployee;
+            }
+            notiAssignment.recipient = Employ.name;
             notiAssignment.idRecipient = dataTaskEm.EmployeeId;
             const result1 = await http_create(Notification, notiAssignment);
             socket.emit("assignmentTask");
@@ -1392,6 +1416,7 @@ export default {
         start_date: "",
         end_date: "",
         content: "",
+        note: "",
         customerId: "",
         Customer: {
           _id: "",
@@ -1454,6 +1479,9 @@ export default {
       data.viewValue.Customer.birthday = formatDate(data.viewValue.Customer.birthday);
       console.log(data.viewValue);
       // router.push({ name: "Assignment.view", params: { id: _id } });
+    };
+    const star = async () => {
+      await refresh();
     };
 
     //SelectAll
@@ -1615,8 +1643,7 @@ export default {
           value.note = "không có";
         } else value.note = value.note;
       }
-      // console.log("Data items tasks:", data.items);
-
+      console.log("Data items tasks:", data.items);
       for (const value of data.items) {
         value.end_date_format = formatDate(value.end_date);
         value.start_date_format = formatDate(value.start_date);
@@ -1689,6 +1716,7 @@ export default {
       initRenewTask,
       handleCycle,
       renewTask,
+      star,
     };
   },
 };
@@ -1829,13 +1857,17 @@ export default {
           :item="data.taskEmployee"
           @giaoviec="giaoviec"
         />
-        <FeedBack v-if="data.showFeedback" :item="data.taskEmployee" />
+        <FeedBack
+          v-if="data.showFeedback"
+          :item="data.taskEmployee"
+          @create="(data.resetDataFb = false), star()"
+        />
         <button
           type="button"
           class="btn btn-secondary mr-3"
           data-toggle="modal"
           data-target="#model-feedback"
-          @click="showFeedback()"
+          @click="showFeedback(), (data.resetDataFb = true)"
         >
           <span class="mx-2">Đánh giá</span>
         </button>
@@ -1863,11 +1895,13 @@ export default {
           class="btn btn-primary"
           data-toggle="modal"
           data-target="#model-add"
+          @click="data.resetDataAdd = true"
         >
           <span id="add" class="mx-2">Thêm</span>
         </button>
         <Add
-          @create="create"
+          :resetData="data.resetDataAdd"
+          @create="(data.resetDataAdd = false), create()"
           :cycles="data.cycles"
           :cus="data.cus"
           :employee="data.employee"
@@ -1900,7 +1934,13 @@ export default {
       @selectAll="(value) => handleSelectAll(value)"
       @selectOne="(id, item) => handlSelectOne(id, item)"
       @delete="handleDelete"
-      @edit="(value, value1) => ((data.editValue = value), (data.activeEdit = value1))"
+      @edit="
+        (value, value1) => (
+          (data.editValue = value),
+          (data.activeEdit = value1),
+          (data.resetDataEdit = true)
+        )
+      "
       @view="(value) => view(value)"
       @appointmentView="
         (value, value1) => {
@@ -1928,7 +1968,8 @@ export default {
       :employee="data.employee"
       :evaluate="data.evaluate"
       :statustask="status_tasks.status_task"
-      @edit="edit(data.editValue)"
+      :resetData="data.resetDataEdit"
+      @edit="edit(data.editValue), (data.resetDataEdit = false)"
     />
     <RenewTask
       v-if="data.activeRenew"
@@ -1938,6 +1979,7 @@ export default {
       :cycles="cycles.cycle"
       :cus="data.cus"
       @initRenewTask="(value) => renewTask(value)"
+      :resetData="data.resetRenew"
     />
     <AddAppointment
       v-if="data.taskId.length > 0"

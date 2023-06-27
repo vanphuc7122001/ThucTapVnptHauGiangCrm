@@ -226,17 +226,13 @@ export default {
         });
       } else {
         return data.items.map((value, index) => {
-          return [value.name, value.email, value.phone]
-            .join("")
-            .toLocaleLowerCase();
+          return [value.name, value.email, value.phone].join("").toLocaleLowerCase();
         });
       }
     });
     const filter = computed(() => {
       return data.items.filter((value, index) => {
-        return toString.value[index].includes(
-          data.searchText.toLocaleLowerCase()
-        );
+        return toString.value[index].includes(data.searchText.toLocaleLowerCase());
       });
     });
     const filtered = computed(() => {
@@ -305,9 +301,7 @@ export default {
         data.department = [];
       }
       if (entryValueDepartment.value != "") {
-        data.unit = await unitsServices.findAllUnitsOfADep(
-          entryValueDepartment.value
-        );
+        data.unit = await unitsServices.findAllUnitsOfADep(entryValueDepartment.value);
         data.unit = data.unit.map((value, index) => {
           return {
             ...value,
@@ -420,9 +414,7 @@ export default {
         });
       } else if (entryValueCenter.value != "") {
         data.items = data.items.filter((val) => {
-          return (
-            val.Unit.Department.Center_VNPTHG._id == entryValueCenter.value
-          );
+          return val.Unit.Department.Center_VNPTHG._id == entryValueCenter.value;
         });
       }
       //Thay đổi
@@ -505,9 +497,7 @@ export default {
       else {
         console.log("1");
         data.items = data.items.filter((value, index) => {
-          return (
-            value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value
-          );
+          return value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value;
         });
       }
       data.selectAll[0].checked = false;
@@ -739,10 +729,7 @@ export default {
         }
         contentAlert += `</tbody>
       </table>`;
-        const isConfirmed = await alert_delete_wide(
-          `Xoá nhiều nhân viên`,
-          contentAlert
-        );
+        const isConfirmed = await alert_delete_wide(`Xoá nhiều nhân viên`, contentAlert);
         if (isConfirmed) {
           let checkDeleteAll = false;
           for (let valueDelete of arrayCheck.data) {
@@ -791,9 +778,7 @@ export default {
     };
     const updateUnit = async (value) => {
       if (entryValueDepartment.value != "") {
-        data.unit = await unitsServices.findAllUnitsOfADep(
-          entryValueDepartment.value
-        );
+        data.unit = await unitsServices.findAllUnitsOfADep(entryValueDepartment.value);
         data.unit = data.unit.map((value, index) => {
           return {
             ...value,
@@ -814,9 +799,7 @@ export default {
     };
     const mail = ref(false);
     const showMail = () => {
-      const count = data.items.filter(
-        (element) => element.checked === true
-      ).length;
+      const count = data.items.filter((element) => element.checked === true).length;
       console.log("c", count);
       if (count > 0) {
         mail.value = true;
@@ -933,8 +916,7 @@ export default {
             :options="data.position"
             @update:entryValue="
               (value, value1) => (
-                updateEntryValuePosition(value),
-                (entryNamePosition = value1.name)
+                updateEntryValuePosition(value), (entryNamePosition = value1.name)
               )
             "
             @refresh="
@@ -971,8 +953,7 @@ export default {
             :options="data.department"
             @update:entryValue="
               (value, value1) => (
-                updateEntryValueDepartment(value),
-                (entryNameDepartment = value1.name)
+                updateEntryValueDepartment(value), (entryNameDepartment = value1.name)
               )
             "
             @refresh="
@@ -1080,9 +1061,7 @@ export default {
           data-target="#model-delete-all"
           @click="deleteMany()"
         >
-          <span id="delete-all" class="mx-2"
-            ><span class="size-16">Xoá</span></span
-          >
+          <span id="delete-all" class="mx-2"><span class="size-16">Xoá</span></span>
         </button>
         <!-- Thêm -->
         <!-- {{ data.resetDataAdd }} -->
@@ -1098,7 +1077,7 @@ export default {
         <Add
           v-if="data.showActiveAdd"
           :resetData="data.resetDataAdd"
-          @create="create, (data.resetDataAdd = false)"
+          @create="(data.resetDataAdd = false), create()"
           @newPosition="
             (value) => {
               updatePosition(value);
@@ -1123,15 +1102,7 @@ export default {
     <!-- Table -->
     <Table
       :items="setPages"
-      :fields="[
-        'Tên',
-        'Sđt',
-        'Email',
-        'Chức vụ',
-        'Đơn vị',
-        'Phòng',
-        'Trung tâm',
-      ]"
+      :fields="['Tên', 'Sđt', 'Email', 'Chức vụ', 'Đơn vị', 'Phòng', 'Trung tâm']"
       :selectAll="data.selectAll"
       :startRow="data.startRow"
       @selectAll="(value) => handleSelectAll(value)"

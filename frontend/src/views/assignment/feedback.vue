@@ -26,8 +26,24 @@ export default {
       type: Object,
       default: {},
     },
+    resetData: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, ctx) {
+    watch(
+      () => props.resetData,
+      async (newValue, oldValue) => {
+        console.log("Thay đổi", newValue);
+        await refresh();
+
+        // const data1 = await Position.getAll();
+        console.log("DT1:", cycles.cycle);
+      },
+      { immediate: true }
+      //có props
+    );
     const data = reactive({});
     const create = () => {
       ctx.emit("create");
@@ -59,7 +75,8 @@ export default {
       console.log("ne", result);
       if (!result.error) {
         alert_success(`Sửa đánh giá`, `${result.msg}`);
-        refresh();
+        await refresh();
+        ctx.emit("create");
       } else if (result.error) {
         alert_error(`Sửa đánh giá`, `${result.msg}`);
       }
@@ -155,21 +172,15 @@ export default {
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title" style="font-size: 15px">
-            Phản hồi khách hàng
-          </h4>
-          <button type="button" class="close" data-dismiss="modal">
-            &times;
-          </button>
+          <h4 class="modal-title" style="font-size: 15px">Phản hồi khách hàng</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
 
         <!-- Modal body -->
         <div class="modal-body">
           <form action="" class="was-validated">
             <div class="form-group">
-              <label for="name"
-                >Đánh giá(<span style="color: red">*</span>):</label
-              >
+              <label for="name">Đánh giá(<span style="color: red">*</span>):</label>
 
               <Select_Advanced
                 style="height: 40px"
@@ -180,16 +191,13 @@ export default {
                 @delete="(value) => deleteEvaluate(value._id)"
                 @chose="
                   (value, value1) => (
-                    (selectedOptionEvaluate = value),
-                    (item.Evaluate.star = value1.star)
+                    (selectedOptionEvaluate = value), (item.Evaluate.star = value1.star)
                   )
                 "
               />
             </div>
             <div class="form-group">
-              <label for="content"
-                >Nhận xét(<span style="color: red">*</span>):</label
-              >
+              <label for="content">Nhận xét(<span style="color: red">*</span>):</label>
               <textarea
                 id="content"
                 required

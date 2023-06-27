@@ -34,14 +34,28 @@ export default {
       type: Object,
       default: {},
     },
+    resetData: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, ctx) {
+    watch(
+      () => props.resetData,
+      async (newValue, oldValue) => {
+        console.log("Thay đổi", newValue);
+        await refresh();
+      },
+      { immediate: true }
+      //có props
+    );
     const data = reactive({
       renewValue: {
         _id: "",
         start_date: "",
         end_date: "",
         content: "",
+        note: "",
         customerId: "",
         cycleId: "",
         Cycle: {

@@ -142,6 +142,7 @@ export default {
         },
       ],
       employee: {},
+      resetDataEdit: false,
     });
     const route = useRoute();
     const router = useRouter();
@@ -256,6 +257,7 @@ export default {
       // newData.data = editValue;
       // newData.data.StatusAppId = newData.data.StatusAppId.value;
       // console.log("newData:", newData.data);
+      data.resetDataEdit = false;
       console.log("EDIT:", editValue);
       editValue.loginId = sessionStorage.getItem("employeeId");
       const result = await http_update(Appointment, editValue._id, editValue);
