@@ -239,12 +239,13 @@ export default {
           <form class="was-validated">
             <div class="form-group">
               <label for="name">Khách hàng(<span style="color: red">*</span>):</label>
-              <select id="" class="form-control" required v-model="item.customerId">
-                <option value="" disabled selected hidden>Chọn khách hàng</option>
-                <option v-for="cus in cus" :key="cus" :value="cus._id">
-                  {{ cus.name }}
-                </option>
-              </select>
+              <input
+                disabled
+                id=""
+                class="form-control"
+                required
+                v-model="item.Customer.name"
+              />
             </div>
             <div class="form-group">
               <label for="name">Ngày bắt đầu(<span style="color: red">*</span>):</label>

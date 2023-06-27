@@ -435,10 +435,15 @@ export default {
       const A = ["A", "B"]; //array
       const B = ["B", "C", "D"]; //arrayCheck
       const C = reactive({ data: [] });
+      const D = reactive({ data: [] });
+      const E = reactive({ data: [] });
       C.data = array.data.filter((value) => !arrayCheck.data.includes(value));
       C.data = [...new Set(C.data)];
-      console.log("C:", C.data, C.data.length);
-      console.log("đã giao trước:", array.data, array.data.length);
+      D.data = array.data.filter((value) => arrayCheck.data.includes(value));
+      D.data = [...new Set(D.data)];
+      E.data = arrayCheck.data.filter((value) => !D.data.includes(value));
+      // console.log("C:", C.data, C.data.length);
+      // console.log("đã giao trước:", array.data, array.data.length);
       if (C.data.length != 0) {
         for (let j = 0; j < C.data.length; j++) {
           const dataDel = reactive({
@@ -474,14 +479,8 @@ export default {
           }
         }
       }
-      console.log("0", arrayCheck.data.length);
-      for (let i = 0; i < arrayCheck.data.length; i++) {
-        // console.log(arrayCheck.data[i]._id);
-        // if (arrayCheck.data[i].checked == true) {
-        try {
-          dataTaskEm.EmployeeId = arrayCheck.data[i]._id;
-          await http_create(EmployeeTask, dataTaskEm);
-
+      if (E.data.length != 0) {
+        for (let i = 0; i < E.data.length; i++) {
           const token = sessionStorage.getItem("token");
           if (token) {
             const _idEmployee = sessionStorage.getItem("employeeId");
@@ -500,17 +499,22 @@ export default {
               sender: "",
               idRecipient: "",
             });
-            notiAssignment.recipient = arrayCheck.data[i].name;
+            notiAssignment.recipient = E.data[i].name;
             notiAssignment.sender = _nameEmployee;
-            notiAssignment.idRecipient = arrayCheck.data[i]._id;
+            notiAssignment.idRecipient = E.data[i]._id;
             const result1 = await http_create(Notification, notiAssignment);
             console.log("giao viec", notiAssignment);
             socket.emit("assignmentTask");
           }
+        }
+      }
+      for (let i = 0; i < arrayCheck.data.length; i++) {
+        try {
+          dataTaskEm.EmployeeId = arrayCheck.data[i]._id;
+          await http_create(EmployeeTask, dataTaskEm);
         } catch (error) {
           console.error("Error sending email:", error);
         }
-        // }
       }
       alert_success("Đã giao việc cho nhân viên thành công", "");
       await refresh();

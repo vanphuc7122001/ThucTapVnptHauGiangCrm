@@ -1,4 +1,6 @@
 <script>
+import socket from "../../../socket";
+import Notification from "../../services/notification.service";
 import Table from "../../components/table/table-assignment.vue";
 import Pagination from "../../components/table/pagination_duy.vue";
 import Dropdown from "../../components/form/dropdown.vue";
@@ -1345,7 +1347,35 @@ export default {
         dataTaskEm.TaskId = renewTask.document._id;
         for (let i = 0; i < value.EmployeesList.length; i++) {
           dataTaskEm.EmployeeId = value.EmployeesList[i].EmployeeId;
-          await http_create(Employees_Task, dataTaskEm);
+          await http_create(Employees_Task, dataTaskEm);          
+          /////////////////////////////////
+          const Employ = await http_getOne(Employee, value.EmployeesList[i].EmployeeId)
+          const token = sessionStorage.getItem("token");
+          if (token) {
+            const _idEmployee = sessionStorage.getItem("employeeId");
+            const _nameEmployee = sessionStorage.getItem("employeeName");
+            const object = {
+              _id: _idEmployee,
+              name: _nameEmployee,
+            };
+            const notiAssignment = reactive({
+              title: "Tái phân công nhiệm vụ",
+              content: `tái phân công khách hàng "${value.Customer.name}" thành công`,
+              isRead: false,
+              recipient: "",
+              sender: "",
+              idRecipient: "",
+            });  
+            if (_idEmployee==dataTaskEm.EmployeeId){
+              notiAssignment.content = `: bạn đã tái phân công khách hàng "${value.Customer.name}" thành công`
+            }           
+            notiAssignment.recipient =Employ.name;
+            notiAssignment.sender = _nameEmployee;
+            notiAssignment.idRecipient = dataTaskEm.EmployeeId;
+            const result1 = await http_create(Notification, notiAssignment);
+            socket.emit("assignmentTask");
+          }
+          //////////////////////////////
         }
         const task = await http_getOne(Task, value._id);
         console.log("task", task);

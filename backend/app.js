@@ -634,7 +634,7 @@ io.on("connection", (socket) => {
           if (notice.length > 0) {
             for (const item of notice) {
               if (
-                item.title == "Cần chú ý" &&
+                item.title == "Cảnh báo" &&
                 item.content ==
                   `Khách hàng "${value.Customer.name}" đã lâu chưa được chăm sóc kể từ ngày ${formatted_end}`
               ) {
@@ -645,7 +645,7 @@ io.on("connection", (socket) => {
               io.emit("notiTask");
             } else {
               await Notification.create({
-                title: "Cần chú ý",
+                title: "Cảnh báo",
                 content: `Khách hàng "${value.Customer.name}" đã lâu chưa được chăm sóc kể từ ngày ${formatted_end}`,
                 recipient: "Lãnh đạo",
                 sender: "",
@@ -656,7 +656,7 @@ io.on("connection", (socket) => {
             }
           } else {
             await Notification.create({
-              title: "Cần chú ý",
+              title: "Cảnh báo",
               content: `Khách hàng "${value.Customer.name}" đã lâu chưa được chăm sóc kể từ ngày ${formatted_end}`,
               recipient: "Lãnh đạo",
               sender: "",
