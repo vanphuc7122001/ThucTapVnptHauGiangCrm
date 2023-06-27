@@ -137,7 +137,7 @@ export default {
               </button>
               <button
                 type="button"
-                class="mx-2 format-btn"
+                class="format-btn"
                 data-toggle="modal"
                 data-target="#model-renew"
               >

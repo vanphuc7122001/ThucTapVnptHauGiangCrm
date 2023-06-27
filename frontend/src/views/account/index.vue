@@ -396,14 +396,14 @@ export default {
       <div class="d-flex align-items-start">
         <button
           type="button"
-          class="btn btn-danger mr-3"
+          class="btn btn-danger"
           data-toggle="modal"
           data-target="#model-delete-all"
         >
           <span id="delete-all" class="mx-2">Xoá</span>
         </button>
         <!-- <DeleteAll :items="data.items" /> -->
-        <button
+        <!-- <button
           type="button"
           class="btn btn-primary"
           data-toggle="modal"
@@ -411,7 +411,7 @@ export default {
         >
           <span id="add" class="mx-2">Thêm</span>
         </button>
-        <Add :item="data.itemAdd" @create="create" />
+        <Add :item="data.itemAdd" @create="create" /> -->
       </div>
     </div>
     <!-- Table -->

@@ -4,6 +4,7 @@ import StatusTask from "../../services/status_task.service";
 import Select_Advanced from "../../components/form/select_advanced.vue";
 import Cycle from "../../services/cycle.service";
 import Swal from "sweetalert2";
+import { formatDateTime, formatDate } from "../../assets/js/common.js";
 import {
   http_getAll,
   http_create,
@@ -130,7 +131,10 @@ export default {
       console.log(isConfirmed);
       if (isConfirmed == true) {
         const result = await http_deleteOne(Cycle, _id);
-        alert_success(`Xoá chu kỳ`, `Bạn đã xoá thành công chu kỳ ${cycle.name} .`);
+        alert_success(
+          `Xoá chu kỳ`,
+          `Bạn đã xoá thành công chu kỳ ${cycle.name} .`
+        );
         refresh();
       }
     };
@@ -160,6 +164,22 @@ export default {
       ctx.emit("initRenewTask", props.item);
     };
 
+    const _formatDate = (value) => {
+      return value;
+    };
+
+    const showInfo = ref(false);
+
+    watch(
+      () => props.item,
+      (newValue) => {
+        if (newValue) {
+          showInfo.value = true;
+        }
+      },
+      { immediate: true }
+    );
+
     return {
       data,
       selectedOptionCycle,
@@ -167,6 +187,8 @@ export default {
       cycles,
       searchCycle,
       create,
+      _formatDate,
+      showInfo,
     };
   },
 };
@@ -179,24 +201,93 @@ export default {
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title" style="font-size: 15px">Thêm mới phân công</h4>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title" style="font-size: 18px">
+            Tạo mới phân công theo chu kỳ chăm sóc
+          </h4>
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
         </div>
-
+        <div class="modal-header" v-if="showInfo == true">
+          <div class="d-flex flex-column w-100">
+            <!-- <h4 class="modal-title" style="font-size: 15px">
+              Thông tin phân công chăm sóc khách hàng cũ nhất
+            </h4> -->
+            <div class="d-flex justify-content-between w-100">
+              <div class="d-flex flex-column">
+                <div class="">
+                  <span
+                    ><span style="font-weight: 900">Tên khách hàng</span>:
+                    {{ item.Customer.name }}</span
+                  >
+                </div>
+                <span class="my-2">
+                  <span
+                    ><span style="font-weight: 900">Số diện thoại</span>:
+                    {{ item.Customer.phone }}</span
+                  >
+                </span>
+                <div class="">
+                  <span
+                    ><span style="font-weight: 900">Email</span>:
+                    {{ item.Customer.email }}</span
+                  >
+                </div>
+                <div class="mt-2">
+                  <span
+                    ><span style="font-weight: 900">Nội dung chăm sóc</span>:
+                    {{ item.content }}</span
+                  >
+                </div>
+              </div>
+              <div class="d-flex flex-column">
+                <div class="">
+                  <span
+                    ><span style="font-weight: 900">Ngày bắt đầu</span>:
+                    {{ item.start_date }}</span
+                  >
+                </div>
+                <span class="my-2">
+                  <span
+                    ><span style="font-weight: 900">Ngày kết thúc</span>:
+                    {{ item.end_date }}</span
+                  >
+                </span>
+                <div class="">
+                  <span
+                    ><span style="font-weight: 900">Chu kỳ</span>:
+                    {{ item.Cycle.name }}</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <!-- Modal body -->
         <div class="modal-body">
           <form class="was-validated">
             <div class="form-group">
-              <label for="name">Khách hàng(<span style="color: red">*</span>):</label>
-              <select id="" class="form-control" required v-model="item.customerId">
-                <option value="" disabled selected hidden>Chọn khách hàng</option>
+              <label for="name"
+                >Khách hàng(<span style="color: red">*</span>):</label
+              >
+              <select
+                id=""
+                class="form-control"
+                required
+                v-model="item.customerId"
+              >
+                <option value="" disabled selected hidden>
+                  Chọn khách hàng
+                </option>
                 <option v-for="cus in cus" :key="cus" :value="cus._id">
                   {{ cus.name }}
                 </option>
               </select>
             </div>
             <div class="form-group">
-              <label for="name">Ngày bắt đầu(<span style="color: red">*</span>):</label>
+              <label for="name"
+                >Ngày bắt đầu(<span style="color: red">*</span>):</label
+              >
               <input
                 type="date"
                 class="form-control"
@@ -207,7 +298,9 @@ export default {
             </div>
 
             <div class="form-group">
-              <label for="name">Ngày kết thúc(<span style="color: red">*</span>):</label>
+              <label for="name"
+                >Ngày kết thúc(<span style="color: red">*</span>):</label
+              >
               <input
                 type="date"
                 class="form-control"
@@ -218,7 +311,9 @@ export default {
             </div>
 
             <div class="form-group">
-              <label for="content">Chu kỳ(<span style="color: red">*</span>):</label>
+              <label for="content"
+                >Chu kỳ(<span style="color: red">*</span>):</label
+              >
               <Select_Advanced
                 style="height: 40px"
                 required
@@ -228,7 +323,8 @@ export default {
                 @delete="(value) => deleteCycle(value._id)"
                 @chose="
                   (value, value1) => (
-                    (selectedOptionCycle = value), (item.Cycle.name = value1.name)
+                    (selectedOptionCycle = value),
+                    (item.Cycle.name = value1.name)
                   )
                 "
               />
@@ -238,7 +334,11 @@ export default {
               <label for="content"
                 >Nội dung chăm sóc(<span style="color: red">*</span>):</label
               >
-              <textarea class="form-control" v-model="item.content" required></textarea>
+              <textarea
+                class="form-control"
+                v-model="item.content"
+                required
+              ></textarea>
             </div>
             <div class="form-group">
               <label for="content">Chú thích:</label>

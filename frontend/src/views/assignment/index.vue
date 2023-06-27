@@ -357,7 +357,10 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (entryValueEval.value != "" && entryValueStatusTask.value != "") {
+      } else if (
+        entryValueEval.value != "" &&
+        entryValueStatusTask.value != ""
+      ) {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -381,7 +384,10 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (entryValueStatusTask.value != "" && startdateValue.value != "") {
+      } else if (
+        entryValueStatusTask.value != "" &&
+        startdateValue.value != ""
+      ) {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -429,7 +435,8 @@ export default {
       } else if (enddateValue.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
-            value.cycleId == entryValueCycle.value && value.end_date == enddateValue.value
+            value.cycleId == entryValueCycle.value &&
+            value.end_date == enddateValue.value
           );
         });
       } else {
@@ -724,7 +731,10 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (entryValueCycle.value != "" && entryValueStatusTask.value != "") {
+      } else if (
+        entryValueCycle.value != "" &&
+        entryValueStatusTask.value != ""
+      ) {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -740,7 +750,10 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (entryValueStatusTask.value != "" && entryValueEval.value != "") {
+      } else if (
+        entryValueStatusTask.value != "" &&
+        entryValueEval.value != ""
+      ) {
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
@@ -905,7 +918,10 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (entryValueCycle.value != "" && entryValueStatusTask.value != "") {
+      } else if (
+        entryValueCycle.value != "" &&
+        entryValueStatusTask.value != ""
+      ) {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -913,7 +929,10 @@ export default {
             value.end_date == enddateValue.value
           );
         });
-      } else if (entryValueStatusTask.value != "" && startdateValue.value != "") {
+      } else if (
+        entryValueStatusTask.value != "" &&
+        startdateValue.value != ""
+      ) {
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
@@ -945,7 +964,10 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (entryValueStatusTask.value != "" && entryValueEval.value != "") {
+      } else if (
+        entryValueStatusTask.value != "" &&
+        entryValueEval.value != ""
+      ) {
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
@@ -956,7 +978,8 @@ export default {
       } else if (entryValueCycle.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
-            value.cycleId == entryValueCycle.value && value.end_date == enddateValue.value
+            value.cycleId == entryValueCycle.value &&
+            value.end_date == enddateValue.value
           );
         });
       } else if (entryValueStatusTask.value != "") {
@@ -1084,7 +1107,10 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (entryValueCycle.value != "" && entryValueStatusTask.value != "") {
+      } else if (
+        entryValueCycle.value != "" &&
+        entryValueStatusTask.value != ""
+      ) {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -1092,7 +1118,10 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (entryValueStatusTask.value != "" && startdateValue.value != "") {
+      } else if (
+        entryValueStatusTask.value != "" &&
+        startdateValue.value != ""
+      ) {
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
@@ -1212,7 +1241,9 @@ export default {
     });
     const filter = computed(() => {
       return data.items.filter((value, index) => {
-        return toString.value[index].includes(data.searchText.toLocaleLowerCase());
+        return toString.value[index].includes(
+          data.searchText.toLocaleLowerCase()
+        );
       });
     });
     const filtered = computed(() => {
@@ -1262,7 +1293,10 @@ export default {
         }
       }
       if (data.showFeedback == false) {
-        alert_warning(`Thêm đánh giá`, `Vui lòng chọn phân công để thêm đánh giá.`);
+        alert_warning(
+          `Thêm đánh giá`,
+          `Vui lòng chọn phân công để thêm đánh giá.`
+        );
       }
     };
     const showTask_Employee = () => {
@@ -1347,12 +1381,12 @@ export default {
         const task = await http_getOne(Task, value._id);
         console.log("task", task);
         alert_success(
-          `Thêm phân công`,
+          `Tạo mới phân công theo chu kỳ chăm sóc`,
           `Phân công khách hàng "${task.Customer.name}" đã được tạo thành công.`
         );
         refresh();
       } else if (renewTask.error) {
-        alert_error(`Thêm phân công`, `${renewTask.msg}`);
+        alert_error(`Tạo mới phân công theo chu kỳ chăm sóc`, `${renewTask.msg}`);
       }
       await refresh();
     };
@@ -1395,7 +1429,9 @@ export default {
       console.log(id);
       data.viewValue = await http_getOne(Task, id);
 
-      data.viewValue.Customer.birthday = formatDate(data.viewValue.Customer.birthday);
+      data.viewValue.Customer.birthday = formatDate(
+        data.viewValue.Customer.birthday
+      );
       console.log(data.viewValue);
       // router.push({ name: "Assignment.view", params: { id: _id } });
     };
@@ -1500,7 +1536,10 @@ export default {
         }
         contentAlert += `</tbody>
       </table>`;
-        const isConfirmed = await alert_delete_wide(`Xoá nhiều phân công`, contentAlert);
+        const isConfirmed = await alert_delete_wide(
+          `Xoá nhiều phân công`,
+          contentAlert
+        );
         if (isConfirmed) {
           let checkDeleteAll = false;
           for (let valueDelete of arrayCheck.data) {
@@ -1563,12 +1602,14 @@ export default {
         value.end_date_format = formatDate(value.end_date);
         value.start_date_format = formatDate(value.start_date);
       }
-      status_tasks.status_task = status_tasks.status_task.map((value, index) => {
-        return {
-          ...value,
-          value: value._id,
-        };
-      });
+      status_tasks.status_task = status_tasks.status_task.map(
+        (value, index) => {
+          return {
+            ...value,
+            value: value._id,
+          };
+        }
+      );
       cycles.cycle = cycles.cycle.map((value, index) => {
         return {
           ...value,
@@ -1679,11 +1720,13 @@ export default {
             :options="status_tasks.status_task"
             @update:entryValue="
               (value, value1) => (
-                updateEntryValueStatusTask(value), (entryNameStatusTask = value1.name)
+                updateEntryValueStatusTask(value),
+                (entryNameStatusTask = value1.name)
               )
             "
             @refresh="
-              (entryNameStatusTask = 'Trạng thái'), updateEntryValueStatusTask('')
+              (entryNameStatusTask = 'Trạng thái'),
+                updateEntryValueStatusTask('')
             "
             style="height: 35px"
           />
@@ -1842,7 +1885,11 @@ export default {
       @selectAll="(value) => handleSelectAll(value)"
       @selectOne="(id, item) => handlSelectOne(id, item)"
       @delete="handleDelete"
-      @edit="(value, value1) => ((data.editValue = value), (data.activeEdit = value1))"
+      @edit="
+        (value, value1) => (
+          (data.editValue = value), (data.activeEdit = value1)
+        )
+      "
       @view="(value) => view(value)"
       @appointmentView="
         (value, value1) => {
@@ -1873,6 +1920,7 @@ export default {
       @edit="edit(data.editValue)"
     />
     <RenewTask
+      v-if="data.activeRenew"
       :item="data.renewValue"
       :class="[data.activeRenew ? 'show-modal' : 'd-none']"
       @cancel="data.activeRenew = false"
