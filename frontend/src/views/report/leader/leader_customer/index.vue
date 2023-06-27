@@ -278,7 +278,7 @@
         <p>Người Báo Cáo</p>
       </div>
     </div>
-    <View :item="data.viewValue" :Events="data.Events" />
+    <View :item="data.viewValue" :Events="data.Events" :viewCareCus="data.viewCareCus" />
     <Mail />
   </div>
 </template>
@@ -298,6 +298,7 @@ import {
   Search,
   formatDate,
   http_getOne,
+  Customer,
 } from "../../../common/import";
 import jsPDF from "jspdf"; //in
 import html2canvas from "html2canvas";
@@ -367,6 +368,7 @@ export default {
       searchText: "",
       activeMenu: 3,
       viewValue: {},
+      viewCareCus: [],
     });
 
     const reFresh = async () => {
@@ -511,8 +513,23 @@ export default {
       }
     };
 
-    const view = (item) => {
-      console.log("View: ", item);
+    const view = async (item) => {
+      // console.log("View: ", item.Customer._id);
+      const res = await http_getOne(Customer, item.Customer._id);
+
+      data.viewCareCus = res.documents.Tasks.map((value) => {
+        return {
+          name: item.Customer.name,
+          start_date: formatDate(value.start_date),
+          end_date: formatDate(value.end_date),
+          content: value.content,
+          cycle: value.Cycle.name,
+          statusTask: value.Status_Task.name,
+          star: value.Evaluate.star,
+          comment: value.Comment.content,
+        };
+      });
+
       data.viewValue = {
         Customer: {
           customerType: item.Customer.Customer_Type.name,

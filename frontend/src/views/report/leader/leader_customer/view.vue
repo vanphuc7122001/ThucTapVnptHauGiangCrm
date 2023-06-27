@@ -16,6 +16,9 @@ export default {
     Events: {
       type: Array,
     },
+    viewCareCus: {
+      type: Array,
+    },
   },
   setup(props, context) {
     const isActive = ref(false);
@@ -40,9 +43,7 @@ export default {
         <!-- Modal Header -->
         <div class="modal-header">
           <h4 class="modal-title">Thông tin chi tiết khách hàng</h4>
-          <button type="button" class="close" data-dismiss="modal">
-            &times;
-          </button>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
 
         <!-- Modal body -->
@@ -57,11 +58,7 @@ export default {
             >
               Thông tin cá nhân
             </button>
-            <div
-              v-if="isActive"
-              id="personal-info"
-              class="collapse my-2 border-all"
-            >
+            <div v-if="isActive" id="personal-info" class="collapse my-2 border-all">
               <img
                 :src="item.Customer.avatar"
                 alt=""
@@ -80,9 +77,7 @@ export default {
                           {{ item.nameCustomer }}
                         </p>
                         <p>
-                          <span class="font-weight-bold"
-                            >Email khách hàng:</span
-                          >
+                          <span class="font-weight-bold">Email khách hàng:</span>
                           {{ item.emailCustomer }}
                         </p>
                         <p>
@@ -98,15 +93,11 @@ export default {
                     >
                       <div>
                         <p>
-                          <span class="font-weight-bold"
-                            >Ngày sinh khách hàng:</span
-                          >
+                          <span class="font-weight-bold">Ngày sinh khách hàng:</span>
                           {{ formatDate(item.Customer.birthday) }}
                         </p>
                         <p>
-                          <span class="font-weight-bold"
-                            >Địa chỉ khách hàng:</span
-                          >
+                          <span class="font-weight-bold">Địa chỉ khách hàng:</span>
                           {{ item.Customer.address }}
                         </p>
                         <p>
@@ -130,11 +121,7 @@ export default {
             >
               Công việc
             </button>
-            <div
-              v-if="isActive"
-              id="customer-work"
-              class="collapse border-all my-2"
-            >
+            <div v-if="isActive" id="customer-work" class="collapse border-all my-2">
               <div class="container p-3">
                 <div class="row">
                   <div class="col-md-6">
@@ -143,9 +130,7 @@ export default {
                     >
                       <div>
                         <p>
-                          <span class="font-weight-bold"
-                            >Công việc hiện tại:</span
-                          >
+                          <span class="font-weight-bold">Công việc hiện tại:</span>
                           {{ item.Customer_Work.work_place }}
                         </p>
                         <p>
@@ -165,9 +150,7 @@ export default {
                           {{ item.Customer_Work.work_temp }}
                         </p>
                         <p>
-                          <span class="font-weight-bold"
-                            >Lịch sử làm việc:</span
-                          >
+                          <span class="font-weight-bold">Lịch sử làm việc:</span>
                           {{ item.Customer_Work.work_history }}
                         </p>
                       </div>
@@ -187,7 +170,7 @@ export default {
               Danh sách chăm sóc khách hàng
             </button>
             <div v-if="isActive" id="assignment" class="collapse">
-              <div class="table-responsive">
+              <!-- <div class="table-responsive">
                 <table class="table table-bordered">
                   <thead>
                     <tr>
@@ -214,12 +197,48 @@ export default {
                     </tr>
                   </tbody>
                 </table>
-              </div>
+              </div> -->
               <!-- <div v-for="(value, index) in item.Tasks" :key="index">
               <p> Ngày bắt đầu:  {{ value.start_date }}</p>
               <p> Ngày kết thúc: {{ value.end_date }}</p>
               <p> Nội dung: {{ value.content }}</p>
               </div> -->
+              <!-- name: item.Customer.name,
+          start_date: formatDate(value.start_date),
+          end_date: formatDate(value.end_date),
+          content: value.content,
+          cycle: value.Cycle.name,
+          statusTask: value.Status_Task.name,
+          star: value.Evaluate.star,
+          comment: value.Comment.content -->
+              <Table
+                :items="viewCareCus"
+                :fields="[
+                  'Ngày bắt đầu',
+                  'Ngày kết thúc',
+                  'Nội dung chăm sóc',
+                  'Tên khách hàng',
+                  'Chu kì',
+                  'Trạng thái',
+                  'Đánh giá',
+                  'Nhận xét',
+                ]"
+                :labels="[
+                  'start_date',
+                  'end_date',
+                  'content',
+                  'name',
+                  'cycle',
+                  'statusTask',
+                  'star',
+                  'comment',
+                ]"
+                :borderTableAll="true"
+                :showActionList="[false, false, false]"
+                :activeAction="false"
+                :isActiveCheckbox="false"
+                :startRow="0"
+              />
             </div>
           </div>
           <div class="">

@@ -391,7 +391,6 @@ export default {
       const cusWork = await http_getAll(Customer_Work);
       const tasks = await http_getAll(Task);
 
-      data.lengthCustomer = cusWork.documents.length;
       data.items = cusWork.documents.filter((cusWork) => {
         const taskCusCared = cusWork.Customer.Tasks.filter((task) => {
           if (task.Status_Task.name == "đã chăm sóc") {

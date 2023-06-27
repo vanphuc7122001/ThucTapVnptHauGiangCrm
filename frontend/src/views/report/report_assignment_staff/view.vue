@@ -16,6 +16,9 @@ export default {
     Events: {
       type: Array,
     },
+    viewCareCus: {
+      type: Array,
+    }
   },
   setup(props, context) {
     const isActive = ref(false);
@@ -153,19 +156,6 @@ export default {
               class="collapse my-2 border-all"
               style="min-height: 100px"
             >
-              <!-- <div class="d-flex justify-content-around align-items-center">
-                <div>
-                  <p><span class="font-weight-bold">Công việc hiện tại: </span>
-                     {{ item.Customer_Work.current_workplace }}
-                  </p>
-                  <p><span class="font-weight-bold">Vị trí hiện tại:  </span>{{ item.Customer_Work.current_position }} </p>
-                </div>
-                <div>
-                  <p><span class="font-weight-bold">Nhiệm kỳ: </span> {{ item.Customer_Work.work_temp }}</p>
-                  <p><span class="font-weight-bold">Lịch sử làm việc: </span> {{ item.Customer_Work.work_history }}</p>
-                  <p><span class="font-weight-bold">Công ty khách hàng:</span>{{ item.Customer_Work.nameCompany }}  </p>
-                </div>
-              </div> -->
               <div class="container p-3">
                 <div class="row">
                   <div class="col-md-6">
@@ -225,34 +215,16 @@ export default {
               Danh sách chăm sóc khách hàng
             </button>
             <div v-if="isActive" id="assignment" class="collapse">
-              <div class="table-responsive">
-                <table class="table table-bordered">
-                  <thead>
-                    <tr>
-                      <th>Ngày bắt đầu</th>
-                      <th>Ngày kết thúc</th>
-                      <th>Nội dung chăm sóc</th>
-                      <th>Tên khách hàng</th>
-                      <th>Chu kì</th>
-                      <th>Trạng thái</th>
-                      <th>Số sao khách hàng đánh giá</th>
-                      <th>Đánh giá</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>{{ formatDate(item.start_date) }}</td>
-                      <td>{{ formatDate(item.end_date) }}</td>
-                      <td>{{ item.content }}</td>
-                      <td>{{ item.Customer.name }}</td>
-                      <td>{{ item.Cycle.name }}</td>
-                      <td>{{ item.Status_Task.name }}</td>
-                      <td>{{ item.Evaluate.star }}</td>
-                      <td>{{ item.Comment.content }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              <Table
+                :items="viewCareCus"
+                :fields="['Ngày bắt đầu', 'Ngày kết thúc', 'Nội dung chăm sóc', 'Tên khách hàng','Chu kì', 'Trạng thái','Đánh giá', 'Nhận xét']"
+                :labels="['start_date', 'end_date', 'content', 'name', 'cycle','statusTask','star','comment']"
+                :borderTableAll="true"
+                :showActionList="[false, false, false]"
+                :activeAction="false"
+                :isActiveCheckbox="false"
+                :startRow="0"
+              />
             </div>
           </div>
           <div class="">

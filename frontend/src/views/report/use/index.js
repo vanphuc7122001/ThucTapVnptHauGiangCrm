@@ -337,7 +337,7 @@ export const countElementReportAssignmentStaff = async () => {
 
   for (const _id of ListTaskId) {
     const rs = await http_getOne(Task, _id);
-    console.log("rs", rs.Employees.length);
+    // console.log("rs", rs.Employees.length);
     if (rs.Employees.length > 0) {
       arrTasks.push(rs);
     }

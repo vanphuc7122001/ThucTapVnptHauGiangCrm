@@ -1,8 +1,17 @@
-const { Customer_Types, Customer } = require("../models/index.model.js");
+const {
+  Customer_Types,
+  Customer,
+  Task,
+  Status_Task,
+  Evaluate,
+  Comment,
+  Cycle,
+} = require("../models/index.model.js");
 const createError = require("http-errors");
 const { v4: uuidv4 } = require("uuid");
 const fs = require("fs");
 const path_lib = require("path");
+const { Model } = require("sequelize");
 const POSITION_CUT_LINK_IMAGE = 21;
 
 exports.create = async (req, res, next) => {
@@ -64,6 +73,23 @@ exports.findOne = async (req, res, next) => {
       where: {
         _id: req.params.id,
       },
+      include: [
+        {
+          model: Task,
+          include: [
+            { model: Status_Task },
+            {
+              model: Evaluate,
+            },
+            {
+              model: Comment,
+            },
+            {
+              model: Cycle,
+            },
+          ],
+        },
+      ],
     });
     return res.status(200).json({
       msg: documents
