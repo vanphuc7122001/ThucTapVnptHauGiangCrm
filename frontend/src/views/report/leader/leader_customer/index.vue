@@ -20,14 +20,6 @@
           </span>
         </router-link>
       </div>
-
-      <!-- countCustomer: 0,
-      countEmployee: 0,
-      countReport: 0,
-      countReportAssignmentStaff: 0,
-      countReportCustomerCycle: 0,
-      countLeaderCustomer: 0,
-      countleaderStaff: 0 -->
       <div
         class="mx-1 report__item"
         :style="data.activeMenu == 1 ? { border: '1px solid blue' } : {}"
@@ -41,9 +33,7 @@
           <span class="pl-3" style="margin-top: -4px">
             <span class="material-symbols-outlined"> group </span>
             <span class="text-center"
-              >{{ store.countReportAssignmentStaff }}/{{
-                store.countCustomer
-              }}</span
+              >{{ store.countReportAssignmentStaff }}/{{ store.countCustomer }}</span
             >
           </span>
         </router-link>
@@ -62,9 +52,7 @@
           <span class="pl-3" style="margin-top: -4px">
             <span class="material-symbols-outlined"> group </span>
             <span class="text-center"
-              >{{ store.countReportCustomerCycle }}/{{
-                store.countCustomer
-              }}</span
+              >{{ store.countReportCustomerCycle }}/{{ store.countCustomer }}</span
             >
           </span>
         </router-link>
@@ -175,11 +163,7 @@
         >
           <span id="delete-all" class="">Mail</span>
         </button>
-        <button
-          type="button"
-          class="btn btn-primary mx-2"
-          @click="handlePrintData"
-        >
+        <button type="button" class="btn btn-primary mx-2" @click="handlePrintData">
           <span id="printrp" class="">In</span>
         </button>
       </div>
@@ -312,8 +296,8 @@ import {
   Pagination,
   Select,
   Search,
-  Customer,
   formatDate,
+  http_getOne,
 } from "../../../common/import";
 import jsPDF from "jspdf"; //in
 import html2canvas from "html2canvas";
@@ -383,29 +367,38 @@ export default {
       searchText: "",
       activeMenu: 3,
       viewValue: {},
-      lenghCustomer: 0,
     });
 
     const reFresh = async () => {
       store.countCustomer = await countCustomer();
       store.countEmployee = await countEmployee();
       store.countReport = await countElementReportPage();
-      store.countReportAssignmentStaff =
-        await countElementReportAssignmentStaff();
-      store.countReportCustomerCycle =
-        await countElementReportCustomerCyclePage();
+      store.countReportAssignmentStaff = await countElementReportAssignmentStaff();
+      store.countReportCustomerCycle = await countElementReportCustomerCyclePage();
       store.countLeaderCustomer = await countElementReportLeaderCustomer();
       store.countleaderStaff = await countElementReportLeaderStaff();
 
       const leaderId = sessionStorage.getItem("employeeId");
-      const customer = await http_getAll(Customer);
-      data.lenghCustomer = customer.documents.length;
       const tasks = await http_getAll(Task);
-      data.items = tasks.filter((task) => {
-        console.log(task);
-        // return task.leaderId == task.Employee._id && task.leaderId == leaderId; // người giao việc và nhân viên là mình
-        return task.leaderId == leaderId;
+      const ListTaskId = [];
+      tasks.map((task) => {
+        ListTaskId.push(task._id);
       });
+
+      for (const _id of ListTaskId) {
+        const rs = await http_getOne(Task, _id);
+        data.items.push(rs);
+      }
+
+      data.items = data.items.filter((item, index, self) => {
+        return (
+          item.leaderId == leaderId &&
+          index ===
+            self.findIndex((customer) => customer.Customer._id === item.customerId)
+        );
+      });
+
+      // console.log('unique customer', data.items);
 
       data.items = data.items.map((item) => {
         return {
@@ -450,9 +443,7 @@ export default {
     });
     const filter = computed(() => {
       return data.items.filter((value, index) => {
-        return toString.value[index].includes(
-          data.searchText.toLocaleLowerCase()
-        );
+        return toString.value[index].includes(data.searchText.toLocaleLowerCase());
       });
     });
     const filtered = computed(() => {
@@ -632,8 +623,7 @@ a.router-link-active.router-link-exact-active.active-menu {
   font-weight: bold;
 }
 
-a.router-link-active.router-link-exact-active.active-menu
-  span.material-symbols-outlined {
+a.router-link-active.router-link-exact-active.active-menu span.material-symbols-outlined {
   color: blue;
 }
 

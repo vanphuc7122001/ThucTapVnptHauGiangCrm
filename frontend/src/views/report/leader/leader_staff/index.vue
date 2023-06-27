@@ -20,14 +20,6 @@
           </span>
         </router-link>
       </div>
-
-      <!-- countCustomer: 0,
-        countEmployee: 0,
-        countReport: 0,
-        countReportAssignmentStaff: 0,
-        countReportCustomerCycle: 0,
-        countLeaderCustomer: 0,
-        countleaderStaff: 0 -->
       <div
         class="mx-1 report__item"
         :style="data.activeMenu == 1 ? { border: '1px solid blue' } : {}"
@@ -41,9 +33,7 @@
           <span class="pl-3" style="margin-top: -4px">
             <span class="material-symbols-outlined"> group </span>
             <span class="text-center"
-              >{{ store.countReportAssignmentStaff }}/{{
-                store.countCustomer
-              }}</span
+              >{{ store.countReportAssignmentStaff }}/{{ store.countCustomer }}</span
             >
           </span>
         </router-link>
@@ -62,9 +52,7 @@
           <span class="pl-3" style="margin-top: -4px">
             <span class="material-symbols-outlined"> group </span>
             <span class="text-center"
-              >{{ store.countReportCustomerCycle }}/{{
-                store.countCustomer
-              }}</span
+              >{{ store.countReportCustomerCycle }}/{{ store.countCustomer }}</span
             >
           </span>
         </router-link>
@@ -175,20 +163,11 @@
         >
           <span id="delete-all" class="">Mail</span>
         </button>
-        <button
-          type="button"
-          class="btn btn-primary mx-2"
-          @click="handlePrintReport"
-        >
+        <button type="button" class="btn btn-primary mx-2" @click="handlePrintReport">
           <span id="printrp" class="">In</span>
         </button>
       </div>
     </div>
-    <!-- nameEmployee: item.Employee.name,
-              phoneEmployee: item.Employee.phone,
-              emailEmployee: item.Employee.email,
-              addressEmployee: item.Employee.address,
-              birthdayEmployee: item.Employee.birthday, -->
     <Table
       :items="setPages"
       :fields="[
@@ -380,10 +359,8 @@ export default {
       store.countCustomer = await countCustomer();
       store.countEmployee = await countEmployee();
       store.countReport = await countElementReportPage();
-      store.countReportAssignmentStaff =
-        await countElementReportAssignmentStaff();
-      store.countReportCustomerCycle =
-        await countElementReportCustomerCyclePage();
+      store.countReportAssignmentStaff = await countElementReportAssignmentStaff();
+      store.countReportCustomerCycle = await countElementReportCustomerCyclePage();
       store.countLeaderCustomer = await countElementReportLeaderCustomer();
       store.countleaderStaff = await countElementReportLeaderStaff();
 
@@ -410,14 +387,7 @@ export default {
         return task != undefined;
       });
 
-      const newArray = [];
-
-      // chuyển mảng 2 chiều thành mảng 1 chiều
-      for (let i = 0; i < data.items.length; i++) {
-        for (let j = 0; j < data.items[i].length; j++) {
-          newArray.push(data.items[i][j]);
-        }
-      }
+      let newArray = data.items.flatMap((item) => item); // chuyển mảng 2 chiều thành mảng 1 chiều
 
       data.items = newArray.map((item) => {
         return {
@@ -425,8 +395,6 @@ export default {
           ...item,
         };
       });
-
-      console.log("Data items: ", data.items);
     };
 
     onBeforeMount(() => {
@@ -450,17 +418,13 @@ export default {
         });
       } else {
         return data.items.map((value, index) => {
-          return [value.name, value.email, value.phone]
-            .join("")
-            .toLocaleLowerCase();
+          return [value.name, value.email, value.phone].join("").toLocaleLowerCase();
         });
       }
     });
     const filter = computed(() => {
       return data.items.filter((value, index) => {
-        return toString.value[index].includes(
-          data.searchText.toLocaleLowerCase()
-        );
+        return toString.value[index].includes(data.searchText.toLocaleLowerCase());
       });
     });
     const filtered = computed(() => {
@@ -616,8 +580,7 @@ a.router-link-active.router-link-exact-active.active-menu {
   font-weight: bold;
 }
 
-a.router-link-active.router-link-exact-active.active-menu
-  span.material-symbols-outlined {
+a.router-link-active.router-link-exact-active.active-menu span.material-symbols-outlined {
   color: blue;
 }
 

@@ -41,9 +41,7 @@
           <span class="pl-3" style="margin-top: -4px">
             <span class="material-symbols-outlined"> group </span>
             <span class="text-center"
-              >{{ store.countReportAssignmentStaff }}/{{
-                store.countCustomer
-              }}</span
+              >{{ store.countReportAssignmentStaff }}/{{ store.countCustomer }}</span
             >
           </span>
         </router-link>
@@ -62,9 +60,7 @@
           <span class="pl-3" style="margin-top: -4px">
             <span class="material-symbols-outlined"> group </span>
             <span class="text-center"
-              >{{ store.countReportCustomerCycle }}/{{
-                store.countCustomer
-              }}</span
+              >{{ store.countReportCustomerCycle }}/{{ store.countCustomer }}</span
             >
           </span>
         </router-link>
@@ -175,11 +171,7 @@
         >
           <span id="delete-all" class="">Mail</span>
         </button>
-        <button
-          type="button"
-          class="btn btn-primary"
-          @click="handlePrintReport"
-        >
+        <button type="button" class="btn btn-primary" @click="handlePrintReport">
           <span id="printrp" class="">In</span>
         </button>
       </div>
@@ -328,7 +320,6 @@ import {
 } from "../use/index";
 
 import View from "./view.vue";
-import { format } from "date-fns";
 
 export default {
   components: {
@@ -379,10 +370,8 @@ export default {
       store.countCustomer = await countCustomer();
       store.countEmployee = await countEmployee();
       store.countReport = await countElementReportPage();
-      store.countReportAssignmentStaff =
-        await countElementReportAssignmentStaff();
-      store.countReportCustomerCycle =
-        await countElementReportCustomerCyclePage();
+      store.countReportAssignmentStaff = await countElementReportAssignmentStaff();
+      store.countReportCustomerCycle = await countElementReportCustomerCyclePage();
       store.countLeaderCustomer = await countElementReportLeaderCustomer();
       store.countleaderStaff = await countElementReportLeaderStaff();
 
@@ -396,6 +385,16 @@ export default {
         const rs = await http_getOne(Task, _id);
         data.items.push(rs);
       }
+
+      // console.log('Data items report assignment staff:', data.items);
+
+      data.items = data.items.filter((item) => {
+        if (item.Employees.length > 0) {
+          return item;
+        }
+      });
+
+      // console.log('data items:', data.items);
 
       data.items = data.items.map((task) => {
         return {
@@ -482,9 +481,7 @@ export default {
     });
     const filter = computed(() => {
       return data.items.filter((value, index) => {
-        return toString.value[index].includes(
-          data.searchText.toLocaleLowerCase()
-        );
+        return toString.value[index].includes(data.searchText.toLocaleLowerCase());
       });
     });
     const filtered = computed(() => {
@@ -626,8 +623,7 @@ a.router-link-active.router-link-exact-active.active-menu {
   font-weight: bold;
 }
 
-a.router-link-active.router-link-exact-active.active-menu
-  span.material-symbols-outlined {
+a.router-link-active.router-link-exact-active.active-menu span.material-symbols-outlined {
   color: blue;
 }
 

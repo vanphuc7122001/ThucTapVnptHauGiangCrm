@@ -42,9 +42,7 @@
           <span class="pl-3" style="margin-top: -4px">
             <span class="material-symbols-outlined"> group </span>
             <span class="text-center"
-              >{{ store.countReportAssignmentStaff }}/{{
-                store.countCustomer
-              }}</span
+              >{{ store.countReportAssignmentStaff }}/{{ store.countCustomer }}</span
             >
           </span>
         </router-link>
@@ -63,9 +61,7 @@
           <span class="pl-3" style="margin-top: -4px">
             <span class="material-symbols-outlined"> group </span>
             <span class="text-center"
-              >{{ store.countReportCustomerCycle }}/{{
-                store.countCustomer
-              }}</span
+              >{{ store.countReportCustomerCycle }}/{{ store.countCustomer }}</span
             >
           </span>
         </router-link>
@@ -176,11 +172,7 @@
         >
           <span id="delete-all" class="">Mail</span>
         </button>
-        <button
-          type="button"
-          class="btn btn-primary"
-          @click="handlePrintReport"
-        >
+        <button type="button" class="btn btn-primary" @click="handlePrintReport">
           <span id="add" class="">In</span>
         </button>
       </div>
@@ -189,14 +181,7 @@
     <!-- Table -->
     <Table
       :items="setPages"
-      :fields="[
-        'Tên',
-        'Email',
-        'Sdt',
-        'Công việc',
-        'Công ty',
-        'Loại khách hàng',
-      ]"
+      :fields="['Tên', 'Email', 'Sdt', 'Công việc', 'Công ty', 'Loại khách hàng']"
       :labels="[
         'nameCustomer',
         'emailCustomer',
@@ -296,6 +281,7 @@ import {
   Customer_Work,
   formatDateTime,
   formatDate,
+  Task,
 } from "../common/import";
 
 import { isEqual, isBefore, isAfter, isSameDay } from "date-fns";
@@ -380,25 +366,21 @@ export default {
       lengthCustomer: 0,
     });
 
-    const labels = [
-      "Tên khách hàng",
-      "Email",
-      "Số điện thoại",
-      "Loại khách hàng",
-    ];
+    const labels = ["Tên khách hàng", "Email", "Số điện thoại", "Loại khách hàng"];
 
     const reFresh = async () => {
       store.countCustomer = await countCustomer();
       store.countEmployee = await countEmployee();
       store.countReport = await countElementReportPage();
-      store.countReportAssignmentStaff =
-        await countElementReportAssignmentStaff();
-      store.countReportCustomerCycle =
-        await countElementReportCustomerCyclePage();
+      store.countReportAssignmentStaff = await countElementReportAssignmentStaff();
+      store.countReportCustomerCycle = await countElementReportCustomerCyclePage();
       store.countLeaderCustomer = await countElementReportLeaderCustomer();
       store.countleaderStaff = await countElementReportLeaderStaff();
 
       const cusWork = await http_getAll(Customer_Work);
+      const tasks = await http_getAll(Task);
+
+      console.log("List tasks: ", tasks);
       data.lengthCustomer = cusWork.documents.length;
       data.items = cusWork.documents.filter((cusWork) => {
         const taskCusCared = cusWork.Customer.Tasks.filter((task) => {
@@ -438,6 +420,10 @@ export default {
               case cycle.includes("tuần"):
                 cycleDate = numberOfCycle * 7;
                 break;
+              case cycle.includes("quý"):
+                cycleDate = 90;
+              case cycle.includes("quí"):
+                cycleDate = 90;
             }
 
             // lần bắt đầu đầu tiên
@@ -448,32 +434,34 @@ export default {
             const month = start_date.getMonth() + 1;
             const day = start_date.getDate();
             let dayStartNewCycle = year + "-" + month + "-" + day; // ngày bắt đầu chu kì mới
-            // console.log('So sanh dayStartNewCycle', dayStartNewCycle , 'End date',end_date);
-
-            // cycleDate = ((cycleDate) * 2);
 
             if (isAfter(new Date(dayStartNewCycle), new Date(end_date))) {
               cycleDate = cycleDate * 2;
             }
 
             if (dayStartNewCycle == end_date) {
-              // nếu ngày bắt đầu chu kì mới == end_date thì + 1
-              dayStartNewCycle = year + "-" + month + "-" + (day + 1);
+              dayStartNewCycle = new Date(dayStartNewCycle);
+              dayStartNewCycle.setDate(dayStartNewCycle.getDate() + 1);
+              dayStartNewCycle =
+                dayStartNewCycle.getFullYear() +
+                "-" +
+                (dayStartNewCycle.getMonth() + 1) +
+                "-" +
+                dayStartNewCycle.getDate();
               cycleDate = cycleDate * 2;
             }
 
             if (isBefore(new Date(dayStartNewCycle), new Date(end_date))) {
               let end_day = new Date(end_date);
+              end_day.setDate(end_day.getDate() + 1);
               dayStartNewCycle =
                 end_day.getFullYear() +
                 "-" +
                 (end_day.getMonth() + 1) +
                 "-" +
-                (end_day.getDate() + 1);
+                end_day.getDate();
               cycleDate = cycleDate * 2 + 1;
             }
-
-            // console.log('So sanh dayStartNewCycle ++ ', dayStartNewCycle , 'End date ++ ',end_date);
 
             // lần bắt đầu thứ 2
             cycleMonth = cycleMonth * 2;
@@ -492,8 +480,6 @@ export default {
           }
         });
 
-        // import { isEqual, isBefore, isAfter } from 'date-fns';
-
         const rsTaskCusCared = taskCusCared.filter((value, index) => {
           let dayStartNewCycle2 = new Date(value.dayStartNewCycle2);
           let dayStartNewCycle = new Date(value.dayStartNewCycle);
@@ -507,21 +493,42 @@ export default {
               let start_date = new Date(task.start_date);
 
               if (
+                value.customerId == cusWork.Customer._id &&
                 (isAfter(dayStartNewCycle2, currentDay) ||
                   isEqual(dayStartNewCycle2, currentDay)) &&
-                !isSameDay(dayStartNewCycle2, start_date) &&
-                !isSameDay(dayStartNewCycle, start_date)
+                !isEqual(dayStartNewCycle2, start_date) &&
+                !isEqual(dayStartNewCycle, start_date) &&
+                task.Status_Task.name == "đã chăm sóc"
               ) {
+                // console.log('Report ', task);
                 return task;
-              } else {
-                console.log("Run task");
               }
             });
           }
         });
 
         if (rsTaskCusCared.length > 0) {
-          return rsTaskCusCared;
+          const filteredTasks = rsTaskCusCared.filter((taskCusCared) => {
+            const matchingTasks = tasks.filter((task) => {
+              return taskCusCared.customerId === task.customerId;
+            });
+
+            const hasOtherTasks = matchingTasks.some(
+              // lấy
+              (task) => task.Status_Task.name !== "đã chăm sóc"
+            );
+
+            if (hasOtherTasks) {
+              return false; // Không trả về nếu có task khác đã chăm sóc
+            }
+
+            return taskCusCared;
+          });
+
+          console.log("All tasks", filteredTasks);
+          if (filteredTasks.length > 0) {
+            return filteredTasks;
+          }
         }
       });
 
@@ -554,10 +561,7 @@ export default {
       data.searchText = value;
     };
 
-    // nameCustomer: item.Customer.name,
-    //       emailCustomer: item.Customer.email,
-    //       phoneCustomer: item.Customer.phone,
-    // // handle pagination
+    // handle pagination
     const toString = computed(() => {
       console.log("Starting search");
       if (data.choseSearch == "name") {
@@ -582,9 +586,7 @@ export default {
     });
     const filter = computed(() => {
       return data.items.filter((value, index) => {
-        return toString.value[index].includes(
-          data.searchText.toLocaleLowerCase()
-        );
+        return toString.value[index].includes(data.searchText.toLocaleLowerCase());
       });
     });
     const filtered = computed(() => {
@@ -688,8 +690,7 @@ export default {
           cycleName: value.Cycle.name, // join bản sao
           statusName: value.Status_Task.name,
           EvaluateStar: value.Evaluate.star,
-          comment:
-            value.Comment == null ? "Chưa cập nhật" : value.Comment.content,
+          comment: value.Comment == null ? "Chưa cập nhật" : value.Comment.content,
         };
       });
 
@@ -800,8 +801,7 @@ a.router-link-active.router-link-exact-active.active-menu {
   font-weight: bold;
 }
 
-a.router-link-active.router-link-exact-active.active-menu
-  span.material-symbols-outlined {
+a.router-link-active.router-link-exact-active.active-menu span.material-symbols-outlined {
   color: blue;
 }
 
