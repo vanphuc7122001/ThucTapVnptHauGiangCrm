@@ -34,33 +34,9 @@ export default {
       type: Object,
       default: {},
     },
-    employee: {
-      type: Object,
-      default: {},
-    },
-    statustask: {
-      type: Object,
-      default: {},
-    },
-    evaluate: {
-      type: Object,
-      default: {},
-    },
   },
   setup(props, ctx) {
     const data = reactive({
-      stepList: [
-        {
-          _id: 1,
-          name: "Phân công",
-        },
-        {
-          _id: 2,
-          name: "Trạng thái",
-        },
-      ],
-      activeStep: 1,
-      modelStatus_Task: "1",
       renewValue: {
         _id: "",
         start_date: "",
@@ -131,10 +107,7 @@ export default {
       console.log(isConfirmed);
       if (isConfirmed == true) {
         const result = await http_deleteOne(Cycle, _id);
-        alert_success(
-          `Xoá chu kỳ`,
-          `Bạn đã xoá thành công chu kỳ ${cycle.name} .`
-        );
+        alert_success(`Xoá chu kỳ`, `Bạn đã xoá thành công chu kỳ ${cycle.name} .`);
         refresh();
       }
     };
@@ -204,9 +177,7 @@ export default {
           <h4 class="modal-title" style="font-size: 18px">
             Tạo mới phân công theo chu kỳ chăm sóc
           </h4>
-          <button type="button" class="close" data-dismiss="modal">
-            &times;
-          </button>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         <div class="modal-header" v-if="showInfo == true">
           <div class="d-flex flex-column w-100">
@@ -267,27 +238,16 @@ export default {
         <div class="modal-body">
           <form class="was-validated">
             <div class="form-group">
-              <label for="name"
-                >Khách hàng(<span style="color: red">*</span>):</label
-              >
-              <select
-                id=""
-                class="form-control"
-                required
-                v-model="item.customerId"
-              >
-                <option value="" disabled selected hidden>
-                  Chọn khách hàng
-                </option>
+              <label for="name">Khách hàng(<span style="color: red">*</span>):</label>
+              <select id="" class="form-control" required v-model="item.customerId">
+                <option value="" disabled selected hidden>Chọn khách hàng</option>
                 <option v-for="cus in cus" :key="cus" :value="cus._id">
                   {{ cus.name }}
                 </option>
               </select>
             </div>
             <div class="form-group">
-              <label for="name"
-                >Ngày bắt đầu(<span style="color: red">*</span>):</label
-              >
+              <label for="name">Ngày bắt đầu(<span style="color: red">*</span>):</label>
               <input
                 type="date"
                 class="form-control"
@@ -298,9 +258,7 @@ export default {
             </div>
 
             <div class="form-group">
-              <label for="name"
-                >Ngày kết thúc(<span style="color: red">*</span>):</label
-              >
+              <label for="name">Ngày kết thúc(<span style="color: red">*</span>):</label>
               <input
                 type="date"
                 class="form-control"
@@ -311,9 +269,7 @@ export default {
             </div>
 
             <div class="form-group">
-              <label for="content"
-                >Chu kỳ(<span style="color: red">*</span>):</label
-              >
+              <label for="content">Chu kỳ(<span style="color: red">*</span>):</label>
               <Select_Advanced
                 style="height: 40px"
                 required
@@ -323,8 +279,7 @@ export default {
                 @delete="(value) => deleteCycle(value._id)"
                 @chose="
                   (value, value1) => (
-                    (selectedOptionCycle = value),
-                    (item.Cycle.name = value1.name)
+                    (selectedOptionCycle = value), (item.Cycle.name = value1.name)
                   )
                 "
               />
@@ -334,11 +289,7 @@ export default {
               <label for="content"
                 >Nội dung chăm sóc(<span style="color: red">*</span>):</label
               >
-              <textarea
-                class="form-control"
-                v-model="item.content"
-                required
-              ></textarea>
+              <textarea class="form-control" v-model="item.content" required></textarea>
             </div>
             <div class="form-group">
               <label for="content">Chú thích:</label>
@@ -355,6 +306,7 @@ export default {
               style="font-size: 14px"
               @click="create"
               id="create"
+              data-dismiss="modal"
             >
               <span>Thêm</span>
             </button>

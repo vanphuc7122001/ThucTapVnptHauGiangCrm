@@ -106,6 +106,7 @@ export default {
       data.itemAdd.cycleId = selectedOptionCycle.value;
       console.log(data.itemAdd);
       data.itemAdd.leaderId = sessionStorage.getItem("employeeId");
+      data.itemAdd.loginId = sessionStorage.getItem("employeeId");
       console.log("leaderId:", sessionStorage.getItem("employeeId"));
       // const evals = await http_getAll(Evaluate);
       // console.log("evals",evals);
@@ -124,15 +125,20 @@ export default {
       } else if (result.error) {
         alert_error(`Thêm phân công`, `${result.msg}`);
       }
-      data.itemAdd = {
+      (data.itemAdd = {
         start_date: "",
         end_date: "",
         content: "",
         customerId: "",
         cycleId: "",
         leaderId: "",
-      };
-      (data.modelCus = ""), (data.modelValue = ""), ctx.emit("create");
+        EvaluateId: "",
+        StatusTaskId: "",
+        note: "",
+      }),
+        (data.modelCus = ""),
+        (data.modelValue = ""),
+        ctx.emit("create");
     };
 
     //xoa phan cong

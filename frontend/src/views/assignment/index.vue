@@ -138,6 +138,10 @@ export default {
         end_date: "",
         content: "",
         customerId: "",
+        Customer: {
+          _id: "",
+          name: "",
+        },
         cycleId: "",
         Cycle: {
           _id: "",
@@ -357,10 +361,7 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (
-        entryValueEval.value != "" &&
-        entryValueStatusTask.value != ""
-      ) {
+      } else if (entryValueEval.value != "" && entryValueStatusTask.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -384,10 +385,7 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (
-        entryValueStatusTask.value != "" &&
-        startdateValue.value != ""
-      ) {
+      } else if (entryValueStatusTask.value != "" && startdateValue.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -435,8 +433,7 @@ export default {
       } else if (enddateValue.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
-            value.cycleId == entryValueCycle.value &&
-            value.end_date == enddateValue.value
+            value.cycleId == entryValueCycle.value && value.end_date == enddateValue.value
           );
         });
       } else {
@@ -453,9 +450,7 @@ export default {
       // console.log("Data items tasks:", data.items);
       var employees = reactive({ data: {} });
       for (let value of data.items) {
-        employees.data = await http_getOne(Task, value._id);
-        // console.log("count:", employees.data.Employees.length);
-        value.count = employees.data.Employees.length;
+        value.count = value.EmployeesList.length;
 
         for (let value1 of arrayCheck.data) {
           // value.count = employees.Employees.length;
@@ -639,10 +634,7 @@ export default {
       // console.log("Data items tasks:", data.items);
       var employees = reactive({ data: {} });
       for (let value of data.items) {
-        employees.data = await http_getOne(Task, value._id);
-        // console.log("count:", employees.data.Employees.length);
-        value.count = employees.data.Employees.length;
-
+        value.count = value.EmployeesList.length;
         for (let value1 of arrayCheck.data) {
           // value.count = employees.Employees.length;
           if (value._id == value1._id) {
@@ -731,10 +723,7 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (
-        entryValueCycle.value != "" &&
-        entryValueStatusTask.value != ""
-      ) {
+      } else if (entryValueCycle.value != "" && entryValueStatusTask.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -750,10 +739,7 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (
-        entryValueStatusTask.value != "" &&
-        entryValueEval.value != ""
-      ) {
+      } else if (entryValueStatusTask.value != "" && entryValueEval.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
@@ -822,9 +808,7 @@ export default {
       // console.log("Data items tasks:", data.items);
       var employees = reactive({ data: {} });
       for (let value of data.items) {
-        employees.data = await http_getOne(Task, value._id);
-        // console.log("count:", employees.data.Employees.length);
-        value.count = employees.data.Employees.length;
+        value.count = value.EmployeesList.length;
 
         for (let value1 of arrayCheck.data) {
           // value.count = employees.Employees.length;
@@ -918,10 +902,7 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (
-        entryValueCycle.value != "" &&
-        entryValueStatusTask.value != ""
-      ) {
+      } else if (entryValueCycle.value != "" && entryValueStatusTask.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -929,10 +910,7 @@ export default {
             value.end_date == enddateValue.value
           );
         });
-      } else if (
-        entryValueStatusTask.value != "" &&
-        startdateValue.value != ""
-      ) {
+      } else if (entryValueStatusTask.value != "" && startdateValue.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
@@ -964,10 +942,7 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (
-        entryValueStatusTask.value != "" &&
-        entryValueEval.value != ""
-      ) {
+      } else if (entryValueStatusTask.value != "" && entryValueEval.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
@@ -978,8 +953,7 @@ export default {
       } else if (entryValueCycle.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
-            value.cycleId == entryValueCycle.value &&
-            value.end_date == enddateValue.value
+            value.cycleId == entryValueCycle.value && value.end_date == enddateValue.value
           );
         });
       } else if (entryValueStatusTask.value != "") {
@@ -1015,9 +989,7 @@ export default {
       // console.log("Data items tasks:", data.items);
       var employees = reactive({ data: {} });
       for (let value of data.items) {
-        employees.data = await http_getOne(Task, value._id);
-        // console.log("count:", employees.data.Employees.length);
-        value.count = employees.data.Employees.length;
+        value.count = value.EmployeesList.length;
 
         for (let value1 of arrayCheck.data) {
           // value.count = employees.Employees.length;
@@ -1107,10 +1079,7 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (
-        entryValueCycle.value != "" &&
-        entryValueStatusTask.value != ""
-      ) {
+      } else if (entryValueCycle.value != "" && entryValueStatusTask.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -1118,10 +1087,7 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (
-        entryValueStatusTask.value != "" &&
-        startdateValue.value != ""
-      ) {
+      } else if (entryValueStatusTask.value != "" && startdateValue.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
@@ -1202,9 +1168,7 @@ export default {
       // console.log("Data items tasks:", data.items);
       var employees = reactive({ data: {} });
       for (let value of data.items) {
-        employees.data = await http_getOne(Task, value._id);
-        // console.log("count:", employees.data.Employees.length);
-        value.count = employees.data.Employees.length;
+        value.count = value.EmployeesList.length;
 
         for (let value1 of arrayCheck.data) {
           // value.count = employees.Employees.length;
@@ -1241,9 +1205,7 @@ export default {
     });
     const filter = computed(() => {
       return data.items.filter((value, index) => {
-        return toString.value[index].includes(
-          data.searchText.toLocaleLowerCase()
-        );
+        return toString.value[index].includes(data.searchText.toLocaleLowerCase());
       });
     });
     const filtered = computed(() => {
@@ -1293,10 +1255,7 @@ export default {
         }
       }
       if (data.showFeedback == false) {
-        alert_warning(
-          `Thêm đánh giá`,
-          `Vui lòng chọn phân công để thêm đánh giá.`
-        );
+        alert_warning(`Thêm đánh giá`, `Vui lòng chọn phân công để thêm đánh giá.`);
       }
     };
     const showTask_Employee = () => {
@@ -1375,9 +1334,19 @@ export default {
       // const renewTask = await http_create(Task, data.renewValue);
     };
     const renewTask = async (value) => {
-      // console.log("lalala", value);
+      console.log("lalala", value);
+      value.loginId = sessionStorage.getItem("employeeId");
       const renewTask = await http_create(Task, value);
       if (!renewTask.error) {
+        // console.log("task new", renewTask);
+        console.log("id task new", value.EmployeesList.length);
+
+        const dataTaskEm = reactive({ TaskId: " ", EmployeeId: " " });
+        dataTaskEm.TaskId = renewTask.document._id;
+        for (let i = 0; i < value.EmployeesList.length; i++) {
+          dataTaskEm.EmployeeId = value.EmployeesList[i].EmployeeId;
+          await http_create(Employees_Task, dataTaskEm);
+        }
         const task = await http_getOne(Task, value._id);
         console.log("task", task);
         alert_success(
@@ -1388,7 +1357,30 @@ export default {
       } else if (renewTask.error) {
         alert_error(`Tạo mới phân công theo chu kỳ chăm sóc`, `${renewTask.msg}`);
       }
-      await refresh();
+      (data.renewValue = {
+        _id: "",
+        start_date: "",
+        end_date: "",
+        content: "",
+        customerId: "",
+        Customer: {
+          _id: "",
+          name: "",
+        },
+        cycleId: "",
+        Cycle: {
+          _id: "",
+          name: "",
+        },
+        leaderId: "",
+        Status_Task: {
+          _id: "",
+          name: "",
+        },
+        start_date_new: "",
+        end_date_new: "",
+      }),
+        await refresh();
     };
 
     const create = async () => {
@@ -1429,9 +1421,7 @@ export default {
       console.log(id);
       data.viewValue = await http_getOne(Task, id);
 
-      data.viewValue.Customer.birthday = formatDate(
-        data.viewValue.Customer.birthday
-      );
+      data.viewValue.Customer.birthday = formatDate(data.viewValue.Customer.birthday);
       console.log(data.viewValue);
       // router.push({ name: "Assignment.view", params: { id: _id } });
     };
@@ -1475,7 +1465,7 @@ export default {
       console.log("h", id, item);
       const isConfirmed = await alert_delete(
         "Xóa",
-        `Bạn có chắc là xóa phân công khách hàng 
+        `Bạn có chắc là xóa phân công khách hàng
         <span style="color: blue;">${item.Customer.name} </span>
         với nội dung chăm sóc  <span style="color: blue;"> ${item.content}</span>
          không !!`
@@ -1536,10 +1526,7 @@ export default {
         }
         contentAlert += `</tbody>
       </table>`;
-        const isConfirmed = await alert_delete_wide(
-          `Xoá nhiều phân công`,
-          contentAlert
-        );
+        const isConfirmed = await alert_delete_wide(`Xoá nhiều phân công`, contentAlert);
         if (isConfirmed) {
           let checkDeleteAll = false;
           for (let valueDelete of arrayCheck.data) {
@@ -1584,9 +1571,7 @@ export default {
       // console.log("Data items tasks:", data.items);
       var employees = reactive({ data: {} });
       for (let value of data.items) {
-        employees.data = await http_getOne(Task, value._id);
-        // console.log("count:", employees.data.Employees.length);
-        value.count = employees.data.Employees.length;
+        value.count = value.EmployeesList.length;
 
         for (let value1 of arrayCheck.data) {
           // value.count = employees.Employees.length;
@@ -1595,21 +1580,23 @@ export default {
           }
         }
       }
-
+      for (let value of data.items) {
+        if (value.note == null || value.note.length == 0) {
+          value.note = "không có";
+        } else value.note = value.note;
+      }
       // console.log("Data items tasks:", data.items);
 
       for (const value of data.items) {
         value.end_date_format = formatDate(value.end_date);
         value.start_date_format = formatDate(value.start_date);
       }
-      status_tasks.status_task = status_tasks.status_task.map(
-        (value, index) => {
-          return {
-            ...value,
-            value: value._id,
-          };
-        }
-      );
+      status_tasks.status_task = status_tasks.status_task.map((value, index) => {
+        return {
+          ...value,
+          value: value._id,
+        };
+      });
       cycles.cycle = cycles.cycle.map((value, index) => {
         return {
           ...value,
@@ -1720,13 +1707,11 @@ export default {
             :options="status_tasks.status_task"
             @update:entryValue="
               (value, value1) => (
-                updateEntryValueStatusTask(value),
-                (entryNameStatusTask = value1.name)
+                updateEntryValueStatusTask(value), (entryNameStatusTask = value1.name)
               )
             "
             @refresh="
-              (entryNameStatusTask = 'Trạng thái'),
-                updateEntryValueStatusTask('')
+              (entryNameStatusTask = 'Trạng thái'), updateEntryValueStatusTask('')
             "
             style="height: 35px"
           />
@@ -1885,11 +1870,7 @@ export default {
       @selectAll="(value) => handleSelectAll(value)"
       @selectOne="(id, item) => handlSelectOne(id, item)"
       @delete="handleDelete"
-      @edit="
-        (value, value1) => (
-          (data.editValue = value), (data.activeEdit = value1)
-        )
-      "
+      @edit="(value, value1) => ((data.editValue = value), (data.activeEdit = value1))"
       @view="(value) => view(value)"
       @appointmentView="
         (value, value1) => {

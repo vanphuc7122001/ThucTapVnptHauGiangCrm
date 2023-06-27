@@ -170,7 +170,7 @@ exports.create = async (req, res, next) => {
 
       const user = await Employee.findOne({
         where: {
-          _id: leaderId,
+          _id: req.body.loginId,
         }
       });
       const cycleLog = await Cycle.findOne({
@@ -178,25 +178,20 @@ exports.create = async (req, res, next) => {
           _id: document.cycleId
         }
       });
+      console.log("login id", req.body.loginId)
       console.log("user",user);
       user.dataValues.name = getDecrypt(user.dataValues.name);
       user.dataValues.birthday = getDecrypt(user.dataValues.birthday);
       user.dataValues.phone = getDecrypt(user.dataValues.phone);
-      const userInfo = `Họ tên:${user.dataValues.name}, Ngày sinh: ${user.dataValues.birthday}, SĐT: ${user.dataValues.phone}, Id nhân viên: ${leaderId}` 
+      const userInfo = `Họ tên:${user.dataValues.name}, Ngày sinh: ${user.dataValues.birthday}, SĐT: ${user.dataValues.phone}, Id nhân viên: ${req.body.loginId}` 
       console.log("userinfo",userInfo);
-      console.log("kkkkkkkkkkk",leaderId);
       const formattedDateTime = this.dateTime();
       const contentLog = `Thêm phân công ngày bắt đầu ${start_date} và ngày kết thúc ${end_date} với chu kỳ ${cycleLog.name}`
-      console.log("content", contentLog),
-      console.log("date time", formattedDateTime);
-      const logCreatTask = await Log.create({
+      const logCreateTask = await Log.create({
         created_at: formattedDateTime,
         created_user: userInfo,
         content: contentLog,
       });
-      console.log("logggg", logCreatTask);
-      console.log("user", user);
-
       return res.send({
         error: false,
         msg: `Tạo phân công thành công`,
@@ -289,6 +284,20 @@ exports.findAll = async (req, res, next) => {
       ],
     });
 
+     ////////////////////////////////////////////
+    // Thêm employeeTask vào documents.EmployeesList
+    // console.log("Document:", documents.length);
+
+    for (let i = 0; i < documents.length; i++) {
+      var employees = await Employee_Task.findAll({
+        where: {
+          TaskId: documents[i].dataValues._id,
+        },
+      });
+      // console.log("Tất cả employee của 1 task", employees.length);
+      documents[i].dataValues["EmployeesList"] = employees;
+    }
+    /////////////////////////////////////////////////
     return res.send(documents);
   } catch (error) {
     console.log(error);

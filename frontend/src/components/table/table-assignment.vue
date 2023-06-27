@@ -1,5 +1,5 @@
 <script>
-import { reactive, computed } from "vue";
+import { reactive, computed, onMounted, onUnmounted, ref } from "vue";
 export default {
   props: {
     items: {
@@ -31,12 +31,36 @@ export default {
       default: [],
     },
   },
-  setup(props, ntx) {},
+  setup(props, ntx) {
+    const data = reactive({
+      _showAction: -1,
+    });
+    const selectRef = ref(null);
+
+    const handleClickOutside = (event) => {
+      console.log("handleClickOutside");
+      if (!selectRef.value.contains(event.target)) {
+        data._showAction = -1;
+      }
+    };
+
+    onMounted(() => {
+      document.addEventListener("click", handleClickOutside);
+    });
+
+    onUnmounted(() => {
+      document.removeEventListener("click", handleClickOutside);
+    });
+    return {
+      data,
+      selectRef,
+    };
+  },
 };
 </script>
 
 <template>
-  <div>
+  <div ref="selectRef">
     <table class="my-table mb-2" :class="[borderTableAll ? 'border-table-all' : '']">
       <thead>
         <tr>
@@ -85,77 +109,100 @@ export default {
           <td class="size-16">{{ item.Evaluate.star }}</td>
           <td class="size-16">{{ item.Status_Task.name }}</td>
           <td class="size-16" v-if="activeAction == true">
-            <div class="d-flex align-items-center size-16">
-              <button
-                type="button"
-                class="format-btn"
-                data-toggle="modal"
-                data-target="#model-view"
-              >
-                <span
-                  id="view"
-                  class="material-symbols-outlined d-flex align-content-center"
-                  @click="$emit('view', item._id)"
-                >
-                  visibility
-                </span>
-              </button>
-              <button
-                type="button"
-                class="mx-2 format-btn"
-                data-toggle="modal"
-                data-target="#model-form-wizard"
-              >
-                <span
-                  id="edit"
-                  class="material-symbols-outlined d-flex align-content-center"
-                  @click="$emit('edit', item, true)"
-                >
-                  edit
-                </span>
-              </button>
+            <div class="" style="position: relative">
               <span
-                id="delete"
+                @click="data._showAction = index"
                 class="material-symbols-outlined"
-                @click="$emit('delete', item._id, item)"
+                style="cursor: pointer"
+                v-show="data._showAction != index || data._showAction == -1"
               >
-                delete
+                more_vert
               </span>
-              <button
-                type="button"
-                class="mx-2 format-btn"
-                data-toggle="modal"
-                data-target="#modal-addAppointment"
+              <span
+                @click="data._showAction = -1"
+                class="material-symbols-outlined"
+                style="cursor: pointer"
+                v-if="data._showAction == index"
               >
-                <span
-                  id="appointment"
-                  class="material-symbols-outlined d-flex align-items-center justify-content-center"
-                  @click="$emit('appointmentView', item._id, item)"
+                more_vert
+              </span>
+              <div
+                v-if="data._showAction == index"
+                class="d-flex align-items-center size-16 menu-action-child"
+              >
+                <button
+                  type="button"
+                  class="format-btn"
+                  data-toggle="modal"
+                  data-target="#model-view"
                 >
-                  schedule
-                </span>
-              </button>
-              <button
-                type="button"
-                class="format-btn"
-                data-toggle="modal"
-                data-target="#model-renew"
-              >
-                <!-- <span
+                  <span
+                    id="view"
+                    class="material-symbols-outlined d-flex align-content-center"
+                    @click="$emit('view', item._id)"
+                  >
+                    visibility
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  class="mx-2 format-btn"
+                  data-toggle="modal"
+                  data-target="#model-form-wizard"
+                >
+                  <span
+                    id="edit"
+                    class="material-symbols-outlined d-flex align-content-center"
+                    @click="$emit('edit', item, true)"
+                  >
+                    edit
+                  </span>
+                </button>
+                <button type="button" class="format-btn">
+                  <span
+                    id="delete"
+                    class="material-symbols-outlined d-flex align-content-center"
+                    @click="$emit('delete', item._id, item)"
+                  >
+                    delete
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  class="mx-2 format-btn"
+                  data-toggle="modal"
+                  data-target="#modal-addAppointment"
+                >
+                  <span
+                    id="appointment"
+                    class="material-symbols-outlined d-flex align-items-center justify-content-center"
+                    @click="$emit('appointmentView', item._id, item)"
+                  >
+                    schedule
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  class="format-btn"
+                  data-toggle="modal"
+                  data-target="#model-renew"
+                >
+                  <!-- <span
                   id="appointment"
                   class="material-symbols-outlined d-flex align-items-center justify-content-center"
                   @click="$emit('renewtask', item._id, item)"
                 >
                   schedule
                 </span> -->
-                <span
-                  id="appointment"
-                  class="material-symbols-outlined d-flex align-items-center justify-content-center"
-                  @click="$emit('renewtask', item, true)"
-                >
-                  autorenew
-                </span>
-              </button>
+                  <span
+                    id="appointment"
+                    class="material-symbols-outlined d-flex align-items-center justify-content-center"
+                    @click="$emit('renewtask', item, true)"
+                  >
+                    autorenew
+                  </span>
+                </button>
+              </div>
             </div>
           </td>
           <!-- <td v-if="activeAction == true">
@@ -268,5 +315,14 @@ export default {
 }
 .takeCare {
   color: red;
+}
+.menu-action-child {
+  position: absolute;
+  left: 0;
+  margin-left: -140px;
+  background-color: white;
+  padding: 10px 20px;
+  border: 1px solid white;
+  border-radius: 5px;
 }
 </style>
