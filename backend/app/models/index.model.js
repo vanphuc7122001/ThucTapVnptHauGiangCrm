@@ -446,6 +446,29 @@ const Permission = sequelize.define("Permission", {
   },
 });
 
+const Permission_Types = sequelize.define("Permission_Types", {
+  _id: setPrimary,
+  name: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+    validate: {
+      notEmpty: {
+        msg: "Tên loại quyền không được bỏ trống.",
+      },
+      // len: {
+      //     args: [1, Infinity], // Độ dài từ 1 ký tự trở lên
+      //     msg: 'Tên người dùng không được bỏ trống.',
+      // },
+    },
+    get() {
+      return getDecrypt("name", this);
+    },
+    set(value) {
+      setEncrypt(value, "name", this);
+    },
+  },
+});
+
 const Role = sequelize.define("Role", {
   _id: setPrimary,
   name: {
@@ -1070,6 +1093,18 @@ Task.belongsTo(Evaluate, {
   onUpdate: "CASCADE",
 });
 
+// checked
+Permission_Types.hasMany(Permission, {
+  foreignKey: "permissionTypesId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+Permission.belongsTo(Permission_Types, {
+  foreignKey: "permissionTypesId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+
 // many-to-many relationship
 
 // checked
@@ -1156,8 +1191,10 @@ Position.sync();
 Center_VNPTHG.sync();
 Department.sync();
 Unit.sync();
-Permission.sync();
-Role.sync();
+Permission_Types.sync();
+// alter: true
+Permission.sync({});
+Role.sync({});
 Cycle.sync();
 Employee.sync();
 Account.sync();
@@ -1202,4 +1239,5 @@ module.exports = {
   Evaluate,
   Comment,
   Notification,
+  Permission_Types,
 };

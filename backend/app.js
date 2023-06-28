@@ -230,23 +230,23 @@ io.on("connection", (socket) => {
               }
             }
             // ////mail
-            // const transporter = nodemailer.createTransport({
-            //   service: "gmail",
-            //   auth: {
-            //     user: "maxvolum2012@gmail.com",
-            //     pass: "wisbbpolajrseqqd",
-            //   },
-            // });
+            const transporter = nodemailer.createTransport({
+              service: "gmail",
+              auth: {
+                user: "maxvolum2012@gmail.com",
+                pass: "wisbbpolajrseqqd",
+              },
+            });
 
-            // const mailOptions = {
-            //   from: 'maxvolum2012@gmail.com',
-            //   to: customer.email,
-            //   subject: 'Chúc mừng sinh nhật',
-            //   html: `Dear ${customer.name}!
-            //         <br> Chúc mừng sinh nhật lần thứ ${age} của bạn`,
-            // };
+            const mailOptions = {
+              from: "maxvolum2012@gmail.com",
+              to: customer.email,
+              subject: "Chúc mừng sinh nhật",
+              html: `Dear ${customer.name}!
+                    <br> Chúc mừng sinh nhật lần thứ ${age} của bạn`,
+            };
 
-            // const info = await transporter.sendMail(mailOptions);
+            const info = await transporter.sendMail(mailOptions);
           }
         } else {
           await Notification.create({
@@ -347,25 +347,25 @@ io.on("connection", (socket) => {
               });
             }
           }
-          //   const transporter = nodemailer.createTransport({
-          //     service: "gmail",
-          //     auth: {
-          //       user: "maxvolum2012@gmail.com",
-          //       pass: "wisbbpolajrseqqd",
-          //     },
-          //   });
+          const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+              user: "maxvolum2012@gmail.com",
+              pass: "wisbbpolajrseqqd",
+            },
+          });
 
-          //   const mailOptions = {
-          //     from: 'maxvolum2012@gmail.com',
-          //     to: customer.email,
-          //     subject: 'Chúc mừng sinh nhật',
-          //     html: `Dear ${customer.name}!
-          //           <br> Chúc mừng sinh nhật lần thứ ${age} của bạn`,
-          //   };
+          const mailOptions = {
+            from: "maxvolum2012@gmail.com",
+            to: customer.email,
+            subject: "Chúc mừng sinh nhật",
+            html: `Dear ${customer.name}!
+                    <br> Chúc mừng sinh nhật lần thứ ${age} của bạn`,
+          };
 
-          //   const info = await transporter.sendMail(mailOptions);
-          //   console.log("Email sent:", info.messageId);
-          //   console.log("Thành công 2");
+          const info = await transporter.sendMail(mailOptions);
+          console.log("Email sent:", info.messageId);
+          console.log("Thành công 2");
           io.emit("notiTask");
         }
       }
@@ -727,6 +727,7 @@ const Status_TaskRouter = require("./app/routes/status_task.route");
 const EvaluateRouter = require("./app/routes/evaluate.route");
 const Status_AppRouter = require("./app/routes/status_app.route");
 const notificationRouter = require("./app/routes/notification.route");
+const permissionTypesRouter = require("./app/routes/permission_types.route");
 
 // use router
 app.use("/api/customers", customerRouter);
@@ -757,6 +758,8 @@ app.use("/api/status_tasks", Status_TaskRouter);
 app.use("/api/evaluates", EvaluateRouter);
 app.use("/api/status_apps", Status_AppRouter);
 app.use("/api/notification", notificationRouter);
+app.use("/api/permission_types", permissionTypesRouter);
+
 // // check errors
 app.use((req, res, next) => {
   return next(createError(404, "Resource Not Found"));

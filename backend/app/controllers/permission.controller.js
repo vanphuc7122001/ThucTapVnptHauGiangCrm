@@ -1,14 +1,14 @@
-const { Permission } = require("../models/index.model.js");
+const { Permission, Permission_Types } = require("../models/index.model.js");
 const createError = require("http-errors");
 const { v4: uuidv4 } = require("uuid");
 const { sequelize } = require("../config/index");
 
 exports.create = async (req, res, next) => {
-  if (Object.keys(req.body).length === 1) {
-    const { name } = req.body;
+  if (Object.keys(req.body).length === 2) {
+    const { name, permissionTypesId } = req.body;
     const permissions = await Permission.findAll();
     for (let value of permissions) {
-      if (value.name == name) {
+      if (value.name == name && value.permissionTypesId == permissionTypesId) {
         return res.send({
           error: true,
           msg: `Đã tồn tại quyền ${value.name}.`,
@@ -18,6 +18,7 @@ exports.create = async (req, res, next) => {
     try {
       const document = await Permission.create({
         name: req.body.name,
+        permissionTypesId: permissionTypesId,
       });
       return res.send({
         error: false,
@@ -41,7 +42,9 @@ exports.create = async (req, res, next) => {
 
 exports.findAll = async (req, res, next) => {
   try {
-    const documents = await Permission.findAll({});
+    const documents = await Permission.findAll({
+      include: Permission_Types,
+    });
     return res.send(documents);
   } catch (error) {
     console.log(error);
@@ -122,7 +125,7 @@ exports.deleteAll = async (req, res, next) => {
 //         where: {
 //           _id: req.params.id,
 //         },
-//         returning: true, 
+//         returning: true,
 //       }
 //     );
 

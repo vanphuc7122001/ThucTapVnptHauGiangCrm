@@ -79,6 +79,9 @@ exports.findAll = async (req, res, next) => {
     const documents = await Employee.findAll({
       include: [
         {
+          model: Task,
+        },
+        {
           model: Position,
           attributes: ["_id", "name"],
         },

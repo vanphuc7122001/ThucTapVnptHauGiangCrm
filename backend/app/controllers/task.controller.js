@@ -171,22 +171,22 @@ exports.create = async (req, res, next) => {
       const user = await Employee.findOne({
         where: {
           _id: req.body.loginId,
-        }
+        },
       });
       const cycleLog = await Cycle.findOne({
         where: {
-          _id: document.cycleId
-        }
+          _id: document.cycleId,
+        },
       });
-      console.log("login id", req.body.loginId)
-      console.log("user",user);
+      console.log("login id", req.body.loginId);
+      console.log("user", user);
       user.dataValues.name = getDecrypt(user.dataValues.name);
       user.dataValues.birthday = getDecrypt(user.dataValues.birthday);
       user.dataValues.phone = getDecrypt(user.dataValues.phone);
-      const userInfo = `Họ tên:${user.dataValues.name}, Ngày sinh: ${user.dataValues.birthday}, SĐT: ${user.dataValues.phone}, Id nhân viên: ${req.body.loginId}` 
-      console.log("userinfo",userInfo);
+      const userInfo = `Họ tên:${user.dataValues.name}, Ngày sinh: ${user.dataValues.birthday}, SĐT: ${user.dataValues.phone}, Id nhân viên: ${req.body.loginId}`;
+      console.log("userinfo", userInfo);
       const formattedDateTime = this.dateTime();
-      const contentLog = `Thêm phân công ngày bắt đầu ${start_date} và ngày kết thúc ${end_date} với chu kỳ ${cycleLog.name}`
+      const contentLog = `Thêm phân công ngày bắt đầu ${start_date} và ngày kết thúc ${end_date} với chu kỳ ${cycleLog.name}`;
       const logCreateTask = await Log.create({
         created_at: formattedDateTime,
         created_user: userInfo,
@@ -284,7 +284,7 @@ exports.findAll = async (req, res, next) => {
       ],
     });
 
-     ////////////////////////////////////////////
+    ////////////////////////////////////////////
     // Thêm employeeTask vào documents.EmployeesList
     // console.log("Document:", documents.length);
 
@@ -294,6 +294,8 @@ exports.findAll = async (req, res, next) => {
           TaskId: documents[i].dataValues._id,
         },
       });
+
+      // console.log("Employesss", employees);
       // console.log("Tất cả employee của 1 task", employees.length);
       documents[i].dataValues["EmployeesList"] = employees;
     }
@@ -385,10 +387,10 @@ exports.findOne = async (req, res, next) => {
       const center = await Center_VNPTHG.findOne({
         where: { _id: department.dataValues.centerVNPTHGId },
       });
-      console.log("position:", unit);
-      console.log("dep:", department);
-      console.log("center:", center);
-      console.log("nhân viên:", employee.dataValues);
+      // console.log("position:", unit);
+      // console.log("dep:", department);
+      // console.log("center:", center);
+      // console.log("nhân viên:", employee.dataValues);
       employee.dataValues.name = getDecrypt(employee.dataValues.name);
       employee.dataValues.phone = getDecrypt(employee.dataValues.phone);
       employee.dataValues.email = getDecrypt(employee.dataValues.email);
@@ -423,7 +425,7 @@ exports.deleteOne = async (req, res, next) => {
         },
       ],
     });
-    console.log("11Task", task.dataValues);
+    // console.log("11Task", task.dataValues);
     const documents = await Task.destroy({
       where: {
         _id: req.params.id,
@@ -433,20 +435,20 @@ exports.deleteOne = async (req, res, next) => {
     const user = await Employee.findOne({
       where: {
         _id: task.dataValues.leaderId,
-      }
+      },
     });
-    console.log("user",user);
+    console.log("user", user);
     user.dataValues.name = getDecrypt(user.dataValues.name);
     user.dataValues.birthday = getDecrypt(user.dataValues.birthday);
     user.dataValues.phone = getDecrypt(user.dataValues.phone);
     task.dataValues.start_date = getDecrypt(task.dataValues.start_date);
     task.dataValues.end_date = getDecrypt(task.dataValues.end_date);
-    const userInfo = `${user.dataValues.name} ${user.dataValues.birthday} ${user.dataValues.phone} ${task.dataValues.leaderId}` 
-    console.log("userinfo",userInfo);
+    const userInfo = `${user.dataValues.name} ${user.dataValues.birthday} ${user.dataValues.phone} ${task.dataValues.leaderId}`;
+    // console.log("userinfo", userInfo);
     const formattedDateTime = this.dateTime();
-    const contentLog = `Xóa phân công ngày bắt đầu ${task.dataValues.start_date} và ngày kết thúc ${task.dataValues.end_date}`
-    console.log("content", contentLog),
-    console.log("date time", formattedDateTime);
+    const contentLog = `Xóa phân công ngày bắt đầu ${task.dataValues.start_date} và ngày kết thúc ${task.dataValues.end_date}`;
+    // console.log("content", contentLog),
+    //   console.log("date time", formattedDateTime);
     const logDelTask = await Log.create({
       created_at: formattedDateTime,
       created_user: userInfo,
@@ -486,7 +488,7 @@ exports.deleteOne = async (req, res, next) => {
 //     user.dataValues.phone = getDecrypt(user.dataValues.phone);
 //     taskDel.dataValues.start_date = getDecrypt(taskDel.dataValues.start_date);
 //     taskDel.dataValues.end_date = getDecrypt(taskDel.dataValues.end_date);
-//     const userInfo = `${user.dataValues.name} ${user.dataValues.birthday} ${user.dataValues.phone} ${taskDel.dataValues.leaderId}` 
+//     const userInfo = `${user.dataValues.name} ${user.dataValues.birthday} ${user.dataValues.phone} ${taskDel.dataValues.leaderId}`
 //     console.log("userinfo",userInfo);
 //     const formattedDateTime = this.dateTime();
 //     const contentLog = `Xóa phân công ngày bắt đầu ${taskDel.dataValues.start_date} và ngày kết thúc ${taskDel.dataValues.end_date}`
@@ -506,16 +508,16 @@ exports.deleteOne = async (req, res, next) => {
 exports.deleteAll = async (req, res, next) => {};
 
 exports.update = async (req, res, next) => {
-  console.log("update", req.body);
-  console.log("coo", req.body.fb);
-  console.log("coo", req.body.changeStatus);
+  // console.log("update", req.body);
+  // console.log("coo", req.body.fb);
+  // console.log("coo", req.body.changeStatus);
   if (req.body.changeStatus) {
     var EditStatusTask;
     const statustask = await Status_Task.findAll();
     var c = 0;
     for (let value of statustask) {
       value.dataValues.name = getDecrypt(value.dataValues.name);
-      console.log("name", value.dataValues.name);
+      // console.log("name", value.dataValues.name);
       if (value.dataValues.name == "đang chăm sóc") {
         c = 0;
         EditStatusTask = value.dataValues._id;
@@ -529,9 +531,9 @@ exports.update = async (req, res, next) => {
         name: "đang chăm sóc",
       });
       EditStatusTask = statustask1._id;
-      console.log("status_task", EditStatusTask);
+      // console.log("status_task", EditStatusTask);
     }
-    
+
     const document = await Task.update(
       {
         StatusTaskId: EditStatusTask,
@@ -543,7 +545,7 @@ exports.update = async (req, res, next) => {
       msg: "Dữ liệu đã được thay đổi thành công.",
     });
   } else if (req.body.fb == true) {
-    console.log("dooooooooooooo");
+    // console.log("dooooooooooooo");
     try {
       let tasks1 = [
         await Task.findOne({
@@ -588,7 +590,7 @@ exports.update = async (req, res, next) => {
           }
         );
 
-        console.log("ne ne ne");
+        // console.log("ne ne ne");
         return res.send({
           error: false,
           msg: "Dữ liệu đã được thay đổi thành công.",
@@ -603,7 +605,7 @@ exports.update = async (req, res, next) => {
       return next(createError(400, "Error update"));
     }
   } else {
-    console.log("ELSE:");
+    // console.log("ELSE:");
     const {
       start_date,
       end_date,
@@ -615,8 +617,8 @@ exports.update = async (req, res, next) => {
       StatusTaskId,
       EvaluateId,
     } = req.body;
-    console.log("Body:", req.body);
-    console.log("StatusTaskID:", req.body.StatusTaskId);
+    // console.log("Body:", req.body);
+    // console.log("StatusTaskID:", req.body.StatusTaskId);
 
     try {
       let tasks = [
@@ -646,10 +648,10 @@ exports.update = async (req, res, next) => {
         );
       });
       if (tasks.length == 0) {
-        console.log("Start");
+        // console.log("Start");
         let document = {};
         if (req.body.note == null) {
-          console.log("note underfine");
+          // console.log("note underfine");
           document = await Task.update(
             {
               start_date: req.body.start_date,
@@ -665,7 +667,7 @@ exports.update = async (req, res, next) => {
             { where: { _id: req.params.id }, returning: true }
           );
         } else if (req.body.note != null) {
-          console.log("note khác underfine");
+          // console.log("note khác underfine");
           document = await Task.update(
             {
               start_date: req.body.start_date,
@@ -682,8 +684,8 @@ exports.update = async (req, res, next) => {
           );
         }
 
-        console.log(document);
-        console.log("id", req.params.id);
+        // console.log(document);
+        // console.log("id", req.params.id);
         const comment = await Comment.update(
           {
             content: req.body.Comment.content,
@@ -691,24 +693,24 @@ exports.update = async (req, res, next) => {
           { where: { TaskId: req.params.id }, returning: true }
         );
 
-          console.log("login id", req.body.loginId)
-         const user = await Employee.findOne({
-        where: {
-          _id: req.body.loginId,
-        }
-      });
-      console.log("user",user);
-      user.dataValues.name = getDecrypt(user.dataValues.name);
-      user.dataValues.birthday = getDecrypt(user.dataValues.birthday);
-      user.dataValues.phone = getDecrypt(user.dataValues.phone);
-      const userInfo = `Họ tên: ${user.dataValues.name}, Ngày sinh: ${user.dataValues.birthday}, SĐT: ${user.dataValues.phone},Id nhân viên: ${req.body.loginId}` 
-      const formattedDateTime = this.dateTime();
-      const contentLog = `Chỉnh sửa phân công ngày bắt đầu ${start_date} và ngày kết thúc ${end_date} với nội dung ${content}`
-      const logCreateTask = await Log.create({
-        created_at: formattedDateTime,
-        created_user: userInfo,
-        content: contentLog,
-      });
+        // console.log("login id", req.body.loginId);
+        const user = await Employee.findOne({
+          where: {
+            _id: req.body.loginId,
+          },
+        });
+        // console.log("user", user);
+        user.dataValues.name = getDecrypt(user.dataValues.name);
+        user.dataValues.birthday = getDecrypt(user.dataValues.birthday);
+        user.dataValues.phone = getDecrypt(user.dataValues.phone);
+        const userInfo = `Họ tên: ${user.dataValues.name}, Ngày sinh: ${user.dataValues.birthday}, SĐT: ${user.dataValues.phone},Id nhân viên: ${req.body.loginId}`;
+        const formattedDateTime = this.dateTime();
+        const contentLog = `Chỉnh sửa phân công ngày bắt đầu ${start_date} và ngày kết thúc ${end_date} với nội dung ${content}`;
+        const logCreateTask = await Log.create({
+          created_at: formattedDateTime,
+          created_user: userInfo,
+          content: contentLog,
+        });
         return res.send({
           error: false,
           msg: "Dữ liệu đã được thay đổi thành công.",
@@ -725,7 +727,6 @@ exports.update = async (req, res, next) => {
   }
 };
 
-
 exports.dateTime = () => {
   const now = new Date();
   const year = now.getFullYear();
@@ -738,4 +739,3 @@ exports.dateTime = () => {
   const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   return formattedDateTime;
 };
-
