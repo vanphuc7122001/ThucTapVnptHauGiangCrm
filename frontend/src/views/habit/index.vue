@@ -23,24 +23,7 @@ import {
   formatDateTime,
   formatDate,
   // service
-  Event,
   Habit,
-  Account,
-  Appointment,
-  Center_VNPT,
-  Company_KH,
-  Customer_Types,
-  Customer_Work,
-  Customer,
-  Cycle,
-  Department,
-  Employee,
-  Log,
-  Permission,
-  Position,
-  Role,
-  Task,
-  Unit,
   // http service
   http_getAll,
   http_create,
@@ -55,6 +38,15 @@ import {
   alert_info,
   alert_delete_wide,
 } from "../common/import.js";
+
+import {
+  isDeleteHabit,
+  isEditHabit,
+  isCreateHabit,
+  isReadHabit,
+  isSetHabit,
+} from "../../use/getSessionItem";
+
 export default {
   components: {
     Table,
@@ -359,6 +351,11 @@ export default {
       setHabit,
       setHabit1,
       refresh1,
+      isDeleteHabit,
+      isEditHabit,
+      isCreateHabit,
+      isReadHabit,
+      isSetHabit,
     };
   },
 };
@@ -442,6 +439,7 @@ export default {
           data-toggle="modal"
           data-target="#model-delete-all"
           @click="deleteMany()"
+          :disabled="isDeleteHabit() ? false : true"
         >
           <span id="delete-all" class="mx-2">Xoá</span>
         </button>
@@ -451,6 +449,7 @@ export default {
           class="btn btn-primary"
           data-toggle="modal"
           data-target="#model-addHabit"
+          :disabled="isCreateHabit() ? false : true"
         >
           <span id="add" class="mx-2">Thêm</span>
         </button>
@@ -461,6 +460,7 @@ export default {
           data-toggle="modal"
           data-target="#model-setHabit"
           @click="setHabit()"
+          :disabled="isSetHabit() ? false : true"
         >
           <span id="add" class="mx-2">Áp dụng</span>
         </button>
@@ -488,6 +488,11 @@ export default {
         )
       "
       @view="(value) => view(value)"
+      :showActionList="[
+        isReadHabit() ? true : false,
+        isEditHabit() ? true : false,
+        isDeleteHabit() ? true : false,
+      ]"
     />
     <!-- Pagination -->
     <Pagination

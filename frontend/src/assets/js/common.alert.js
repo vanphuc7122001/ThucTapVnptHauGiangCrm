@@ -114,3 +114,24 @@ export const alert_noti = (title, text) => {
     },
   });
 };
+
+export const alert_input_text = async (title) => {
+  let content = "";
+  await Swal.fire({
+    title: title,
+    input: "text",
+    showCancelButton: true,
+    confirmButtonText: "Thêm",
+    preConfirm: (inputValue) => {
+      if (inputValue.trim() === "") {
+        Swal.showValidationMessage("Vui lòng nhập đủ thông tin.");
+      }
+      return inputValue;
+    },
+  }).then((result) => {
+    if (result.isConfirmed) {
+      content = result.value;
+    }
+  });
+  return content;
+};

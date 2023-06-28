@@ -28,6 +28,14 @@ import {
   formatDateTime,
 } from "../common/import";
 
+import {
+  isDeleteCustomer,
+  isEditCustomer,
+  isReadCustomer,
+  isCreateCustomer,
+  isCreateHabit,
+} from "../../use/getSessionItem";
+
 export default {
   components: {
     Table,
@@ -531,6 +539,11 @@ export default {
       reFresh,
       removeItem,
       reFresh1,
+      isDeleteCustomer,
+      isEditCustomer,
+      isReadCustomer,
+      isCreateCustomer,
+      isCreateHabit,
     };
   },
 };
@@ -666,6 +679,7 @@ export default {
           data-toggle="modal"
           data-target="#model-delete-all"
           @click="deleteMany()"
+          :disabled="isDeleteCustomer() ? false : true"
         >
           <span id="delete-all" class="mx-2"
             ><span class="size-16">Xoá</span></span
@@ -678,6 +692,7 @@ export default {
           data-toggle="modal"
           data-target="#model-add"
           @click="(data.resetDataAdd = true), (data.activeShowAdd = true)"
+          :disabled="isCreateCustomer() ? false : true"
         >
           <span id="add" class="mx-2"><span class="size-16">Thêm</span></span>
         </button>
@@ -692,6 +707,7 @@ export default {
           data-toggle="modal"
           data-target="#model-addHabit"
           @click="showAddHabit()"
+          :disabled="isCreateHabit() ? false : true"
         >
           <span id="add" class="mx-2"
             ><span class="size-16">Thêm thói quen</span></span
@@ -724,6 +740,11 @@ export default {
       @delete="handleDelete"
       @edit="edit"
       @view="view"
+      :showActionList="[
+        isReadCustomer() ? true : false,
+        isEditCustomer() ? true : false,
+        isDeleteCustomer() ? true : false
+      ]"
     />
     <!-- Pagination -->
     <Pagination

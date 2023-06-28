@@ -54,6 +54,10 @@ import {
   alert_info,
 } from "../common/import.js";
 
+import {
+  isReadAccount
+} from '../../use/getSessionItem'
+
 export default {
   components: {
     Table,
@@ -301,13 +305,14 @@ export default {
       refresh,
       updateEntryValueRoleAccount,
       handleSelectAll,
+      isReadAccount
     };
   },
 };
 </script>
 
 <template>
-  <div class="border-box d-flex flex-column ml-2">
+  <div class="border-box d-flex flex-column ml-2" v-if="isReadAccount()">
     <!-- Menu -->
     <div class="d-flex menu my-3 mx-3 justify-content-end">
       <router-link
@@ -366,7 +371,7 @@ export default {
         />
         <Search
           class="ml-3"
-          style="width: 300px"
+          style="width: 300px; height: 40px;"
           @update:searchText="(value) => (data.searchText = value)"
           :entryValue="data.searchText"
           @choseSearch="
@@ -394,14 +399,14 @@ export default {
         />
       </div>
       <div class="d-flex align-items-start">
-        <button
+        <!-- <button
           type="button"
           class="btn btn-danger"
           data-toggle="modal"
           data-target="#model-delete-all"
         >
           <span id="delete-all" class="mx-2">Xoá</span>
-        </button>
+        </button> -->
         <!-- <DeleteAll :items="data.items" /> -->
         <!-- <button
           type="button"

@@ -44,6 +44,18 @@ import {
   alert_warning,
   alert_delete_wide,
 } from "../../assets/js/common.alert";
+
+import {
+  isDeleteAssignement,
+  isEditAssignement,
+  isCreateAssignement,
+  isReadAssignement,
+  isSelfAssignement,
+  isSetAssignement,
+  isFeedbackAssignment,
+  isReNewAssignment,
+} from "../../use/getSessionItem";
+
 import { formatDate, formatDateTime } from "../../assets/js/common";
 export default {
   components: {
@@ -66,6 +78,7 @@ export default {
   },
   setup(ctx) {
     const data = reactive({
+      employeeList: [],
       items: [
         {
           _id: "",
@@ -99,6 +112,7 @@ export default {
               reason: "",
             },
           },
+          Employees: [],
           Evaluate: {
             _id: "",
             star: "",
@@ -372,7 +386,10 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (entryValueEval.value != "" && entryValueStatusTask.value != "") {
+      } else if (
+        entryValueEval.value != "" &&
+        entryValueStatusTask.value != ""
+      ) {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -396,7 +413,10 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (entryValueStatusTask.value != "" && startdateValue.value != "") {
+      } else if (
+        entryValueStatusTask.value != "" &&
+        startdateValue.value != ""
+      ) {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -444,7 +464,8 @@ export default {
       } else if (enddateValue.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
-            value.cycleId == entryValueCycle.value && value.end_date == enddateValue.value
+            value.cycleId == entryValueCycle.value &&
+            value.end_date == enddateValue.value
           );
         });
       } else {
@@ -734,7 +755,10 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (entryValueCycle.value != "" && entryValueStatusTask.value != "") {
+      } else if (
+        entryValueCycle.value != "" &&
+        entryValueStatusTask.value != ""
+      ) {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -750,7 +774,10 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (entryValueStatusTask.value != "" && entryValueEval.value != "") {
+      } else if (
+        entryValueStatusTask.value != "" &&
+        entryValueEval.value != ""
+      ) {
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
@@ -913,7 +940,10 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (entryValueCycle.value != "" && entryValueStatusTask.value != "") {
+      } else if (
+        entryValueCycle.value != "" &&
+        entryValueStatusTask.value != ""
+      ) {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -921,7 +951,10 @@ export default {
             value.end_date == enddateValue.value
           );
         });
-      } else if (entryValueStatusTask.value != "" && startdateValue.value != "") {
+      } else if (
+        entryValueStatusTask.value != "" &&
+        startdateValue.value != ""
+      ) {
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
@@ -953,7 +986,10 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (entryValueStatusTask.value != "" && entryValueEval.value != "") {
+      } else if (
+        entryValueStatusTask.value != "" &&
+        entryValueEval.value != ""
+      ) {
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
@@ -964,7 +1000,8 @@ export default {
       } else if (entryValueCycle.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
-            value.cycleId == entryValueCycle.value && value.end_date == enddateValue.value
+            value.cycleId == entryValueCycle.value &&
+            value.end_date == enddateValue.value
           );
         });
       } else if (entryValueStatusTask.value != "") {
@@ -1090,7 +1127,10 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (entryValueCycle.value != "" && entryValueStatusTask.value != "") {
+      } else if (
+        entryValueCycle.value != "" &&
+        entryValueStatusTask.value != ""
+      ) {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -1098,7 +1138,10 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (entryValueStatusTask.value != "" && startdateValue.value != "") {
+      } else if (
+        entryValueStatusTask.value != "" &&
+        startdateValue.value != ""
+      ) {
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
@@ -1191,7 +1234,7 @@ export default {
       data.currentPage = 1;
     });
 
-    // computed
+    // computedconst 
     const toString = computed(() => {
       console.log("Starting search");
       if (data.choseSearch == "nameCus") {
@@ -1206,6 +1249,10 @@ export default {
         return data.items.map((value, index) => {
           return [value.Cycle.name].join("").toLocaleLowerCase();
         });
+      } else if (data.choseSearch == "nameEmployee") {
+        return data.items.map((value, index) => {
+          return value.Employees.map(value1 => value1.name).join("").toLocaleLowerCase();
+        });
       } else {
         return data.items.map((value, index) => {
           return [value.Customer.name, value.Status_Task.name, value.Cycle.name]
@@ -1216,7 +1263,9 @@ export default {
     });
     const filter = computed(() => {
       return data.items.filter((value, index) => {
-        return toString.value[index].includes(data.searchText.toLocaleLowerCase());
+        return toString.value[index].includes(
+          data.searchText.toLocaleLowerCase()
+        );
       });
     });
     const filtered = computed(() => {
@@ -1270,7 +1319,10 @@ export default {
         }
       }
       if (data.showFeedback == false) {
-        alert_warning(`Thêm đánh giá`, `Vui lòng chọn phân công để thêm đánh giá.`);
+        alert_warning(
+          `Thêm đánh giá`,
+          `Vui lòng chọn phân công để thêm đánh giá.`
+        );
       }
     };
     const showTask_Employee = () => {
@@ -1371,7 +1423,10 @@ export default {
           dataTaskEm.EmployeeId = value.EmployeesList[i].EmployeeId;
           await http_create(Employees_Task, dataTaskEm);
           /////////////////////////////////
-          const Employ = await http_getOne(Employee, value.EmployeesList[i].EmployeeId);
+          const Employ = await http_getOne(
+            Employee,
+            value.EmployeesList[i].EmployeeId
+          );
           const token = sessionStorage.getItem("token");
           if (token) {
             const _idEmployee = sessionStorage.getItem("employeeId");
@@ -1409,7 +1464,10 @@ export default {
         );
         refresh();
       } else if (renewTask.error) {
-        alert_error(`Tạo mới phân công theo chu kỳ chăm sóc`, `${renewTask.msg}`);
+        alert_error(
+          `Tạo mới phân công theo chu kỳ chăm sóc`,
+          `${renewTask.msg}`
+        );
       }
       (data.renewValue = {
         _id: "",
@@ -1476,7 +1534,9 @@ export default {
       console.log(id);
       data.viewValue = await http_getOne(Task, id);
 
-      data.viewValue.Customer.birthday = formatDate(data.viewValue.Customer.birthday);
+      data.viewValue.Customer.birthday = formatDate(
+        data.viewValue.Customer.birthday
+      );
       data.viewValue.start_date = formatDate(data.viewValue.start_date);
       data.viewValue.end_date = formatDate(data.viewValue.end_date);
       data.viewValue.Appointments.date_time = formatDateTime(
@@ -1589,7 +1649,10 @@ export default {
         }
         contentAlert += `</tbody>
       </table>`;
-        const isConfirmed = await alert_delete_wide(`Xoá nhiều phân công`, contentAlert);
+        const isConfirmed = await alert_delete_wide(
+          `Xoá nhiều phân công`,
+          contentAlert
+        );
         if (isConfirmed) {
           let checkDeleteAll = false;
           for (let valueDelete of arrayCheck.data) {
@@ -1648,17 +1711,19 @@ export default {
           value.note = "không có";
         } else value.note = value.note;
       }
-      console.log("Data items tasks:", data.items);
+      // console.log("Data items tasks:", data.items);
       for (const value of data.items) {
         value.end_date_format = formatDate(value.end_date);
         value.start_date_format = formatDate(value.start_date);
       }
-      status_tasks.status_task = status_tasks.status_task.map((value, index) => {
-        return {
-          ...value,
-          value: value._id,
-        };
-      });
+      status_tasks.status_task = status_tasks.status_task.map(
+        (value, index) => {
+          return {
+            ...value,
+            value: value._id,
+          };
+        }
+      );
       cycles.cycle = cycles.cycle.map((value, index) => {
         return {
           ...value,
@@ -1674,15 +1739,51 @@ export default {
       });
       // console.log("evaluate", evaluates.evaluate);
       data.selectAll[0].checked = false;
+
+     
+        data.items = data.items.map((item) => {
+            let rs = data.employeeList.filter( value => {
+              let isCheck = false;
+              for (const each of value.Tasks) {
+                if(each._id === item._id) {
+                  isCheck = true;
+                  break
+                }
+              }
+              return isCheck == true;
+            })
+            return {
+              ...item,
+              Employees: rs
+            }
+        });
+
+      console.log('Data items', data.items);
     };
+
     const giaoviec = async () => {
-      console.log("giao việc");
+      // console.log("giao việc");
       await refresh();
     };
     // handle http methods
 
+    const findEmployeeByName = (name) => {
+      return data.employeeList.filter((item) => {
+        return [item.name].join("").includes(name);
+      });
+    };
+
     // Hàm callback được gọi trước khi component được mount (load)
     onBeforeMount(async () => {
+      const res = await http_getAll(Employee);
+      // data.employeeList = res.flatMap( (item) => item)
+      // res.map( (item) => {
+      //   console.log('Value' , item);
+      // })
+      console.log('Data employee list: ' , res);
+      data.employeeList = res;
+      // const result = findEmployeeByName("triệu lệ dĩnh");
+      // console.log("result: ", result);
       await refresh();
     });
 
@@ -1722,6 +1823,15 @@ export default {
       handleCycle,
       renewTask,
       star,
+      // phân quyền
+      isDeleteAssignement,
+      isEditAssignement,
+      isCreateAssignement,
+      isReadAssignement,
+      isSelfAssignement,
+      isSetAssignement,
+      isFeedbackAssignment,
+      isReNewAssignment,
     };
   },
 };
@@ -1770,11 +1880,13 @@ export default {
             :options="status_tasks.status_task"
             @update:entryValue="
               (value, value1) => (
-                updateEntryValueStatusTask(value), (entryNameStatusTask = value1.name)
+                updateEntryValueStatusTask(value),
+                (entryNameStatusTask = value1.name)
               )
             "
             @refresh="
-              (entryNameStatusTask = 'Trạng thái'), updateEntryValueStatusTask('')
+              (entryNameStatusTask = 'Trạng thái'),
+                updateEntryValueStatusTask('')
             "
             style="height: 35px"
           />
@@ -1853,6 +1965,10 @@ export default {
               _id: 'cycle',
               name: 'Tìm kiếm theo chu kỳ',
             },
+            {
+              _id: 'nameEmployee',
+              name: 'Tìm kiếm theo tên nhân viên',
+            },
           ]"
         />
       </div>
@@ -1873,6 +1989,7 @@ export default {
           data-toggle="modal"
           data-target="#model-feedback"
           @click="showFeedback(), (data.resetDataFb = true)"
+          :disabled="isFeedbackAssignment() ? false : true"
         >
           <span class="mx-2">Đánh giá</span>
         </button>
@@ -1882,6 +1999,7 @@ export default {
           data-toggle="modal"
           data-target="#model-form-task_em"
           @click="showTask_Employee()"
+          :disabled="isSetAssignement() ? false : true"
         >
           <span class="mx-2" style="color: white">Giao việc</span>
         </button>
@@ -1891,6 +2009,7 @@ export default {
           data-toggle="modal"
           data-target="#model-delete-all"
           @click="deleteMany()"
+          :disabled="isDeleteAssignement() ? false : true"
         >
           <span id="delete-all" class="mx-2">Xoá</span>
         </button>
@@ -1901,6 +2020,7 @@ export default {
           data-toggle="modal"
           data-target="#model-add"
           @click="data.resetDataAdd = true"
+          :disabled="isCreateAssignement() ? false : true"
         >
           <span id="add" class="mx-2">Thêm</span>
         </button>
@@ -1954,6 +2074,13 @@ export default {
         }
       "
       @renewtask="(value, value1) => initRenewTask(value, value1)"
+      :showActionList="[
+        isReadAssignement() ? true : false,
+        isEditAssignement() ? true : false,
+        isDeleteAssignement() ? true : false,
+        true,
+        isReNewAssignment() ? true : false,
+      ]"
     />
     <!-- Pagination -->
     <Pagination

@@ -36,6 +36,7 @@ import Customer_Event from "../../services/customer_event.service";
 import Customer_Habit from "../../services/customer_habit.service";
 import Status_Task from "../../services/status_task.service";
 import Evaluate from "../../services/evaluate.service";
+import Permission_Types from "../../services/permission_types.service";
 // http methods
 import {
   http_getAll,
@@ -53,6 +54,7 @@ import {
   alert_warning,
   alert_info,
   alert_delete_wide,
+  alert_input_text,
 } from "../../assets/js/common.alert";
 
 export {
@@ -102,6 +104,7 @@ export {
   Customer_Habit,
   Status_Task,
   Evaluate,
+  Permission_Types,
   // http service
   http_getAll,
   http_create,
@@ -115,4 +118,5 @@ export {
   alert_warning,
   alert_info,
   alert_delete_wide,
+  alert_input_text,
 };

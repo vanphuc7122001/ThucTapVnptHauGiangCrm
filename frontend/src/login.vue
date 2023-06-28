@@ -80,15 +80,16 @@ export default {
             password: password.value,
           }
         );
-        console.log("response", response);
+
+        let permissionList = response.data.document.Role.Permissions
+        permissionList = permissionList.map(value => value.name)
+
+        console.log('Permission granted',permissionList);
+
         sessionStorage.setItem("token", response.data.token);
 
         // Kiểm tra phản hồi từ backend
         if (response.data.error == false) {
-          console.log(response.data.message);
-          console.log(response);
-          console.log("USERNAME:", user_name.value);
-          console.log("PASSWORD:", password.value);
 
           sessionStorage.setItem(
             "employeeId",
@@ -100,15 +101,15 @@ export default {
           );
           sessionStorage.setItem("role", response.data.document.Role.name);
           // sessionStorage.setItem("role", response.data.document.Role.name);
+          
           sessionStorage.setItem(
             "permissionList",
-            response.data.document.Role.Permissions
+            JSON.stringify(permissionList)
           );
           // router.push({ name: "Dashboard" });
           location.reload();
         } else {
           // Đăng nhập thất bại, xử lý thông báo lỗi hoặc hiển thị thông báo lỗi trên giao diện
-          console.log(response.data.msg);
           alert_error(`Login`, `${response.data.msg}`);
           router.push({ name: "Login" });
         }
@@ -120,8 +121,6 @@ export default {
     const check = () => {
       const token = sessionStorage.getItem("token");
       const loginInfo = sessionStorage.getItem("loginInfo");
-      console.log(loginInfo);
-      console.log("token", token);
       if (token) {
         router.push({ name: "Dashboard" });
       } else {

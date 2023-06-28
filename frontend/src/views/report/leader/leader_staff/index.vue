@@ -7,7 +7,7 @@
         :style="data.activeMenu == 2 ? { border: '1px solid blue' } : {}"
       >
         <router-link
-          to="/report"
+          :to="!isReadReport() ? '#' : '/report'"
           :class="[data.activeMenu == 2 ? 'active-menu' : 'none-active-menu']"
           class=""
         >
@@ -24,8 +24,9 @@
         class="mx-1 report__item"
         :style="data.activeMenu == 1 ? { border: '1px solid blue' } : {}"
       >
+                <!-- to="/report_assignment_staff" -->
         <router-link
-          to="/report_assignment_staff"
+          :to="!isReadReportAssinmentStaff() ? '#' : '/report_assignment_staff'"
           :class="[data.activeMenu == 1 ? 'active-menu' : 'none-active-menu']"
           class=""
         >
@@ -33,9 +34,7 @@
           <span class="pl-3" style="margin-top: -4px">
             <span class="material-symbols-outlined"> group </span>
             <span class="text-center"
-              >{{ store.countReportAssignmentStaff }}/{{
-                store.countCustomer
-              }}</span
+              >{{ store.countReportAssignmentStaff }}/{{ store.countCustomer }}</span
             >
           </span>
         </router-link>
@@ -46,7 +45,7 @@
         :style="data.activeMenu == 0 ? { border: '1px solid blue' } : {}"
       >
         <router-link
-          to="/report_customer_cycle"
+          :to="!isReadReportCustomerCycle() ? '#' : '/report_customer_cycle'"
           :class="[data.activeMenu == 0 ? 'active-menu' : 'none-active-menu']"
           class=""
         >
@@ -54,9 +53,7 @@
           <span class="pl-3" style="margin-top: -4px">
             <span class="material-symbols-outlined"> group </span>
             <span class="text-center"
-              >{{ store.countReportCustomerCycle }}/{{
-                store.countCustomer
-              }}</span
+              >{{ store.countReportCustomerCycle }}/{{ store.countCustomer }}</span
             >
           </span>
         </router-link>
@@ -67,7 +64,7 @@
         :style="data.activeMenu == 3 ? { border: '1px solid blue' } : {}"
       >
         <router-link
-          to="/report_leader_customer"
+          :to="!isReadReportLeaderCustomer() ? '#' : '/report_leader_customer'"
           :class="[data.activeMenu == 3 ? 'active-menu' : 'none-active-menu']"
           class=""
         >
@@ -85,7 +82,7 @@
         :style="data.activeMenu == 4 ? { border: '1px solid blue' } : {}"
       >
         <router-link
-          to="/report_leader_staff"
+          :to="!isReadReportLeaderStaff() ? '#' : '/report_leader_staff'"
           :class="[data.activeMenu == 4 ? 'active-menu' : 'none-active-menu']"
           class=""
         >
@@ -161,18 +158,20 @@
       </div>
       <div class="d-flex align-items-start">
         <button
-          class="btn btn-warning"
+          class="btn btn-warning mx-2"
           data-toggle="modal"
           data-target="#model-form-mail"
+          :disabled="isMail() ? false : true"
         >
           <span id="delete-all" class="">Mail</span>
         </button>
         <button
           type="button"
-          class="btn btn-primary mx-2"
+          :disabled="isPrintReport() ? false : true"
+          class="btn btn-primary"
           @click="handlePrintReport"
         >
-          <span id="printrp" class="">In</span>
+          <span id="add" class="">In</span>
         </button>
       </div>
     </div>
@@ -304,6 +303,16 @@ import {
   countElementReportLeaderCustomer,
   countElementReportLeaderStaff,
 } from "../../use/index";
+
+import {
+  isReadReport,
+  isReadReportLeaderCustomer,
+  isReadReportLeaderStaff,
+  isReadReportCustomerCycle,
+  isReadReportAssinmentStaff,
+  isPrintReport,
+  isMail
+} from '../../../../use/getSessionItem'
 
 export default {
   components: {
@@ -533,6 +542,13 @@ export default {
       pdfContent,
       view,
       store,
+      isReadReport,
+      isReadReportLeaderCustomer,
+      isReadReportLeaderStaff,
+      isReadReportCustomerCycle,
+      isReadReportAssinmentStaff,
+      isPrintReport,
+      isMail
     };
   },
 };

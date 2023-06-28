@@ -8,7 +8,6 @@ import Select from "../../components/form/select.vue";
 import Box from "../../components/box_lananh/box.vue";
 import SelectOption from "../../components/box_lananh/select.vue";
 import Add from "../dashboard/add_taskemployeedash.vue";
-import { formatDate } from "../../assets/js/common";
 import {
   Customer,
   Customer_Types,
@@ -23,6 +22,8 @@ import {
 // import { Select_Advanced } from "../common/import";
 import Select_Advanced from "../../components/form/select_cycle.vue";
 import moment from "moment";
+import {isReadDashboard} from '../../use/getSessionItem'
+
 export default {
   components: {
     apexchart: VueApexCharts,
@@ -751,12 +752,14 @@ export default {
       chartSeriesAppointment,
       chartOptionsAppointment1,
       chartSeriesAppointment1,
+
+      isReadDashboard
     };
   },
 };
 </script>
 <template>
-  <div class="border-box ml-2">
+  <div class="border-box ml-2" v-if="isReadDashboard()">
     <div class="d-flex my-2 mx-3 menu justify-content-end" style="border: none">
       <!-- BTN tổng quan chi tiêt -->
       <div class="d-flex menu mx-2 my-2 justify-content-end">
@@ -773,30 +776,6 @@ export default {
         </a>
       </div>
       <div class="">
-        <!-- <button
-          class="btn m-0"
-          :class="{ 'btn-primary': overview }"
-          @click="
-            () => {
-              detail = false;
-              overview = true;
-            }
-          "
-        >
-          Tổng quan
-        </button> -->
-        <!--<button
-          class="btn mr-4"
-          @click="
-            () => {
-              detail = true;
-              overview = false;
-            }
-          "
-          :class="{ 'btn-primary': detail }"
-        >
-          Chi tiết
-        </button> -->
       </div>
     </div>
     <div class="border-hr mb-3"></div>

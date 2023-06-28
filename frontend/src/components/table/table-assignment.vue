@@ -33,6 +33,10 @@ export default {
     startRow: {
       type: Number,
       default: 0,
+    },
+    showActionList: {
+      type: Array,
+      default: [true, true, true, true, true],
     }
   },
   setup(props, ntx) {
@@ -139,6 +143,7 @@ export default {
                   class="format-btn"
                   data-toggle="modal"
                   data-target="#model-view"
+                  v-if="showActionList[0] == true"
                 >
                   <span
                     id="view"
@@ -153,6 +158,7 @@ export default {
                   class="mx-2 format-btn"
                   data-toggle="modal"
                   data-target="#model-form-wizard"
+                  v-if="showActionList[1] == true"
                 >
                   <span
                     id="edit"
@@ -162,11 +168,13 @@ export default {
                     edit
                   </span>
                 </button>
-                <button type="button" class="format-btn">
+                <button type="button" class="format-btn" v-if="showActionList[2] == true">
                   <span
                     id="delete"
                     class="material-symbols-outlined d-flex align-content-center"
                     @click="$emit('delete', item._id, item)"
+                  
+
                   >
                     delete
                   </span>
@@ -176,11 +184,14 @@ export default {
                   class="mx-2 format-btn"
                   data-toggle="modal"
                   data-target="#modal-addAppointment"
+                  v-if="showActionList[3] == true"
+
                 >
                   <span
                     id="appointment"
                     class="material-symbols-outlined d-flex align-items-center justify-content-center"
                     @click="$emit('appointmentView', item._id, item)"
+                    
                   >
                     schedule
                   </span>
@@ -190,14 +201,8 @@ export default {
                   class="format-btn"
                   data-toggle="modal"
                   data-target="#model-renew"
+                  v-if="showActionList[4] == true"
                 >
-                  <!-- <span
-                  id="appointment"
-                  class="material-symbols-outlined d-flex align-items-center justify-content-center"
-                  @click="$emit('renewtask', item._id, item)"
-                >
-                  schedule
-                </span> -->
                   <span
                     id="appointment"
                     class="material-symbols-outlined d-flex align-items-center justify-content-center"
@@ -209,57 +214,6 @@ export default {
               </div>
             </div>
           </td>
-          <!-- <td v-if="activeAction == true">
-            <button
-              type="button"
-              class=""
-              data-toggle="modal"
-              data-target="#model-view"
-            >
-              <span
-                id="view"
-                class="material-symbols-outlined d-flex align-items-center"
-                @click="$emit('view', item)"
-              >
-                visibility
-              </span>
-            </button>
-            <button
-              type="button"
-              class="mx-2"
-              data-toggle="modal"
-              data-target="#model-form-wizard"
-            >
-              <span
-                id="edit"
-                class="material-symbols-outlined d-flex align-items-center justify-content-center"
-                @click="$emit('edit', item, true)"
-              >
-                edit
-              </span>
-            </button>
-            <span
-              id="delete"
-              class="material-symbols-outlined"
-              @click="$emit('delete', item._id)"
-            >
-              delete
-            </span>
-            <button
-              type="button"
-              class="mx-2"
-              data-toggle="modal"
-              data-target="#modal-addAppointment"
-            >
-              <span
-                id="appointment"
-                class="material-symbols-outlined d-flex align-items-center justify-content-center"
-                @click="$emit('appointment', item._id, item)"
-              >
-                schedule
-              </span>
-            </button>
-          </td> -->
         </tr>
       </tbody>
     </table>
@@ -328,5 +282,6 @@ export default {
   padding: 10px 20px;
   border: 1px solid white;
   border-radius: 5px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 </style>

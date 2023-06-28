@@ -39,6 +39,14 @@ import {
   alert_warning,
   alert_delete_wide,
 } from "../../assets/js/common.alert";
+
+import {
+  isDeleteAppointment,
+  isCreateAppointment,
+  isEditAppointment,
+  isReadAppointment,
+} from "../../use/getSessionItem";
+
 import { formatDate, formatDateTime } from "../../assets/js/common";
 export default {
   components: {
@@ -163,7 +171,9 @@ export default {
     });
     const filter = computed(() => {
       return data.items.filter((value, index) => {
-        return toString.value[index].includes(data.searchText.toLocaleLowerCase());
+        return toString.value[index].includes(
+          data.searchText.toLocaleLowerCase()
+        );
       });
     });
     const filtered = computed(() => {
@@ -305,21 +315,6 @@ export default {
         };
       });
 
-      // 2*****
-      // console.log("Data items tasks:", data.items);
-      // var employees = reactive({ data: {} });
-      // for (let value of data.items) {
-      //   employees.data = await http_getOne(Task, value._id);
-      //   // console.log("count:", employees.data.Employees.length);
-      //   value.count = employees.data.Employees.length;
-
-      //   for (let value1 of arrayCheck.data) {
-      //     // value.count = employees.Employees.length;
-      //     if (value._id == value1._id) {
-      //       value.checked = true;
-      //     }
-      //   }
-      // }
       for (let value of data.items) {
         value.checked = false;
       }
@@ -334,17 +329,6 @@ export default {
         }
       }
 
-      // for (let value of data.items) {
-      //   value.checked = false;
-      // }
-      // for (let value of data.items) {
-      //   for (let value1 of arrayCheck.data) {
-      //     if (value._id == value1._id) {
-      //       value.checked = true;
-      //     }
-      //   }
-      // }
-      // arrayCheck.data = [];
       data.selectAll[0].checked = false;
     };
     const handleSelectAll = (value) => {
@@ -377,26 +361,6 @@ export default {
       console.log("ArrayCheckOne:", arrayCheck.data, item.checked);
       data.selectAll[0].checked = false;
     };
-    // handle http methods
-    //XÓA 1
-    // const handleDelete = async (id, item) => {
-    //   console.log("D id & item:", id, item);
-    //   const isConfirmed = await alert_delete(
-    //     "Xóa",
-    //     `Bạn có chắc là xóa lịch hẹn này không!!`
-    //   );
-    //   if (isConfirmed) {
-    //     // 1***** xem thay đổi Appoiment cho phù hợp
-    //     const rsAppointment = await http_deleteOne(Appointment, id);
-    //     console.log(rsAppointment);
-    //     if (rsAppointment.error) {
-    //       alert_error("Lỗi ", rsAppointment.msg);
-    //     } else {
-    //       await refresh();
-    //       alert_success("Thành công", "Xóa lịch hẹn thành công");
-    //     }
-    //   }
-    // };
 
     const handleDelete = async (id, item) => {
       console.log("D id & item:", id, item);
@@ -459,7 +423,10 @@ export default {
         }
         contentAlert += `</tbody>
       </table>`;
-        const isConfirmed = await alert_delete_wide(`Xoá nhiều lịch hẹn`, contentAlert);
+        const isConfirmed = await alert_delete_wide(
+          `Xoá nhiều lịch hẹn`,
+          contentAlert
+        );
         if (isConfirmed) {
           let checkDeleteAll = false;
           const loginId = reactive({ loginId: "", id: "" });
@@ -467,7 +434,10 @@ export default {
           for (let valueDelete of arrayCheck.data) {
             // 1***** xem thay đổi Appoiment cho phù hợp
             loginId.id = valueDelete._id;
-            const rsAppointment = await Appointment.deleteOne(valueDelete._id, loginId);
+            const rsAppointment = await Appointment.deleteOne(
+              valueDelete._id,
+              loginId
+            );
             if (rsAppointment.error) {
               alert_error("Lỗi ", rsAppointment.msg);
               checkDeleteAll = false;
@@ -504,6 +474,11 @@ export default {
       entryNameStatus,
       updateEntryValueStatus,
       status_apps,
+      // phân quyền
+      isDeleteAppointment,
+      isCreateAppointment,
+      isEditAppointment,
+      isReadAppointment,
     };
   },
 };
@@ -535,18 +510,12 @@ export default {
                 updateEntryValueStatus(value), (entryNameStatus = value1.name)
               )
             "
-            @refresh="(entryNameStatus = 'Trạng thái'), updateEntryValueStatus('')"
+            @refresh="
+              (entryNameStatus = 'Trạng thái'), updateEntryValueStatus('')
+            "
             style="height: 35px; width: 200px"
           />
         </div>
-        <!-- <div class="form-group w-100 ml-3">
-          <InputFilter
-            @update:entryValue="(value) => (datetimeValue = value)"
-            :title="`Ngày hẹn`"
-            :entryValue="`Ngày hẹn`"
-            style="height: 35px"
-          />
-        </div> -->
         <div class="form-group"></div>
       </div>
     </div>
@@ -611,6 +580,7 @@ export default {
           data-toggle="modal"
           data-target="#model-delete-all"
           @click="deleteMany()"
+          :disabled="isDeleteAppointment() ? false : true"
         >
           <span id="delete-all" class="mx-2">Xoá</span>
         </button>
@@ -620,6 +590,7 @@ export default {
           class="btn btn-primary"
           data-toggle="modal"
           data-target="#modal-add"
+          :disabled="isCreateAppointment() ? false : true"
         >
           <span id="add" class="mx-2">Thêm</span>
         </button>
@@ -648,6 +619,10 @@ export default {
           (data.editValue.date_time = data.editValue.date_time.toUpperCase())
         )
       "
+      :showActionList="[
+        isEditAppointment() ? true : false,
+        isDeleteAppointment() ? true : false,
+      ]"
     />
     <!-- Pagination -->
     <Pagination

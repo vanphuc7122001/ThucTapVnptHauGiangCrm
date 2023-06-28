@@ -49,6 +49,7 @@
                 class="format-btn"
                 data-toggle="modal"
                 data-target="#model-view"
+                v-if="showActionList[0]"
               >
                 <span
                   id="view"
@@ -63,6 +64,7 @@
                 class="mx-2 format-btn"
                 data-toggle="modal"
                 data-target="#model-edit"
+                v-if="showActionList[1]"
               >
                 <span
                   id="edit"
@@ -76,6 +78,7 @@
                 id="delete"
                 class="material-symbols-outlined"
                 @click="$emit('delete', item._id, item)"
+                v-if="showActionList[2]"
               >
                 delete
               </span>
@@ -115,6 +118,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    showActionList: {
+      type: Array,
+      default: [true, true, true],
+    }
   },
   setup(props, ntx) {
     console.log(props.items);

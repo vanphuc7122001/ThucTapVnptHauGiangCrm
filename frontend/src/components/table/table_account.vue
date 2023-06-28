@@ -73,7 +73,7 @@ export default {
           <th v-for="(value, index) in fields" :key="index">
             <span class="size-16">{{ value }}</span>
           </th>
-          <th><span class="size-16">Hành động</span></th>
+          <!-- <th><span class="size-16">Hành động</span></th> -->
         </tr>
       </thead>
       <tbody>
@@ -109,7 +109,7 @@ export default {
               </p>
             </div>
           </td>
-          <td v-if="activeAction == true">
+          <!-- <td v-if="activeAction == true">
             <div class="d-flex align-items-center">
               <button
                 v-if="showActionList[0] == true"
@@ -149,7 +149,7 @@ export default {
                 delete
               </span>
             </div>
-          </td>
+          </td> -->
         </tr>
       </tbody>
     </table>

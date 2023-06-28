@@ -28,23 +28,6 @@ import {
   formatDate,
   // service
   Event,
-  Habit,
-  Account,
-  Appointment,
-  Center_VNPT,
-  Company_KH,
-  Customer_Types,
-  Customer_Work,
-  Customer,
-  Cycle,
-  Department,
-  Employee,
-  Log,
-  Permission,
-  Position,
-  Role,
-  Task,
-  Unit,
   // http service
   http_getAll,
   http_create,
@@ -56,9 +39,16 @@ import {
   alert_error,
   alert_delete,
   alert_warning,
-  alert_info,
   alert_delete_wide,
 } from "../common/import.js";
+
+import {
+  isDeleteEvent,
+  isEditEvent,
+  isCreateEvent,
+  isReadEvent,
+  isSetEvent,
+} from "../../use/getSessionItem";
 
 export default {
   components: {
@@ -424,6 +414,11 @@ export default {
       setEvent,
       setEvent1,
       refresh1,
+      isDeleteEvent,
+      isEditEvent,
+      isCreateEvent,
+      isReadEvent,
+      isSetEvent,
     };
   },
 };
@@ -551,6 +546,7 @@ export default {
           data-toggle="modal"
           data-target="#model-delete-all"
           @click="deleteMany()"
+          :disabled="isDeleteEvent() ? false : true"
         >
           <span id="delete-all" class="mx-2">Xoá</span>
         </button>
@@ -560,6 +556,7 @@ export default {
           class="btn btn-primary"
           data-toggle="modal"
           data-target="#model-add"
+          :disabled="isCreateEvent() ? false : true"
         >
           <span id="add" class="mx-2">Thêm</span>
         </button>
@@ -570,6 +567,7 @@ export default {
           data-toggle="modal"
           data-target="#model-setEvent"
           @click="setEvent()"
+          :disabled="isSetEvent() ? false : true"
         >
           <span id="add" class="mx-2">Áp dụng</span>
         </button>
@@ -605,6 +603,11 @@ export default {
         )
       "
       @view="(value) => view(value)"
+      :showActionList="[
+        isReadEvent() ? true : false,
+        isEditEvent() ? true : false,
+        isDeleteEvent() ? true : false,
+      ]"
     />
     <!-- Pagination -->
     <Pagination

@@ -7,7 +7,7 @@
         :style="data.activeMenu == 2 ? { border: '1px solid blue' } : {}"
       >
         <router-link
-          to="/report"
+          :to="!isReadReport() ? '#' : '/report'"
           :class="[data.activeMenu == 2 ? 'active-menu' : 'none-active-menu']"
           class=""
         >
@@ -24,8 +24,9 @@
         class="mx-1 report__item"
         :style="data.activeMenu == 1 ? { border: '1px solid blue' } : {}"
       >
+                <!-- to="/report_assignment_staff" -->
         <router-link
-          to="/report_assignment_staff"
+          :to="!isReadReportAssinmentStaff() ? '#' : '/report_assignment_staff'"
           :class="[data.activeMenu == 1 ? 'active-menu' : 'none-active-menu']"
           class=""
         >
@@ -44,7 +45,7 @@
         :style="data.activeMenu == 0 ? { border: '1px solid blue' } : {}"
       >
         <router-link
-          to="/report_customer_cycle"
+          :to="!isReadReportCustomerCycle() ? '#' : '/report_customer_cycle'"
           :class="[data.activeMenu == 0 ? 'active-menu' : 'none-active-menu']"
           class=""
         >
@@ -63,7 +64,7 @@
         :style="data.activeMenu == 3 ? { border: '1px solid blue' } : {}"
       >
         <router-link
-          to="/report_leader_customer"
+          :to="!isReadReportLeaderCustomer() ? '#' : '/report_leader_customer'"
           :class="[data.activeMenu == 3 ? 'active-menu' : 'none-active-menu']"
           class=""
         >
@@ -81,7 +82,7 @@
         :style="data.activeMenu == 4 ? { border: '1px solid blue' } : {}"
       >
         <router-link
-          to="/report_leader_staff"
+          :to="!isReadReportLeaderStaff() ? '#' : '/report_leader_staff'"
           :class="[data.activeMenu == 4 ? 'active-menu' : 'none-active-menu']"
           class=""
         >
@@ -157,22 +158,24 @@
       </div>
       <div class="d-flex align-items-start">
         <button
-          class="btn btn-warning"
+          class="btn btn-warning mx-2"
           data-toggle="modal"
           data-target="#model-form-mail"
+          :disabled="isMail() ? false : true"
         >
           <span id="delete-all" class="">Mail</span>
         </button>
-        <button type="button" class="btn btn-primary mx-2" @click="handlePrintData">
-          <span id="printrp" class="">In</span>
+        <button
+          type="button"
+          :disabled="isPrintReport() ? false : true"
+          class="btn btn-primary"
+          @click="handlePrintReport"
+        >
+          <span id="add" class="">In</span>
         </button>
       </div>
     </div>
-    <!-- nameCustomer: item.Customer.name,
-            phoneCustomer: item.Customer.phone,
-            emailCustomer: item.Customer.email,
-            customerType: item.Customer.Customer_Type.name,
-            statusTask: item.Status_Task.name, -->
+    
     <Table
       :items="setPages"
       :fields="[
@@ -313,6 +316,16 @@ import {
   countElementReportLeaderStaff,
 } from "../../use/index";
 
+import {
+  isReadReport,
+  isReadReportLeaderCustomer,
+  isReadReportLeaderStaff,
+  isReadReportCustomerCycle,
+  isReadReportAssinmentStaff,
+  isPrintReport,
+  isMail
+} from '../../../../use/getSessionItem'
+
 export default {
   components: {
     Table,
@@ -416,8 +429,11 @@ export default {
       console.log("Data items: ", data.items);
     };
 
-    onBeforeMount(() => {
-      reFresh();
+    
+
+    onBeforeMount(async () => {
+      await reFresh();
+      console.log('data items lenght',data.items.length);
     });
 
     // computed
@@ -462,11 +478,14 @@ export default {
     });
     const setPages = computed(() => {
       if (data.items.length > 0) {
+        console.log('Data item index', data.items.length);
+        console.log('Data items setpages', data.items);
         if (setNumberOfPages.value == 0 || data.entryValue == "All") {
           data.entryValue = data.items.length;
           data.numberOfPages = 1;
         } else data.numberOfPages = setNumberOfPages.value;
         data.startRow = (data.currentPage - 1) * data.entryValue + 1;
+        console.log('Total row',data.startRow);
         data.endRow = data.currentPage * data.entryValue;
         return filtered.value.filter((item, index) => {
           return (
@@ -571,6 +590,13 @@ export default {
       pdfContent,
       view,
       store,
+      isReadReport,
+      isReadReportLeaderCustomer,
+      isReadReportLeaderStaff,
+      isReadReportCustomerCycle,
+      isReadReportAssinmentStaff,
+      isPrintReport,
+      isMail
     };
   },
 };

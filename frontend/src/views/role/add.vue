@@ -38,8 +38,8 @@ export default {
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title" style="font-size: 15px">
-            Thêm vai trờ mới mới
+          <h4 class="modal-title" style="font-size: 18px">
+            Thêm vai trò mới mới
           </h4>
           <button type="button" class="close" data-dismiss="modal">
             &times;

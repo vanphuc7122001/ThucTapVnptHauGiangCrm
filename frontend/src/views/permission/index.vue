@@ -164,11 +164,14 @@ export default {
     });
 
     // methods
-    const create = async () => {
+    const create = async (pTValue) => {
       try {
         let isFlase = false;
         for (let value of data.itemAdd) {
-          const result = await http_create(Permission, value);
+          const result = await http_create(Permission, {
+            name: value.name,
+            permissionTypesId: pTValue,
+          });
           if (result.error) {
             alert_error(`Thêm quyền`, `${result.msg}`);
             break;
@@ -283,6 +286,7 @@ export default {
       data.items = await http_getAll(Permission);
       for (let value of data.items) {
         value.checked = false;
+        value.pTValue = value.Permission_Type.name;
       }
     };
 
@@ -435,15 +439,15 @@ export default {
         >
           <span id="add" class="mx-2">Thêm</span>
         </button>
-        <Add :items="data.itemAdd" @create="create" @remove="removeItem" />
+        <Add :items="data.itemAdd" @create="(value) => create(value)" @remove="removeItem" />
       </div>
     </div>
     <!-- Table -->
     <Table
       :items="setPages"
-      :fields="['Tên quyền']"
-      :labels="['name']"
-      :showActionList="[false, true, true]"
+      :fields="['Tên quyền', 'Loại quyền']"
+      :labels="['name', 'pTValue']"
+      :showActionList="[false, false, true]"
       :startRow="data.startRow"
       :selectAll="data.selectAll"
       @selectAll="(value) => handleSelectAll(value)"

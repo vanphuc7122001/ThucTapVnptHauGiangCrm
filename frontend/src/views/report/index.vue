@@ -8,7 +8,7 @@
         :style="data.activeMenu == 2 ? { border: '1px solid blue' } : {}"
       >
         <router-link
-          to="/report"
+          :to="!isReadReport() ? '#' : '/report'"
           :class="[data.activeMenu == 2 ? 'active-menu' : 'none-active-menu']"
           class=""
         >
@@ -21,20 +21,13 @@
           </span>
         </router-link>
       </div>
-
-      <!-- countCustomer: 0,
-        countEmployee: 0,
-        countReport: 0,
-        countReportAssignmentStaff: 0,
-        countReportCustomerCycle: 0,
-        countLeaderCustomer: 0,
-        countleaderStaff: 0 -->
       <div
         class="mx-1 report__item"
         :style="data.activeMenu == 1 ? { border: '1px solid blue' } : {}"
       >
+        <!-- to="/report_assignment_staff" -->
         <router-link
-          to="/report_assignment_staff"
+          :to="!isReadReportAssinmentStaff() ? '#' : '/report_assignment_staff'"
           :class="[data.activeMenu == 1 ? 'active-menu' : 'none-active-menu']"
           class=""
         >
@@ -42,7 +35,9 @@
           <span class="pl-3" style="margin-top: -4px">
             <span class="material-symbols-outlined"> group </span>
             <span class="text-center"
-              >{{ store.countReportAssignmentStaff }}/{{ store.countCustomer }}</span
+              >{{ store.countReportAssignmentStaff }}/{{
+                store.countCustomer
+              }}</span
             >
           </span>
         </router-link>
@@ -53,7 +48,7 @@
         :style="data.activeMenu == 0 ? { border: '1px solid blue' } : {}"
       >
         <router-link
-          to="/report_customer_cycle"
+          :to="!isReadReportCustomerCycle() ? '#' : '/report_customer_cycle'"
           :class="[data.activeMenu == 0 ? 'active-menu' : 'none-active-menu']"
           class=""
         >
@@ -61,7 +56,9 @@
           <span class="pl-3" style="margin-top: -4px">
             <span class="material-symbols-outlined"> group </span>
             <span class="text-center"
-              >{{ store.countReportCustomerCycle }}/{{ store.countCustomer }}</span
+              >{{ store.countReportCustomerCycle }}/{{
+                store.countCustomer
+              }}</span
             >
           </span>
         </router-link>
@@ -72,7 +69,7 @@
         :style="data.activeMenu == 3 ? { border: '1px solid blue' } : {}"
       >
         <router-link
-          to="/report_leader_customer"
+          :to="!isReadReportLeaderCustomer() ? '#' : '/report_leader_customer'"
           :class="[data.activeMenu == 3 ? 'active-menu' : 'none-active-menu']"
           class=""
         >
@@ -90,7 +87,7 @@
         :style="data.activeMenu == 4 ? { border: '1px solid blue' } : {}"
       >
         <router-link
-          to="/report_leader_staff"
+          :to="!isReadReportLeaderStaff() ? '#' : '/report_leader_staff'"
           :class="[data.activeMenu == 4 ? 'active-menu' : 'none-active-menu']"
           class=""
         >
@@ -169,10 +166,16 @@
           class="btn btn-warning mx-2"
           data-toggle="modal"
           data-target="#model-form-mail"
+          :disabled="isMail() ? false : true"
         >
           <span id="delete-all" class="">Mail</span>
         </button>
-        <button type="button" class="btn btn-primary" @click="handlePrintReport">
+        <button
+          type="button"
+          :disabled="isPrintReport() ? false : true"
+          class="btn btn-primary"
+          @click="handlePrintReport"
+        >
           <span id="add" class="">In</span>
         </button>
       </div>
@@ -181,7 +184,14 @@
     <!-- Table -->
     <Table
       :items="setPages"
-      :fields="['Tên', 'Email', 'Sdt', 'Công việc', 'Công ty', 'Loại khách hàng']"
+      :fields="[
+        'Tên',
+        'Email',
+        'Sdt',
+        'Công việc',
+        'Công ty',
+        'Loại khách hàng',
+      ]"
       :labels="[
         'nameCustomer',
         'emailCustomer',
@@ -284,6 +294,16 @@ import {
   Task,
 } from "../common/import";
 
+import {
+  isReadReport,
+  isReadReportLeaderCustomer,
+  isReadReportLeaderStaff,
+  isReadReportCustomerCycle,
+  isReadReportAssinmentStaff,
+  isPrintReport,
+  isMail 
+} from "../../use/getSessionItem";
+
 import { isEqual, isBefore, isAfter, isSameDay } from "date-fns";
 
 import {
@@ -294,6 +314,7 @@ import {
   countElementReportAssignmentStaff,
   countElementReportLeaderCustomer,
   countElementReportLeaderStaff,
+  
 } from "./use/index";
 
 import jsPDF from "jspdf";
@@ -366,14 +387,21 @@ export default {
       lengthCustomer: 0,
     });
 
-    const labels = ["Tên khách hàng", "Email", "Số điện thoại", "Loại khách hàng"];
+    const labels = [
+      "Tên khách hàng",
+      "Email",
+      "Số điện thoại",
+      "Loại khách hàng",
+    ];
 
     const reFresh = async () => {
       store.countCustomer = await countCustomer();
       store.countEmployee = await countEmployee();
       store.countReport = await countElementReportPage();
-      store.countReportAssignmentStaff = await countElementReportAssignmentStaff();
-      store.countReportCustomerCycle = await countElementReportCustomerCyclePage();
+      store.countReportAssignmentStaff =
+        await countElementReportAssignmentStaff();
+      store.countReportCustomerCycle =
+        await countElementReportCustomerCyclePage();
       store.countLeaderCustomer = await countElementReportLeaderCustomer();
       store.countleaderStaff = await countElementReportLeaderStaff();
 
@@ -466,7 +494,7 @@ export default {
             // // lần bắt đầu thứ 2
 
             // console.log('Day start new cycle before: ' + dayStartNewCycle);
-            const dayCycle2 = new Date(dayStartNewCycle)
+            const dayCycle2 = new Date(dayStartNewCycle);
             // console.log('Cycle month: ' + cycleMonth);
             // console.log('Cycle date: ' + cycleDate);
             // console.log(' cycleYear: ' + cycleYear);
@@ -474,17 +502,12 @@ export default {
             dayCycle2.setMonth(dayCycle2.getMonth() + cycleMonth);
             dayCycle2.setFullYear(dayCycle2.getFullYear() + cycleYear);
             // console.log('Day start new cycle after: ' + dayCycle2);
-            
+
             const year2 = dayCycle2.getFullYear();
             const month2 = dayCycle2.getMonth() + 1;
             const day2 = dayCycle2.getDate();
-            
-            // console.log('--------------------------------Chu kì lần 2-------------------------------');
-            // console.log('Cycle month: ' + cycleMonth);
-            // console.log('Cycle date: ' + cycleDate);
-            // console.log(' cycleYear: ' + cycleYear);
+
             const dayStartNewCycle2 = year2 + "-" + month2 + "-" + day2;
-            // console.log('Day start day 2', dayStartNewCycle2);
 
             task.dayStartNewCycle2 = dayStartNewCycle2;
             task.dayStartNewCycle = dayStartNewCycle;
@@ -601,7 +624,9 @@ export default {
     });
     const filter = computed(() => {
       return data.items.filter((value, index) => {
-        return toString.value[index].includes(data.searchText.toLocaleLowerCase());
+        return toString.value[index].includes(
+          data.searchText.toLocaleLowerCase()
+        );
       });
     });
     const filtered = computed(() => {
@@ -705,7 +730,8 @@ export default {
           cycleName: value.Cycle.name, // join bản sao
           statusName: value.Status_Task.name,
           EvaluateStar: value.Evaluate.star,
-          comment: value.Comment == null ? "Chưa cập nhật" : value.Comment.content,
+          comment:
+            value.Comment == null ? "Chưa cập nhật" : value.Comment.content,
         };
       });
 
@@ -732,6 +758,14 @@ export default {
       view,
       labels,
       store,
+      // phân quyền
+      isReadReport,
+      isReadReportLeaderCustomer,
+      isReadReportLeaderStaff,
+      isReadReportCustomerCycle,
+      isReadReportAssinmentStaff,
+      isPrintReport,
+      isMail
     };
   },
 };
@@ -816,7 +850,8 @@ a.router-link-active.router-link-exact-active.active-menu {
   font-weight: bold;
 }
 
-a.router-link-active.router-link-exact-active.active-menu span.material-symbols-outlined {
+a.router-link-active.router-link-exact-active.active-menu
+  span.material-symbols-outlined {
   color: blue;
 }
 

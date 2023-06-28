@@ -42,6 +42,10 @@ export default {
       type: Number,
       default: 1,
     },
+    showActionList: {
+      type: Array,
+      default: [true, true],
+    }
   },
   setup(props, ntx) {},
 };
@@ -93,25 +97,12 @@ export default {
           <td class="size-16">{{ item.Status_App.name }}</td>
           <td class="size-16" v-if="activeAction == true">
             <div class="d-flex align-items-center">
-              <!-- <button
-              type="button"
-              class="format-btn"
-              data-toggle="modal"
-              data-target="#model-view"
-            >
-              <span
-                id="view"
-                class="material-symbols-outlined d-flex align-content-center"
-                @click="$emit('view', item._id)"
-              >
-                visibility
-              </span>
-            </button> -->
               <button
                 type="button"
                 class="mx-2 format-btn"
                 data-toggle="modal"
                 data-target="#modal-edit"
+                v-if="showActionList[0]"
               >
                 <span
                   id="edit"
@@ -125,6 +116,7 @@ export default {
                 id="delete"
                 class="material-symbols-outlined"
                 @click="$emit('delete', item._id, item)"
+                v-if="showActionList[1]"
               >
                 delete
               </span>
