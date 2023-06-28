@@ -194,7 +194,7 @@
       @delete="handleDelete"
       @edit="EditEmit"
       :showActionList="[true, false, false]"
-      :startRow="0"
+      :startRow="data.startRow"
       @view="view"
       :isActiveCheckbox="false"
     />

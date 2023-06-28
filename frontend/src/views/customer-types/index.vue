@@ -184,7 +184,7 @@ export default {
       @delete="handleDelete"
       @edit="EditEmit"
       :showActionList="[false, true, true]"
-      :startRow="0"
+      :startRow="1"
     />
     <Edit
       :item="data.editValue"

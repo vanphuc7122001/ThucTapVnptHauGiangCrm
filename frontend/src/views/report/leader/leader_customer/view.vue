@@ -170,47 +170,6 @@ export default {
               Danh sách chăm sóc khách hàng
             </button>
             <div v-if="isActive" id="assignment" class="collapse">
-              <!-- <div class="table-responsive">
-                <table class="table table-bordered">
-                  <thead>
-                    <tr>
-                      <th>Ngày bắt đầu</th>
-                      <th>Ngày kết thúc</th>
-                      <th>Nội dung chăm sóc</th>
-                      <th>Tên khách hàng</th>
-                      <th>Chu kì</th>
-                      <th>Trạng thái</th>
-                      <th>Đánh giá</th>
-                      <th>Nhận xét</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>{{ formatDate(item.start_date) }}</td>
-                      <td>{{ formatDate(item.end_date) }}</td>
-                      <td>{{ item.content }}</td>
-                      <td>{{ item.Customer.name }}</td>
-                      <td>{{ item.Cycle.name }}</td>
-                      <td>{{ item.Status_Task.name }}</td>
-                      <td>{{ item.Evaluate.star }}</td>
-                      <td>{{ item.Comment.content }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div> -->
-              <!-- <div v-for="(value, index) in item.Tasks" :key="index">
-              <p> Ngày bắt đầu:  {{ value.start_date }}</p>
-              <p> Ngày kết thúc: {{ value.end_date }}</p>
-              <p> Nội dung: {{ value.content }}</p>
-              </div> -->
-              <!-- name: item.Customer.name,
-          start_date: formatDate(value.start_date),
-          end_date: formatDate(value.end_date),
-          content: value.content,
-          cycle: value.Cycle.name,
-          statusTask: value.Status_Task.name,
-          star: value.Evaluate.star,
-          comment: value.Comment.content -->
               <Table
                 :items="viewCareCus"
                 :fields="[
@@ -237,7 +196,7 @@ export default {
                 :showActionList="[false, false, false]"
                 :activeAction="false"
                 :isActiveCheckbox="false"
-                :startRow="0"
+                :startRow="1"
               />
             </div>
           </div>
@@ -259,7 +218,7 @@ export default {
                 :showActionList="[false, false, false]"
                 :activeAction="false"
                 :isActiveCheckbox="false"
-                :startRow="0"
+                :startRow="1"
               />
             </div>
           </div>
@@ -281,12 +240,8 @@ export default {
                 :showActionList="[false, false, false]"
                 :activeAction="false"
                 :isActiveCheckbox="false"
+                :startRow="1"
               />
-              <!-- <div v-for="(value, index) in item.Habits" :key="index">
-                <p class="text-center">
-                {{ value.name }}
-                </p>
-              </div> -->
             </div>
           </div>
         </div>

@@ -30,6 +30,10 @@ export default {
       type: Array,
       default: [],
     },
+    startRow: {
+      type: Number,
+      default: 0,
+    }
   },
   setup(props, ntx) {
     const data = reactive({
@@ -93,7 +97,7 @@ export default {
               class="d-flex align-items-center size-16"
             />
           </td>
-          <td class="size-16">{{ index + 1 }}</td>
+          <td class="size-16">{{ startRow + index }}</td>
           <td class="size-16" width="12%">{{ item.Customer.name }}</td>
           <td class="size-16" width="8%">{{ item.Cycle.name }}</td>
           <td

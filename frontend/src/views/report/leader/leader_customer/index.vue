@@ -192,7 +192,7 @@
       @delete="handleDelete"
       @edit="EditEmit"
       :showActionList="[true, false, false]"
-      :startRow="0"
+      :startRow="data.startRow"
       @view="view"
       :isActiveCheckbox="false"
     />
@@ -400,7 +400,7 @@ export default {
         );
       });
 
-      // console.log('unique customer', data.items);
+      console.log('unique customer', data.items);
 
       data.items = data.items.map((item) => {
         return {

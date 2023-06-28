@@ -14,6 +14,19 @@ export default {
       activeMenuResponsive: false,
       activeIndex: sessionStorage.getItem("activeMenu") || 1,
     });
+
+    // sessionStorage.setItem("role", response.data.document.Role.name);
+    //       // sessionStorage.setItem("role", response.data.document.Role.name);
+    //       sessionStorage.setItem(
+    //         "permissionList",
+    //         response.data.document.Role.Permissions
+    //       );
+
+    const role = sessionStorage.getItem('role')
+    const permissionList = sessionStorage.getItem('permissionList')
+    console.log('role:', role);
+    console.log('permissionList:', permissionList);
+
     const updateMenuResponsive = () => {
       console.log("Received event from child component:");
     };

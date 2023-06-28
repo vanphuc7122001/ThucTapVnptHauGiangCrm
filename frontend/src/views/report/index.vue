@@ -193,7 +193,7 @@
       @delete="handleDelete"
       @edit="EditEmit"
       :showActionList="[true, false, false]"
-      :startRow="0"
+      :startRow="data.startRow"
       @view="view"
       :isActiveCheckbox="false"
     />
@@ -436,7 +436,7 @@ export default {
             let dayStartNewCycle = year + "-" + month + "-" + day; // ngày bắt đầu chu kì mới
 
             if (isAfter(new Date(dayStartNewCycle), new Date(end_date))) {
-              cycleDate = cycleDate * 2;
+              // cycleDate = cycleDate * 2;
             }
 
             if (dayStartNewCycle == end_date) {
@@ -448,7 +448,7 @@ export default {
                 (dayStartNewCycle.getMonth() + 1) +
                 "-" +
                 dayStartNewCycle.getDate();
-              cycleDate = cycleDate * 2;
+              // cycleDate = cycleDate * 2;
             }
 
             if (isBefore(new Date(dayStartNewCycle), new Date(end_date))) {
@@ -460,19 +460,31 @@ export default {
                 (end_day.getMonth() + 1) +
                 "-" +
                 end_day.getDate();
-              cycleDate = cycleDate * 2 + 1;
+              // cycleDate = cycleDate * 2 + 1;
             }
 
-            // lần bắt đầu thứ 2
-            cycleMonth = cycleMonth * 2;
-            cycleYear = cycleYear * 2;
-            start_date.setDate(start_date.getDate() + cycleDate);
-            start_date.setMonth(start_date.getMonth() + cycleMonth);
-            start_date.setFullYear(start_date.getFullYear() + cycleYear);
-            const year2 = start_date.getFullYear();
-            const month2 = start_date.getMonth() + 1;
-            const day2 = start_date.getDate();
+            // // lần bắt đầu thứ 2
+
+            // console.log('Day start new cycle before: ' + dayStartNewCycle);
+            const dayCycle2 = new Date(dayStartNewCycle)
+            // console.log('Cycle month: ' + cycleMonth);
+            // console.log('Cycle date: ' + cycleDate);
+            // console.log(' cycleYear: ' + cycleYear);
+            dayCycle2.setDate(dayCycle2.getDate() + cycleDate);
+            dayCycle2.setMonth(dayCycle2.getMonth() + cycleMonth);
+            dayCycle2.setFullYear(dayCycle2.getFullYear() + cycleYear);
+            // console.log('Day start new cycle after: ' + dayCycle2);
+            
+            const year2 = dayCycle2.getFullYear();
+            const month2 = dayCycle2.getMonth() + 1;
+            const day2 = dayCycle2.getDate();
+            
+            // console.log('--------------------------------Chu kì lần 2-------------------------------');
+            // console.log('Cycle month: ' + cycleMonth);
+            // console.log('Cycle date: ' + cycleDate);
+            // console.log(' cycleYear: ' + cycleYear);
             const dayStartNewCycle2 = year2 + "-" + month2 + "-" + day2;
+            // console.log('Day start day 2', dayStartNewCycle2);
 
             task.dayStartNewCycle2 = dayStartNewCycle2;
             task.dayStartNewCycle = dayStartNewCycle;
@@ -481,11 +493,14 @@ export default {
         });
 
         const rsTaskCusCared = taskCusCared.filter((value, index) => {
+          // console.log('TAsk task', value);
+          // console.log('Day start new cycle', value.dayStartNewCycle);
+          // console.log('Day start new cycl2', value.dayStartNewCycle2);
           let dayStartNewCycle2 = new Date(value.dayStartNewCycle2);
           let dayStartNewCycle = new Date(value.dayStartNewCycle);
-          console.log("Index", index);
-          console.log("Day 1", dayStartNewCycle);
-          console.log("Day 2", dayStartNewCycle2);
+          // console.log("Index", index);
+          // console.log("Day 1", dayStartNewCycle);
+          // console.log("Day 2", dayStartNewCycle2);
 
           let currentDay = new Date();
           if (value.customerId == cusWork.Customer._id) {
@@ -525,7 +540,7 @@ export default {
             return taskCusCared;
           });
 
-          console.log("All tasks", filteredTasks);
+          // console.log("All tasks", filteredTasks);
           if (filteredTasks.length > 0) {
             return filteredTasks;
           }

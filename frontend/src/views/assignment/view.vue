@@ -317,32 +317,6 @@ export default {
               Danh sách lịch hẹn
             </button>
             <div v-if="isActive" id="event" class="collapse mt-2">
-              <!-- <table
-                class="my-table mb-2 table border-table-all"
-              >
-                <thead style="max-width: 100px; overflow: auto;">
-                  <tr>
-                    <th>Stt</th>
-                    <th>Khách hàng</th>
-                    <th>Ngày hẹn</th>
-                    <th>Nội dung</th>
-                    <th>Địa điểm</th>
-                    <th>Lưu ý</th>
-                    <th>Trạng thái cuộc hẹn</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(item, index) in viewValue.Appointments" :key="index">
-                    <td>{{Math.ceil(index) + 1 }}</td>
-                    <td>{{ viewValue.Customer.name }}</td>
-                    <td>{{ item.date_time }}</td>
-                    <td>{{ item.content }}</td>
-                    <td>{{ item.place }}</td>
-                    <td>{{ item.note }}</td>
-                    <td>{{ item.Status_App.name}}</td>
-                  </tr>
-                </tbody>
-              </table>  -->
               <Table
                 :items="viewValue.Appointments"
                 :cus="viewValue.Customer.name"
@@ -350,6 +324,7 @@ export default {
                 :labels="['date_time', 'place', 'content']"
                 :activeCheck="false"
                 :borderTableAll="true"
+                :activeAction="false"
               />
 
               <!-- <p v-if="viewValue.Appointments.length == 0" class="text-center mt-2">Không tồn tại bản ghi.</p> -->

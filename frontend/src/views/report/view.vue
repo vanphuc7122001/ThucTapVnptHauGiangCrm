@@ -60,18 +60,6 @@ export default {
                 class="rounded-circle mx-auto d-block border border-dark my-3"
                 height="100"
               />
-              <!-- <div class="d-flex justify-content-around">
-                <div>
-                  <p><span class="font-weight-bold">Họ tên: </span> {{ item.Customer.name }}</p>
-                  <p><span class="font-weight-bold">Email: </span> {{ item.Customer.email }}</p>
-                  <p><span class="font-weight-bold">SDT: </span> {{ item.Customer.phone }}</p>
-                </div>
-                <div>
-                  <p><span class="font-weight-bold">Ngày sinh: </span> {{ item.Customer.birthday }}</p>
-                  <p><span class="font-weight-bold">Loại: </span> {{ item.Customer_Type.name }}</p>
-                  <p><span class="font-weight-bold">Địa chỉ: </span> {{ item.Customer.address }}</p>
-                </div>
-              </div> -->
               <div class="container">
                 <div class="row">
                   <div class="col-md-6">
@@ -213,7 +201,7 @@ export default {
                   :showActionList="[false, false, false]"
                   :activeAction="false"
                   :isActiveCheckbox="false"
-                  :startRow="0"
+                  :startRow="1"
                 />
               </div>
             </div>
@@ -236,7 +224,7 @@ export default {
                 :showActionList="[false, false, false]"
                 :activeAction="false"
                 :isActiveCheckbox="false"
-                :startRow="0"
+                :startRow="1"
               />
             </div>
           </div>
@@ -258,7 +246,7 @@ export default {
                 :showActionList="[false, false, false]"
                 :activeAction="false"
                 :isActiveCheckbox="false"
-                :startRow="0"
+                :startRow="1"
               />
             </div>
           </div>

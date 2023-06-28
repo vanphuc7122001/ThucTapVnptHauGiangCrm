@@ -199,14 +199,9 @@ export default {
                   :showActionList="[false, false, false]"
                   :activeAction="false"
                   :isActiveCheckbox="false"
-                  :startRow="0"
+                  :startRow="1"
                 />
               </div>
-              <!-- <div v-for="(value, index) in item.Tasks" :key="index">
-              <p> Ngày bắt đầu:  {{ value.start_date }}</p>
-              <p> Ngày kết thúc: {{ value.end_date }}</p>
-              <p> Nội dung: {{ value.content }}</p>
-              </div> -->
             </div>
           </div>
           <div class="">
@@ -227,7 +222,7 @@ export default {
                 :showActionList="[false, false, false]"
                 :activeAction="false"
                 :isActiveCheckbox="false"
-                :startRow="0"
+                :startRow="1"
               />
             </div>
           </div>
@@ -249,7 +244,7 @@ export default {
                 :showActionList="[false, false, false]"
                 :activeAction="false"
                 :isActiveCheckbox="false"
-                :startRow="0"
+                :startRow="1"
               />
             </div>
           </div>

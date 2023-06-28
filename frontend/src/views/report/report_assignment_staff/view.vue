@@ -219,7 +219,7 @@ export default {
                 :showActionList="[false, false, false]"
                 :activeAction="false"
                 :isActiveCheckbox="false"
-                :startRow="0"
+                :startRow="1"
               />
             </div>
           </div>
@@ -241,7 +241,7 @@ export default {
                 :showActionList="[false, false, false]"
                 :activeAction="false"
                 :isActiveCheckbox="false"
-                :startRow="0"
+                :startRow="1"
               />
             </div>
           </div>
@@ -263,7 +263,7 @@ export default {
                 :showActionList="[false, false, false]"
                 :activeAction="false"
                 :isActiveCheckbox="false"
-                :startRow="0"
+                :startRow="1"
               />
             </div>
           </div>
@@ -282,39 +282,6 @@ export default {
               class="collapse mt-2"
               style="border: 1px solid #ccc; border-radius: 3px"
             >
-              <!-- <div class="d-flex justify-content-around" >
-                <div class="mt-3" >
-                  <p>
-                    <span class="font-weight-bold">Họ tên nhân viên:  </span> 
-                  </p>
-                  <p>
-                    <span class="font-weight-bold">Ngày sinh: </span> 
-                  </p>
-                  <p> 
-                    <span class="font-weight-bold">Số điện thoại:  </span> 
-                  </p>
-                  <p>
-                    <span class="font-weight-bold">Địa chỉ: </span>  
-                  </p>
-                  <p>
-                    <span class="font-weight-bold">Email: </span> 
-                  </p>
-                </div>
-                <div class="mt-3">
-                  <p>
-                    <span class="font-weight-bold">Chức vụ: </span>  
-                  </p>
-                  <p>
-                    <span class="font-weight-bold">Đơn vị: </span>   
-                  </p>
-                  <p>
-                    <span class="font-weight-bold">Phòng: </span>  
-                  </p>
-                  <p>
-                    <span class="font-weight-bold">Trung tâm: </span>  
-                  </p>
-                </div>
-              </div>-->
               <div class="table-responsive">
                 <table class="my-table mb-2 table border-table-all">
                   <thead style="max-width: 100px; overflow: auto">
