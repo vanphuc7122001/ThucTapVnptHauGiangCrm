@@ -1234,7 +1234,7 @@ export default {
       data.currentPage = 1;
     });
 
-    // computedconst 
+    // computedconst
     const toString = computed(() => {
       console.log("Starting search");
       if (data.choseSearch == "nameCus") {
@@ -1251,7 +1251,9 @@ export default {
         });
       } else if (data.choseSearch == "nameEmployee") {
         return data.items.map((value, index) => {
-          return value.Employees.map(value1 => value1.name).join("").toLocaleLowerCase();
+          return value.Employees.map((value1) => value1.name)
+            .join("")
+            .toLocaleLowerCase();
         });
       } else {
         return data.items.map((value, index) => {
@@ -1740,25 +1742,24 @@ export default {
       // console.log("evaluate", evaluates.evaluate);
       data.selectAll[0].checked = false;
 
-     
-        data.items = data.items.map((item) => {
-            let rs = data.employeeList.filter( value => {
-              let isCheck = false;
-              for (const each of value.Tasks) {
-                if(each._id === item._id) {
-                  isCheck = true;
-                  break
-                }
-              }
-              return isCheck == true;
-            })
-            return {
-              ...item,
-              Employees: rs
+      data.items = data.items.map((item) => {
+        let rs = data.employeeList.filter((value) => {
+          let isCheck = false;
+          for (const each of value.Tasks) {
+            if (each._id === item._id) {
+              isCheck = true;
+              break;
             }
+          }
+          return isCheck == true;
         });
+        return {
+          ...item,
+          Employees: rs,
+        };
+      });
 
-      console.log('Data items', data.items);
+      console.log("Data items", data.items);
     };
 
     const giaoviec = async () => {
@@ -1780,7 +1781,7 @@ export default {
       // res.map( (item) => {
       //   console.log('Value' , item);
       // })
-      console.log('Data employee list: ' , res);
+      console.log("Data employee list: ", res);
       data.employeeList = res;
       // const result = findEmployeeByName("triệu lệ dĩnh");
       // console.log("result: ", result);
@@ -2150,5 +2151,11 @@ export default {
 #add,
 #delete-all {
   font-size: 14px;
+}
+@media screen and (max-width: 992px) {
+  .border-box {
+    width: 100%;
+    margin-left: 10px;
+  }
 }
 </style>

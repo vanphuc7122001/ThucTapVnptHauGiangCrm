@@ -48,8 +48,10 @@ export default {
         focusConfirm: false,
         showCancelButton: true,
         preConfirm: () => {
-          const selectedOptionCenter = document.getElementById("my-select-center").value;
-          const selectedOptionDep = document.getElementById("my-select-dep").value;
+          const selectedOptionCenter =
+            document.getElementById("my-select-center").value;
+          const selectedOptionDep =
+            document.getElementById("my-select-dep").value;
 
           const inputValue = document.getElementById("my-input").value;
           if (!selectedOptionCenter || !inputValue || !selectedOptionDep) {
@@ -76,7 +78,9 @@ export default {
             .map(
               (option) =>
                 `<option value="${option._id}"
-                ${option._id == selectedOptionDepartment.value ? "selected" : ""}
+                ${
+                  option._id == selectedOptionDepartment.value ? "selected" : ""
+                }
 
                 >${option.name}</option>`
             )
@@ -142,7 +146,9 @@ export default {
         <!-- Modal Header -->
         <div class="modal-header">
           <h4 class="modal-title">Thông tin chi tiết phân công</h4>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
         </div>
 
         <!-- Modal body -->
@@ -157,7 +163,11 @@ export default {
             >
               Thông tin phân công
             </button>
-            <div v-if="isActive" id="personal-info" class="collapse my-3 border-all">
+            <div
+              v-if="isActive"
+              id="personal-info"
+              class="collapse my-3 border-all"
+            >
               <div
                 class="d-flex justify-content-around row mx-2"
                 style="margin-top: 12px"
@@ -216,7 +226,11 @@ export default {
             >
               Thông tin khách hàng
             </button>
-            <div v-if="isActive" id="customer-work" class="collapse border-all my-3">
+            <div
+              v-if="isActive"
+              id="customer-work"
+              class="collapse border-all my-3"
+            >
               <img
                 :src="viewValue.Customer.avatar"
                 alt=""
@@ -287,7 +301,10 @@ export default {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(item, index) in viewValue.Employees" :key="index">
+                    <tr
+                      v-for="(item, index) in viewValue.Employees"
+                      :key="index"
+                    >
                       <td class="size-16">{{ Math.ceil(index) + 1 }}</td>
                       <td class="size-16">{{ item.name }}</td>
                       <td class="size-16">{{ item.phone }}</td>
@@ -301,7 +318,10 @@ export default {
                     </tr>
                   </tbody>
                 </table>
-                <p v-if="viewValue.Employees.length == 0" class="text-center mt-2">
+                <p
+                  v-if="viewValue.Employees.length == 0"
+                  class="text-center mt-2"
+                >
                   Không tồn tại bản ghi.
                 </p>
               </div>
@@ -367,5 +387,11 @@ export default {
 }
 .modal-parent {
   position: relative;
+}
+@media screen and (min-width: 739px) and (max-width: 992px) {
+  .modal-content {
+    width: 200%;
+    margin-left: -50%;
+  }
 }
 </style>

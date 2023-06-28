@@ -1238,4 +1238,35 @@ export default {
   background-color: inherit;
   border: 1px solid var(--gray);
 }
+@media screen and (max-width: 739px) {
+  .select {
+    width: 90px;
+  }
+  .search {
+    width: 210px;
+    margin-left: 2px !important ;
+    margin-right: 2px;
+  }
+  .border-box {
+    width: 1000px;
+    margin-right: 50px !important;
+  }
+  .menu {
+    padding: 0;
+  }
+}
+@media screen and (max-width: 992px) {
+  .select {
+    width: 90px;
+  }
+  .search {
+    width: 210px;
+    margin-left: 2px !important ;
+    margin-right: 2px;
+  }
+  .border-box {
+    width: 100%;
+    margin-left: 10px;
+  }
+}
 </style>

@@ -549,4 +549,18 @@ export default {
   pointer-events: auto;
   z-index: 1; */
 }
+@media screen and (max-width: 992px) {
+  .select {
+    width: 90px;
+  }
+  .search {
+    width: 210px;
+    margin-left: 2px !important ;
+    margin-right: 2px;
+  }
+  .border-box {
+    width: 100%;
+    margin-left: 10px;
+  }
+}
 </style>

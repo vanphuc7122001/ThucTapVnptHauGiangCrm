@@ -71,14 +71,10 @@ export default {
             </div>
           </form>
           <div class="form-group">
-            <label for="duration"
-              >Danh sách khách hàng tham gia sự kiện:</label
-            >
+            <label for="duration">Danh sách khách hàng tham gia sự kiện:</label>
             <Table_Customer :customer_event="item.Customers" />
-
           </div>
-          <div class="mt-2">
-          </div>
+          <div class="mt-2"></div>
         </div>
       </div>
     </div>
@@ -88,5 +84,11 @@ export default {
 <style scoped>
 label {
   font-size: 18px;
+}
+@media screen and (min-width: 739px) and (max-width: 992px) {
+  .modal-content {
+    width: 200%;
+    margin-left: -50%;
+  }
 }
 </style>

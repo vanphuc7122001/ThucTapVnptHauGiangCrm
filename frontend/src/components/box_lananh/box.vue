@@ -1,7 +1,7 @@
 <template>
   <div class="row mx-2 justify-content-around">
     <!-- customer -->
-    <div class="col-4 mb-4" @click="chartName('customer')">
+    <div class="col-md-4 col-12 mb-4" @click="chartName('customer')">
       <div
         class="card border-left-primary shadow h-100 py-2"
         :class="{ 'box-active': name == 'customer' }"
@@ -27,7 +27,7 @@
     </div>
 
     <!-- Appointment -->
-    <div class="col-4 mb-4" @click="chartName('appointment')">
+    <div class="col-md-4 col-12 mb-4" @click="chartName('appointment')">
       <div
         class="card border-left-info shadow h-100 py-2"
         :class="{ 'box-active': name == 'appointment' }"
@@ -69,7 +69,7 @@
       </div>
     </div>
     <!-- customer care cycle-->
-    <div class="col-4 mb-4" @click="chartName('customerCycle')">
+    <div class="col-md-4 col-12 mb-4" @click="chartName('customerCycle')">
       <div
         class="card border-left-success shadow h-100 py-2"
         :class="{ 'box-active': showchart == 'customerCycle' }"

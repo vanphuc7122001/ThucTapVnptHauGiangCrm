@@ -80,9 +80,9 @@ export default {
         for (let value1 of data.pTList) {
           for (let value of value1.Permissions) {
             // console.log('Value', isStringFound(value._id));
-            console.log('Value checked' , value.checked);
+            console.log("Value checked", value.checked);
             if (value.checked == true && !isStringFound(value._id)) {
-              console.log('before create');
+              console.log("before create");
               let result = await http_create(Role_Permission, {
                 RoleId: props.item._id,
                 PermissionId: value._id,
@@ -134,8 +134,6 @@ export default {
           data.pTList = await http_getAll(Permission_Types);
           data.pTList = data.pTList.documents;
         }
-
-
 
         // for (let value1 of data.pTList) {
         //     for (let value of value1.Permissions) {
@@ -214,16 +212,20 @@ export default {
                     class="form-check-input flex align-items-center"
                     value=""
                     :checked="isStringFound(value1._id) == true"
-                    @click="() => {
-                      if(value1.checked == undefined || value1.checked == 'undefined') {
-                      value1.checked = !isStringFound(value1._id)                      
-                      }else {
-                        value1.checked = !value1.checked
-                      }
+                    @click="
+                      () => {
+                        if (
+                          value1.checked == undefined ||
+                          value1.checked == 'undefined'
+                        ) {
+                          value1.checked = !isStringFound(value1._id);
+                        } else {
+                          value1.checked = !value1.checked;
+                        }
 
-                      console.log('Value1: ' + value1.checked);
-                      
-                    }"
+                        console.log('Value1: ' + value1.checked);
+                      }
+                    "
                   />&emsp;{{ value1.name }}
                   <!-- v-model="value1.checked" -->
                 </h2>
@@ -285,5 +287,12 @@ ul {
 
 li {
   list-style-type: none;
+}
+
+@media screen and (min-width: 739px) and (max-width: 992px) {
+  .modal-content {
+    width: 180%;
+    margin-left: -40%;
+  }
 }
 </style>

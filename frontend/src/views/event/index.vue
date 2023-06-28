@@ -662,4 +662,18 @@ export default {
   border: 1px solid var(--gray);
   border-radius: 5px;
 }
+@media screen and (max-width: 992px) {
+  .select {
+    width: 90px;
+  }
+  .search {
+    width: 210px;
+    margin-left: 2px !important ;
+    margin-right: 2px;
+  }
+  .border-box {
+    width: 100%;
+    margin-left: 10px;
+  }
+}
 </style>

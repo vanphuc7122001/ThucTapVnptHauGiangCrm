@@ -1,6 +1,6 @@
 <template>
   <div>
-    <table class="my-table mb-2">
+    <table class="my-table table-container mb-2">
       <thead>
         <tr class="">
           <!-- <th>
@@ -131,5 +131,10 @@ export default {
 }
 #delete:hover {
   color: var(--red);
+}
+.table-container {
+  overflow-x: auto;
+  max-width: 100%;
+  width: 100%;
 }
 </style>

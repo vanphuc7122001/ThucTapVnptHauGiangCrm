@@ -1,6 +1,6 @@
 <template>
   <div>
-    <table class="my-table">
+    <table class="my-table table-container">
       <thead>
         <tr class="">
           <th>
@@ -87,7 +87,9 @@
         </tr>
       </tbody>
     </table>
-    <p v-if="items.length == 0" class="text-center mt-2">Không tồn tại bản ghi.</p>
+    <p v-if="items.length == 0" class="text-center mt-2">
+      Không tồn tại bản ghi.
+    </p>
   </div>
 </template>
 
@@ -121,7 +123,7 @@ export default {
     showActionList: {
       type: Array,
       default: [true, true, true],
-    }
+    },
   },
   setup(props, ntx) {
     console.log(props.items);
@@ -177,5 +179,10 @@ export default {
 }
 #delete:hover {
   color: var(--red);
+}
+.table-container {
+  overflow-x: auto;
+  max-width: 100%;
+  width: 100%;
 }
 </style>

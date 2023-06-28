@@ -14,7 +14,7 @@ import {
   Customer,
   Event,
   http_getOne,
-  watch
+  watch,
 } from "../../views/common/import";
 
 import Swal from "sweetalert2";
@@ -37,7 +37,7 @@ export default {
     resetData: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   setup(props, context) {
     watch(
@@ -231,8 +231,8 @@ export default {
           );
         }
       } else {
-        const rs = await http_getOne(Company_KH, _id)
-        data.modelValue = rs.name
+        const rs = await http_getOne(Company_KH, _id);
+        data.modelValue = rs.name;
         viewData.customerCompany._id = _id;
         console.log(viewData.customerCompany._id);
       }
@@ -649,5 +649,11 @@ input {
 .btn-prev:hover {
   background-color: red;
   color: white;
+}
+@media screen and (min-width: 739px) and (max-width: 992px) {
+  .modal-content {
+    width: 200%;
+    margin-left: -50%;
+  }
 }
 </style>

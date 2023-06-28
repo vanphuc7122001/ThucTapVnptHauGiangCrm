@@ -37,7 +37,7 @@ export default {
     showActionList: {
       type: Array,
       default: [true, true, true, true, true],
-    }
+    },
   },
   setup(props, ntx) {
     const data = reactive({
@@ -69,7 +69,10 @@ export default {
 
 <template>
   <div ref="selectRef">
-    <table class="my-table mb-2" :class="[borderTableAll ? 'border-table-all' : '']">
+    <table
+      class="my-table mb-2 table-container"
+      :class="[borderTableAll ? 'border-table-all' : '']"
+    >
       <thead>
         <tr>
           <th>
@@ -168,13 +171,15 @@ export default {
                     edit
                   </span>
                 </button>
-                <button type="button" class="format-btn" v-if="showActionList[2] == true">
+                <button
+                  type="button"
+                  class="format-btn"
+                  v-if="showActionList[2] == true"
+                >
                   <span
                     id="delete"
                     class="material-symbols-outlined d-flex align-content-center"
                     @click="$emit('delete', item._id, item)"
-                  
-
                   >
                     delete
                   </span>
@@ -185,13 +190,11 @@ export default {
                   data-toggle="modal"
                   data-target="#modal-addAppointment"
                   v-if="showActionList[3] == true"
-
                 >
                   <span
                     id="appointment"
                     class="material-symbols-outlined d-flex align-items-center justify-content-center"
                     @click="$emit('appointmentView', item._id, item)"
-                    
                   >
                     schedule
                   </span>
@@ -217,7 +220,9 @@ export default {
         </tr>
       </tbody>
     </table>
-    <p v-if="items.length == 0" class="text-center mt-2">Không tồn tại bản ghi.</p>
+    <p v-if="items.length == 0" class="text-center mt-2">
+      Không tồn tại bản ghi.
+    </p>
   </div>
 </template>
 
@@ -283,5 +288,10 @@ export default {
   border: 1px solid white;
   border-radius: 5px;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+.table-container {
+  overflow-x: auto;
+  max-width: 100%;
+  width: 100%;
 }
 </style>

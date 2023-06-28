@@ -1,5 +1,14 @@
 <script>
-import { defineEmits, inject, ref, reactive, onMounted, computed, watch, onUnmounted } from "vue";
+import {
+  defineEmits,
+  inject,
+  ref,
+  reactive,
+  onMounted,
+  computed,
+  watch,
+  onUnmounted,
+} from "vue";
 import { useRouter } from "vue-router";
 import socket from "../../../socket";
 import employeeService from "../../services/employee.service";
@@ -49,7 +58,7 @@ export default {
     };
     const hasNotification = ref(false);
     const showNotification = ref(false);
-    const count = ref(0)
+    const count = ref(0);
     const toggleNotification = () => {
       showNotification.value = !showNotification.value;
       hasNotification.value = false;
@@ -103,7 +112,10 @@ export default {
       );
       if (isConfirmed == true) {
         const result = await notificationService.deleteAll(_idEmployee);
-        alert_success(`Xoá thông báo`, `Bạn đã xoá thành công tất cả thông báo`);
+        alert_success(
+          `Xoá thông báo`,
+          `Bạn đã xoá thành công tất cả thông báo`
+        );
         refresh();
         count.value = 0;
       }
@@ -201,7 +213,6 @@ export default {
       document.removeEventListener("click", handleClickOutside);
       document.removeEventListener("click", handleClickOutside1);
     });
-
 
     const clearNotification = () => {
       showNotification.value = false;
@@ -313,36 +324,54 @@ export default {
       deleteAll,
       isRead,
       formatDateTime,
-      selectRef, 
-      selectRef1
+      selectRef,
+      selectRef1,
     };
   },
 };
 </script>
 
 <template>
-  <nav class="w-100 d-flex align-items-center justify-content-between border-nav">
-    <a class="text-dark h5 my-auto d-none d-xl-block ml-3">PERSONAL CRM SYSTEM</a>
-    <a class="d-xl-none d-sm-block text-dark h5 my-auto"
-      ><span class="material-symbols-outlined cursor-pointer" @click="$emit('showMenu')">
+  <nav
+    class="w-100 d-flex align-items-center justify-content-between border-nav"
+  >
+    <a class="text-dark h5 my-auto d-none d-xl-block ml-3"
+      >PERSONAL CRM SYSTEM</a
+    >
+    <a class="d-xl-none d-sm-block text-dark h5 my-auto ml-3"
+      ><span
+        class="material-symbols-outlined cursor-pointer"
+        @click="$emit('showMenu')"
+      >
         menu
       </span></a
     >
-    <div class="d-flex align-content-center justify-content-between" ref="selectRef">
+    <div
+      class="d-flex align-content-center justify-content-between"
+      ref="selectRef"
+    >
       <a class="text-dark d-flex align-items-center"
-        ><span class="material-symbols-outlined cursor-pointer"> search </span></a
+        ><span class="material-symbols-outlined cursor-pointer">
+          search
+        </span></a
       >
       <a class="text-dark d-flex align-items-center mx-2"
-        ><span class="material-symbols-outlined cursor-pointer"> translate </span></a
+        ><span class="material-symbols-outlined cursor-pointer">
+          translate
+        </span></a
       >
       <a class="text-dark d-flex align-items-center"
-        ><span class="material-symbols-outlined cursor-pointer"> light_mode </span></a
+        ><span class="material-symbols-outlined cursor-pointer">
+          light_mode
+        </span></a
       >
       <a
         class="text-dark d-flex align-items-center mx-2 notification-icon"
         @click="toggleNotification"
       >
-        <span class="material-symbols-outlined cursor-pointer"> notifications </span>
+        <span class="material-symbols-outlined cursor-pointer">
+          notifications
+        </span>
         <span class="notification-dot">{{ count }}</span>
       </a>
       <div v-if="showNotification" class="notification-dropdown">
@@ -379,12 +408,15 @@ export default {
             </span>
           </p>
         </div>
-        <button @click="deleteAll()" class="clearNotification">Xóa Thông Báo</button>
+        <button @click="deleteAll()" class="clearNotification">
+          Xóa Thông Báo
+        </button>
       </div>
 
       <div
         class="d-flex align-content-center mr-3 my-1 cursor-pointer"
-        @click="toggleDropdown" ref="selectRef1"
+        @click="toggleDropdown"
+        ref="selectRef1"
       >
         <img
           class="rounded-circle cursor-pointer"

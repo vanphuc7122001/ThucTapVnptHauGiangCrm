@@ -35,7 +35,9 @@ export default {
         <!-- Modal Header -->
         <div class="modal-header">
           <h4 class="modal-title">Thông tin chi tiết khách hàng</h4>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
         </div>
 
         <!-- Modal body -->
@@ -50,7 +52,11 @@ export default {
             >
               Thông tin cá nhân
             </button>
-            <div v-if="isActive" id="personal-info" class="collapse my-2 border-all">
+            <div
+              v-if="isActive"
+              id="personal-info"
+              class="collapse my-2 border-all"
+            >
               <img
                 :src="item.Customer.avatar"
                 alt=""
@@ -127,7 +133,9 @@ export default {
                     >
                       <div>
                         <p>
-                          <span class="font-weight-bold">Công việc hiện tại:</span>
+                          <span class="font-weight-bold"
+                            >Công việc hiện tại:</span
+                          >
                           {{ item.current_workplace }}
                         </p>
                         <p>
@@ -147,11 +155,15 @@ export default {
                           {{ item.work_temp }}
                         </p>
                         <p>
-                          <span class="font-weight-bold">Lịch sử làm việc:</span>
+                          <span class="font-weight-bold"
+                            >Lịch sử làm việc:</span
+                          >
                           {{ item.work_history }}
                         </p>
                         <p>
-                          <span class="font-weight-bold">Công ty khách hàng:</span>
+                          <span class="font-weight-bold"
+                            >Công ty khách hàng:</span
+                          >
                           {{ item.Company_KH.name }}
                         </p>
                       </div>
@@ -267,5 +279,11 @@ export default {
 .border-all {
   border: 1px solid #ccc;
   border-radius: 5px;
+}
+@media screen and (min-width: 739px) and (max-width: 992px) {
+  .modal-content {
+    width: 180%;
+    margin-left: -40%;
+  }
 }
 </style>

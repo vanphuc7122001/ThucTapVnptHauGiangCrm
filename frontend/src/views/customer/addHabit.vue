@@ -559,4 +559,10 @@ input {
 .suggestion-item:hover {
   background-color: #f0f0f0;
 }
+@media screen and (min-width: 739px) and (max-width: 992px) {
+  .modal-content {
+    width: 180%;
+    margin-left: -40%;
+  }
+}
 </style>

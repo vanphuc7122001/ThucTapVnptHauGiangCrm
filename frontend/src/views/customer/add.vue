@@ -29,4 +29,11 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+@media screen and (min-width: 739px) and (max-width: 992px) {
+  .modal-content {
+    width: 200%;
+    margin-left: -50%;
+  }
+}
+</style>

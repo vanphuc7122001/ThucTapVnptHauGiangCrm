@@ -264,4 +264,10 @@ export default {
   border: 1px solid #ccc;
   border-radius: 5px;
 }
+@media screen and (min-width: 739px) and (max-width: 992px) {
+  .modal-content {
+    width: 200%;
+    margin-left: -50%;
+  }
+}
 </style>

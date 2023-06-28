@@ -109,7 +109,7 @@ export default {
             `Áp dụng sự kiện`,
             `Bạn đã áp dụng sự kiện đối với khách hàng thành công thành công.`
           );
-          ctx.emit('refresh1');
+          ctx.emit("refresh1");
         }
         refresh();
         props.refreshTable = true;
@@ -270,4 +270,11 @@ export default {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+@media screen and (min-width: 739px) and (max-width: 992px) {
+  .modal-content {
+    width: 200%;
+    margin-left: -50%;
+  }
+}
+</style>

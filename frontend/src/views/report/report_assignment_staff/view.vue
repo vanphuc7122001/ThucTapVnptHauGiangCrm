@@ -43,7 +43,9 @@ export default {
         <!-- Modal Header -->
         <div class="modal-header">
           <h4 class="modal-title">Thông tin chi tiết khách hàng</h4>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
         </div>
 
         <!-- Modal body -->
@@ -58,7 +60,11 @@ export default {
             >
               Thông tin cá nhân khách hàng
             </button>
-            <div v-if="isActive" id="personal-info" class="collapse my-2 border-all">
+            <div
+              v-if="isActive"
+              id="personal-info"
+              class="collapse my-2 border-all"
+            >
               <img
                 :src="item.Customer.avatar"
                 alt=""
@@ -85,15 +91,21 @@ export default {
                     >
                       <div>
                         <p>
-                          <span class="font-weight-bold">Họ tên khách hàng:</span>
+                          <span class="font-weight-bold"
+                            >Họ tên khách hàng:</span
+                          >
                           {{ item.Customer.name }}
                         </p>
                         <p>
-                          <span class="font-weight-bold">Email mail khách hàng:</span>
+                          <span class="font-weight-bold"
+                            >Email mail khách hàng:</span
+                          >
                           {{ item.Customer.email }}
                         </p>
                         <p>
-                          <span class="font-weight-bold">Số điện thoại khách hàng:</span>
+                          <span class="font-weight-bold"
+                            >Số điện thoại khách hàng:</span
+                          >
                           {{ item.Customer.phone }}
                         </p>
                       </div>
@@ -105,11 +117,15 @@ export default {
                     >
                       <div>
                         <p>
-                          <span class="font-weight-bold">Ngày sinh khách hàng:</span>
+                          <span class="font-weight-bold"
+                            >Ngày sinh khách hàng:</span
+                          >
                           {{ formatDate(item.Customer.birthday) }}
                         </p>
                         <p>
-                          <span class="font-weight-bold">Địa chỉ khách hàng:</span>
+                          <span class="font-weight-bold"
+                            >Địa chỉ khách hàng:</span
+                          >
                           {{ item.Customer.address }}
                         </p>
                         <p>
@@ -148,7 +164,9 @@ export default {
                     >
                       <div>
                         <p>
-                          <span class="font-weight-bold">Công việc hiện tại:</span>
+                          <span class="font-weight-bold"
+                            >Công việc hiện tại:</span
+                          >
                           {{ item.Customer_Work.current_workplace }}
                         </p>
                         <p>
@@ -168,11 +186,15 @@ export default {
                           {{ item.Customer_Work.work_temp }}
                         </p>
                         <p>
-                          <span class="font-weight-bold">Lịch sử làm việc:</span>
+                          <span class="font-weight-bold"
+                            >Lịch sử làm việc:</span
+                          >
                           {{ item.Customer_Work.work_history }}
                         </p>
                         <p>
-                          <span class="font-weight-bold">Công ty khách hàng:</span>
+                          <span class="font-weight-bold"
+                            >Công ty khách hàng:</span
+                          >
                           {{ item.Customer_Work.nameCompany }}
                         </p>
                       </div>
@@ -330,5 +352,11 @@ export default {
 .border-all {
   border: 1px solid #ccc;
   border-radius: 5px;
+}
+@media screen and (min-width: 739px) and (max-width: 992px) {
+  .modal-content {
+    width: 200%;
+    margin-left: -50%;
+  }
 }
 </style>

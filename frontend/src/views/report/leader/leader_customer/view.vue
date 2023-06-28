@@ -43,7 +43,9 @@ export default {
         <!-- Modal Header -->
         <div class="modal-header">
           <h4 class="modal-title">Thông tin chi tiết khách hàng</h4>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
         </div>
 
         <!-- Modal body -->
@@ -58,7 +60,11 @@ export default {
             >
               Thông tin cá nhân
             </button>
-            <div v-if="isActive" id="personal-info" class="collapse my-2 border-all">
+            <div
+              v-if="isActive"
+              id="personal-info"
+              class="collapse my-2 border-all"
+            >
               <img
                 :src="item.Customer.avatar"
                 alt=""
@@ -77,7 +83,9 @@ export default {
                           {{ item.nameCustomer }}
                         </p>
                         <p>
-                          <span class="font-weight-bold">Email khách hàng:</span>
+                          <span class="font-weight-bold"
+                            >Email khách hàng:</span
+                          >
                           {{ item.emailCustomer }}
                         </p>
                         <p>
@@ -93,11 +101,15 @@ export default {
                     >
                       <div>
                         <p>
-                          <span class="font-weight-bold">Ngày sinh khách hàng:</span>
+                          <span class="font-weight-bold"
+                            >Ngày sinh khách hàng:</span
+                          >
                           {{ formatDate(item.Customer.birthday) }}
                         </p>
                         <p>
-                          <span class="font-weight-bold">Địa chỉ khách hàng:</span>
+                          <span class="font-weight-bold"
+                            >Địa chỉ khách hàng:</span
+                          >
                           {{ item.Customer.address }}
                         </p>
                         <p>
@@ -121,7 +133,11 @@ export default {
             >
               Công việc
             </button>
-            <div v-if="isActive" id="customer-work" class="collapse border-all my-2">
+            <div
+              v-if="isActive"
+              id="customer-work"
+              class="collapse border-all my-2"
+            >
               <div class="container p-3">
                 <div class="row">
                   <div class="col-md-6">
@@ -130,7 +146,9 @@ export default {
                     >
                       <div>
                         <p>
-                          <span class="font-weight-bold">Công việc hiện tại:</span>
+                          <span class="font-weight-bold"
+                            >Công việc hiện tại:</span
+                          >
                           {{ item.Customer_Work.work_place }}
                         </p>
                         <p>
@@ -150,7 +168,9 @@ export default {
                           {{ item.Customer_Work.work_temp }}
                         </p>
                         <p>
-                          <span class="font-weight-bold">Lịch sử làm việc:</span>
+                          <span class="font-weight-bold"
+                            >Lịch sử làm việc:</span
+                          >
                           {{ item.Customer_Work.work_history }}
                         </p>
                       </div>
@@ -259,5 +279,11 @@ export default {
 .border-all {
   border: 1px solid #ccc;
   border-radius: 5px;
+}
+@media screen and (min-width: 739px) and (max-width: 992px) {
+  .modal-content {
+    width: 200%;
+    margin-left: -50%;
+  }
 }
 </style>

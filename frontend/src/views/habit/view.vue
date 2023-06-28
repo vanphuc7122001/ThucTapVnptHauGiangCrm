@@ -34,7 +34,9 @@ export default {
         <div class="modal-body">
           <form class="was-validated">
             <div class="form-group">
-              <label for="name">Tên thói quen(<span style="color: red">*</span>):</label>
+              <label for="name"
+                >Tên thói quen(<span style="color: red">*</span>):</label
+              >
               <input
                 type="text"
                 class="form-control"
@@ -46,14 +48,10 @@ export default {
             </div>
           </form>
           <div class="form-group">
-            <label for="duration"
-              >Danh sách khách hàng cùng thói quen:</label
-            >
+            <label for="duration">Danh sách khách hàng cùng thói quen:</label>
             <Table_Customer :customer_event="item.Customers" />
-
           </div>
-          <div class="mt-2">
-          </div>
+          <div class="mt-2"></div>
         </div>
       </div>
     </div>
@@ -63,5 +61,11 @@ export default {
 <style scoped>
 label {
   font-size: 18px;
+}
+@media screen and (min-width: 739px) and (max-width: 992px) {
+  .modal-content {
+    width: 200%;
+    margin-left: -50%;
+  }
 }
 </style>

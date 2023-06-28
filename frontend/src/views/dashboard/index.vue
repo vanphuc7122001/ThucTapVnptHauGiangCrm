@@ -22,7 +22,7 @@ import {
 // import { Select_Advanced } from "../common/import";
 import Select_Advanced from "../../components/form/select_cycle.vue";
 import moment from "moment";
-import {isReadDashboard} from '../../use/getSessionItem'
+import { isReadDashboard } from "../../use/getSessionItem";
 
 export default {
   components: {
@@ -753,13 +753,13 @@ export default {
       chartOptionsAppointment1,
       chartSeriesAppointment1,
 
-      isReadDashboard
+      isReadDashboard,
     };
   },
 };
 </script>
 <template>
-  <div class="border-box ml-2" v-if="isReadDashboard()">
+  <div class="border-box content ml-2" v-if="isReadDashboard()">
     <div class="d-flex my-2 mx-3 menu justify-content-end" style="border: none">
       <!-- BTN tổng quan chi tiêt -->
       <div class="d-flex menu mx-2 my-2 justify-content-end">
@@ -775,8 +775,7 @@ export default {
           <span class="size-17 active-menu">Tổng quan</span>
         </a>
       </div>
-      <div class="">
-      </div>
+      <div class=""></div>
     </div>
     <div class="border-hr mb-3"></div>
     <!-- Box -->
@@ -799,7 +798,7 @@ export default {
         v-if="showchart == 'customerCycle'"
       >
         <Select
-          class="d-flex justify-content-start"
+          class="d-flex justify-content-start select"
           :options="[
             {
               name: 5,
@@ -825,7 +824,7 @@ export default {
           @refresh="(data.entryValue = 'All'), (data.currentPage = 1)"
         />
         <Search
-          class="ml-3"
+          class="ml-3 search"
           style="width: 300px"
           @update:searchText="(value) => (data.searchText = value)"
           :entryValue="data.searchText"
@@ -894,7 +893,7 @@ export default {
       <div class="mt-2" v-if="showchart == 'appointment'">
         <!--Chart Appointment -->
         <div class="mt-5" v-if="overview && showchart == 'appointment'">
-          <div class="border-box">
+          <div class="border-box-chart">
             <h5 class="text-center mt-2">
               Biểu đồ thể hiện trạng thái chăm sóc
             </h5>
@@ -905,7 +904,7 @@ export default {
               height="400"
             />
           </div>
-          <div class="mt-3 border-box">
+          <div class="mt-3 border-box-chart">
             <apexchart
               class="mt-5"
               :options="chartOptionsAppointment1"
@@ -919,10 +918,10 @@ export default {
 
       <!--Chart Customer -->
       <div
-        class="row justify-content-around"
+        class="row justify-content-around row"
         v-if="overview && showchart == 'customer'"
       >
-        <div class="col-6 mb-4">
+        <div class="col-lg-6 col-12 mb-4">
           <div
             class="card border-left-primary shadow h-100 py-2"
             :class="{ 'box-active': name == 'customer' }"
@@ -944,7 +943,7 @@ export default {
             </div>
           </div>
         </div>
-        <div class="col-6 mb-4">
+        <div class="col-lg-6 col-12 mb-4">
           <div class="card border-left-primary shadow h-100 py-2">
             <div class="card-body">
               <div class="row no-gutters align-items-center">
@@ -1024,6 +1023,11 @@ export default {
 .border-box {
   border: 1px solid var(--gray);
   border-radius: 5px;
+  padding: 0;
+}
+.border-box-chart {
+  border: 1px solid var(--gray);
+  border-radius: 5px;
 }
 .border-hr {
   border-top: 1px solid var(--gray);
@@ -1051,9 +1055,41 @@ select {
 .pad {
   padding: 1px;
 }
-@media screen and (max-width: 739px) {
-  apexchart {
-    width: 500px;
+.select {
+  width: 125px;
+}
+.search {
+  width: 300px;
+}
+.content {
+  margin-top: 0px;
+}
+@media screen and (max-width: 738px) {
+  .select {
+    width: 90px;
+  }
+  .search {
+    width: 210px;
+    margin-left: 2px !important ;
+    margin-right: 2px;
+  }
+  .border-box {
+    width: 890px;
+    margin-left: 10px;
+  }
+}
+@media screen and (max-width: 992px) {
+  .select {
+    width: 90px;
+  }
+  .search {
+    width: 210px;
+    margin-left: 10px !important ;
+    margin-right: 10px;
+  }
+  .border-box {
+    width: 100%;
+    margin-left: 10px;
   }
 }
 </style>

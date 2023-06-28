@@ -1,7 +1,14 @@
 <script>
 import Notification from "../../services/notification.service";
 import socket from "../../../socket";
-import { reactive, onBeforeMount, ref, watch, computed, watchEffect } from "vue";
+import {
+  reactive,
+  onBeforeMount,
+  ref,
+  watch,
+  computed,
+  watchEffect,
+} from "vue";
 import Select_Advanced from "../../components/form/select_advanced.vue";
 import Table from "../../components/table/table_employee.vue";
 import Select from "../../components/form/select.vue";
@@ -110,13 +117,17 @@ export default {
         });
       } else {
         return data.itemEm.map((value, index) => {
-          return [value.name, value.email, value.phone].join("").toLocaleLowerCase();
+          return [value.name, value.email, value.phone]
+            .join("")
+            .toLocaleLowerCase();
         });
       }
     });
     const filter = computed(() => {
       return data.itemEm.filter((value, index) => {
-        return toString.value[index].includes(data.searchText.toLocaleLowerCase());
+        return toString.value[index].includes(
+          data.searchText.toLocaleLowerCase()
+        );
       });
     });
     const filtered = computed(() => {
@@ -201,7 +212,9 @@ export default {
         });
       } else if (entryValueCenter.value != "") {
         data.itemEm = data.itemEm.filter((val) => {
-          return val.Unit.Department.Center_VNPTHG._id == entryValueCenter.value;
+          return (
+            val.Unit.Department.Center_VNPTHG._id == entryValueCenter.value
+          );
         });
       }
       //Thay đổi
@@ -283,7 +296,9 @@ export default {
       else {
         console.log("1");
         data.itemEm = data.itemEm.filter((value, index) => {
-          return value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value;
+          return (
+            value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value
+          );
         });
       }
       data.selectAll[0].checked = false;
@@ -659,7 +674,9 @@ export default {
         data.department = [];
       }
       if (entryValueDepartment.value != "") {
-        data.unit = await unitsServices.findAllUnitsOfADep(entryValueDepartment.value);
+        data.unit = await unitsServices.findAllUnitsOfADep(
+          entryValueDepartment.value
+        );
         data.unit = data.unit.map((value, index) => {
           return {
             ...value,
@@ -750,8 +767,15 @@ export default {
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title" style="font-size: 15px">Giao việc cho nhân viên</h4>
-          <button type="button" class="close" data-dismiss="modal" @click="closeModal">
+          <h4 class="modal-title" style="font-size: 15px">
+            Giao việc cho nhân viên
+          </h4>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            @click="closeModal"
+          >
             &times;
           </button>
         </div>
@@ -761,7 +785,9 @@ export default {
           <div style="padding: 24px">
             <form action="" class="was-validated">
               <div class="form-group">
-                <label for="name">Khách hàng(<span style="color: red">*</span>):</label>
+                <label for="name"
+                  >Khách hàng(<span style="color: red">*</span>):</label
+                >
                 <input
                   type="text"
                   class="form-control"
@@ -796,7 +822,8 @@ export default {
                         )
                       "
                       @refresh="
-                        (entryNamePosition = 'Chọn chức vụ'), updateEntryValuePosition('')
+                        (entryNamePosition = 'Chọn chức vụ'),
+                          updateEntryValuePosition('')
                       "
                       style="height: 35px"
                     />
@@ -808,11 +835,13 @@ export default {
                       :options="data.center"
                       @update:entryValue="
                         (value, value1) => (
-                          updateEntryValueCenter(value), (entryNameCenter = value1.name)
+                          updateEntryValueCenter(value),
+                          (entryNameCenter = value1.name)
                         )
                       "
                       @refresh="
-                        (entryNameCenter = 'Chọn trung tâm'), updateEntryValueCenter('')
+                        (entryNameCenter = 'Chọn trung tâm'),
+                          updateEntryValueCenter('')
                       "
                       style="height: 35px"
                     />
@@ -845,10 +874,13 @@ export default {
                       :options="data.unit"
                       @update:entryValue="
                         (value, value1) => (
-                          updateEntryValueUnit(value), (entryNameUnit = value1.name)
+                          updateEntryValueUnit(value),
+                          (entryNameUnit = value1.name)
                         )
                       "
-                      @refresh="(entryNameUnit = 'Chọn tổ'), updateEntryValueUnit('')"
+                      @refresh="
+                        (entryNameUnit = 'Chọn tổ'), updateEntryValueUnit('')
+                      "
                       style="height: 35px"
                     />
                   </div>
@@ -941,5 +973,11 @@ export default {
   border-radius: 5px;
   padding-top: 10px;
   margin-bottom: 14px;
+}
+@media screen and (min-width: 739px) and (max-width: 992px) {
+  .modal-content {
+    width: 200%;
+    margin-left: -50%;
+  }
 }
 </style>

@@ -258,3 +258,29 @@ a {
 ::-webkit-scrollbar-thumb:hover {
   background: #b30000;
 }
+
+
+
+@media (max-width: 992px) {
+  .sidebar{
+   display: none;
+  }
+  .navbar{
+    width: 100%;
+    margin-right: 10px;
+  }
+  .content {
+    padding: 15px;
+    margin-left: -8px;
+    margin-right: -566px;
+    max-width: var(--content-max-width);/* Use the computed property */
+    width: 1000px;
+  }
+ 
+  .footer {
+    padding: 15px;
+    margin-left: -8px;
+    width: 1000px; /* Use the computed property */
+  }
+}
+
