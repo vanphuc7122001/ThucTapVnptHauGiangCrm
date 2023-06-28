@@ -38,6 +38,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    startRow: {
+      type: Number,
+      default: 1,
+    },
   },
   setup(props, ntx) {},
 };
@@ -63,6 +67,7 @@ export default {
           <th>Stt</th>
           <th>Khách hàng</th>
           <th v-for="(value, index) in fields" :key="index">{{ value }}</th>
+          <th>Lưu ý</th>
           <th>Trạng thái</th>
           <th v-if="activeAction == true">Hành động</th>
         </tr>
@@ -79,11 +84,12 @@ export default {
               v-if="activeCheck == true"
             />
           </td>
-          <td class="size-16">{{ index + 1 }}</td>
+          <td class="size-16">{{ startRow + index }}</td>
           <td class="size-16">{{ cus }}</td>
           <td v-for="(label, index1) in labels" :key="index1" class="size-16">
             {{ item[label] }}
           </td>
+          <td class="size-16">{{ item.note == null ? "không có" : item.note }}</td>
           <td class="size-16">{{ item.Status_App.name }}</td>
           <td class="size-16" v-if="activeAction == true">
             <div class="d-flex align-items-center">

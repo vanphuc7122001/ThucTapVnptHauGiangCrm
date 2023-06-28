@@ -223,37 +223,40 @@ export default {
                 class="rounded-circle mx-auto d-block border border-dark my-3"
                 height="100"
               />
-              <div
-                class="d-flex justify-content-around align-items-center"
-                style="height: 100px"
-              >
-                <div>
-                  <p>
-                    <span class="font-weight-bold">Khách hàng: </span>
-                    {{ viewValue.Customer.name }}
-                  </p>
-                  <p>
-                    <span class="font-weight-bold">Ngày sinh: </span>
-                    {{ viewValue.Customer.birthday }}
-                  </p>
-                  <p>
-                    <span class="font-weight-bold">Loại khách hàng: </span>
-                    {{ viewValue.Customer.Customer_Type.name }}
-                  </p>
-                </div>
-                <div>
-                  <p>
-                    <span class="font-weight-bold">Địa chỉ: </span>
-                    {{ viewValue.Customer.address }}
-                  </p>
-                  <p>
-                    <span class="font-weight-bold">Số điện thoại: </span>
-                    {{ viewValue.Customer.phone }}
-                  </p>
-                  <p>
-                    <span class="font-weight-bold">Email:</span>
-                    {{ viewValue.Customer.email }}
-                  </p>
+              <div class="container">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <p class="mb-0">
+                        <span class="font-weight-bold">Họ tên: </span
+                        >{{ viewValue.Customer.name }}
+                      </p>
+                      <p class="mb-0">
+                        <span class="font-weight-bold">Ngày sinh: </span
+                        >{{ viewValue.Customer.birthday }}
+                      </p>
+                      <p class="mb-0">
+                        <span class="font-weight-bold">Loại khách hàng: </span
+                        >{{ viewValue.Customer.Customer_Type.name }}
+                      </p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <p class="mb-0">
+                        <span class="font-weight-bold">Địa chỉ: </span
+                        >{{ viewValue.Customer.address }}
+                      </p>
+                      <p class="mb-0">
+                        <span class="font-weight-bold">SĐT: </span
+                        >{{ viewValue.Customer.phone }}
+                      </p>
+                      <p class="mb-0">
+                        <span class="font-weight-bold">Email: </span
+                        >{{ viewValue.Customer.email }}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -343,9 +346,8 @@ export default {
               <Table
                 :items="viewValue.Appointments"
                 :cus="viewValue.Customer.name"
-                :fields="['Ngày hẹn', 'Địa điểm', 'Nội dung lịch hẹn', 'Chú thích']"
-                :labels="['date_time', 'place', 'content', 'note']"
-                :activeAction="false"
+                :fields="['Ngày hẹn', 'Địa điểm', 'Nội dung lịch hẹn']"
+                :labels="['date_time', 'place', 'content']"
                 :activeCheck="false"
                 :borderTableAll="true"
               />

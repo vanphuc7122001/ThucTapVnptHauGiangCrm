@@ -461,6 +461,7 @@ export default {
               _id: _idEmployee,
               name: _nameEmployee,
             };
+            console.log("ggg", _idEmployee, "hhh", dataDel.data.EmployeeId);
             const TaskCus = await http_getOne(Task, dataDel.data.TaskId);
             const notiAssignment = reactive({
               title: "Huỷ giao việc",
@@ -470,8 +471,13 @@ export default {
               sender: "",
               idRecipient: "",
             });
+            if (_idEmployee == dataDel.data.EmployeeId) {
+              notiAssignment.content = `Bạn đã hủy phân công khách hàng "${TaskCus.Customer.name}" thành công`;
+              notiAssignment.sender = "";
+            } else {
+              notiAssignment.sender = _nameEmployee;
+            }
             notiAssignment.recipient = C.data[j].name;
-            notiAssignment.sender = _nameEmployee;
             notiAssignment.idRecipient = C.data[j]._id;
             const result1 = await http_create(Notification, notiAssignment);
             console.log("giao viec", notiAssignment);
@@ -499,8 +505,13 @@ export default {
               sender: "",
               idRecipient: "",
             });
+            if (_idEmployee == E.data[i]._id) {
+              notiAssignment.content = `Khách hàng "${TaskCus.Customer.name}" đã được phân công cho bạn`;
+              notiAssignment.sender = "";
+            } else {
+              notiAssignment.sender = _nameEmployee;
+            }
             notiAssignment.recipient = E.data[i].name;
-            notiAssignment.sender = _nameEmployee;
             notiAssignment.idRecipient = E.data[i]._id;
             const result1 = await http_create(Notification, notiAssignment);
             console.log("giao viec", notiAssignment);

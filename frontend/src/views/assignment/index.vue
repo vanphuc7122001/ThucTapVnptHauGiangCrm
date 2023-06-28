@@ -44,7 +44,7 @@ import {
   alert_warning,
   alert_delete_wide,
 } from "../../assets/js/common.alert";
-import { formatDate } from "../../assets/js/common";
+import { formatDate, formatDateTime } from "../../assets/js/common";
 export default {
   components: {
     SelectFilter,
@@ -1477,6 +1477,11 @@ export default {
       data.viewValue = await http_getOne(Task, id);
 
       data.viewValue.Customer.birthday = formatDate(data.viewValue.Customer.birthday);
+      data.viewValue.start_date = formatDate(data.viewValue.start_date);
+      data.viewValue.end_date = formatDate(data.viewValue.end_date);
+      data.viewValue.Appointments.date_time = formatDateTime(
+        data.viewValue.Appointments.date_time
+      );
       console.log(data.viewValue);
       // router.push({ name: "Assignment.view", params: { id: _id } });
     };
@@ -1929,6 +1934,7 @@ export default {
         'Đánh giá',
         'Trạng thái',
       ]"
+      :startRow="data.startRow"
       :selectAll="data.selectAll"
       :labels="['start_date_format', 'end_date_format', 'content', 'count']"
       @selectAll="(value) => handleSelectAll(value)"
