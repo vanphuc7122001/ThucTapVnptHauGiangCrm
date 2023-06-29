@@ -1455,7 +1455,8 @@ export default {
             }
             notiAssignment.recipient = Employ.name;
             notiAssignment.idRecipient = dataTaskEm.EmployeeId;
-            const result1 = await http_create(Notification, notiAssignment);
+            // const result1 = await http_create(Notification, notiAssignment);
+            socket.emit("reAssign",notiAssignment);
             socket.emit("assignmentTask");
           }
           //////////////////////////////

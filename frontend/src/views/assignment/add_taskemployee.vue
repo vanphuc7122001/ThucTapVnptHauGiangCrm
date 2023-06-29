@@ -264,7 +264,7 @@ export default {
           value: value._id,
         };
       });
-      console.log("start1", data.department[0]._id);
+      // console.log("start1", data.department[0]._id);
       data.unit = [];
       //Lấy tất cả tổ của 1 trung tâm
       // for (let value of data.department) {
@@ -499,7 +499,8 @@ export default {
             }
             notiAssignment.recipient = C.data[j].name;
             notiAssignment.idRecipient = C.data[j]._id;
-            const result1 = await http_create(Notification, notiAssignment);
+            // const result1 = await http_create(Notification, notiAssignment);
+            socket.emit("cancleAssign",notiAssignment)
             console.log("giao viec", notiAssignment);
             socket.emit("assignmentTask");
           }
@@ -533,7 +534,8 @@ export default {
             }
             notiAssignment.recipient = E.data[i].name;
             notiAssignment.idRecipient = E.data[i]._id;
-            const result1 = await http_create(Notification, notiAssignment);
+            // const result1 = await http_create(Notification, notiAssignment);
+            socket.emit("Assign",notiAssignment)
             console.log("giao viec", notiAssignment);
             socket.emit("assignmentTask");
           }
@@ -583,7 +585,8 @@ export default {
           });
           notiAssignment.recipient = _nameEmployee;
           notiAssignment.idRecipient = _idEmployee;
-          const result1 = await http_create(Notification, notiAssignment);
+          // const result1 = await http_create(Notification, notiAssignment);
+          socket.emit("Work",notiAssignment)
           socket.emit("assignmentTask");
         }
         /////////////////////////////////////

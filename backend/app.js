@@ -43,6 +43,22 @@ io.on("connection", (socket) => {
     io.emit("notiTask");
   });
 
+  socket.on("reAssign", async (notiAssignment) => {
+    await Notification.create(notiAssignment);
+  });
+
+  socket.on("cancleAssign", async (notiAssignment) => {
+    await Notification.create(notiAssignment);
+  });
+
+  socket.on("Assign", async (notiAssignment) => {
+    await Notification.create(notiAssignment);
+  });
+
+  socket.on("Work", async (notiAssignment) => {
+    await Notification.create(notiAssignment);
+  });
+
   socket.on("birthday", async (customers, _id, nameEm) => {
     const today = moment(); // Lấy ngày hiện tại
     const events = await Event.findAll();

@@ -50,14 +50,14 @@ export default {
       </thead>
       <tbody>
         <tr v-for="(item, index) in items" :key="index">
-          <td>{{ index + 1 }}</td>
-          <td>{{ item.Customers.name }}</td>
+          <td class="size-16">{{ index + 1 }}</td>
+          <td class="size-16">{{ item.Customers.name }}</td>
 
-          <td v-for="(label, index1) in labels" :key="index1">
+          <td class="size-16" v-for="(label, index1) in labels" :key="index1">
             {{ item[label] }}
           </td>
-          <td>{{ item.Cycles.name }}</td>
-          <td>{{ item.Status.name }}</td>
+          <td class="size-16">{{ item.Cycles.name }}</td>
+          <td class="size-16">{{ item.Status.name }}</td>
 
           <td v-if="activeAction == true">
             <button
