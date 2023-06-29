@@ -245,9 +245,6 @@
             <th
               v-for="(value, index) in [
                 'Stt',
-                'Tên nhân viên',
-                // 'Sdt nhân viên',
-                'Email nhân viên',
                 'Tên khách hàng',
                 'Sdt khách hàng',
                 'Email khách hàng',
@@ -263,12 +260,6 @@
         <tbody>
           <tr v-for="(item, index) in data.employee" :key="index">
             <td>{{ index + 1 }}</td>
-            <td v-for="(value, index) in item.employee" :key="index">
-              {{ value.name }}
-            </td>
-            <td v-for="(value, index) in item.employee" :key="index">
-              {{ value.email }}
-            </td>
             <td>{{ item.nameCustomer }}</td>
             <td>{{ item.phoneCustomer }}</td>
             <td>{{ item.emailCustomer }}</td>
@@ -403,7 +394,10 @@ export default {
         }
       });
 
-      // console.log('data items:', data.items);
+      // data.items.filter( (item) => {
+      //   console.log('Item: ' , item);
+      // })
+
 
       data.items = data.items.map((task) => {
         return {

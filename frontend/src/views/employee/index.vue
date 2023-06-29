@@ -765,6 +765,7 @@ export default {
           if (checkDeleteAll) {
             refresh();
             alert_success("Thành công", "Xóa khách hàng thành công");
+            arrayCheck.data=[]
           }
         }
       } catch (error) {

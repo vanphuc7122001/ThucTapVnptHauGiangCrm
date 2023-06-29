@@ -210,7 +210,7 @@
       class="mx-3"
     />
 
-    <div class="container pdf-content" v-show="true" ref="pdfContent">
+    <div class="container pdf-content" ref="pdfContent">
       <img
         src="../../../../assets/images/vnpt-logo1.png"
         class="rounded-circle"
@@ -503,7 +503,7 @@ export default {
     };
 
     const pdfContent = ref(null);
-    const handlePrintData = () => {
+    const handlePrintReport = () => {
       const doc = new jsPDF();
 
       if (pdfContent.value) {
@@ -586,7 +586,7 @@ export default {
       data,
       setPages,
       handleUpdateSearchText,
-      handlePrintData,
+      handlePrintReport,
       pdfContent,
       view,
       store,

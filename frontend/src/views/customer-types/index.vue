@@ -23,6 +23,13 @@ import Add from "./add.vue";
 import Edit from "./edit.vue";
 // import service
 
+import {
+  isDeleteCustomer,
+  isEditCustomer,
+  isReadCustomer,
+  isCreateCustomer,
+} from '../../use/getSessionItem'
+
 
 export default {
   components: {
@@ -133,7 +140,12 @@ export default {
       EditEmit,
       handleDelete,
       handleCreate,
-      handleUpdate
+      handleUpdate,
+      // phân quyền
+      isDeleteCustomer,
+      isEditCustomer,
+      isReadCustomer,
+      isCreateCustomer,
     };
   },
 };
@@ -175,6 +187,7 @@ export default {
           class="btn btn-primary"
           data-toggle="modal"
           data-target="#model-add"
+          :disabled="isCreateCustomer() ? false: true"
         >
           <span id="add" class="mx-2">Thêm</span>
         </button>
@@ -188,7 +201,11 @@ export default {
       :labels="['name']"
       @delete="handleDelete"
       @edit="EditEmit"
-      :showActionList="[false, true, true]"
+      :showActionList="[false, 
+        isEditCustomer() ? true : false
+      , 
+        isDeleteCustomer() ? true : false
+      ]"
       :startRow="1"
     />
     <Edit
