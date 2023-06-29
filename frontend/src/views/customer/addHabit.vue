@@ -457,7 +457,8 @@ export default {
                   "
                   class="btn-next d-flex align-items-center px-3 py-1"
                   @click="data.activeStep = 2"
-                  >Next
+                  >
+                  Kế tiếp
                   <span
                     class="material-symbols-outlined d-flex align-items-center"
                   >
@@ -475,7 +476,9 @@ export default {
                     class="material-symbols-outlined d-flex align-items-center"
                   >
                     navigate_before </span
-                  >Previous</span
+                  >
+                    Quay lại
+                  </span
                 >
               </div>
             </div>

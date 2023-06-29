@@ -63,6 +63,8 @@ export default {
     View,
   },
   setup(ctx) {
+    const rs = isReadAppointment()
+    console.log('Rs',rs);
     const data = reactive({
       items: [
         {

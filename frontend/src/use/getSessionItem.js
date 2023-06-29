@@ -84,7 +84,8 @@ const isSelfAssignement = () => {
   return permissionList.includes("tự phân công");
 };
 const isSetAssignement = () => {
-  return permissionList.includes("giao phân công");
+  // console.log("PerList: ", permissionList);
+  return permissionList.includes("giao phân công ");
 };
 const isFeedbackAssignment = () => {
   return permissionList.includes("thêm đánh giá phân công");
@@ -105,6 +106,7 @@ const isEditAppointment = () => {
   return permissionList.includes("sửa lịch hẹn");
 };
 const isReadAppointment = () => {
+  console.log("Xem lịch hẹn", permissionList);
   return permissionList.includes("xem lịch hẹn");
 };
 

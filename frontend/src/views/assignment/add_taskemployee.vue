@@ -32,6 +32,11 @@ import {
   alert_delete,
   alert_warning,
 } from "../../assets/js/common.alert";
+
+import {
+  isSelfAssignement,
+  isSetAssignement
+} from '../../use/getSessionItem'
 import { Task } from "../common/import";
 export default {
   components: {
@@ -755,6 +760,9 @@ export default {
       updateEntryValueDepartment,
       handlSelectOne,
       handleSelectAll,
+      // phân quyền 
+      isSelfAssignement,
+      isSetAssignement
     };
   },
 };
@@ -885,34 +893,6 @@ export default {
                     />
                   </div>
                 </div>
-                <!-- <Table
-                  @selectAll="checkAll()"
-                  :selectAll="selectAll"
-                  :itemEm="setPages"
-                  :fields="['Tên','Chức vụ' ,'Tổ', 'Phòng', 'Trung tâm']"
-                  :labels="['name']"
-                /> -->
-                <!-- <Table
-                  :selectAll="selectAll"
-                  :items="setPages"
-                  :fields="[
-                    'Tên',
-                    'Chức vụ',
-                    'Đơn vị',
-                    'Phòng',
-                    'Trung tâm',
-                  ]"
-                  :labels="['name']"
-                  :startRow="data.startRow"
-                /> -->
-                <!-- <Table
-                  :items="setPages"
-                  :fields="['Tên', 'Chức vụ', 'Đơn vị', 'Phòng', 'Trung tâm']"
-                  :selectAll="data.selectAll"
-                  :startRow="data.startRow"
-                  @selectAll="(value) => handleSelectAll(value)"
-                  @selectOne="(id, item) => handlSelectOne(id, item)"
-                /> -->
                 <Table
                   :items="setPages"
                   :fields="[
@@ -947,6 +927,7 @@ export default {
                 style="font-size: 14px; margin-right: 24px"
                 @click="createTaskEm"
                 id="add"
+                :disabled="isSetAssignement() ? false : true"
               >
                 <span style="color: white">Giao việc</span>
               </button>
@@ -955,6 +936,7 @@ export default {
                 class="btn btn-secondary px-3 py-2"
                 style="font-size: 14px"
                 @click="addTaskEm"
+                :disabled="isSelfAssignement() ? false : true"
                 id=""
               >
                 <span>Nhận việc</span>

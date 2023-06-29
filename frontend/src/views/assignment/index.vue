@@ -77,6 +77,8 @@ export default {
     RenewTask,
   },
   setup(ctx) {
+    const res = isSetAssignement()
+    console.log('Giao việc', res);
     const data = reactive({
       employeeList: [],
       items: [
@@ -2000,7 +2002,6 @@ export default {
           data-toggle="modal"
           data-target="#model-form-task_em"
           @click="showTask_Employee()"
-          :disabled="isSetAssignement() ? false : true"
         >
           <span class="mx-2" style="color: white">Giao việc</span>
         </button>

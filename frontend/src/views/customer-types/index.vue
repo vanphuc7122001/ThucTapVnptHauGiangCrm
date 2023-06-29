@@ -39,7 +39,7 @@ export default {
 
     // declare variables
     let data = reactive({
-      items: null,
+      items: [],
       activeEdit: false,
       editValue: {
         _id: "",
@@ -143,18 +143,23 @@ export default {
   <div class="border-box d-flex flex-column ml-2">
     <!-- Menu -->
     <div class="d-flex menu my-3 mx-3 justify-content-end">
-      <router-link
+      <router-link class="size-18"
         to="/customer"
         @click="activeMenu = 1"
         :class="[activeMenu == 1 ? 'active-menu' : 'none-active-menu']"
-        >Khách hàng
+        >
+        <span class="size-18">Khách hàng</span>
       </router-link>
       <router-link
+      class="size-18"
         to="/customer_types"
         @click="activeMenu = 2"
         :class="[activeMenu == 2 ? 'active-menu' : 'none-active-menu']"
         
-        >Loại khách hàng
+        >
+        <span class="size-18">
+          Loại khách hàng
+        </span>
       </router-link>
     </div>
     <!-- Filter -->

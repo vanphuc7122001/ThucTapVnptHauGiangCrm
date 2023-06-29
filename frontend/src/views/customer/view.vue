@@ -118,44 +118,37 @@ export default {
               v-if="isActive"
               id="customer-work"
               class="collapse border-all my-2"
-            >
-              <div class="container">
+              >
+              <div class="container p-3" style="min-height: 100px;">
                 <div class="row">
                   <div class="col-md-6">
-                    <div class="d-flex justify-content-between">
-                      <div class="p-2">
-                        <p class="mb-0">
-                          <span class="font-weight-bold"
+                    <div class="mb-3">
+                      <p class="mb-0">
+                        <span class="font-weight-bold"
                             >Công việc hiện tại: </span
                           >{{ item.current_workplace }}
-                        </p>
-                        <p class="mb-0">
-                          <span class="font-weight-bold">Vị trí hiện tại: </span
+                      </p>
+                      <p class="mb-0">
+                        <span class="font-weight-bold">Vị trí hiện tại: </span
                           >{{ item.current_position }}
-                        </p>
-                      </div>
+                      </p>
+                      <p class="mb-0">
+                        <span class="font-weight-bold">Công ty: </span
+                          >{{ item.Company_KH.name }}
+                      </p>
                     </div>
                   </div>
                   <div class="col-md-6">
-                    <div
-                      class="d-flex justify-content-center align-items-center"
-                      style="min-height: 100px"
-                    >
-                      <div class="p-2">
-                        <p class="mb-0">
-                          <span class="font-weight-bold">Nhiệm kỳ: </span
+                    <div class="mb-3">
+                      <p class="mb-0">
+                        <span class="font-weight-bold">Nhiệm kỳ: </span
                           >{{ item.work_temp }}
-                        </p>
-                        <p class="mb-0">
-                          <span class="font-weight-bold"
+                      </p>
+                      <p class="mb-0">
+                        <span class="font-weight-bold"
                             >Lịch sử làm việc: </span
                           >{{ item.work_history }}
-                        </p>
-                        <p class="mb-0">
-                          <span class="font-weight-bold">Công ty: </span
-                          >{{ item.Company_KH.name }}
-                        </p>
-                      </div>
+                      </p>
                     </div>
                   </div>
                 </div>

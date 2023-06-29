@@ -59,7 +59,7 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 1;
+  z-index: 2;
   margin-top: 8px;
 }
 .sidebar {
@@ -69,17 +69,21 @@ body {
   top: 20px;
   margin-top: 70.5px;
   bottom: 0;
-  /* overflow-y: auto; */
+  overflow-x: auto;
+  overflow-y: auto;
   margin-left: 16px;
   /* height: 100vh; */
   margin-bottom: 14px;
+  z-index: 1;
 }
 .content {
   padding: 20px;
   margin-left: 204px;
-  margin-top: 70.5px;
+  margin-right: -2px;
+  margin-top: 71.5px;
   background-color: var(--light);
-  margin-bottom: -12px;
+  /* margin-bottom: -12px; */
+  margin-bottom: 15px;
 }
 .footer {
   background-color: #333;
@@ -89,7 +93,7 @@ body {
   text-align: center;
   background-color: var(--light);
   margin-right: 7px;
-  margin-top: -20px;
+  margin-top: -30px;
 }
 /* new layout */
 
@@ -264,6 +268,9 @@ a {
 @media (max-width: 992px) {
   .sidebar{
    display: none;
+   overflow: scroll;
+   max-height: 100vh;
+   height: 100vh;
   }
   .navbar{
     width: 100%;
@@ -283,4 +290,3 @@ a {
     width: 1000px; /* Use the computed property */
   }
 }
-

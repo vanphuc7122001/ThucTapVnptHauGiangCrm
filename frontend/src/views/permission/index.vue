@@ -206,7 +206,7 @@ export default {
       //   const event = await http_getOne(Permission, _id);
       //   console.log("deleting", event);
       const isConfirmed = await alert_delete(
-        `Xoá sự kiện`,
+        `Xoá quyền`,
         `Bạn có chắc chắn muốn xoá quyền ${data.name} không ?`
       );
       console.log(isConfirmed);

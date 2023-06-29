@@ -224,25 +224,43 @@ export default {
                     {{ item.content }}</span
                   >
                 </div>
-              </div>
-              <div class="d-flex flex-column">
-                <div class="">
+                <div class="mt-2">
                   <span
-                    ><span style="font-weight: 900">Ngày bắt đầu</span>:
+                    ><span style="font-weight: 900">Ngày bắt đầu chăm sóc</span>:
                     {{ item.start_date }}</span
                   >
                 </div>
-                <span class="my-2">
+                <div class="mt-2">
                   <span
-                    ><span style="font-weight: 900">Ngày kết thúc</span>:
+                    ><span style="font-weight: 900">Ngày kết thúc chăm sóc</span>:
                     {{ item.end_date }}</span
                   >
-                </span>
-                <div class="">
+                </div>
+                <div class="mt-2">
                   <span
-                    ><span style="font-weight: 900">Chu kỳ</span>:
+                    ><span style="font-weight: 900">Chu kì chăm sóc khách hàng</span>:
                     {{ item.Cycle.name }}</span
                   >
+                </div>
+              </div>
+              <div class="d-flex flex-column">
+                <div class="">
+                  <!-- <span
+                    ><span style="font-weight: 900">Ngày bắt đầu</span>:
+                    {{ item.start_date }}</span
+                  > -->
+                </div>
+                <span class="my-2">
+                  <!-- <span
+                    ><span style="font-weight: 900">Ngày kết thúc</span>:
+                    {{ item.end_date }}</span
+                  > -->
+                </span>
+                <div class="">
+                  <!-- <span
+                    ><span style="font-weight: 900">Chu kỳ</span>:
+                    {{ item.Cycle.name }}</span
+                  > -->
                 </div>
               </div>
             </div>
