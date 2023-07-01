@@ -59,7 +59,7 @@ export default {
               class="collapse mt-2"
               style="border: 1px solid #ccc; border-radius: 3px"
             >
-              <div class="container text-center">
+              <div class="container">
                 <div class="row">
                   <div class="col-md-6 mt-3">
                     <div class="d-flex flex-column">
@@ -110,6 +110,7 @@ export default {
             </div>
           </div>
         </div>
+        
       </div>
     </div>
   </div>
