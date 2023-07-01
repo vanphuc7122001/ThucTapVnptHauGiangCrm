@@ -51,7 +51,9 @@ exports.findAll = async (req, res, next) => {
       msg:
         documents.length > 0 ? "Danh sách khách hàng" : "Không có khách hàng",
       error: documents.length > 0 ? false : true,
-      documents,
+      documents: documents.sort(
+        (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
+      ),
     });
   } catch (error) {
     console.log(error);

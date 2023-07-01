@@ -81,7 +81,9 @@ exports.findAll = async (req, res, next) => {
     return res.status(200).json({
       msg: documents.length > 0 ? "Danh sách công việc khách hàng!!" : "Trống",
       error: documents.length > 0 ? false : true,
-      documents,
+      documents: documents.sort(
+        (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
+      ),
     });
   } catch (error) {
     return next(createError(500, error.message));

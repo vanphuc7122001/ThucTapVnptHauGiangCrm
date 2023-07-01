@@ -1,4 +1,10 @@
-const { Appointment, Status_App, Task, Employee , Log} = require("../models/index.model.js");
+const {
+  Appointment,
+  Status_App,
+  Task,
+  Employee,
+  Log,
+} = require("../models/index.model.js");
 const { DataTypes, Op } = require("sequelize");
 const createError = require("http-errors");
 const { v4: uuidv4 } = require("uuid");
@@ -94,24 +100,24 @@ exports.create = async (req, res, next) => {
       const user = await Employee.findOne({
         where: {
           _id: req.body.loginId,
-        }
+        },
       });
       console.log("user", user);
       const task = await Task.findOne({
-        where:{
+        where: {
           _id: taskId,
-        }
+        },
       });
-      console.log("task",task);
+      console.log("task", task);
       user.dataValues.name = getDecrypt(user.dataValues.name);
       user.dataValues.birthday = getDecrypt(user.dataValues.birthday);
       user.dataValues.phone = getDecrypt(user.dataValues.phone);
-      const userInfo = `Tên: ${user.dataValues.name} , Ngày sinh: ${user.dataValues.birthday}, SĐT: ${user.dataValues.phone}, Id nhân viên: ${req.body.loginId}` 
-      console.log("userinfo",userInfo);
+      const userInfo = `Tên: ${user.dataValues.name} , Ngày sinh: ${user.dataValues.birthday}, SĐT: ${user.dataValues.phone}, Id nhân viên: ${req.body.loginId}`;
+      console.log("userinfo", userInfo);
       const formattedDateTime = this.dateTime();
-      const contentLog = `Thêm lịch hẹn ngày ${date_time} tại ${place} của phân công  `
+      const contentLog = `Thêm lịch hẹn ngày ${date_time} tại ${place} của phân công  `;
       console.log("content", contentLog),
-      console.log("date time", formattedDateTime);
+        console.log("date time", formattedDateTime);
       const logCreateTask = await Log.create({
         created_at: formattedDateTime,
         created_user: userInfo,
@@ -119,7 +125,6 @@ exports.create = async (req, res, next) => {
       });
       console.log("logggg", logCreateTask);
       console.log("user", user);
-
 
       return res.send({
         error: false,
@@ -145,7 +150,9 @@ exports.create = async (req, res, next) => {
 exports.findAll = async (req, res, next) => {
   try {
     const documents = await Appointment.findAll();
-    return res.send(documents);
+    return res.send(
+      documents.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+    );
   } catch (error) {
     console.log(error);
     return next(createError(400, "Error findAll !"));
@@ -210,9 +217,9 @@ exports.deleteOne = async (req, res, next) => {
     const user = await Employee.findOne({
       where: {
         _id: req.body.loginId,
-      }
+      },
     });
-    console.log("user",user);
+    console.log("user", user);
     user.dataValues.name = getDecrypt(user.dataValues.name);
     user.dataValues.birthday = getDecrypt(user.dataValues.birthday);
     user.dataValues.phone = getDecrypt(user.dataValues.phone);
@@ -220,10 +227,10 @@ exports.deleteOne = async (req, res, next) => {
     // task.dataValues.end_date = getDecrypt(task.dataValues.end_date);
     // appointment.dataValues.date_time = getDecrypt(appointment.dataValues.date_time);
     // appointment.dataValues.place = getDecrypt(appointment.dataValues.place);
-    const userInfo = `Họ tên: ${user.dataValues.name}, Ngày sinh: ${user.dataValues.birthday}, SĐT: ${user.dataValues.phone}, Id nhân viên: ${req.body.loginId}` 
-    console.log("userinfo",userInfo);
+    const userInfo = `Họ tên: ${user.dataValues.name}, Ngày sinh: ${user.dataValues.birthday}, SĐT: ${user.dataValues.phone}, Id nhân viên: ${req.body.loginId}`;
+    console.log("userinfo", userInfo);
     const formattedDateTime = this.dateTime();
-    const contentLog = `Xóa lịch hẹn ngày ${appointment.dataValues.date_time} tại ${appointment.dataValues.place}`
+    const contentLog = `Xóa lịch hẹn ngày ${appointment.dataValues.date_time} tại ${appointment.dataValues.place}`;
     const logDelTask = await Log.create({
       created_at: formattedDateTime,
       created_user: userInfo,
@@ -234,7 +241,6 @@ exports.deleteOne = async (req, res, next) => {
       msg: `Đã xoá thành công cuộc hẹn ${appointment.content} lúc ${appointment.date_time}.`,
       document: appointment,
     });
-    
   } catch (error) {
     console.log(error);
     return next(createError(400, "Error deleteOne"));
@@ -356,7 +362,7 @@ exports.update = async (req, res, next) => {
         const user = await Employee.findOne({
           where: {
             _id: req.body.loginId,
-          }
+          },
         });
         console.log("user", user);
         // const task = await Task.findOne({
@@ -368,19 +374,18 @@ exports.update = async (req, res, next) => {
         user.dataValues.name = getDecrypt(user.dataValues.name);
         user.dataValues.birthday = getDecrypt(user.dataValues.birthday);
         user.dataValues.phone = getDecrypt(user.dataValues.phone);
-        const userInfo = `Tên: ${user.dataValues.name} , Ngày sinh: ${user.dataValues.birthday}, SĐT: ${user.dataValues.phone}, Id nhân viên: ${req.body.loginId}` 
-        console.log("userinfo",userInfo);
+        const userInfo = `Tên: ${user.dataValues.name} , Ngày sinh: ${user.dataValues.birthday}, SĐT: ${user.dataValues.phone}, Id nhân viên: ${req.body.loginId}`;
+        console.log("userinfo", userInfo);
         const formattedDateTime = this.dateTime();
-        const contentLog = `Chỉnh sửa lịch hẹn ngày ${date_time} tại ${place} của phân công  `
+        const contentLog = `Chỉnh sửa lịch hẹn ngày ${date_time} tại ${place} của phân công  `;
         console.log("content", contentLog),
-        console.log("date time", formattedDateTime);
+          console.log("date time", formattedDateTime);
         const logCreateTask = await Log.create({
           created_at: formattedDateTime,
           created_user: userInfo,
           content: contentLog,
         });
         console.log("logggg", logCreateTask);
-  
 
         return res.send({
           error: false,
@@ -459,13 +464,14 @@ exports.finAllAppointment = async (req, res, next) => {
       console.log("Status:", status.dataValues.name);
       document[i].dataValues.Status_App = status.dataValues;
     }
-    console.log(document);
+    console.log(
+      document.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+    );
     return res.send(document);
   } catch (error) {
     return next(createError(400, "Error findOne"));
   }
 };
-
 
 exports.dateTime = () => {
   const now = new Date();

@@ -43,7 +43,9 @@ exports.findAll = async (req, res, next) => {
           ? "Danh sách thông báo!!"
           : "Không có thông báo nào",
       error: documents.length > 0 ? false : true,
-      documents,
+      documents: documents.sort(
+        (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
+      ),
     });
   } catch (err) {
     return next(createError(500, err.message));

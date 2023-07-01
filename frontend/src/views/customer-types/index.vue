@@ -91,7 +91,7 @@ export default {
       const customerType = res.document
       const isConfirmed = await alert_delete(
         `Xoá loại khách hàng`,
-        `Bạn có chắc chắn muốn xoá loại khách hàng không ?`
+        `Bạn có chắc chắn muốn xoá loại khách hàng ${customerType.name} không ?`
       );
 
       if(isConfirmed) {

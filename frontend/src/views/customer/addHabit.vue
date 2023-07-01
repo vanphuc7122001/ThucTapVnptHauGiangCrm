@@ -364,7 +364,7 @@ export default {
                     id="name"
                     name="name"
                     v-model="value.name"
-                    @input="habitValue = $event.target.value"
+                    @input="habitValue = $event.target.value.toLocaleLowerCase()"
                     required
                     @focus="data.activeSuggest = index"
                     autocomplete="off"

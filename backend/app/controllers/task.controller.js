@@ -300,7 +300,9 @@ exports.findAll = async (req, res, next) => {
       documents[i].dataValues["EmployeesList"] = employees;
     }
     /////////////////////////////////////////////////
-    return res.send(documents);
+    return res.send(
+      documents.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+    );
   } catch (error) {
     console.log(error);
     return next(createError(400, "Không tìm thấy phân công!"));

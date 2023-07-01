@@ -29,7 +29,9 @@ exports.findAll = async (req, res, next) => {
           ? "Danh sách công ty của khách hàng"
           : "Danh sách không tồn tại",
       error: documents.length > 0 ? false : true,
-      documents,
+      documents: documents.sort(
+        (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
+      ),
     });
   } catch (error) {
     return next(createError(500, error.message));

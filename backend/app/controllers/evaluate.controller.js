@@ -41,7 +41,9 @@ exports.create = async (req, res, next) => {
 exports.findAll = async (req, res, next) => {
   try {
     const documents = await Evaluate.findAll();
-    return res.send(documents);
+    return res.send(
+      documents.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+    );
   } catch (error) {
     console.log(error);
     return next(createError(400, "Error finding positions !"));
