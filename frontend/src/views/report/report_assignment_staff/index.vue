@@ -24,7 +24,7 @@
         class="mx-1 report__item"
         :style="data.activeMenu == 1 ? { border: '1px solid blue' } : {}"
       >
-                <!-- to="/report_assignment_staff" -->
+        <!-- to="/report_assignment_staff" -->
         <router-link
           :to="!isReadReportAssinmentStaff() ? '#' : '/report_assignment_staff'"
           :class="[data.activeMenu == 1 ? 'active-menu' : 'none-active-menu']"
@@ -34,7 +34,9 @@
           <span class="pl-3" style="margin-top: -4px">
             <span class="material-symbols-outlined"> group </span>
             <span class="text-center"
-              >{{ store.countReportAssignmentStaff }}/{{ store.countCustomer }}</span
+              >{{ store.countReportAssignmentStaff }}/{{
+                store.countCustomer
+              }}</span
             >
           </span>
         </router-link>
@@ -53,7 +55,9 @@
           <span class="pl-3" style="margin-top: -4px">
             <span class="material-symbols-outlined"> group </span>
             <span class="text-center"
-              >{{ store.countReportCustomerCycle }}/{{ store.countCustomer }}</span
+              >{{ store.countReportCustomerCycle }}/{{
+                store.countCustomer
+              }}</span
             >
           </span>
         </router-link>
@@ -233,11 +237,11 @@
         </h3>
       </div>
       <div class="">
-        <span>Họ tên</span>
+        <span>Họ tên: ................................</span>
         <br />
-        <span>Chức vụ</span>
+        <span>Chức vụ: .............................</span>
         <br />
-        <span>Bộ phận công tác</span>
+        <span>Bộ phận công tác: ............</span>
       </div>
       <table class="table table-bordered mt-4">
         <thead>
@@ -245,6 +249,9 @@
             <th
               v-for="(value, index) in [
                 'Stt',
+                'Tên nhân viên',
+                'Email nhân viên',
+                'Sdt nhân viên',
                 'Tên khách hàng',
                 'Sdt khách hàng',
                 'Email khách hàng',
@@ -260,6 +267,21 @@
         <tbody>
           <tr v-for="(item, index) in data.employee" :key="index">
             <td>{{ index + 1 }}</td>
+            <td>
+              <span v-for="(value, index) in item.employee" :key="index">
+                {{ value.name }} <br>
+              </span>
+            </td>
+            <td>
+              <span v-for="(value, index) in item.employee" :key="index">
+                {{ value.email }} <br>
+              </span>
+            </td>
+            <td>
+              <span v-for="(value, index) in item.employee" :key="index">
+                {{ value.phone }} <br>
+              </span>
+            </td>
             <td>{{ item.nameCustomer }}</td>
             <td>{{ item.phoneCustomer }}</td>
             <td>{{ item.emailCustomer }}</td>
@@ -274,7 +296,11 @@
         <p>Người Báo Cáo</p>
       </div>
     </div>
-    <View :item="data.viewValue" :Events="data.Events" :viewCareCus="data.viewCareCus" />
+    <View
+      :item="data.viewValue"
+      :Events="data.Events"
+      :viewCareCus="data.viewCareCus"
+    />
     <Mail />
   </div>
 </template>
@@ -315,8 +341,8 @@ import {
   isReadReportCustomerCycle,
   isReadReportAssinmentStaff,
   isPrintReport,
-  isMail
-} from '../../../use/getSessionItem'
+  isMail,
+} from "../../../use/getSessionItem";
 
 import View from "./view.vue";
 
@@ -370,8 +396,10 @@ export default {
       store.countCustomer = await countCustomer();
       store.countEmployee = await countEmployee();
       store.countReport = await countElementReportPage();
-      store.countReportAssignmentStaff = await countElementReportAssignmentStaff();
-      store.countReportCustomerCycle = await countElementReportCustomerCyclePage();
+      store.countReportAssignmentStaff =
+        await countElementReportAssignmentStaff();
+      store.countReportCustomerCycle =
+        await countElementReportCustomerCyclePage();
       store.countLeaderCustomer = await countElementReportLeaderCustomer();
       store.countleaderStaff = await countElementReportLeaderStaff();
 
@@ -381,10 +409,14 @@ export default {
         ListTaskId.push(task._id);
       });
 
+      const customerArray = [];
       for (const _id of ListTaskId) {
         const rs = await http_getOne(Task, _id);
-        data.items.push(rs);
+        customerArray.push(rs);
+        // data.items.push(rs);
       }
+
+      data.items = [...customerArray];
 
       // console.log('Data items report assignment staff:', data.items);
 
@@ -397,7 +429,6 @@ export default {
       // data.items.filter( (item) => {
       //   console.log('Item: ' , item);
       // })
-
 
       data.items = data.items.map((task) => {
         return {
@@ -484,7 +515,9 @@ export default {
     });
     const filter = computed(() => {
       return data.items.filter((value, index) => {
-        return toString.value[index].includes(data.searchText.toLocaleLowerCase());
+        return toString.value[index].includes(
+          data.searchText.toLocaleLowerCase()
+        );
       });
     });
     const filtered = computed(() => {
@@ -577,7 +610,7 @@ export default {
       isReadReportCustomerCycle,
       isReadReportAssinmentStaff,
       isPrintReport,
-      isMail
+      isMail,
     };
   },
 };
@@ -647,7 +680,8 @@ a.router-link-active.router-link-exact-active.active-menu {
   font-weight: bold;
 }
 
-a.router-link-active.router-link-exact-active.active-menu span.material-symbols-outlined {
+a.router-link-active.router-link-exact-active.active-menu
+  span.material-symbols-outlined {
   color: blue;
 }
 

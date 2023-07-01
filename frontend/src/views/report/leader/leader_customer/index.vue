@@ -235,17 +235,12 @@
         </h3>
       </div>
       <div class="">
-        <span>Họ tên</span>
+        <span>Họ tên: ................................</span>
         <br />
-        <span>Chức vụ</span>
+        <span>Chức vụ: .............................</span>
         <br />
-        <span>Bộ phận công tác</span>
+        <span>Bộ phận công tác: ............</span>
       </div>
-      <!-- nameCustomer: item.Customer.name,
-            phoneCustomer: item.Customer.phone,
-            emailCustomer: item.Customer.email,
-            customerType: item.Customer.Customer_Type.name,
-            statusTask: item.Status_Task.name, -->
       <table class="table table-bordered mt-4">
         <thead>
           <tr>
@@ -400,10 +395,15 @@ export default {
         ListTaskId.push(task._id);
       });
 
+
+      const customerArray = []
       for (const _id of ListTaskId) {
         const rs = await http_getOne(Task, _id);
-        data.items.push(rs);
+        customerArray.push(rs)
+        // data.items.push(rs);
       }
+
+      data.items = [...customerArray]
 
       data.items = data.items.filter((item, index, self) => {
         return (

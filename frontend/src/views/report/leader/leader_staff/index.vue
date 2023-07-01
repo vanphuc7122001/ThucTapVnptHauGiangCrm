@@ -228,11 +228,11 @@
         </h3>
       </div>
       <div class="">
-        <span>Họ tên</span>
+        <span>Họ tên: ................................</span>
         <br />
-        <span>Chức vụ</span>
+        <span>Chức vụ: .............................</span>
         <br />
-        <span>Bộ phận công tác</span>
+        <span>Bộ phận công tác: ............</span>
       </div>
 
       <table class="table table-bordered mt-4">
@@ -391,10 +391,15 @@ export default {
         ListTaskId.push(task._id);
       });
 
+      const staffArray = [];
       for (const _id of ListTaskId) {
         const rs = await http_getOne(Task, _id);
-        data.items.push(rs);
+        staffArray.push(rs)
+        // data.items.push(rs);
       }
+
+      data.items = [...staffArray]
+      
 
       data.items = data.items.map((task) => {
         if (task.leaderId == leaderId) {

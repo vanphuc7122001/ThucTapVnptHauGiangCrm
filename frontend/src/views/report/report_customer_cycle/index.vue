@@ -231,11 +231,11 @@
         </h3>
       </div>
       <div class="">
-        <span>Họ tên</span>
+        <span>Họ tên: ................................</span>
         <br />
-        <span>Chức vụ</span>
+        <span>Chức vụ: .............................</span>
         <br />
-        <span>Bộ phận công tác</span>
+        <span>Bộ phận công tác: ............</span>
       </div>
       <!-- nameCustomer: item.Customer.name,
               emailCustomer: item.Customer.email,
@@ -510,6 +510,8 @@ export default {
                 !isEqual(dayStartNewCycle, start_date) &&
                 task.Status_Task.name == "đã chăm sóc"
               ) {
+                console.log('dayStartNewCycle',(dayStartNewCycle.getDate() + '-' + (dayStartNewCycle.getMonth() + 1)));
+                console.log('start_date',(start_date.getDate() + '-' + (start_date.getMonth() + 1)));
                 return task;
               }
             });
