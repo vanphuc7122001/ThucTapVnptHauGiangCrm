@@ -227,7 +227,7 @@
       <div class="text-center mt-4 font-weight-bold">
         <h3 class="font-weight-bold text-center">
           Báo Cáo <br />
-          Danh Sách Khách Hàng Đã Lâu Chưa Chăm Sóc
+          Danh Sách Khách Hàng Tới Chu Kì Chưa Chăm Sóc
         </h3>
       </div>
       <div class="">
