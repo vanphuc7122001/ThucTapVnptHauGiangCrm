@@ -5,7 +5,7 @@
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title" style="font-size: 15px">
+          <h4 class="modal-title" style="font-size: 18px">
             Sửa loại khách hàng
           </h4>
           <button type="button" class="close" data-dismiss="modal" @click="$emit('cancel')">
@@ -21,7 +21,7 @@
                 <input type="text" class="form-control" id="name" placeholder="" v-model="item.name" required />
               </div>
               <button type="submit" class="btn btn-primary" @click="handleUpdate(item)">
-                Sửa
+                Cập nhật
               </button>
             </form>
           </div>

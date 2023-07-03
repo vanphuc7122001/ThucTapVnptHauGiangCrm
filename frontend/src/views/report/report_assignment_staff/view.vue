@@ -42,7 +42,7 @@ export default {
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title">Thông tin chi tiết khách hàng</h4>
+          <h4 class="modal-title" style="font-size: 18px;">Thông tin chi tiết khách hàng</h4>
           <button type="button" class="close" data-dismiss="modal">
             &times;
           </button>
@@ -71,18 +71,6 @@ export default {
                 class="rounded-circle mx-auto d-block border border-dark my-3"
                 height="100"
               />
-              <!-- <div class="d-flex justify-content-around">
-                <div>
-                  <p><span class="font-weight-bold">Họ tên khách hàng: </span> {{ item.Customer.name }}</p>
-                  <p><span class="font-weight-bold">Email mail khách hàng: </span> {{ item.Customer.email }}</p>
-                  <p><span class="font-weight-bold">Số điện thoại khách hàng: </span> {{ item.Customer.phone }}</p>
-                </div>
-                <div>
-                  <p><span class="font-weight-bold">Ngày sinh khách hàng: </span> {{ formatDate(item.Customer.birthday) }}</p>
-                  <p><span class="font-weight-bold">Địa chỉ khách hàng: </span> {{ item.Customer.address }}</p>
-                  <p><span class="font-weight-bold">Loại khách hàng: </span> {{ item.customerType }}</p>
-                </div>
-              </div> -->
               <div class="container">
                 <div class="row">
                   <div class="col-md-6">

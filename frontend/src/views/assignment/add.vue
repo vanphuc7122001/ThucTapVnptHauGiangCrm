@@ -241,7 +241,7 @@ export default {
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title" style="font-size: 15px">Thêm mới phân công</h4>
+          <h4 class="modal-title" style="font-size: 18px">Thêm mới phân công</h4>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
 

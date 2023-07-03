@@ -28,7 +28,7 @@ export default {
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title" style="font-size: 15px">Sửa thói quen</h4>
+          <h4 class="modal-title" style="font-size: 18px">Sửa thói quen</h4>
           <button @click="$emit('cancel')" type="button" class="close" data-dismiss="modal">
             &times;
           </button>

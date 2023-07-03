@@ -99,33 +99,6 @@ export default {
 
       reader.readAsDataURL(files);
     };
-
-    // const handleAddCustometType = async () => {
-    //   if (props.item.Customer_Type._id == "Add") {
-    //     const { value: customerType } = await Swal.fire({
-    //       title: "Thêm loại khách hàng",
-    //       input: "text",
-    //       inputLabel: "Tên loại khách hàng",
-    //       inputValidator: (value) => {
-    //         if (!value) {
-    //           return "Bạn không được phép để trường này trống!";
-    //         }
-    //       },
-    //     });
-
-    //     const res = await http_create(Customer_Types, { name: customerType });
-    //     if (res.error) {
-    //       alert_error(`Thêm loại khách hàng`, `${res.msg}`);
-    //     } else {
-    //       props.item.Customer_Type._id = res.document._id;
-    //       refresh();
-    //       alert_success(
-    //         `Thêm loại khách hàng`,
-    //         `Loại khách hàng ${customerType}  đã được tạo thành công.`
-    //       );
-    //     }
-    //   }
-    // };
     const handleAddCustometType = async () => {
       if (props.item.Customer_Type._id == "Add") {
         const { value: customerType, dismiss } = await Swal.fire({
@@ -229,15 +202,6 @@ export default {
       event.preventDefault();
       let isCheck = false;
       refresh();
-      // for (const value of data.customer) {
-      //   if (
-      //     value.name == props.item.Customer.name &&
-      //     value.phone == props.item.Customer.phone &&
-      //     value.email == props.item.Customer.email
-      //   ) {
-      //     isCheck = true;
-      //   }
-      // }
       if (isCheck == true) {
         return alert_error(
           "Lổi",
@@ -257,15 +221,6 @@ export default {
         formData.append("email", props.item.Customer.email);
         formData.append("customerTypesId", props.item.Customer_Type._id);
 
-        // console.log("Object formdata avatar" + props.item.Customer.avatar);
-        // console.log("Object formdata name" + props.item.Customer.name);
-        // console.log("Object formdata birthday" + props.item.Customer.birthday);
-        // console.log("Object formdata address" + props.item.Customer.address);
-        // console.log("Object formdata phone" + props.item.Customer.phone);
-        // console.log("Object formdata email" + props.item.Customer.email);
-        // console.log(
-        //   "Object formdata customerTypesId" + props.item.Customer_Type._id
-        // );
         const res = await http_update(
           Customer,
           props.item.Customer._id,
@@ -322,7 +277,7 @@ export default {
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title" style="font-size: 15px">Sửa thông tin khách hàng</h4>
+          <h4 class="modal-title" style="font-size: 18px">Sửa thông tin khách hàng</h4>
           <button type="button" class="close" data-dismiss="modal">
             &times;
           </button>
@@ -556,7 +511,7 @@ export default {
                   @click="update"
                   class="btn btn-primary"
                 >
-                  Sửa
+                  Cập nhật
                 </button>
               </form>
 

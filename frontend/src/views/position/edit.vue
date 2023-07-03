@@ -27,7 +27,7 @@ export default {
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title" style="font-size: 15px">Sửa chức vụ</h4>
+          <h4 class="modal-title" style="font-size: 18px">Sửa chức vụ</h4>
           <button
             @click="$emit('cancel')"
             type="button"

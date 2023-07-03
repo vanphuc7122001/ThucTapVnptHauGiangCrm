@@ -128,34 +128,6 @@ export default {
       reader.readAsDataURL(file);
     };
 
-    // handle create customer type
-    // const handleAddCustometType = async () => {
-    //   if (viewData.customerInfo.customerTypesId === "Add") {
-    //     const { value: customerType } = await Swal.fire({
-    //       title: "Thêm loại khách hàng",
-    //       input: "text",
-    //       inputLabel: "Tên loại khách hàng",
-    //       inputValidator: (value) => {
-    //         if (!value) {
-    //           return "Bạn không được phép để trường này trống!";
-    //         }
-    //       },
-    //     });
-
-    //     const res = await http_create(Customer_Types, { name: customerType });
-    //     if (res.error) {
-    //       alert_error(`Thêm loại khách hàng`, `${res.msg}`);
-    //     } else {
-    //       viewData.customerInfo.customerTypesId = res.document._id;
-    //       refresh();
-    //       alert_success(
-    //         `Thêm loại khách hàng`,
-    //         `Loại khách hàng ${customerType}  đã được tạo thành công.`
-    //       );
-    //     }
-    //   }
-    // };
-
     const handleAddCustometType = async () => {
       if (viewData.customerInfo.customerTypesId === "Add") {
         const { value: customerType, dismiss } = await Swal.fire({
@@ -348,7 +320,7 @@ export default {
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title" style="font-size: 15px">Thêm Khách Hàng</h4>
+          <h4 class="modal-title" style="font-size: 18px">Thêm Khách Hàng</h4>
           <button type="button" class="close" data-dismiss="modal">
             &times;
           </button>

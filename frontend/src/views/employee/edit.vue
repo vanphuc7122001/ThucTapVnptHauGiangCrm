@@ -481,8 +481,8 @@ export default {
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title" style="font-size: 15px">
-            Thêm thông tin nhân viên mới
+          <h4 class="modal-title" style="font-size: 18px">
+            Sửa thông tin nhân viên mới
           </h4>
           <button
             type="button"
