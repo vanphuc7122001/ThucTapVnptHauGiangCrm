@@ -38,7 +38,6 @@ export default {
             &times;
           </button>
         </div>
-
         <!-- Modal body -->
         <div class="modal-body">
           <form class="was-validated">
@@ -61,22 +60,56 @@ export default {
                 id="content"
                 required
                 class="form-control"
-                rows="5"
+                rows="4"
                 v-model="item.content"
               ></textarea>
             </div>
             <div class="form-group">
-              <label for="duration"
-                >Thời gian diễn ra(<span style="color: red">*</span>):</label
+              <!-- <label for="content"
+                >Thời gian diễn ra sự kiện(<span style="color: red">*</span
+                >):</label
+              > -->
+              <div class="d-flex">
+                <div class="form-group mr-3 w-100">
+                  <label for="content"
+                    >Thời gian bắt đầu(<span style="color: red">*</span
+                    >):</label
+                  >
+                  <input
+                    type="datetime-local"
+                    class="form-control w-100"
+                    id="start_time"
+                    name="start_time"
+                    v-model="item.start_time"
+                    required
+                  />
+                </div>
+                <div class="form-group w-100">
+                  <label for="content"
+                    >Thời gian kết thúc(<span style="color: red">*</span
+                    >):</label
+                  >
+                  <input
+                    type="datetime-local"
+                    class="form-control mr-3 w-100"
+                    id="end_time"
+                    name="end_time"
+                    v-model="item.end_time"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="content"
+                >Địa điểm:</label
               >
-              <input
-                type="datetime-local"
+              <textarea
+                id="content"
                 class="form-control"
-                id="duration"
-                name="duration"
-                v-model="item.time_duration"
-                required
-              />
+                rows="5"
+                v-model="item.place"
+              ></textarea>
             </div>
             <button
               type="button"

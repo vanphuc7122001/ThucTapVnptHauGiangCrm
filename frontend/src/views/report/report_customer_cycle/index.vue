@@ -24,7 +24,7 @@
         class="mx-1 report__item"
         :style="data.activeMenu == 1 ? { border: '1px solid blue' } : {}"
       >
-                <!-- to="/report_assignment_staff" -->
+        <!-- to="/report_assignment_staff" -->
         <router-link
           :to="!isReadReportAssinmentStaff() ? '#' : '/report_assignment_staff'"
           :class="[data.activeMenu == 1 ? 'active-menu' : 'none-active-menu']"
@@ -34,7 +34,9 @@
           <span class="pl-3" style="margin-top: -4px">
             <span class="material-symbols-outlined"> group </span>
             <span class="text-center"
-              >{{ store.countReportAssignmentStaff }}/{{ store.countCustomer }}</span
+              >{{ store.countReportAssignmentStaff }}/{{
+                store.countCustomer
+              }}</span
             >
           </span>
         </router-link>
@@ -53,7 +55,9 @@
           <span class="pl-3" style="margin-top: -4px">
             <span class="material-symbols-outlined"> group </span>
             <span class="text-center"
-              >{{ store.countReportCustomerCycle }}/{{ store.countCustomer }}</span
+              >{{ store.countReportCustomerCycle }}/{{
+                store.countCustomer
+              }}</span
             >
           </span>
         </router-link>
@@ -179,7 +183,14 @@
     <!-- Table -->
     <Table
       :items="setPages"
-      :fields="['Tên', 'Email', 'Sdt', 'Công việc', 'Công ty', 'Loại khách hàng']"
+      :fields="[
+        'Tên',
+        'Email',
+        'Sdt',
+        'Công việc',
+        'Công ty',
+        'Loại khách hàng',
+      ]"
       :labels="[
         'nameCustomer',
         'emailCustomer',
@@ -297,6 +308,7 @@ import {
   Search,
   Customer_Work,
   formatDateTime,
+  formatDateTime_2,
   formatDate,
   Task,
 } from "../../common/import";
@@ -318,8 +330,8 @@ import {
   isReadReportCustomerCycle,
   isReadReportAssinmentStaff,
   isPrintReport,
-  isMail
-} from '../../../use/getSessionItem'
+  isMail,
+} from "../../../use/getSessionItem";
 
 import { isEqual, isBefore, isAfter, isSameDay } from "date-fns";
 
@@ -399,8 +411,10 @@ export default {
       store.countCustomer = await countCustomer();
       store.countEmployee = await countEmployee();
       store.countReport = await countElementReportPage();
-      store.countReportAssignmentStaff = await countElementReportAssignmentStaff();
-      store.countReportCustomerCycle = await countElementReportCustomerCyclePage();
+      store.countReportAssignmentStaff =
+        await countElementReportAssignmentStaff();
+      store.countReportCustomerCycle =
+        await countElementReportCustomerCyclePage();
       store.countLeaderCustomer = await countElementReportLeaderCustomer();
       store.countleaderStaff = await countElementReportLeaderStaff();
 
@@ -510,8 +524,16 @@ export default {
                 !isEqual(dayStartNewCycle, start_date) &&
                 task.Status_Task.name == "đã chăm sóc"
               ) {
-                console.log('dayStartNewCycle',(dayStartNewCycle.getDate() + '-' + (dayStartNewCycle.getMonth() + 1)));
-                console.log('start_date',(start_date.getDate() + '-' + (start_date.getMonth() + 1)));
+                console.log(
+                  "dayStartNewCycle",
+                  dayStartNewCycle.getDate() +
+                    "-" +
+                    (dayStartNewCycle.getMonth() + 1)
+                );
+                console.log(
+                  "start_date",
+                  start_date.getDate() + "-" + (start_date.getMonth() + 1)
+                );
                 return task;
               }
             });
@@ -588,7 +610,11 @@ export default {
         });
       } else {
         return data.items.map((value, index) => {
-          return [value.Customer.name, value.Customer.email, value.Customer.phone]
+          return [
+            value.Customer.name,
+            value.Customer.email,
+            value.Customer.phone,
+          ]
             .join("")
             .toLocaleLowerCase();
         });
@@ -596,7 +622,9 @@ export default {
     });
     const filter = computed(() => {
       return data.items.filter((value, index) => {
-        return toString.value[index].includes(data.searchText.toLocaleLowerCase());
+        return toString.value[index].includes(
+          data.searchText.toLocaleLowerCase()
+        );
       });
     });
     const filtered = computed(() => {
@@ -700,15 +728,17 @@ export default {
           cycleName: value.Cycle.name, // join bản sao
           statusName: value.Status_Task.name,
           EvaluateStar: value.Evaluate.star,
-          comment: value.Comment == null ? "Chưa cập nhật" : value.Comment.content,
+          comment:
+            value.Comment == null ? "Chưa cập nhật" : value.Comment.content,
         };
       });
 
       data.Events = item.Customer.Events.map((item) => {
         return {
           name: item.name,
-          time_duration: formatDateTime(item.time_duration),
+          time_duration: formatDateTime_2(item.time_duration),
           content: item.content,
+          place: item.place != null ? item.place : "không có",
         };
       });
     };
@@ -731,7 +761,7 @@ export default {
       isReadReportCustomerCycle,
       isReadReportAssinmentStaff,
       isPrintReport,
-      isMail
+      isMail,
     };
   },
 };
@@ -816,7 +846,8 @@ a.router-link-active.router-link-exact-active.active-menu {
   font-weight: bold;
 }
 
-a.router-link-active.router-link-exact-active.active-menu span.material-symbols-outlined {
+a.router-link-active.router-link-exact-active.active-menu
+  span.material-symbols-outlined {
   color: blue;
 }
 

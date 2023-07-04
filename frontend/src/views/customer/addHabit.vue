@@ -135,6 +135,10 @@ export default {
       }
     };
     const createEvent = async () => {
+      props.eventAdd.time_duration = [
+        props.eventAdd.start_time,
+        props.eventAdd.end_time,
+      ].join(" to ");
       const result = await http_create(Event, props.eventAdd);
       let isSuccess = false;
       console.log("result", result);
@@ -364,7 +368,9 @@ export default {
                     id="name"
                     name="name"
                     v-model="value.name"
-                    @input="habitValue = $event.target.value.toLocaleLowerCase()"
+                    @input="
+                      habitValue = $event.target.value.toLocaleLowerCase()
+                    "
                     required
                     @focus="data.activeSuggest = index"
                     autocomplete="off"
@@ -400,6 +406,7 @@ export default {
               </form>
               <!-- page 2 -->
               <form v-if="data.activeStep == 2" action="" class="was-validated">
+                {{ eventAdd }}
                 <div class="form-group">
                   <label for="name"
                     >Tên sự kiện(<span style="color: red">*</span>):</label
@@ -422,22 +429,55 @@ export default {
                     required
                     class="form-control"
                     v-model="eventAdd.content"
-                    rows="5"
+                    rows="4"
                   ></textarea>
                 </div>
                 <div class="form-group">
+                  <!-- <label for="content"
+                >Thời gian diễn ra sự kiện(<span style="color: red">*</span
+                >):</label
+              > -->
+                  <div class="d-flex">
+                    <div class="form-group mr-3 w-100">
+                      <label for="content"
+                        >Thời gian bắt đầu(<span style="color: red">*</span
+                        >):</label
+                      >
+                      <input
+                        type="datetime-local"
+                        class="form-control w-100"
+                        id="start_time"
+                        name="start_time"
+                        v-model="eventAdd.start_time"
+                        required
+                      />
+                    </div>
+                    <div class="form-group w-100">
+                      <label for="content"
+                        >Thời gian kết thúc(<span style="color: red">*</span
+                        >):</label
+                      >
+                      <input
+                        type="datetime-local"
+                        class="form-control mr-3 w-100"
+                        id="end_time"
+                        name="end_time"
+                        v-model="eventAdd.end_time"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
                   <label for="content"
-                    >Thời gian diễn ra sự kiện(<span style="color: red">*</span
-                    >):</label
+                    >Địa điểm:</label
                   >
-                  <input
-                    type="datetime-local"
+                  <textarea
+                    id="content"
                     class="form-control"
-                    id="time_duration"
-                    name="time_duration"
-                    v-model="eventAdd.time_duration"
-                    required
-                  />
+                    v-model="eventAdd.place"
+                    rows="3"
+                  ></textarea>
                 </div>
                 <button
                   type="button"
@@ -457,7 +497,7 @@ export default {
                   "
                   class="btn-next d-flex align-items-center px-3 py-1"
                   @click="data.activeStep = 2"
-                  >
+                >
                   Kế tiếp
                   <span
                     class="material-symbols-outlined d-flex align-items-center"
@@ -475,11 +515,10 @@ export default {
                   ><span
                     class="material-symbols-outlined d-flex align-items-center"
                   >
-                    navigate_before </span
-                  >
-                    Quay lại
-                  </span
-                >
+                    navigate_before
+                  </span>
+                  Quay lại
+                </span>
               </div>
             </div>
           </div>

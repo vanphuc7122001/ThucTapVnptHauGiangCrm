@@ -9,7 +9,7 @@ import Select_Advanced from "../../components/form/select_advanced.vue";
 import form_wizard_customer from "../../components/form/form_wizard_customer.vue";
 import { reactive, computed, watch, ref, onBeforeMount, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { formatDateTime, formatDate } from "../../assets/js/common.js";
+import { formatDateTime, formatDate, formatDateTime_2 } from "../../assets/js/common.js";
 // import { toString, _filter } from "../../assets/js/pagination.js";
 
 // services
@@ -80,6 +80,7 @@ export {
   // format date or datetime
   formatDateTime,
   formatDate,
+  formatDateTime_2,
   // service
   Event,
   Habit,

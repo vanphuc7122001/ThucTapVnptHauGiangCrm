@@ -5,9 +5,11 @@ const { v4: uuidv4 } = require("uuid");
 
 // checked
 exports.create = async (req, res, next) => {
-  console.log(req.body);
-  if (Object.keys(req.body).length === 3) {
-    const { content, time_duration, name } = req.body;
+  // console.log(req.body);
+  // console.log('cc');
+  if (Object.keys(req.body).length === 6) {
+    console.log('cc');
+    const { content, time_duration, name, place } = req.body;
     const events = await Event.findAll();
     for (let value of events) {
       if (value.name == name && value.time_duration == time_duration) {
@@ -22,6 +24,7 @@ exports.create = async (req, res, next) => {
         name: name,
         content: content,
         time_duration: time_duration,
+        place: place,
       });
       return res.send({
         error: false,
@@ -37,7 +40,7 @@ exports.create = async (req, res, next) => {
   } else {
     return res.send({
       error: true,
-      msg: `Vui lòng nhập đủ thông tin.`,
+      msg: `Vui lòng nhập đủ thông tin1.`,
     });
   }
 };
@@ -97,12 +100,12 @@ exports.deleteOne = async (req, res, next) => {
 
 exports.deleteAll = async (req, res, next) => {
   try {
-  } catch (error) {}
+  } catch (error) { }
 };
 
 exports.update = async (req, res, next) => {
   console.log("update", req.body);
-  const { content, time_duration, name } = req.body;
+  const { content, time_duration, name, place } = req.body;
   try {
     let events = [
       await Event.findOne({
@@ -117,6 +120,7 @@ exports.update = async (req, res, next) => {
         value.name == name &&
         value.time_duration == time_duration &&
         value.content == content
+        && value.place == place
       );
     });
 
@@ -126,6 +130,7 @@ exports.update = async (req, res, next) => {
           time_duration: time_duration,
           content: content,
           name: name,
+          place: place,
         },
         { where: { _id: req.params.id }, returning: true }
       );

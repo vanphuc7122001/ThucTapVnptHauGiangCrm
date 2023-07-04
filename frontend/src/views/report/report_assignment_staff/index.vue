@@ -321,6 +321,7 @@ import {
   Customer,
   http_getOne,
   formatDateTime,
+  formatDateTime_2,
   formatDate,
 } from "../../common/import";
 
@@ -591,8 +592,9 @@ export default {
       data.Events = item.Customer.Events.map((item) => {
         return {
           name: item.name,
-          time_duration: formatDateTime(item.time_duration),
+          time_duration: formatDateTime_2(item.time_duration),
           content: item.content,
+          place: item.place != null ? item.place : 'không có',
         };
       });
     };

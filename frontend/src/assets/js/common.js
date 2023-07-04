@@ -34,3 +34,10 @@ export const formatDateTime = (value) => {
 //     return `${hours} giờ ${minutes} phút, ngày ${day}-${month}-${year}`;
 // }
 
+export const formatDateTime_2 = (value) => {
+    const start_time = value.split(" to ")[0];
+    const end_time = value.split(" to ")[1];
+    return [formatDateTime(start_time), formatDateTime(end_time)].join(" đến ");
+}
+
+// console.log(formatDateTime_2('2023-07-04t15:01 to 2023-07-06t15:01'))

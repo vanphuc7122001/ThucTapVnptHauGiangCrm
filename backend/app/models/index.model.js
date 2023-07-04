@@ -326,6 +326,16 @@ const Event = sequelize.define("Event", {
       setEncrypt(value, "content", this);
     },
   },
+  place: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+    get() {
+      return getDecrypt("place", this);
+    },
+    set(value) {
+      setEncrypt(value, "place", this);
+    },
+  },
 });
 
 const Habit = sequelize.define("Habit", {
@@ -1185,7 +1195,7 @@ Customer_Types.sync();
 Customer.sync();
 Customer_Work.sync();
 Company_KH.sync();
-Event.sync();
+Event.sync({ });
 Habit.sync();
 Position.sync();
 Center_VNPTHG.sync();

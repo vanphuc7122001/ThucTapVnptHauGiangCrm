@@ -26,6 +26,7 @@ import {
   // format date or datetime
   formatDateTime,
   formatDate,
+  formatDateTime_2,
   // service
   Event,
   // http service
@@ -81,6 +82,9 @@ export default {
         name: "",
         content: "",
         time_duration: "",
+        end_time: "",
+        start_time: "",
+        place: "",
       },
       activeEdit: false,
       editValue: {},
@@ -166,11 +170,15 @@ export default {
 
     // methods
     const create = async () => {
+      data.itemAdd.time_duration = [
+        data.itemAdd.start_time,
+        data.itemAdd.end_time,
+      ].join(" to ");
       const result = await http_create(Event, data.itemAdd);
       if (!result.error) {
         alert_success(
           `Thêm sự kiện`,
-          `Sự kiện ${result.document.name} lúc ${formatDateTime(
+          `Sự kiện ${result.document.name} lúc ${formatDateTime_2(
             result.document.time_duration
           )} đã được tạo thành công.`
         );
@@ -228,7 +236,7 @@ export default {
       console.log("deleting", event);
       const isConfirmed = await alert_delete(
         `Xoá sự kiện`,
-        `Bạn có chắc chắn muốn xoá sự kiện ${event.name} lúc ${formatDateTime(
+        `Bạn có chắc chắn muốn xoá sự kiện ${event.name} lúc ${formatDateTime_2(
           event.time_duration
         )} không ?`
       );
@@ -239,7 +247,7 @@ export default {
           `Xoá sự kiện`,
           `Bạn đã xoá thành công sự kiện ${
             result.document.name
-          } lúc ${formatDateTime(result.document.time_duration)}.`
+          } lúc ${formatDateTime_2(result.document.time_duration)}.`
         );
         refresh();
       }
@@ -257,6 +265,7 @@ export default {
         <tr>
           <th>Tên sự kiện</th>
           <th>Ngày diễn ra sự kiện</th>
+          <th>Địa điểm</th>
         </tr>
       </thead> <tbody>`;
         console.log("deleteArray", deleteArray[0].Customer);
@@ -264,6 +273,7 @@ export default {
           contentAlert += `<tr>
           <td>${value.name}</td>
           <td>${value.time_duration_format}</td>
+          <td>${value.place != null ? value.place : 'không có'}</td>
         </tr>`;
         }
         contentAlert += `</tbody>
@@ -295,6 +305,9 @@ export default {
 
     const edit = async (editValue) => {
       console.log(editValue);
+      editValue.time_duration = [editValue.start_time, editValue.end_time].join(
+        " to "
+      );
       const result = await http_update(Event, editValue._id, editValue);
       if (!result.error) {
         alert_success(`Sửa sự kiện`, `${result.msg}`);
@@ -307,7 +320,13 @@ export default {
     const view = async (item) => {
       console.log("view", item);
       await refresh();
-      item.time_duration = item.time_duration.toUpperCase();
+      item.start_time = item.time_duration.split(" to ")[0].toUpperCase();
+      item.end_time = item.time_duration.split(" to ")[1].toUpperCase();
+      item.time_duration_format = [
+        formatDateTime(item.start_time),
+        formatDateTime(item.end_time),
+      ].join(" đến ");
+      // item.time_duration = item.time_duration.toUpperCase();
       data.viewValue = item;
       data.showView = true;
       // router.push({ name: "Event.view", params: { id: _id } });
@@ -323,7 +342,13 @@ export default {
     const refresh = async () => {
       data.items = await http_getAll(Event);
       for (const value of data.items) {
-        value.time_duration_format = formatDateTime(value.time_duration);
+        value.start_time = value.time_duration.split(" to ")[0].toUpperCase();
+        value.end_time = value.time_duration.split(" to ")[1].toUpperCase();
+        value.time_duration_format = [
+          formatDateTime(value.start_time),
+          formatDateTime(value.end_time),
+        ].join(" đến ");
+        value.place = value.place != null ? value.place : "không có";
       }
       for (let value of data.items) {
         value.checked = false;
@@ -336,22 +361,25 @@ export default {
         if (data.endTimeValue.length == 0) {
           data.items = data.items.filter((value, index) => {
             console.log(
-              value.time_duration == data.startTimeValue.toLocaleLowerCase()
+              value.start_time == data.startTimeValue.toLocaleLowerCase()
             );
-            return (
-              value.time_duration == data.startTimeValue.toLocaleLowerCase()
-            );
+            return value.start_time == data.startTimeValue.toLocaleLowerCase();
           });
         } else {
           data.items = data.items.filter((value, index) => {
             return (
-              new Date(value.time_duration.toUpperCase()) >=
+              new Date(value.start_time.toUpperCase()) >=
                 new Date(data.startTimeValue) &&
-              new Date(value.time_duration.toUpperCase()) <=
+              new Date(value.start_time.toUpperCase()) <=
                 new Date(data.endTimeValue)
             );
           });
         }
+      } else if (data.endTimeValue.length > 0) {
+        data.items = data.items.filter((value, index) => {
+          console.log(value.end_time == data.endTimeValue.toLocaleLowerCase());
+          return value.end_time == data.endTimeValue.toLocaleLowerCase();
+        });
       }
     };
 
@@ -586,9 +614,16 @@ export default {
         'Tên sự kiện',
         'Nội dung sự kiện',
         'Thời gian diễn ra',
+        'Địa điểm',
         'Khách hàng',
       ]"
-      :labels="['name', 'content', 'time_duration_format', 'totalCustomer']"
+      :labels="[
+        'name',
+        'content',
+        'time_duration_format',
+        'place',
+        'totalCustomer',
+      ]"
       @delete="(value) => deleteOne(value)"
       :startRow="data.startRow"
       :selectAll="data.selectAll"
@@ -597,6 +632,12 @@ export default {
       @edit="
         async (value, value1) => (
           (data.editValue = await getOne(value._id)),
+          (data.editValue.start_time = data.editValue.time_duration
+            .split(' to ')[0]
+            .toUpperCase()),
+          (data.editValue.end_time = data.editValue.time_duration
+            .split(' to ')[1]
+            .toUpperCase()),
           (data.activeEdit = value1),
           (data.editValue.time_duration =
             data.editValue.time_duration.toUpperCase())

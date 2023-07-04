@@ -295,6 +295,7 @@ import {
   Select,
   Search,
   formatDate,
+  formatDateTime_2,
   http_getOne,
   Customer,
 } from "../../../common/import";
@@ -575,8 +576,9 @@ export default {
       data.Events = item.Customer.Events.map((item) => {
         return {
           name: item.name,
-          time_duration: formatDate(item.time_duration),
+          time_duration: formatDateTime_2(item.time_duration),
           content: item.content,
+          place: item.place != null ? item.place : 'không có',
         };
       });
     };

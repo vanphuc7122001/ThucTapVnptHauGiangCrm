@@ -290,6 +290,7 @@ import {
   Search,
   Customer_Work,
   formatDateTime,
+  formatDateTime_2,
   formatDate,
   Task,
 } from "../common/import";
@@ -301,7 +302,7 @@ import {
   isReadReportCustomerCycle,
   isReadReportAssinmentStaff,
   isPrintReport,
-  isMail 
+  isMail,
 } from "../../use/getSessionItem";
 
 import { isEqual, isBefore, isAfter, isSameDay } from "date-fns";
@@ -314,7 +315,6 @@ import {
   countElementReportAssignmentStaff,
   countElementReportLeaderCustomer,
   countElementReportLeaderStaff,
-  
 } from "./use/index";
 
 import jsPDF from "jspdf";
@@ -388,7 +388,7 @@ export default {
     });
 
     const labels = [
-      'STT',
+      "STT",
       "Tên khách hàng",
       "Email",
       "Số điện thoại",
@@ -739,8 +739,9 @@ export default {
       data.Events = item.Customer.Events.map((item) => {
         return {
           name: item.name,
-          time_duration: formatDateTime(item.time_duration),
+          time_duration: formatDateTime_2(item.time_duration),
           content: item.content,
+          place: item.place != null ? item.place : "không có",
         };
       });
     };
@@ -766,7 +767,7 @@ export default {
       isReadReportCustomerCycle,
       isReadReportAssinmentStaff,
       isPrintReport,
-      isMail
+      isMail,
     };
   },
 };

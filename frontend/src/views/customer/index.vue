@@ -26,6 +26,7 @@ import {
   Status_Task,
   formatDate,
   formatDateTime,
+  formatDateTime_2,
 } from "../common/import";
 
 import {
@@ -132,7 +133,10 @@ export default {
       eventAdd: {
         name: "",
         content: "",
-        time_duration: "",
+        time_duration: 'eventAdd.start_time',
+        start_time: "",
+        end_time: "",
+        place: "",
       },
     });
 
@@ -371,8 +375,9 @@ export default {
         return {
           // 'name','time_duration', 'content'
           name: item.name,
-          time_duration: formatDateTime(item.time_duration),
+          time_duration: formatDateTime_2(item.time_duration),
           content: item.content,
+          place: item.place != null ? item.place : 'không có'
         };
       });
     };

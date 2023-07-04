@@ -192,11 +192,11 @@ const router = createRouter({
 });
 router.beforeEach((to, from, next) => {
   const isAuthenticated = sessionStorage.getItem("token"); // Kiểm tra xem người dùng đã đăng nhập hay chưa
-  console.log(`isAuthenticated `, isAuthenticated);
-  const customerId = sessionStorage.getItem("customerId");
-  const customerName = sessionStorage.getItem("customerName");
-  const role = sessionStorage.getItem("role");
-  console.log(customerId, customerName, role);
+  // console.log(`isAuthenticated `, isAuthenticated);
+  // const customerId = sessionStorage.getItem("customerId");
+  // const customerName = sessionStorage.getItem("customerName");
+  // const role = sessionStorage.getItem("role");
+  // console.log(customerId, customerName, role);
   if (
     to.matched.some((record) => record.meta.requiresAuth) &&
     !isAuthenticated

@@ -37,7 +37,9 @@ export default {
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title" style="font-size: 18px;">Thông tin chi tiết khách hàng</h4>
+          <h4 class="modal-title" style="font-size: 18px">
+            Thông tin chi tiết khách hàng
+          </h4>
           <button type="button" class="close" data-dismiss="modal">
             &times;
           </button>
@@ -118,23 +120,23 @@ export default {
               v-if="isActive"
               id="customer-work"
               class="collapse border-all my-2"
-              >
-              <div class="container p-3" style="min-height: 100px;">
+            >
+              <div class="container p-3" style="min-height: 100px">
                 <div class="row">
                   <div class="col-md-6">
                     <div class="mb-3">
                       <p class="mb-0">
                         <span class="font-weight-bold"
-                            >Công việc hiện tại: </span
-                          >{{ item.current_workplace }}
+                          >Công việc hiện tại: </span
+                        >{{ item.current_workplace }}
                       </p>
                       <p class="mb-0">
                         <span class="font-weight-bold">Vị trí hiện tại: </span
-                          >{{ item.current_position }}
+                        >{{ item.current_position }}
                       </p>
                       <p class="mb-0">
                         <span class="font-weight-bold">Công ty: </span
-                          >{{ item.Company_KH.name }}
+                        >{{ item.Company_KH.name }}
                       </p>
                     </div>
                   </div>
@@ -142,12 +144,11 @@ export default {
                     <div class="mb-3">
                       <p class="mb-0">
                         <span class="font-weight-bold">Nhiệm kỳ: </span
-                          >{{ item.work_temp }}
+                        >{{ item.work_temp }}
                       </p>
                       <p class="mb-0">
-                        <span class="font-weight-bold"
-                            >Lịch sử làm việc: </span
-                          >{{ item.work_history }}
+                        <span class="font-weight-bold">Lịch sử làm việc: </span
+                        >{{ item.work_history }}
                       </p>
                     </div>
                   </div>
@@ -209,8 +210,13 @@ export default {
             <div v-if="isActive" id="event" class="collapse">
               <Table
                 :items="Events"
-                :fields="['Tên sự kiện', 'Thời gian diển ra', 'Nội dung']"
-                :labels="['name', 'time_duration', 'content']"
+                :fields="[
+                  'Tên sự kiện',
+                  'Thời gian diển ra',
+                  'Địa điểm',
+                  'Nội dung',
+                ]"
+                :labels="['name', 'time_duration', 'place', 'content']"
                 :borderTableAll="true"
                 :showActionList="[false, false, false]"
                 :activeAction="false"
