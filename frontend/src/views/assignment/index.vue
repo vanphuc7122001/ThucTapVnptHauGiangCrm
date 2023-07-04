@@ -77,8 +77,8 @@ export default {
     RenewTask,
   },
   setup(ctx) {
-    const res = isSetAssignement()
-    console.log('Giao việc', res);
+    const res = isSetAssignement();
+    console.log("Giao việc", res);
     const data = reactive({
       employeeList: [],
       items: [
@@ -331,8 +331,8 @@ export default {
           return (
             value.cycleId == entryValueCycle.value &&
             value.Status_Task._id == entryValueStatusTask.value &&
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value &&
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value) &&
             value.Evaluate._id == entryValueEval.value
           );
         });
@@ -345,8 +345,8 @@ export default {
           return (
             value.cycleId == entryValueCycle.value &&
             value.Status_Task._id == entryValueStatusTask.value &&
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value)
           );
         });
       } else if (
@@ -357,8 +357,8 @@ export default {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value &&
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value) &&
             value.Evaluate._id == entryValueEval.value
           );
         });
@@ -388,10 +388,7 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (
-        entryValueEval.value != "" &&
-        entryValueStatusTask.value != ""
-      ) {
+      } else if (entryValueEval.value != "" && entryValueStatusTask.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -415,10 +412,7 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (
-        entryValueStatusTask.value != "" &&
-        startdateValue.value != ""
-      ) {
+      } else if (entryValueStatusTask.value != "" && startdateValue.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -430,8 +424,8 @@ export default {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value)
           );
         });
       } else if (entryValueStatusTask.value != "" && enddateValue.value != "") {
@@ -466,8 +460,7 @@ export default {
       } else if (enddateValue.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
-            value.cycleId == entryValueCycle.value &&
-            value.end_date == enddateValue.value
+            value.cycleId == entryValueCycle.value && value.end_date == enddateValue.value
           );
         });
       } else {
@@ -516,8 +509,8 @@ export default {
           return (
             value.cycleId == entryValueCycle.value &&
             value.Status_Task._id == entryValueStatusTask.value &&
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value &&
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value) &&
             value.Evaluate._id == entryValueEval.value
           );
         });
@@ -531,8 +524,8 @@ export default {
           return (
             value.cycleId == entryValueCycle.value &&
             value.Status_Task._id == entryValueStatusTask.value &&
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value)
           );
         });
       } else if (
@@ -570,8 +563,8 @@ export default {
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value &&
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value) &&
             value.Evaluate._id == entryValueEval.value
           );
         });
@@ -579,8 +572,8 @@ export default {
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value)
           );
         });
       } else if (entryValueCycle.value != "" && entryValueEval.value != "") {
@@ -700,8 +693,8 @@ export default {
           return (
             value.cycleId == entryValueCycle.value &&
             value.Status_Task._id == entryValueStatusTask.value &&
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value &&
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value) &&
             value.Evaluate._id == entryValueEval.value
           );
         });
@@ -714,8 +707,8 @@ export default {
           return (
             value.cycleId == entryValueCycle.value &&
             value.Status_Task._id == entryValueStatusTask.value &&
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value)
           );
         });
       } else if (
@@ -726,8 +719,8 @@ export default {
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value &&
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value) &&
             value.Evaluate._id == entryValueEval.value
           );
         });
@@ -752,15 +745,12 @@ export default {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value &&
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value) &&
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (
-        entryValueCycle.value != "" &&
-        entryValueStatusTask.value != ""
-      ) {
+      } else if (entryValueCycle.value != "" && entryValueStatusTask.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -776,10 +766,7 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (
-        entryValueStatusTask.value != "" &&
-        entryValueEval.value != ""
-      ) {
+      } else if (entryValueStatusTask.value != "" && entryValueEval.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
@@ -790,8 +777,8 @@ export default {
       } else if (enddateValue.value != "" && entryValueEval.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value &&
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value) &&
             value.Evaluate._id == entryValueEval.value
           );
         });
@@ -799,16 +786,16 @@ export default {
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value)
           );
         });
       } else if (entryValueCycle.value != "" && enddateValue.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value)
           );
         });
       } else if (entryValueCycle.value != "") {
@@ -826,10 +813,16 @@ export default {
           );
         });
       } else if (enddateValue.value != "") {
+        console.log("1", new Date(value.start_date));
+        console.log("2", new Date(startdateValue.value));
+
+        console.log("3", new Date(value.end_date));
+        console.log("4", new Date(enddateValue.value));
+
         data.items = data.items.filter((value, index) => {
           return (
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value)
           );
         });
       } else if (entryValueEval.value != "") {
@@ -885,8 +878,8 @@ export default {
           return (
             value.cycleId == entryValueCycle.value &&
             value.Status_Task._id == entryValueStatusTask.value &&
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value &&
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value) &&
             value.Evaluate._id == entryValueEval.value
           );
         });
@@ -899,8 +892,8 @@ export default {
           return (
             value.cycleId == entryValueCycle.value &&
             value.Status_Task._id == entryValueStatusTask.value &&
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value)
           );
         });
       } else if (
@@ -911,8 +904,8 @@ export default {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value &&
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value) &&
             value.Evaluate._id == entryValueEval.value
           );
         });
@@ -937,15 +930,12 @@ export default {
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value &&
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value) &&
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (
-        entryValueCycle.value != "" &&
-        entryValueStatusTask.value != ""
-      ) {
+      } else if (entryValueCycle.value != "" && entryValueStatusTask.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -953,23 +943,20 @@ export default {
             value.end_date == enddateValue.value
           );
         });
-      } else if (
-        entryValueStatusTask.value != "" &&
-        startdateValue.value != ""
-      ) {
+      } else if (entryValueStatusTask.value != "" && startdateValue.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value)
           );
         });
       } else if (entryValueCycle.value != "" && startdateValue.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value)
           );
         });
       } else if (entryValueCycle.value != "" && entryValueEval.value != "") {
@@ -983,15 +970,12 @@ export default {
       } else if (startdateValue.value != "" && entryValueEval.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value &&
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value) &&
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (
-        entryValueStatusTask.value != "" &&
-        entryValueEval.value != ""
-      ) {
+      } else if (entryValueStatusTask.value != "" && entryValueEval.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
@@ -1002,8 +986,7 @@ export default {
       } else if (entryValueCycle.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
-            value.cycleId == entryValueCycle.value &&
-            value.end_date == enddateValue.value
+            value.cycleId == entryValueCycle.value && value.end_date == enddateValue.value
           );
         });
       } else if (entryValueStatusTask.value != "") {
@@ -1016,8 +999,8 @@ export default {
       } else if (startdateValue.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value)
           );
         });
       } else if (entryValueEval.value != "") {
@@ -1072,8 +1055,8 @@ export default {
           return (
             value.cycleId == entryValueCycle.value &&
             value.Status_Task._id == entryValueStatusTask.value &&
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value &&
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value) &&
             value.Evaluate._id == entryValueEval.value
           );
         });
@@ -1086,8 +1069,8 @@ export default {
           return (
             value.Evaluate._id == entryValueEval.value &&
             value.Status_Task._id == entryValueStatusTask.value &&
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value)
           );
         });
       } else if (
@@ -1111,8 +1094,8 @@ export default {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value &&
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value) &&
             value.Evaluate._id == entryValueEval.value
           );
         });
@@ -1129,10 +1112,7 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (
-        entryValueCycle.value != "" &&
-        entryValueStatusTask.value != ""
-      ) {
+      } else if (entryValueCycle.value != "" && entryValueStatusTask.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -1140,10 +1120,7 @@ export default {
             value.Evaluate._id == entryValueEval.value
           );
         });
-      } else if (
-        entryValueStatusTask.value != "" &&
-        startdateValue.value != ""
-      ) {
+      } else if (entryValueStatusTask.value != "" && startdateValue.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
@@ -1170,8 +1147,8 @@ export default {
       } else if (startdateValue.value != "" && enddateValue.value != "") {
         data.items = data.items.filter((value, index) => {
           return (
-            value.start_date == startdateValue.value &&
-            value.end_date == enddateValue.value &&
+            new Date(value.start_date) >= new Date(startdateValue.value) &&
+            new Date(value.start_date) <= new Date(enddateValue.value) &&
             value.Evaluate._id == entryValueEval.value
           );
         });
@@ -1267,9 +1244,7 @@ export default {
     });
     const filter = computed(() => {
       return data.items.filter((value, index) => {
-        return toString.value[index].includes(
-          data.searchText.toLocaleLowerCase()
-        );
+        return toString.value[index].includes(data.searchText.toLocaleLowerCase());
       });
     });
     const filtered = computed(() => {
@@ -1323,10 +1298,7 @@ export default {
         }
       }
       if (data.showFeedback == false) {
-        alert_warning(
-          `Thêm đánh giá`,
-          `Vui lòng chọn phân công để thêm đánh giá.`
-        );
+        alert_warning(`Thêm đánh giá`, `Vui lòng chọn phân công để thêm đánh giá.`);
       }
     };
     const showTask_Employee = () => {
@@ -1427,10 +1399,7 @@ export default {
           dataTaskEm.EmployeeId = value.EmployeesList[i].EmployeeId;
           await http_create(Employees_Task, dataTaskEm);
           /////////////////////////////////
-          const Employ = await http_getOne(
-            Employee,
-            value.EmployeesList[i].EmployeeId
-          );
+          const Employ = await http_getOne(Employee, value.EmployeesList[i].EmployeeId);
           const token = sessionStorage.getItem("token");
           if (token) {
             const _idEmployee = sessionStorage.getItem("employeeId");
@@ -1456,7 +1425,7 @@ export default {
             notiAssignment.recipient = Employ.name;
             notiAssignment.idRecipient = dataTaskEm.EmployeeId;
             // const result1 = await http_create(Notification, notiAssignment);
-            socket.emit("reAssign",notiAssignment);
+            socket.emit("reAssign", notiAssignment);
             socket.emit("assignmentTask");
           }
           //////////////////////////////
@@ -1469,10 +1438,7 @@ export default {
         );
         refresh();
       } else if (renewTask.error) {
-        alert_error(
-          `Tạo mới phân công theo chu kỳ chăm sóc`,
-          `${renewTask.msg}`
-        );
+        alert_error(`Tạo mới phân công theo chu kỳ chăm sóc`, `${renewTask.msg}`);
       }
       (data.renewValue = {
         _id: "",
@@ -1539,9 +1505,7 @@ export default {
       console.log(id);
       data.viewValue = await http_getOne(Task, id);
 
-      data.viewValue.Customer.birthday = formatDate(
-        data.viewValue.Customer.birthday
-      );
+      data.viewValue.Customer.birthday = formatDate(data.viewValue.Customer.birthday);
       data.viewValue.start_date = formatDate(data.viewValue.start_date);
       data.viewValue.end_date = formatDate(data.viewValue.end_date);
       data.viewValue.Appointments.date_time = formatDateTime(
@@ -1654,10 +1618,7 @@ export default {
         }
         contentAlert += `</tbody>
       </table>`;
-        const isConfirmed = await alert_delete_wide(
-          `Xoá nhiều phân công`,
-          contentAlert
-        );
+        const isConfirmed = await alert_delete_wide(`Xoá nhiều phân công`, contentAlert);
         if (isConfirmed) {
           let checkDeleteAll = false;
           for (let valueDelete of arrayCheck.data) {
@@ -1721,14 +1682,12 @@ export default {
         value.end_date_format = formatDate(value.end_date);
         value.start_date_format = formatDate(value.start_date);
       }
-      status_tasks.status_task = status_tasks.status_task.map(
-        (value, index) => {
-          return {
-            ...value,
-            value: value._id,
-          };
-        }
-      );
+      status_tasks.status_task = status_tasks.status_task.map((value, index) => {
+        return {
+          ...value,
+          value: value._id,
+        };
+      });
       cycles.cycle = cycles.cycle.map((value, index) => {
         return {
           ...value,
@@ -1884,13 +1843,11 @@ export default {
             :options="status_tasks.status_task"
             @update:entryValue="
               (value, value1) => (
-                updateEntryValueStatusTask(value),
-                (entryNameStatusTask = value1.name)
+                updateEntryValueStatusTask(value), (entryNameStatusTask = value1.name)
               )
             "
             @refresh="
-              (entryNameStatusTask = 'Trạng thái'),
-                updateEntryValueStatusTask('')
+              (entryNameStatusTask = 'Trạng thái'), updateEntryValueStatusTask('')
             "
             style="height: 35px"
           />

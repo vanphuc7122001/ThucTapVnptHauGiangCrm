@@ -15,7 +15,7 @@ const uploadImages = (type) => {
   const upload = multer({
     storage: storage,
     fileFilter: function (req, file, cb) {
-      const extensionsImagesList = [".png", ".jpg", ".jpeg"];
+      const extensionsImagesList = [".png", ".jpg", "jpeg"];
       const extensions = file.originalname.slice(-4);
       const check = extensionsImagesList.includes(extensions);
       if (check) {

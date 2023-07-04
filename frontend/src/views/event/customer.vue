@@ -169,9 +169,7 @@ export default {
 
       if (entryValueCustomerType.value.length > 0) {
         data.items = data.items.filter((cusWork) => {
-          return (
-            cusWork.Customer.Customer_Type._id == entryValueCustomerType.value
-          );
+          return cusWork.Customer.Customer_Type._id == entryValueCustomerType.value;
         });
       }
 
@@ -219,17 +217,11 @@ export default {
 
     onBeforeMount(async () => {
       reFresh();
-      console.log(
-        "props.customer_eventListObject",
-        props.customer_eventListObject
-      );
+      console.log("props.customer_eventListObject", props.customer_eventListObject);
       //   data.customer_eventList = await http_getAll(Customer_Event);
     });
     onMounted(() => {
-      console.log(
-        "props.customer_eventListObject",
-        props.customer_eventListObject
-      );
+      console.log("props.customer_eventListObject", props.customer_eventListObject);
     });
     // computed
     const toString = computed(() => {
@@ -248,11 +240,7 @@ export default {
         });
       } else {
         return data.items.map((value, index) => {
-          return [
-            value.Customer.name,
-            value.Customer.email,
-            value.Customer.phone,
-          ]
+          return [value.Customer.name, value.Customer.email, value.Customer.phone]
             .join("")
             .toLocaleLowerCase();
         });
@@ -260,9 +248,7 @@ export default {
     });
     const filter = computed(() => {
       return data.items.filter((value, index) => {
-        return toString.value[index].includes(
-          data.searchText.toLocaleLowerCase()
-        );
+        return toString.value[index].includes(data.searchText.toLocaleLowerCase());
       });
     });
     const filtered = computed(() => {
@@ -369,8 +355,7 @@ export default {
           cycleName: value.Cycle.name, // join bản sao
           statusName: value.Status_Task.name,
           EvaluateStar: value.Evaluate.star,
-          comment:
-            value.Comment == null ? "Chưa cập nhật" : value.Comment.content,
+          comment: value.Comment == null ? "Chưa cập nhật" : value.Comment.content,
         };
       });
     };
@@ -470,10 +455,7 @@ export default {
         if (isConfirmed) {
           let checkDeleteAll = false;
           for (let valueDelete of deleteArray) {
-            const rsCustomer = await http_deleteOne(
-              Customer,
-              valueDelete.Customer._id
-            );
+            const rsCustomer = await http_deleteOne(Customer, valueDelete.Customer._id);
             if (rsCustomer.error) {
               alert_error("Lổi ", rsCustomer.msg);
               checkDeleteAll = false;
@@ -493,8 +475,7 @@ export default {
 
     const isStringFound = (_id) => {
       return data.customer_eventList.some(
-        (item) =>
-          item.CustomerId.toString() == _id && item.EventId == props.item._id
+        (item) => item.CustomerId.toString() == _id && item.EventId == props.item._id
       );
     };
 
@@ -519,10 +500,7 @@ export default {
       () => props.customer_eventListObject, // Theo dõi props cần load dữ liệu
       (newValue, oldValue) => {
         // Hành động sau khi props đã load dữ liệu
-        console.log(
-          "props.customer_eventListObject",
-          props.customer_eventListObject
-        );
+        console.log("props.customer_eventListObject", props.customer_eventListObject);
         data.customer_eventList = props.customer_eventListObject;
       },
       { immediate: true } // Bật cờ immediate để hành động được gọi ngay từ ban đầu
@@ -577,8 +555,7 @@ export default {
             :options="data.customerType"
             @update:entryValue="
               (value, value1) => (
-                updateEntryValueCustomerType(value),
-                (entryNameCustomerType = value1.name)
+                updateEntryValueCustomerType(value), (entryNameCustomerType = value1.name)
               )
             "
             @refresh="
@@ -596,8 +573,7 @@ export default {
             :options="data.customerStatus"
             @update:entryValue="
               (value, value1) => (
-                updateEntryValueStatusTask(value),
-                (entryNameStatusTask = value1.name)
+                updateEntryValueStatusTask(value), (entryNameStatusTask = value1.name)
               )
             "
             @refresh="
@@ -674,14 +650,7 @@ export default {
     <!-- Table -->
     <Table
       :items="setPages"
-      :fields="[
-        'Tên',
-        'Email',
-        'Sdt',
-        'Công việc',
-        'Công ty',
-        'Loại khách hàng',
-      ]"
+      :fields="['Tên', 'Email', 'Sdt', 'Công việc', 'Công ty', 'Loại khách hàng']"
       :selectAll="data.selectAll"
       :startRow="data.startRow"
       :activeAction="true"

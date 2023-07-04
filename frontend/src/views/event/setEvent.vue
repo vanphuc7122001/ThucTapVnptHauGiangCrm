@@ -150,18 +150,13 @@ export default {
     // };
     const isStringFound = (_id) => {
       return data.customer_eventList.some((item) => {
-        if (
-          item.CustomerId.toString() == _id &&
-          item.EventId == props.item._id
-        ) {
+        if (item.CustomerId.toString() == _id && item.EventId == props.item._id) {
           console.log("item", item);
           data.customerId = item.CustomerId;
           data.eventId = item.EventId;
           data.customer_eventId = data.customerId + data.eventId;
         }
-        return (
-          item.CustomerId.toString() == _id && item.EventId == props.item._id
-        );
+        return item.CustomerId.toString() == _id && item.EventId == props.item._id;
       });
     };
     const refresh = async () => {
@@ -190,17 +185,13 @@ export default {
           <h4 class="modal-title" style="font-size: 18px">
             Thêm khách hàng áp dụng sự kiện
           </h4>
-          <button type="button" class="close" data-dismiss="modal">
-            &times;
-          </button>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         <!-- Modal body -->
         <div class="modal-body">
           <form action="" class="was-validated">
             <div class="form-group">
-              <label for="name"
-                >Tên sự kiện(<span style="color: red">*</span>):</label
-              >
+              <label for="name">Tên sự kiện(<span style="color: red">*</span>):</label>
               <input
                 type="text"
                 class="form-control"
@@ -222,7 +213,7 @@ export default {
                 v-model="item.content"
               ></textarea>
             </div>
-            <div class="form-group">
+            <!-- <div class="form-group">
               <label for="content"
                 >Thời gian diễn ra sự kiện(<span style="color: red">*</span
                 >):</label
@@ -235,6 +226,50 @@ export default {
                 v-model="item.time_duration"
                 disabled
               />
+            </div> -->
+            <div class="form-group">
+              <!-- <label for="content"
+                >Thời gian diễn ra sự kiện(<span style="color: red">*</span
+                >):</label
+              > -->
+              <div class="d-flex">
+                <div class="form-group mr-3 w-100">
+                  <label for="content"
+                    >Thời gian bắt đầu(<span style="color: red">*</span>):</label
+                  >
+                  <input
+                    type="datetime-local"
+                    class="form-control w-100"
+                    id="start_time"
+                    name="start_time"
+                    v-model="item.start_time"
+                    disabled
+                  />
+                </div>
+                <div class="form-group w-100">
+                  <label for="content"
+                    >Thời gian kết thúc(<span style="color: red">*</span>):</label
+                  >
+                  <input
+                    type="datetime-local"
+                    class="form-control mr-3 w-100"
+                    id="end_time"
+                    name="end_time"
+                    v-model="item.end_time"
+                    disabled
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="content">Địa điểm:</label>
+              <textarea
+                id="content"
+                class="form-control"
+                rows="2"
+                v-model="item.place"
+                disabled
+              ></textarea>
             </div>
             <div class="form-group">
               <label for="content"

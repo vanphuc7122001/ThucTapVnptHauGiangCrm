@@ -53,9 +53,7 @@ export default {
               />
             </div>
             <div class="form-group">
-              <label for="content"
-                >Nội dung(<span style="color: red">*</span>):</label
-              >
+              <label for="content">Nội dung(<span style="color: red">*</span>):</label>
               <textarea
                 id="content"
                 required
@@ -72,8 +70,7 @@ export default {
               <div class="d-flex">
                 <div class="form-group mr-3 w-100">
                   <label for="content"
-                    >Thời gian bắt đầu(<span style="color: red">*</span
-                    >):</label
+                    >Thời gian bắt đầu(<span style="color: red">*</span>):</label
                   >
                   <input
                     type="datetime-local"
@@ -86,8 +83,7 @@ export default {
                 </div>
                 <div class="form-group w-100">
                   <label for="content"
-                    >Thời gian kết thúc(<span style="color: red">*</span
-                    >):</label
+                    >Thời gian kết thúc(<span style="color: red">*</span>):</label
                   >
                   <input
                     type="datetime-local"
@@ -101,13 +97,11 @@ export default {
               </div>
             </div>
             <div class="form-group">
-              <label for="content"
-                >Địa điểm:</label
-              >
+              <label for="content">Địa điểm:</label>
               <textarea
                 id="content"
                 class="form-control"
-                rows="5"
+                rows="2"
                 v-model="item.place"
               ></textarea>
             </div>
