@@ -89,17 +89,19 @@
 
 /**
  * !!!!! Phân công (ngày bắt đầu, ngày kết thúc, chu kỳ chắm sóc, nội dung chăm sóc, chú thích)
- * Phân công:
-   Ngày bắt đầu: 2023-07-10
-   Ngày kết thúc: 2023-07-15
-   Chu kỳ chăm sóc: Hàng tuần
+ * Phân công: 
+ * ? trường hợp thông báo khách hàng gần đến chu kỳ chăm sóc
+   Ngày bắt đầu: 2023-06-30
+   Ngày kết thúc: 2023-07-04
+   Chu kỳ chăm sóc: 1 tuần
    Nội dung chăm sóc: Xử lý yêu cầu bảo hành sản phẩm
    Chú thích: Ghi chú các thông tin liên quan đến yêu cầu bảo hành
 
+   * ? trường hợp thông báo khách hàng đã lâu chưa chăm sóc
    Phân công:
-   Ngày bắt đầu: 2023-07-20
-   Ngày kết thúc: 2023-07-25
-   Chu kỳ chăm sóc: Hàng tháng
+   Ngày bắt đầu: 2023-05-05
+   Ngày kết thúc: 2023-06-06
+   Chu kỳ chăm sóc: 2 tuần
    Nội dung chăm sóc: Tư vấn khách hàng về việc nâng cấp gói dịch vụ
    Chú thích: Ghi chú các thông tin liên quan đến nhu cầu và lợi ích của khách hàng
 
@@ -120,7 +122,7 @@
    Phân công:
    Ngày bắt đầu: 2023-09-01
    Ngày kết thúc: 2023-09-30
-   Chu kỳ chăm sóc: Hàng quý
+   Chu kỳ chăm sóc: 1 quý
    Nội dung chăm sóc: Tư vấn khách hàng về cách tiết kiệm chi phí sử dụng dịch vụ
    Chú thích: Ghi chú các thông tin liên quan đến nhu cầu và lợi ích của khách hàng
 
@@ -169,4 +171,9 @@
    Nội dung lịch hẹn: Xem xét yêu cầu bảo hành từ khách hàng
    Địa điểm cuộc hẹn: Trung tâm dịch vụ
    Chú thích: Ghi chú các thông tin liên quan đến yêu cầu và tiến trình giải quyết
+ */
+
+/**
+ * !!!!!!!  Thông báo khách hàng gần tới chu kỳ chăm sóc
+ *
  */

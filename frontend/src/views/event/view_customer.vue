@@ -31,8 +31,11 @@ import {
   Customer_Types,
   Status_Task,
   Customer_Event,
+  alert_mail
 } from "../common/import";
 
+
+import Swal from 'sweetalert2'
 export default {
   components: {
     Table,
@@ -68,6 +71,7 @@ export default {
   setup(props, ctx) {
     const data = reactive({
       items: [],
+      activeShowMail: false,
       entryValue: 5,
       numberOfPages: 1,
       totalRow: 0,
@@ -156,8 +160,8 @@ export default {
       data.items = data.items.filter((value, index) => {
         return (
           props.customer_event.some((value1, index1) => {
-            console.log("value1._id", value1._id);
-            console.log("value.Customer._id", value.Customer._id);
+            // console.log("value1._id", value1._id);
+            // console.log("value.Customer._id", value.Customer._id);
             return value1._id.toString() == value.Customer._id;
           }) == true
         );
@@ -204,20 +208,20 @@ export default {
 
       //   setCheckbox
       for (let value of data.items) {
-        console.log("value.Customer._id", value.Customer._id);
-        console.log(
-          "isStringFound(value.Customer._id)",
-          isStringFound(value.Customer._id)
-        );
+        // console.log("value.Customer._id", value.Customer._id);
+        // console.log(
+        //   "isStringFound(value.Customer._id)",
+        //   isStringFound(value.Customer._id)
+        // );
         if (isStringFound(value.Customer._id)) {
-          console.log("ghgdhsjakdhsjakdhsj");
+          // console.log("ghgdhsjakdhsjakdhsj");
           value.checked = true;
         }
       }
     };
 
     const showAddHabit = () => {
-      console.log("ok");
+      // console.log("ok");
       data.customerValue = {};
       data.showAddHabit = false;
       for (let value of data.items) {
@@ -234,21 +238,21 @@ export default {
 
     onBeforeMount(async () => {
       reFresh();
-      console.log(
-        "props.customer_eventListObject",
-        props.customer_eventListObject
-      );
+      // console.log(
+      //   "props.customer_eventListObject",
+      //   props.customer_eventListObject
+      // );
       //   data.customer_eventList = await http_getAll(Customer_Event);
     });
     onMounted(() => {
-      console.log(
-        "props.customer_eventListObject",
-        props.customer_eventListObject
-      );
+      // console.log(
+      //   "props.customer_eventListObject",
+      //   props.customer_eventListObject
+      // );
     });
     // computed
     const toString = computed(() => {
-      console.log("Starting search");
+      // console.log("Starting search");
       if (data.choseSearch == "name") {
         return data.items.map((value, index) => {
           return [value.Customer.name].join("").toLocaleLowerCase();
@@ -310,10 +314,10 @@ export default {
     });
     // methods
     const update = (item) => {
-      console.log("updating", item);
+      // console.log("updating", item);
     };
     const deleteOne = (_id) => {
-      console.log("deleting", _id);
+      // console.log("deleting", _id);
     };
 
     // watch
@@ -329,7 +333,7 @@ export default {
 
       if (isConfirmed) {
         const rsCustomer = await http_deleteOne(Customer, customerId);
-        console.log(rsCustomer);
+        // console.log(rsCustomer);
         if (rsCustomer.error) {
           alert_error("Lổi ", rsCustomer.msg);
         } else {
@@ -375,7 +379,7 @@ export default {
       };
 
       data.viewCareCus = item.Customer.Tasks.map((value) => {
-        console.log("Value:", value);
+        // console.log("Value:", value);
         return {
           start_date: value.start_date,
           end_date: value.end_date,
@@ -393,7 +397,7 @@ export default {
     //   formatDateTime,
     // formatDate,
     const edit = (item, isCheck) => {
-      console.log(item.Customer);
+      // console.log(item.Customer);
       data.viewValue = {
         Customer: {
           _id: item.Customer._id,
@@ -420,8 +424,8 @@ export default {
       };
 
       data.activeEdit = isCheck;
-      console.log("Edit data", data.viewValue);
-      console.log("Check edit", data.activeEdit);
+      // console.log("Edit data", data.viewValue);
+      // console.log("Check edit", data.activeEdit);
     };
 
     const updateEntryValueCustomerType = (value) => {
@@ -433,7 +437,7 @@ export default {
     };
 
     const handleSelectAll = (value) => {
-      console.log("cccc", value);
+      // console.log("cccc", value);
       if (value == false) {
         for (let value1 of data.items) {
           value1.checked = true;
@@ -446,7 +450,7 @@ export default {
 
       for (let value of data.items) {
         props._customerList.push(value);
-        console.log(props._customerList);
+        // console.log(props._customerList);
       }
     };
 
@@ -467,7 +471,7 @@ export default {
       </thead> <tbody>`;
         console.log("deleteArray", deleteArray[0].Customer);
         for (let value of deleteArray) {
-          console.log(value.Customer);
+          // console.log(value.Customer);
           contentAlert += `<tr>
           <td>${value.Customer.name}</td>
           <td>${value.Customer.email}</td>
@@ -534,10 +538,10 @@ export default {
       () => props.customer_eventListObject, // Theo dõi props cần load dữ liệu
       (newValue, oldValue) => {
         // Hành động sau khi props đã load dữ liệu
-        console.log(
-          "props.customer_eventListObject",
-          props.customer_eventListObject
-        );
+        // console.log(
+        //   "props.customer_eventListObject",
+        //   props.customer_eventListObject
+        // );
         data.customer_eventList = props.customer_eventListObject;
       },
       { immediate: true } // Bật cờ immediate để hành động được gọi ngay từ ban đầu
@@ -546,7 +550,7 @@ export default {
     watch(
       () => props.refreshTable,
       () => {
-        console.log("chay chayyayayaya");
+        // console.log("chay chayyayayaya");
         reFresh();
       }
     );
@@ -555,6 +559,7 @@ export default {
 
     const handleClickOutside = (event) => {
       if (!selectRef.value.contains(event.target)) {
+        // data.activeShowMail = false
         reFresh();
       }
     };
@@ -566,6 +571,16 @@ export default {
     onUnmounted(() => {
       document.removeEventListener("click", handleClickOutside);
     });
+
+    const handleSendMail = () => {
+      const newArray = []
+      data.items.map((value, index) => {
+          if( value.checked == true){
+            newArray.push(value.Customer.email)
+          }
+      });
+      alert_mail(newArray)
+    };
 
     return {
       update,
@@ -589,6 +604,7 @@ export default {
       reFresh,
       isStringFound,
       selectRef,
+      handleSendMail,
     };
   },
 };
@@ -704,6 +720,15 @@ export default {
           ]"
         />
       </div>
+      <button
+        type="button"
+        class="btn btn-warning text-white"
+        data-toggle="modal"
+        data-target="#modal-mail"
+        @click="handleSendMail"
+      >
+        Mail
+      </button>
     </div>
     <!-- Table -->
     <Table

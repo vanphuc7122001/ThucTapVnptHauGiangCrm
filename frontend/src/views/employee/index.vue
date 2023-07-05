@@ -201,12 +201,12 @@ export default {
       showActiveAdd: false,
       resetDataAdd: false,
     });
+
     const view = async (value) => {
-      console.log("Data view:", value);
       // FIND ONE employee
       data.viewValue = await employeeService.get(value);
-
-      for (let i = 0; i <= data.viewValue.Tasks.length; i++) {
+      data.viewValue.birthday = formatDate(data.viewValue.birthday);
+      for (let i = 0; i < data.viewValue.Tasks.length; i++) {
         data.viewValue.Tasks[i].start_date = formatDate(
           data.viewValue.Tasks[i].start_date
         );
@@ -214,7 +214,7 @@ export default {
           data.viewValue.Tasks[i].end_date
         );
       }
-      data.viewValue.birthday = formatDate(data.viewValue.birthday);
+
       // console.log("sinh nhật:", data.viewValue.birthday);
     };
     // computed

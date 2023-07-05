@@ -9,7 +9,11 @@ import Select_Advanced from "../../components/form/select_advanced.vue";
 import form_wizard_customer from "../../components/form/form_wizard_customer.vue";
 import { reactive, computed, watch, ref, onBeforeMount, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { formatDateTime, formatDate, formatDateTime_2 } from "../../assets/js/common.js";
+import {
+  formatDateTime,
+  formatDate,
+  formatDateTime_2,
+} from "../../assets/js/common.js";
 // import { toString, _filter } from "../../assets/js/pagination.js";
 
 // services
@@ -55,6 +59,7 @@ import {
   alert_info,
   alert_delete_wide,
   alert_input_text,
+  alert_mail,
 } from "../../assets/js/common.alert";
 
 export {
@@ -120,4 +125,5 @@ export {
   alert_info,
   alert_delete_wide,
   alert_input_text,
+  alert_mail,
 };

@@ -90,8 +90,9 @@ io.on("connection", (socket) => {
             if (
               value.title == "Sinh nhật" &&
               value.content ==
-              `Ngày mai ${customerBirthday.date}/${customerBirthday.month + 1
-              } là sinh nhật thứ ${age} của khách hàng "${customer.name}"`
+                `Ngày mai ${customerBirthday.date}/${
+                  customerBirthday.month + 1
+                } là sinh nhật thứ ${age} của khách hàng "${customer.name}"`
             ) {
               count++;
             }
@@ -101,8 +102,9 @@ io.on("connection", (socket) => {
           } else {
             await Notification.create({
               title: "Sinh nhật",
-              content: `Ngày mai ${customerBirthday.date}/${customerBirthday.month + 1
-                } là sinh nhật thứ ${age} của khách hàng "${customer.name}"`,
+              content: `Ngày mai ${customerBirthday.date}/${
+                customerBirthday.month + 1
+              } là sinh nhật thứ ${age} của khách hàng "${customer.name}"`,
               recipient: nameEm,
               sender: "",
               isRead: false,
@@ -114,7 +116,11 @@ io.on("connection", (socket) => {
             if (events.length > 0) {
               let temp = 0;
               for (let value of events) {
+                value.time_duration = value.time_duration.split(" to ")[0];
+                console.log("Value time_duration: ", value.time_duration);
+
                 var time_duration = new Date(value.time_duration);
+
                 var ngay = time_duration.getDate();
                 var thang = time_duration.getMonth() + 1; // Tháng bắt đầu từ 0, nên cộng thêm 1
                 var nam = time_duration.getFullYear();
@@ -125,6 +131,7 @@ io.on("connection", (socket) => {
                 var thang = ngayHienTai.getMonth() + 1; // Tháng bắt đầu từ 0, nên cộng thêm 1
                 var nam = ngayHienTai.getFullYear();
                 var current = ngay + "/" + thang + "/" + nam;
+                console.log("Time eventttttttttttttttttt", timeEvent);
                 if (value.name == "sinh nhật" && timeEvent == current) {
                   temp++;
                   ////// có sự kiện r thì thêm khách hàng dô
@@ -167,7 +174,10 @@ io.on("connection", (socket) => {
                   -2
                 );
 
-                const datetimeLocalFormat = `${currentYear}-${currentMonth}-${currentDay}T${currentHour}:${currentMinute}` + ' to ' + `${currentYear}-${currentMonth}-${currentDay}T23:59`;
+                const datetimeLocalFormat =
+                  `${currentYear}-${currentMonth}-${currentDay}T${currentHour}:${currentMinute}` +
+                  " to " +
+                  `${currentYear}-${currentMonth}-${currentDay}T23:59`;
                 const docevent = await Event.create({
                   name: "sinh nhật",
                   content: "sinh nhật",
@@ -207,11 +217,12 @@ io.on("connection", (socket) => {
               );
               const currentDay = ("0" + currentDate.getDate()).slice(-2);
               const currentHour = ("0" + currentDate.getHours()).slice(-2);
-              const currentMinute = ("0" + currentDate.getMinutes()).slice(
-                -2
-              );
+              const currentMinute = ("0" + currentDate.getMinutes()).slice(-2);
 
-              const datetimeLocalFormat = `${currentYear}-${currentMonth}-${currentDay}T${currentHour}:${currentMinute}` + ' to ' + `${currentYear}-${currentMonth}-${currentDay}T23:59`;
+              const datetimeLocalFormat =
+                `${currentYear}-${currentMonth}-${currentDay}T${currentHour}:${currentMinute}` +
+                " to " +
+                `${currentYear}-${currentMonth}-${currentDay}T23:59`;
               // const currentDate = new Date();
               const formattedDateTime = currentDate.toISOString();
               const document = await Event.create({
@@ -267,8 +278,9 @@ io.on("connection", (socket) => {
         } else {
           await Notification.create({
             title: "Sinh nhật",
-            content: `Ngày mai ${customerBirthday.date}/${customerBirthday.month + 1
-              } là sinh nhật thứ ${age} của khách hàng "${customer.name}"`,
+            content: `Ngày mai ${customerBirthday.date}/${
+              customerBirthday.month + 1
+            } là sinh nhật thứ ${age} của khách hàng "${customer.name}"`,
             recipient: nameEm,
             sender: "",
             isRead: false,
@@ -279,6 +291,8 @@ io.on("connection", (socket) => {
           if (events.length > 0) {
             let temp = 0;
             for (let value of events) {
+              value.time_duration = value.time_duration.split(" to ")[0];
+              console.log("Value time_duration: ", value.time_duration);
               var time_duration = new Date(value.time_duration);
               var ngay = time_duration.getDate();
               var thang = time_duration.getMonth() + 1; // Tháng bắt đầu từ 0, nên cộng thêm 1
@@ -290,6 +304,7 @@ io.on("connection", (socket) => {
               var thang = ngayHienTai.getMonth() + 1; // Tháng bắt đầu từ 0, nên cộng thêm 1
               var nam = ngayHienTai.getFullYear();
               var current = ngay + "/" + thang + "/" + nam;
+              console.log("Time eventttttttttttttttttt", timeEvent);
               if (value.name == "sinh nhật" && timeEvent == current) {
                 temp++;
                 ////// có sự kiện r thì thêm khách hàng dô
@@ -324,16 +339,15 @@ io.on("connection", (socket) => {
             // const currentDate = new Date();
             const currentDate = new Date();
             const currentYear = currentDate.getFullYear();
-            const currentMonth = ("0" + (currentDate.getMonth() + 1)).slice(
-              -2
-            );
+            const currentMonth = ("0" + (currentDate.getMonth() + 1)).slice(-2);
             const currentDay = ("0" + currentDate.getDate()).slice(-2);
             const currentHour = ("0" + currentDate.getHours()).slice(-2);
-            const currentMinute = ("0" + currentDate.getMinutes()).slice(
-              -2
-            );
+            const currentMinute = ("0" + currentDate.getMinutes()).slice(-2);
 
-            const datetimeLocalFormat = `${currentYear}-${currentMonth}-${currentDay}T${currentHour}:${currentMinute}` + ' to ' + `${currentYear}-${currentMonth}-${currentDay}T23:59`;
+            const datetimeLocalFormat =
+              `${currentYear}-${currentMonth}-${currentDay}T${currentHour}:${currentMinute}` +
+              " to " +
+              `${currentYear}-${currentMonth}-${currentDay}T23:59`;
             const formattedDateTime = currentDate.toISOString();
             const document = await Event.create({
               name: "sinh nhật",
@@ -478,10 +492,13 @@ io.on("connection", (socket) => {
                   if (
                     item.title == "Phân công chưa được giao" &&
                     item.content ==
-                    `Ngày mai ${todayDate.date + 1}/${todayDate.month + 1
-                    } là chu kỳ chăm sóc "${value.Cycle.name
-                    }" của khách hàng "${value.Customer.name
-                    }" với nội dung chăm sóc: ${value.content}`
+                      `Ngày mai ${todayDate.date + 1}/${
+                        todayDate.month + 1
+                      } là chu kỳ chăm sóc "${
+                        value.Cycle.name
+                      }" của khách hàng "${
+                        value.Customer.name
+                      }" với nội dung chăm sóc: ${value.content}`
                   ) {
                     count++;
                   }
@@ -491,10 +508,13 @@ io.on("connection", (socket) => {
                 } else {
                   await Notification.create({
                     title: "Phân công chưa được giao",
-                    content: `Ngày mai ${todayDate.date + 1}/${todayDate.month + 1
-                      } là chu kỳ chăm sóc "${value.Cycle.name
-                      }" của khách hàng "${value.Customer.name
-                      }" với nội dung chăm sóc: ${value.content}`,
+                    content: `Ngày mai ${todayDate.date + 1}/${
+                      todayDate.month + 1
+                    } là chu kỳ chăm sóc "${
+                      value.Cycle.name
+                    }" của khách hàng "${
+                      value.Customer.name
+                    }" với nội dung chăm sóc: ${value.content}`,
                     recipient: "Lãnh đạo",
                     sender: "",
                     isRead: false,
@@ -505,9 +525,11 @@ io.on("connection", (socket) => {
               } else {
                 await Notification.create({
                   title: "Phân công chưa được giao",
-                  content: `Ngày mai ${todayDate.date + 1}/${todayDate.month + 1
-                    } là chu kỳ chăm sóc "${value.Cycle.name}" của khách hàng "${value.Customer.name
-                    }" với nội dung chăm sóc: ${value.content}`,
+                  content: `Ngày mai ${todayDate.date + 1}/${
+                    todayDate.month + 1
+                  } là chu kỳ chăm sóc "${value.Cycle.name}" của khách hàng "${
+                    value.Customer.name
+                  }" với nội dung chăm sóc: ${value.content}`,
                   recipient: "Lãnh đạo",
                   sender: "",
                   isRead: false,
@@ -532,10 +554,13 @@ io.on("connection", (socket) => {
                   if (
                     item.title == "Tới chu kỳ" &&
                     item.content ==
-                    `Ngày mai ${todayDate.date + 1}/${todayDate.month + 1
-                    } là chu kỳ chăm sóc "${value.Cycle.name
-                    }" của khách hàng "${value.Customer.name
-                    }" với nội dung chăm sóc: ${value.content}`
+                      `Ngày mai ${todayDate.date + 1}/${
+                        todayDate.month + 1
+                      } là chu kỳ chăm sóc "${
+                        value.Cycle.name
+                      }" của khách hàng "${
+                        value.Customer.name
+                      }" với nội dung chăm sóc: ${value.content}`
                   ) {
                     count++;
                   }
@@ -545,10 +570,13 @@ io.on("connection", (socket) => {
                 } else {
                   await Notification.create({
                     title: "Tới chu kỳ",
-                    content: `Ngày mai ${todayDate.date + 1}/${todayDate.month + 1
-                      } là chu kỳ chăm sóc "${value.Cycle.name
-                      }" của khách hàng "${value.Customer.name
-                      }" với nội dung chăm sóc: ${value.content}`,
+                    content: `Ngày mai ${todayDate.date + 1}/${
+                      todayDate.month + 1
+                    } là chu kỳ chăm sóc "${
+                      value.Cycle.name
+                    }" của khách hàng "${
+                      value.Customer.name
+                    }" với nội dung chăm sóc: ${value.content}`,
                     recipient: "Lãnh đạo",
                     sender: "",
                     isRead: false,
@@ -559,9 +587,11 @@ io.on("connection", (socket) => {
               } else {
                 await Notification.create({
                   title: "Tới chu kỳ",
-                  content: `Ngày mai ${todayDate.date + 1}/${todayDate.month + 1
-                    } là chu kỳ chăm sóc "${value.Cycle.name}" của khách hàng "${value.Customer.name
-                    }" với nội dung chăm sóc: ${value.content}`,
+                  content: `Ngày mai ${todayDate.date + 1}/${
+                    todayDate.month + 1
+                  } là chu kỳ chăm sóc "${value.Cycle.name}" của khách hàng "${
+                    value.Customer.name
+                  }" với nội dung chăm sóc: ${value.content}`,
                   recipient: "Lãnh đạo",
                   sender: "",
                   isRead: false,
@@ -639,7 +669,7 @@ io.on("connection", (socket) => {
               if (
                 item.title == "Cảnh báo" &&
                 item.content ==
-                `Khách hàng "${value.Customer.name}" đã lâu chưa được chăm sóc kể từ ngày ${formatted_end}`
+                  `Khách hàng "${value.Customer.name}" đã lâu chưa được chăm sóc kể từ ngày ${formatted_end}`
               ) {
                 count++;
               }

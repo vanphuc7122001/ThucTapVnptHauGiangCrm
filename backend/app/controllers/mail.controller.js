@@ -65,3 +65,39 @@ exports.sendEmailReport = async (req, res, next) => {
     return res.json({ error: true, msg: error.message });
   }
 };
+
+exports.sendEmailMutilFile = async (req, res, next) => {
+  const { mail, title, content } = req.body;
+  // console.log("mail", mail, typeof mail);
+  // console.log("title", title, typeof title);
+  // console.log("content", content, typeof content);
+  console.log("Req file", req.body);
+  try {
+    const attachments = req.files.map((file) => ({
+      filename: file.originalname,
+      path: path.join(__dirname, "../public/file/file_multiple", file.filename),
+    }));
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "maxvolum2012@gmail.com",
+        pass: "wisbbpolajrseqqd",
+      },
+    });
+
+    const mailOptions = {
+      from: "maxvolum2012@gmail.com",
+      to: mail,
+      subject: title,
+      html: content,
+      attachments: attachments,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    return res.send({ error: false, msg: "Thành công" });
+    // res.json({ msg: "Thành công" });
+  } catch (error) {
+    return res.json({ error: true, msg: error.message });
+  }
+};

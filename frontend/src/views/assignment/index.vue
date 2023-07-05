@@ -1508,9 +1508,12 @@ export default {
       data.viewValue.Customer.birthday = formatDate(data.viewValue.Customer.birthday);
       data.viewValue.start_date = formatDate(data.viewValue.start_date);
       data.viewValue.end_date = formatDate(data.viewValue.end_date);
-      data.viewValue.Appointments.date_time = formatDateTime(
-        data.viewValue.Appointments.date_time
-      );
+      // data.viewValue.Appointments.date_time = formatDateTime(
+      //   data.viewValue.Appointments.date_time
+      // );
+      for (const value of data.viewValue.Appointments) {
+        value.date_time_format = formatDateTime(value.date_time.toUpperCase());
+      }
       console.log(data.viewValue);
       // router.push({ name: "Assignment.view", params: { id: _id } });
     };

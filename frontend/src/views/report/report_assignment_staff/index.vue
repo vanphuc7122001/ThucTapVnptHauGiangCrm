@@ -243,15 +243,15 @@
         <br />
         <span>Bộ phận công tác: ............</span>
       </div>
+      <!-- 'Tên nhân viên',
+                'Email nhân viên',
+                'Sdt nhân viên', -->
       <table class="table table-bordered mt-4">
         <thead>
           <tr>
             <th
               v-for="(value, index) in [
                 'Stt',
-                'Tên nhân viên',
-                'Email nhân viên',
-                'Sdt nhân viên',
                 'Tên khách hàng',
                 'Sdt khách hàng',
                 'Email khách hàng',
@@ -267,21 +267,21 @@
         <tbody>
           <tr v-for="(item, index) in data.employee" :key="index">
             <td>{{ index + 1 }}</td>
-            <td>
+            <!-- <td>
               <span v-for="(value, index) in item.employee" :key="index">
-                {{ value.name }} <br>
+                {{ value.name }} <br />
               </span>
             </td>
             <td>
               <span v-for="(value, index) in item.employee" :key="index">
-                {{ value.email }} <br>
+                {{ value.email }} <br />
               </span>
             </td>
             <td>
               <span v-for="(value, index) in item.employee" :key="index">
-                {{ value.phone }} <br>
+                {{ value.phone }} <br />
               </span>
-            </td>
+            </td> -->
             <td>{{ item.nameCustomer }}</td>
             <td>{{ item.phoneCustomer }}</td>
             <td>{{ item.emailCustomer }}</td>
@@ -291,7 +291,10 @@
         </tbody>
       </table>
 
-      <div class="d-flex justify-content-around mt-4">
+      <div
+        class="d-flex justify-content-around mt-4"
+        style="margin-bottom: 100px"
+      >
         <p>Phụ trách bộ phận</p>
         <p>Người Báo Cáo</p>
       </div>
@@ -464,29 +467,39 @@ export default {
     const pdfContent = ref(null);
     const handlePrintReport = async () => {
       const doc = new jsPDF();
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
 
       if (pdfContent.value) {
         const content = pdfContent.value;
 
-        // Chuyển đổi nội dung HTML thành ảnh sử dụng html2canvas
         html2canvas(content).then((canvas) => {
           const imgData = canvas.toDataURL("image/png");
 
-          // Đợi cho hình ảnh tải hoàn toàn trước khi thêm vào tài liệu PDF
-          const image = new Image();
-          image.onload = function () {
-            // Tạo tài liệu PDF và thêm ảnh vào
-            const imgWidth = 210; // Đặt chiều rộng ảnh bằng chiều rộng trang A4
-            const imgHeight = (canvas.height * imgWidth) / canvas.width; // Tính toán chiều cao dựa trên tỷ lệ
+          const imgWidth = pageWidth - 20; // Giảm kích thước hình ảnh để tạo lề
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+          let yPosition = 10; // Đặt lề trên là 10px
+          let contentRemainingHeight = imgHeight;
+          let pageNumber = 1;
 
-            doc.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight); // Đặt kích thước ảnh là kích thước trang PDFF
+          while (contentRemainingHeight > 0) {
+            if (pageNumber > 1) {
+              doc.addPage();
+            }
 
-            // Tải xuống tệp PDF
-            doc.save("BaoCaoKhachHangThuocNhanVienPhuTrach.pdf");
-          };
+            doc.addImage(imgData, "PNG", 10, yPosition, imgWidth, imgHeight); // Đặt lề trái là 10px
 
-          // Thiết lập nguồn dữ liệu cho hình ảnh và kích hoạt sự kiện onload
-          image.src = imgData;
+            contentRemainingHeight -= pageHeight - 20; // Giảm chiều cao trang để tạo lề
+            if (contentRemainingHeight > 0) {
+              yPosition = 10 - contentRemainingHeight; // Đặt lề trên trang tiếp theo
+            } else {
+              yPosition = 10; // Reset lề trên cho trang tiếp theo
+            }
+
+            pageNumber++;
+          }
+
+          doc.save("BaoCaoKhachHangThuocNhanVienPhuTrach.pdf");
         });
       }
     };
@@ -594,7 +607,7 @@ export default {
           name: item.name,
           time_duration: formatDateTime_2(item.time_duration),
           content: item.content,
-          place: item.place != null ? item.place : 'không có',
+          place: item.place != null ? item.place : "không có",
         };
       });
     };

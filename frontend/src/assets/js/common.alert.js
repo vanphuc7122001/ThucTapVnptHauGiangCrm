@@ -1,4 +1,5 @@
 import Swal from "sweetalert2";
+import MailService from "../../services/mail.service";
 
 export const alert_success = (title, text) => {
   Swal.fire({
@@ -134,4 +135,82 @@ export const alert_input_text = async (title) => {
     }
   });
   return content;
+};
+
+export const alert_mail = (arr) => {
+  Swal.fire({
+    title: "Gửi Email",
+    html: `
+      <div style="text-align:justify">
+      <div class="container">
+        <div class="form-group">
+          <label for="subject">Tiêu Đề(<span style="color: red">*</span>):</label>
+          <input type="text" id="subject" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="content">Nội Dung(<span style="color: red">*</span>):</label>
+           <textarea id="content-email" class="form-control"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="attachment">Tệp Đính Kèm(<span style="color: red">*</span>):</label>
+          <input type="file" id="attachment" multiple class="form-control">
+        </div>
+      </div>
+    `,
+    // <textarea id="content" class="form-control"></textarea>
+    showCancelButton: true,
+    confirmButtonText: "Send",
+    showLoaderOnConfirm: true,
+    width: 700,
+    preConfirm: async () => {
+      // const recipient = document.getElementById("recipient").value;
+      const title = document.getElementById("subject").value;
+      const content = document.getElementById("content-email").value;
+      const fileInput = document.getElementById("attachment");
+      const files = fileInput.files;
+
+      // console.log("File length", files.length);
+
+      const formData = new FormData();
+
+      formData.append("mail", arr);
+      formData.append("title", title);
+      formData.append("content", content);
+      for (let i = 0; i < files.length; i++) {
+        formData.append("file_multiple", files[i]);
+      }
+
+      const res = await MailService.sendMailMultiple(formData);
+      console.log("Res ", res);
+
+      if (!res.error) {
+        return alert_success("Gửi mail thành công", "");
+      }
+      return alert_error("Gửi mail thất bại", "");
+
+      // return fetch("/send-mail", {
+      //   method: "POST",
+      //   body: formData,
+      // })
+      //   .then((response) => {
+      //     if (!response.ok) {
+      //       throw new Error(response.statusText);
+      //     }
+      //     return response.json();
+      //   })
+      //   .catch((error) => {
+      //     Swal.showValidationMessage(`Request failed: ${error}`);
+      //   });
+    },
+    // allowOutsideClick: () => !Swal.isLoading(),
+  });
+  // .then((result) => {
+  //   if (result.isConfirmed) {
+  //     Swal.fire({
+  //       title: "Email Sent",
+  //       text: "The email has been sent successfully.",
+  //       icon: "success",
+  //     });
+  //   }
+  // });
 };

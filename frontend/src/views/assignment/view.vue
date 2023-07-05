@@ -341,7 +341,7 @@ export default {
                 :items="viewValue.Appointments"
                 :cus="viewValue.Customer.name"
                 :fields="['Ngày hẹn', 'Địa điểm', 'Nội dung lịch hẹn']"
-                :labels="['date_time', 'place', 'content']"
+                :labels="['date_time_format', 'place', 'content']"
                 :activeCheck="false"
                 :borderTableAll="true"
                 :activeAction="false"

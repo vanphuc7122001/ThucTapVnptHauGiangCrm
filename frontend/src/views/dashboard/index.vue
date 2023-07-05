@@ -893,7 +893,7 @@ export default {
               height="400"
             />
           </div>
-          <div class="mt-3 border-box-chart">
+          <div class="my-3 border-box-chart">
             <apexchart
               class="mt-5"
               :options="chartOptionsAppointment1"

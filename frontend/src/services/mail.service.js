@@ -17,6 +17,16 @@ class EventService {
       })
     ).data;
   }
+
+  async sendMailMultiple(data) {
+    return (
+      await this.api.post("/send-mail-muliple", data, {
+        headers: {
+          "Content-Type": "multipart/form-data", // Đảm bảo định dạng dữ liệu là multipart/form-data
+        },
+      })
+    ).data;
+  }
 }
 
 export default new EventService();

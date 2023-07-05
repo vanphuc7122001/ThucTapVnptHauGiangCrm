@@ -9,30 +9,33 @@ export default {
       title: "",
       content: "",
       mail: "",
+      selectedFile: []
     });
 
-    const selectedFile = ref(null);
     const handleFileUpload = (event) => {
-      selectedFile.value = event.target.files[0];
-      console.log("file uploaded", selectedFile.value);
+      const files = event.target.files;
+      for (let i = 0; i < files.length; i++) {
+        item.selectedFile.push(files[i]);
+      }
+      // console.log('FIle upload', item.selectedFile.length);
     };
 
     const sendEmail = async () => {
       const formData = new FormData();
-      formData.append("filePdf", selectedFile.value);
+      // formData.append("filePdf", selectedFile.value);
       formData.append("title", item.title);
       formData.append("content", item.content);
       formData.append("mail", item.mail);
-
-      // console.log('title', item.title);
-      // console.log('content', item.content);
-      // console.log('mail', item.mail);
-      const response = await MailService.sendMailReport(formData);
-      console.log(response);
+      for (let i = 0; i < item.selectedFile.length; i++) {
+          formData.append("file_multiple", item.selectedFile[i]);
+      }
+      
+      const response = await MailService.sendMailMultiple(formData);
+      console.log('response', response);
       if (response.error) {
-        alert_error("Lỗi", "Mail gửi đi thất bại");
+        alert_error("Gửi mail thất bại", "");
       } else {
-        alert_success("Thành công", "Mail gửi đi thành công");
+        alert_success("Gửi mail thành công", "");
       }
     };
 
@@ -121,6 +124,7 @@ export default {
                       class="form-control w-100"
                       id="name"
                       name="name"
+                      multiple
                       ref="fileInput"
                       @change="handleFileUpload"
                       required

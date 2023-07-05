@@ -383,7 +383,10 @@ export default {
           await refresh();
           alert_success(
             "Thành công",
-            `Xóa lịch hẹn ngày ${rsAppointment.document.date_time} với khách hàng  ${data.customer}`
+            `Xóa lịch hẹn ngày ${formatDateTime(
+              rsAppointment.document.date_time.toUpperCase()
+            )} với khách hàng  ${data.customer}`
+
           );
         }
       }
