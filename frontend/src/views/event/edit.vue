@@ -24,7 +24,7 @@ export default {
 <template>
   <!-- The Modal -->
   <div class="modal" id="model-edit">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">

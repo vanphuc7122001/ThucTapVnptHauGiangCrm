@@ -242,7 +242,7 @@ export default {
         <!-- Modal Header -->
         <div class="modal-header">
           <h4 class="modal-title" style="font-size: 18px">
-            Thêm thói quen và sự kiện {{ data.a }}
+            Thêm thói quen và sự kiện
           </h4>
           <button type="button" class="close" data-dismiss="modal">
             &times;
@@ -406,7 +406,6 @@ export default {
               </form>
               <!-- page 2 -->
               <form v-if="data.activeStep == 2" action="" class="was-validated">
-                {{ eventAdd }}
                 <div class="form-group">
                   <label for="name"
                     >Tên sự kiện(<span style="color: red">*</span>):</label

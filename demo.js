@@ -2,7 +2,7 @@
  * ! Khách hàng (tên, ngày sinh, địa chỉ, số điện thoại, email, loại khách hàng, ảnh đại diện, tên công ty, nơi đang công tác, vị trí đang công tác, lịch sử công tác, nhiệm kỳ công tác)
  * Khách hàng 1:
     Tên: Jennie Kim
-    Ngày sinh: 16/01/1996
+    Ngày sinh: 07/07/1996
     Địa chỉ: Số 123, Đường Seoul, Hàn Quốc
     Số điện thoại: 0901234567
     Email: jennie@example.com
@@ -16,7 +16,7 @@
 
    Khách hàng 2:
     Tên: Lisa Manoban
-    Ngày sinh: 27/03/1997
+    Ngày sinh: 07/07/1997
     Địa chỉ: Số 456, Đường Bangkok, Thái Lan
     Số điện thoại: 0987654321
     Email: lisa@example.com
