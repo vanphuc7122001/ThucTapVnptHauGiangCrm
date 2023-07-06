@@ -43,6 +43,8 @@
 </details>
 
 <!-- Features -->
+  <br>
+  <br> 
 
 ### Key Features <a name="key-features"></a>
 
@@ -52,46 +54,65 @@
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- LIVE DEMO -->
+  <br>
+  <br> 
 
 ## 🚀 Live Demo <a name="live-demo"></a>
 
 > Add a link to your deployed project.
 
 <!-- GETTING STARTED -->
+  <br>
+  <br> 
 
 ## 💻 Getting Started <a name="getting-started"></a>
 
 > Describe how a new developer could make use of your project.
+>   <br>
+  <br> 
 
 
 ### Prerequisites
 
 In order to run this project you need:
+  <br>
+  <br> 
 
 
 ### Setup
 
 Clone this repository to your desired folder:
+  <br>
+  <br> 
 
 
 ### Install
 
 Install this project with:
+  <br>
+  <br> 
 
 
 ### Usage
 
 To run the project, execute the following command:
+  <br>
+  <br> 
 
 
 ### Run tests
 
 To run tests, run the following command:
+  <br>
+  <br> 
 
 ### Deployment
 
 You can deploy this project using:
-
+  <br>
+  <br> 
+    <br>
+  <br> 
 
 ## 👥 Authors <a name="authors"></a>
 
