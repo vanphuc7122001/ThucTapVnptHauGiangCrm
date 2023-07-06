@@ -48,9 +48,6 @@
 
 > Describe between 1-3 key features of the application.
 
-- **[key_feature_1]**
-- **[key_feature_2]**
-- **[key_feature_3]**
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -102,6 +99,8 @@ You can deploy this project using:
 
 👤 **Author1(Leader)**
   Tran Tuan Duy 
+  <br>
+  <br> 
 👤 **Author2(member)**
   Dang Van Phuc
 👤 **Author3(member)**
