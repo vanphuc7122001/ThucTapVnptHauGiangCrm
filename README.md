@@ -1,7 +1,7 @@
 <div align="center">
 
 
-  <h3><b>Báo Cáo Thực Tập VNPT Hậu Giang</b></h3>
+  <h3><b>VNPT Hau Giang Internship Report</b></h3>
 
 </div>
 
