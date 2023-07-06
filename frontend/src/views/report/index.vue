@@ -517,14 +517,8 @@ export default {
         });
 
         const rsTaskCusCared = taskCusCared.filter((value, index) => {
-          // console.log('TAsk task', value);
-          // console.log('Day start new cycle', value.dayStartNewCycle);
-          // console.log('Day start new cycl2', value.dayStartNewCycle2);
           let dayStartNewCycle2 = new Date(value.dayStartNewCycle2);
           let dayStartNewCycle = new Date(value.dayStartNewCycle);
-          // console.log("Index", index);
-          // console.log("Day 1", dayStartNewCycle);
-          // console.log("Day 2", dayStartNewCycle2);
 
           let currentDay = new Date();
           if (value.customerId == cusWork.Customer._id) {
@@ -602,7 +596,7 @@ export default {
 
     // handle pagination
     const toString = computed(() => {
-      console.log("Starting search");
+      // console.log("Starting search");
       if (data.choseSearch == "name") {
         return data.items.map((value, index) => {
           return [value.nameCustomer].join("").toLocaleLowerCase();

@@ -228,6 +228,13 @@ export default {
           return value.Status_App._id == entryValueStatus.value;
         });
       }
+      
+      for (let value of data.items) {
+        if (value.note == null || value.note.length == 0) {
+          value.note = "không có";
+        } else value.note = value.note;
+      }
+
       data.selectAll[0].checked = false;
       for (let value of data.items) {
         value.checked = false;
@@ -611,8 +618,8 @@ export default {
     <Table
       :items="setPages"
       :cus="data.customer"
-      :fields="['Ngày hẹn', 'Địa điểm', 'Nội dung lịch hẹn', 'Chú thích']"
-      :labels="['date_time_format', 'place', 'content', 'note']"
+      :fields="['Ngày hẹn', 'Địa điểm', 'Nội dung lịch hẹn']"
+      :labels="['date_time_format', 'place', 'content']"
       :selectAll="data.selectAll"
       @selectAll="(value) => handleSelectAll(value)"
       @selectOne="(id, item) => handleSelectOne(id, item)"

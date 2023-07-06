@@ -123,4 +123,11 @@ export default {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+@media screen and (min-width: 739px) and (max-width: 992px) {
+  .modal-content {
+    width: 180%;
+    margin-left: -40%;
+  }
+}
+</style>

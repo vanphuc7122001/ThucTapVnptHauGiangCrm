@@ -91,7 +91,7 @@ exports.sendEmailMutilFile = async (req, res, next) => {
       to: mail,
       subject: title,
       html: content,
-      attachments: attachments,
+      attachments: attachments.length > 0 ? attachments : null,
     };
 
     const info = await transporter.sendMail(mailOptions);
