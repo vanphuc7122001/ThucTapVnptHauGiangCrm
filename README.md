@@ -13,7 +13,7 @@
 
 > Describe your project in 1 or 2 sentences.
 
-**[your_project__name]** is a...
+**[crm]** is a...
 
 ## 🛠 Built With <a name="built-with"></a>
 
@@ -24,7 +24,7 @@
 <details>
   <summary>Client</summary>
   <ul>
-    <li><a href="https://reactjs.org/">React.js</a></li>
+    <li><a href="https://vuejs.org/">VueJS</a></li>
   </ul>
 </details>
 
@@ -38,7 +38,7 @@
 <details>
 <summary>Database</summary>
   <ul>
-    <li><a href="https://www.postgresql.org/">PostgreSQL</a></li>
+    <li><a href="https://sequelize.org/">MySql(Sequelize)</a></li>
   </ul>
 </details>
 
