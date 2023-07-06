@@ -1,6 +1,6 @@
 <div align="center">
   <!-- You are encouraged to replace this logo with your own! Otherwise you can also remove it. -->
-  <img src="https://yu.ctu.edu.vn/images/upload/article/2020/03/0305-logo-ctu.png" alt="logo" width="140"  height="auto" />
+  <img src="./frontend/src/assets/images/vpnt-logo1.png" alt="logo" width="140"  height="auto" />
   <br/>
 
   <h3><b>Báo Cáo Thực Tập VNPT Hậu Giang</b></h3>
