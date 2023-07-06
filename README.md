@@ -103,14 +103,24 @@ You can deploy this project using:
   <br> 
 👤 **Author2(member)**
   Dang Van Phuc
+    <br>
+  <br> 
 👤 **Author3(member)**
   Truong Thiet Long
+    <br>
+  <br> 
 👤 **Author4(member)**
   Nguyen Lan Anh 
+    <br>
+  <br> 
 👤 **Author5(member)**
   Nguyen Thi Thanh Truc
+    <br>
+  <br> 
 👤 **Author6(member)**
   Nguyen Ngoc Van Anh
+    <br>
+  <br> 
 <!-- FUTURE FEATURES -->
 
 ## 🔭 Future Features <a name="future-features"></a>
