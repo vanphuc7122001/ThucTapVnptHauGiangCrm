@@ -59,9 +59,9 @@ export default {
     const { showSuccess } = Swal();
     // computed
     const toString = computed(() => {
-      console.log("Starting search");
+      
       return data.items.map((value, index) => {
-        console.log("value.name", value.lev_name);
+      
         return [value.uni_name].join("").toLocaleLowerCase();
       });
     });
@@ -113,12 +113,12 @@ export default {
     };
     const addOrUpdateLevel = () => {
       if (newData.uni == "update") {
-        console.log("UPDATE THU NGHIEM", newData.uni_id);
+
         emptyNewData();
         document.getElementById("model-add").style.display = "none";
         showSuccess();
       } else {
-        console.log("ADD THU NGHIEM", newData.uni_id);
+
         emptyNewData();
         showSuccess();
       }
@@ -136,18 +136,18 @@ export default {
           /* Read more about isConfirmed, isDenied below */
           if (result.isConfirmed) {
             // CODE API
-            console.log("Delete", data);
+            
             swal.fire("Deleted!", "", "success");
           }
         });
     };
     const detail = (data) => {
-      console.log("detail", data);
+      // console.log("detail", data);
     };
     //select_option
     const selectedOption = ref("Level");
     watch(selectedOption, (newValue, oldValue) => {
-      console.log("Dropdown value changed:", newValue);
+      
       if (newValue != "Level" && newValue != "all")
         router.push({ name: "unit_level", params: { id: newValue } });
       else if (newValue == "all") router.push({ name: "unit" });

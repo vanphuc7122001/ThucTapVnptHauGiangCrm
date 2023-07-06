@@ -79,16 +79,12 @@ export default {
       },
     });
     const create = async () => {
-      console.log(data.item.date_time);
-      console.log(data.item.content);
-      console.log(data.item.place);
-      console.log(data.item.note);
-      console.log("day ne", data.item);
+     
       props.task.changeStatus = true;
       data.item.loginId = sessionStorage.getItem("employeeId");
 
       data.item.taskId = props.taskId;
-      console.log("task id", data.item.taskId);
+     
       const result = await http_create(Appointment, data.item);
       const change = await http_update(Task, props.task._id, props.task);
       if (!result.error) {

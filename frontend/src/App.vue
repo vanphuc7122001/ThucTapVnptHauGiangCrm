@@ -21,7 +21,7 @@ export default {
     });
     const checkLogin = ref(false);
     const updateMenuResponsive = () => {
-      console.log("Received event from child component:");
+      // console.log("Received event from child component:");
     };
 
     onBeforeMount(() => {

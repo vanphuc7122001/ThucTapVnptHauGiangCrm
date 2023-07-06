@@ -15,25 +15,20 @@ const { Model } = require("sequelize");
 const POSITION_CUT_LINK_IMAGE = 21;
 
 exports.create = async (req, res, next) => {
-  // const documents = await Customer.findAll();
-  // check unique name, email, phone
-  console.log("abcxyz");
-  console.log("-------");
-  console.log(req.file);
+
   if (!req.file) {
     return res.status(400).json({ message: "No file uploaded" });
   } else {
     const { path } = req.file;
     const imgUrl = path.slice(4, path.length);
     const image = `http://localhost:3000/${imgUrl}`;
-    console.log(image);
     const newCustomer = {
       ...req.body,
       avatar: image,
     };
 
     try {
-      console.log(newCustomer);
+
       const customer = await Customer.create({
         ...newCustomer,
       });
@@ -203,7 +198,7 @@ exports.update = async (req, res, next) => {
 
       const imgUrl = path.slice(4, path.length);
       const image = `http://localhost:3000/${imgUrl}`;
-      console.log(image);
+  
       const newCustomer = {
         ...req.body,
         avatar: image,

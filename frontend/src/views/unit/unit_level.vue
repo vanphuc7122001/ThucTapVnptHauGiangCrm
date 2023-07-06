@@ -60,9 +60,9 @@ export default {
     const { showSuccess } = Swal();
     // computed
     const toString = computed(() => {
-      console.log("Starting search");
+ 
       return data.value.items.map((value, index) => {
-        console.log("value.name", value.lev_name);
+  
         return [value.uni_name].join("").toLocaleLowerCase();
       });
     });
@@ -115,12 +115,12 @@ export default {
     };
     const addOrUpdateLevel = () => {
       if (newData.uni == "update") {
-        console.log("UPDATE THU NGHIEM", newData.uni_id);
+  
         emptyNewData();
         document.getElementById("model-add").style.display = "none";
         showSuccess();
       } else {
-        console.log("ADD THU NGHIEM", newData.uni_id);
+
         emptyNewData();
         showSuccess();
       }
@@ -138,28 +138,28 @@ export default {
           /* Read more about isConfirmed, isDenied below */
           if (result.isConfirmed) {
             // CODE API
-            console.log("Delete", data);
+           
             swal.fire("Deleted!", "", "success");
           }
         });
     };
     const detail = (data) => {
-      console.log("detail", data);
+      // console.log("detail", data);
     };
 
     const params = ref({});
     computed(() => {
-      console.log("params", data.value.searchText);
+    
       return data.value.searchText;
     });
     // const data_root = ref({});
     // data_root.value = data_copy;
     const getUnitofLevel = (id) => {
-      console.log("route:", id, data_copy);
+
       data.value.items = data_copy.items.filter(
         (uni, index) => uni.lev_id == id
       );
-      console.log("new units a levels", data.value);
+
     };
 
     const selectedOption = ref("");
@@ -168,7 +168,7 @@ export default {
       (newParams) => {
         // Xử lý giá trị mới của route.params
         params.value = newParams;
-        console.log("New route params:", params.value, data.value.items.length);
+
         getUnitofLevel(params.value.id);
         // ***
         // selectedOption.value = newValue;
@@ -177,7 +177,7 @@ export default {
     );
 
     watch(selectedOption, (newValue, oldValue) => {
-      console.log("Dropdown value changed:", newValue);
+  
       if (newValue != "Level" && newValue != "all")
         router.push({ name: "unit_level", params: { id: newValue } });
       else if (newValue == "all") router.push({ name: "unit" });

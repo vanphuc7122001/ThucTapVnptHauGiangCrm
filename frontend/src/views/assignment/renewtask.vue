@@ -43,7 +43,6 @@ export default {
     watch(
       () => props.resetData,
       async (newValue, oldValue) => {
-        console.log("Thay đổi", newValue);
         await refresh();
       },
       { immediate: true }
@@ -99,9 +98,7 @@ export default {
             props.item.Cycle.name = res.document.name;
             await refresh();
             ctx.emit("newCycle", cycles.cycle);
-            console.log("ne", res.document.name);
             selectedOptionCycle.value = res.document._id;
-            // name.value = document.document.name;
           }
           return true;
         };
@@ -113,12 +110,10 @@ export default {
 
     const deleteCycle = async (_id) => {
       const cycle = await http_getOne(Cycle, _id);
-      console.log("deleting", cycle);
       const isConfirmed = await alert_delete(
         `Xoá chu kỳ`,
         `Bạn có chắc chắn muốn xoá chu kỳ ${cycle.name} không ?`
       );
-      console.log(isConfirmed);
       if (isConfirmed == true) {
         const result = await http_deleteOne(Cycle, _id);
         alert_success(`Xoá chu kỳ`, `Bạn đã xoá thành công chu kỳ ${cycle.name} .`);
@@ -126,13 +121,13 @@ export default {
       }
     };
     const searchCycle = async (value) => {
-      console.log("a", value, cycles.cycle);
+  
       await refresh();
       cycles.cycle = cycles.cycle.filter((value1, index) => {
-        console.log(value1, value);
+        
         return value1.name.includes(value) || value.length == 0;
       });
-      console.log("searchSlect", value.length);
+      
     };
 
     const refresh = async () => {

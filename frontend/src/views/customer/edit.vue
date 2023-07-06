@@ -32,8 +32,7 @@ export default {
     },
   },
   setup(props, ctx) {
-    console.log(props.item.Company_KH.name);
-    console.log(props.item);
+
     const data = reactive({
       imgSrc: null,
       stepList: [
@@ -76,7 +75,7 @@ export default {
     };
 
     const onFileChange = (event) => {
-      console.log("qua met moi");
+
       props.item.Customer.avatar = event.target.files[0];
 
       // handle display img
@@ -86,16 +85,16 @@ export default {
       } else {
         isImageUploaded.value = false;
       }
-      console.log(props.item.Customer.avatar);
+   
       const reader = new FileReader();
 
-      console.log("qua met moi1");
+     
 
       reader.onload = (event) => {
         data.imgSrc = event.target.result;
       };
 
-      console.log("qua met moi2");
+
 
       reader.readAsDataURL(files);
     };
@@ -140,10 +139,10 @@ export default {
     const searchSelect = async (value) => {
       await refresh(),
         (data.items = data.items.filter((value1, index) => {
-          console.log(value1, value);
+          
           return value1.name.includes(value) || value.length == 0;
-        })),
-        console.log("searchSlect", value.length);
+        }))
+       
     };
 
     const choosed = async (_id) => {
@@ -166,14 +165,14 @@ export default {
           data.modelValue = companyName;
           refresh();
           props.item.Company_KH._id = res.document._id;
-          console.log(props.item.Company_KH._id);
+        
           alert_success(`Thành công`, `Công ty ${companyName}  đã được tạo thành công.`);
         }
       } else {
         const rs = await http_getOne(Company_KH, _id);
         data.modelValue = rs.name;
         props.item.Company_KH._id = _id;
-        console.log(props.item.Company_KH._id);
+        
       }
     };
 
@@ -208,9 +207,7 @@ export default {
         const formData = new FormData();
         if (isImageUploaded.value == false) {
           formData.append("avatar", props.item.Customer.avatar);
-        } else {
-          console.log("Không có thay đổi");
-        }
+        } 
         formData.append("name", props.item.Customer.name);
         formData.append("birthday", props.item.Customer.birthday);
         formData.append("address", props.item.Customer.address);

@@ -114,7 +114,6 @@ export default {
     const handleUpdate = async (item) => {
       const rs = await http_update(Customer_Types, item._id, {...item})
       const doc = await http_getOne(Customer_Types, item._id);
-      console.log(doc.document);
       if(rs.error) {
         alert_error('Sửa loại khách hàng', `${rs.msg}`);
         refresh();

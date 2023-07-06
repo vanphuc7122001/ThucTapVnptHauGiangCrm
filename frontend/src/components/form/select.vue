@@ -33,17 +33,7 @@ export default {
     watch(
       () => props.entryValue,
       (newValue, oldValue) => {
-        console.log("dang lang nghe");
-        // for (let value of props.options) {
-        //   console.log(value.name);
-        //   console.log(props.entryValue);
-        //   if (value.name == props.entryValue) {
-        //     data.activeClose = true;
-        //     break;
-        //   }
-        //   data.activeClose = false;
-        // }
-        console.log(data.activeClose);
+             
         checkShowClose();
       }
     );

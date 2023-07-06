@@ -32,7 +32,6 @@ export default {
 
     // computed
     const toString = computed(() => {
-      console.log("Starting search");
       return props.items.map((value, index) => {
         // thay đổi từ name ->lev_name
         return [value.lev_name].join("").toLocaleLowerCase();

@@ -30,7 +30,7 @@ exports.login = async (req, res) => {
         password: encryptedPassword
       }
     });
-    console.log(account)
+
 
     if (account) {
       // Đăng nhập thành công

@@ -4,7 +4,7 @@ const ID_CAN_NOT_DELETE = "705a7bc8-d6f3-4df9-a0bf-f3fc67c133e8";
 
 exports.create = async (req, res, next) => {
   const customerType = await Customer_Types.findAll();
-  console.log(customerType);
+
   const name = req.body.name;
   let isCheck = true;
   for (const each of customerType) {

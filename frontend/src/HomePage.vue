@@ -16,14 +16,14 @@ export default {
       activeIndex: sessionStorage.getItem("activeMenu") || 1,
     });
     const updateMenuResponsive = () => {
-      console.log("Received event from child component:");
+      // console.log("Received event from child component:");
     };
     const isSideBar = ref(true);
 
     // Check if the device's maximum width is 992 pixels
 
     const showSidebar = () => {
-      console.log("Thay đổi sidebar:", isSideBar.value);
+      // console.log("Thay đổi sidebar:", isSideBar.value);
       isSideBar.value = !isSideBar.value;
     };
     const isIPadAndMaxWidth992 = () => {
@@ -33,7 +33,6 @@ export default {
     };
     const isIpad = ref(false);
     watch(isSideBar, (newValue, oldValue) => {
-      console.log("Tính lại SB", isSideBar.value, isIPadAndMaxWidth992());
       isIpad.value = isIPadAndMaxWidth992();
     });
     onMounted(() => {

@@ -137,13 +137,12 @@ exports.deleteAll = async (req, res, next) => {
 //   }
 // };
 exports.update = async (req, res, next) => {
-  console.log("Update", req.body);
-  console.log("name");
+
   const { name } = req.body;
-  console.log("name");
+
   // Kiểm tra xem dữ liệu cần thiết có bị thiếu không
   try {
-    console.log("cc");
+  
     let roles = [
       await Role.findOne({
         where: {
@@ -151,7 +150,7 @@ exports.update = async (req, res, next) => {
         },
       }),
     ];
-    console.log("roles", roles);
+   
     roles = roles.filter((value, index) => {
       return value.name == name;
     });

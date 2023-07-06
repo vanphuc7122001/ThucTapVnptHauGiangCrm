@@ -35,11 +35,10 @@ export default {
     watch(
       () => props.resetData,
       async (newValue, oldValue) => {
-        console.log("Thay đổi", newValue);
+        
         await refresh();
 
-        // const data1 = await Position.getAll();
-        console.log("DT1:", cycles.cycle);
+   
       },
       { immediate: true }
       //có props
@@ -107,7 +106,7 @@ export default {
             data.modelValue = res.document.name;
             await refresh();
             ctx.emit("newCycle", cycles.cycle);
-            console.log("ne", res.document.name);
+           
             selectedOptionCycle.value = res.document._id;
             // name.value = document.document.name;
           }
@@ -121,19 +120,15 @@ export default {
     //tao phan cong moi
     const create = async () => {
       data.itemAdd.cycleId = selectedOptionCycle.value;
-      console.log(data.itemAdd);
+      
       data.itemAdd.leaderId = sessionStorage.getItem("employeeId");
       data.itemAdd.loginId = sessionStorage.getItem("employeeId");
-      console.log("leaderId:", sessionStorage.getItem("employeeId"));
-      // const evals = await http_getAll(Evaluate);
-      // console.log("evals",evals);
-      // console.log("star",data.itemAdd.EvaluateId)
-      // console.log('data itemadd', data.itemAdd);
+      
       const result = await http_create(Task, data.itemAdd);
-      console.log("result", result);
+    
       if (!result.error) {
         const task = await http_getOne(Task, result.document._id);
-        console.log("task", task);
+        
         alert_success(
           `Thêm phân công`,
           `Phân công khách hàng "${task.Customer.name}" đã được tạo thành công.`
@@ -161,12 +156,12 @@ export default {
     //xoa phan cong
     const deleteCycle = async (_id) => {
       const cycle = await http_getOne(Cycle, _id);
-      console.log("deleting", cycle);
+  
       const isConfirmed = await alert_delete(
         `Xoá chu kỳ`,
         `Bạn có chắc chắn muốn xoá chu kỳ ${cycle.name} không ?`
       );
-      console.log(isConfirmed);
+    
       if (isConfirmed == true) {
         const result = await http_deleteOne(Cycle, _id);
         alert_success(
@@ -178,12 +173,12 @@ export default {
     };
     const deleteStatusTask = async (_id) => {
       const status_task = await http_getOne(StatusTask, _id);
-      console.log("deleting", status_task);
+      
       const isConfirmed = await alert_delete(
         `Xoá trạng thái`,
         `Bạn có chắc chắn muốn xoá trạng thái ${status_task.name} không ?`
       );
-      console.log(isConfirmed);
+    
       if (isConfirmed == true) {
         const result = await http_deleteOne(StatusTask, _id);
         alert_success(
@@ -200,7 +195,7 @@ export default {
       customers.customer = customers.customer.documents;
       for (let value of customers.customer) {
         value.name += " - " + value.phone + " - " + value.email;
-        console.log("name", value.name);
+        
       }
       employees.employee = await http_getAll(Employee);
       statustasks.statustask = await http_getAll(StatusTask);
@@ -292,8 +287,7 @@ export default {
                           value.length == 0
                         );
                       }
-                    )),
-                    console.log('searchSlect', value.length)
+                    ))
                   )
                 "
                 @chose="
@@ -343,15 +337,14 @@ export default {
                   async (value) => (
                     await refresh(),
                     (cycles.cycle = cycles.cycle.filter((value1, index) => {
-                      console.log('cvcvcxvvxvvcsvxccsvxcvscvxcs');
-                      console.log(value1.name, value);
+                      
                       return (
                         [value1.name.split(' ').join('')].includes(
                           value.split(' ').join('')
                         ) || value.length == 0
                       );
-                    })),
-                    console.log('searchSlect', value.length)
+                    }))
+                    
                   )
                 "
                 @delete="(value) => deleteCycle(value._id)"

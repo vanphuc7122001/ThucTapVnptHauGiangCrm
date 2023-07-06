@@ -50,7 +50,7 @@ export default {
     const { showSuccess } = Swal();
     // computed
     const toString = computed(() => {
-      console.log("Starting search");
+  
       return data.items.map((value, index) => {
         return [value.lev_name].join("").toLocaleLowerCase();
       });
@@ -102,12 +102,12 @@ export default {
     };
     const addOrUpdateLevel = () => {
       if (newData.lev == "update") {
-        console.log("UPDATE THU NGHIEM", newData.lev_id);
+   
         emptyNewData();
         document.getElementById("model-add").style.display = "none";
         showSuccess();
       } else {
-        console.log("ADD THU NGHIEM", newData.lev_name);
+       
         data.items.push({ lev_id: 8, lev_name: newData.lev_name });
         emptyNewData();
         showSuccess();
@@ -125,14 +125,13 @@ export default {
         .then((result) => {
           /* Read more about isConfirmed, isDenied below */
           if (result.isConfirmed) {
-            // CODE API
-            console.log("Delete", data);
+          
             swal.fire("Deleted!", "", "success");
           }
         });
     };
     const detail = (data) => {
-      console.log("detail", data);
+      // console.log("detail", data);
     };
     return {
       data,

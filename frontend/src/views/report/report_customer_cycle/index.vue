@@ -138,7 +138,7 @@
           :entryValue="data.searchText"
           @choseSearch="
             async (value) => (
-              console.log('search ........'),
+             
               (data.choseSearch = value),
               (data.currentPage = 1)
             )
@@ -500,9 +500,7 @@ export default {
                 end_day.getDate();
             }
 
-            console.log("Start date: ", start_date);
-            console.log("Cycle", cycle);
-            console.log("Day start new cycle", dayStartNewCycle);
+            
 
             task.dayStartNewCycle = dayStartNewCycle;
             return task;
@@ -511,9 +509,7 @@ export default {
 
         const rsTaskCusCared = taskCusCared.filter((value, index) => {
           let dayStartNewCycle = new Date(value.dayStartNewCycle);
-          console.log("Index", index);
-          console.log("Day 1", dayStartNewCycle);
-
+         
           let currentDay = new Date();
           if (value.customerId == cusWork.Customer._id) {
             return cusWork.Customer.Tasks.filter((task) => {
@@ -524,16 +520,7 @@ export default {
                 !isEqual(dayStartNewCycle, start_date) &&
                 task.Status_Task.name == "đã chăm sóc"
               ) {
-                console.log(
-                  "dayStartNewCycle",
-                  dayStartNewCycle.getDate() +
-                    "-" +
-                    (dayStartNewCycle.getMonth() + 1)
-                );
-                console.log(
-                  "start_date",
-                  start_date.getDate() + "-" + (start_date.getMonth() + 1)
-                );
+                
                 return task;
               }
             });
@@ -558,7 +545,7 @@ export default {
             return taskCusCared;
           });
 
-          console.log("All tasks", filteredTasks);
+  
           if (filteredTasks.length > 0) {
             return filteredTasks;
           }
@@ -595,7 +582,7 @@ export default {
     };
     // // handle pagination
     const toString = computed(() => {
-      console.log("Starting search");
+    
       if (data.choseSearch == "name") {
         return data.items.map((value, index) => {
           return [value.Customer.name].join("").toLocaleLowerCase();
@@ -729,7 +716,7 @@ export default {
       };
 
       data.viewCareCus = item.Customer.Tasks.map((value) => {
-        console.log("Value:", value);
+   
         return {
           start_date: formatDate(value.start_date),
           end_date: formatDate(value.end_date),

@@ -98,7 +98,7 @@ export default {
 
     const entryValueRoleAccount = ref("Vai trò tài khoản");
     const toString = computed(() => {
-      console.log("Starting search");
+      
       if (data.choseSearch == "employee") {
         return data.items.map((value, index) => {
           return [value.employee].join("").toLocaleLowerCase();
@@ -195,12 +195,12 @@ export default {
 
     const deleteOne = async (_id) => {
       const account = await http_getOne(Account, _id);
-      console.log("deleting", account);
+      
       const isConfirmed = await alert_delete(
         `Xoá tài khoản`,
         `Bạn có chắc chắn muốn xoá tài khoản ${account.user_name} không ?`
       );
-      console.log(isConfirmed);
+     
       if (isConfirmed == true) {
         const result = await http_deleteOne(Account, _id);
         alert_success(
@@ -212,7 +212,7 @@ export default {
     };
 
     const edit = async (editValue) => {
-      console.log(editValue);
+      
       const result = await http_update(Event, editValue._id, editValue);
       if (!result.error) {
         alert_success(`Sửa sự kiện`, `${result.msg}`);
@@ -223,7 +223,7 @@ export default {
     };
 
     const view = (_id) => {
-      console.log("view", _id);
+     
       // router.push({ name: "Event.view", params: { id: _id } });
       // location.reload();
     };
@@ -233,7 +233,7 @@ export default {
       for (let value of data.items) {
         value.checked = false;
       }
-      console.log("1", data.items);
+      
       data.items = data.items.map((value, index) => {
         return {
           _id: value._id,
@@ -243,7 +243,7 @@ export default {
           permision: [...value.Role.Permissions],
         };
       });
-      // console.log("2", data.items);
+    
 
       const roles = await http_getAll(Role);
       data.optionSelect = [...roles];
@@ -256,7 +256,7 @@ export default {
     };
 
     const handleSelectAll = (value) => {
-      console.log("cccc", value);
+      
       if (value == false) {
         for (let value1 of data.items) {
           value1.checked = true;
@@ -269,7 +269,7 @@ export default {
     };
 
     const delete_a = async (objectData) => {
-      console.log("delete_a", objectData);
+      // console.log("delete_a", objectData);
     };
 
     const updateEntryValueRoleAccount = (value) => {
@@ -288,7 +288,7 @@ export default {
     // Hàm callback được gọi trước khi component được mount (load)
     onBeforeMount(async () => {
       refresh();
-      console.log("data.items", data.items);
+      
     });
 
     return {
@@ -376,7 +376,7 @@ export default {
           :entryValue="data.searchText"
           @choseSearch="
             async (value) => (
-              console.log('search ........'),
+              
               (data.choseSearch = value),
               (data.currentPage = 1)
             )

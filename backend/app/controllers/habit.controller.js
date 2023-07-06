@@ -100,7 +100,7 @@ exports.deleteAll = async (req, res, next) => {
 };
 
 exports.update = async (req, res, next) => {
-  console.log("update", req.body);
+  
   const { name } = req.body;
   try {
     let habits = [

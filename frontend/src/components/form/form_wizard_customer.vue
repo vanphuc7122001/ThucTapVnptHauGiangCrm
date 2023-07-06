@@ -43,7 +43,7 @@ export default {
     watch(
       () => props.resetData,
       async (newValue, oldValue) => {
-        console.log("Thay đổi", newValue);
+       
         await refresh();
       },
       { immediate: true }
@@ -118,7 +118,7 @@ export default {
 
       // handle display img
       const file = event.target.files[0];
-      console.log(viewData.customerInfo.avatar);
+      
       const reader = new FileReader();
 
       reader.onload = (event) => {
@@ -169,14 +169,14 @@ export default {
     const searchSelect = async (value) => {
       await refresh(),
         (data.items = data.items.filter((value1, index) => {
-          console.log(value1, value);
+          
           return value1.name.includes(value) || value.length == 0;
         })),
-        console.log("searchSlect", value.length);
+       
     };
 
     const choosed = async (_id) => {
-      console.log("other", _id);
+      
       if (_id === "other") {
         const { value: companyName } = await Swal.fire({
           title: "Thêm công ty",
@@ -196,7 +196,7 @@ export default {
           data.modelValue = companyName;
           refresh();
           viewData.customerCompany._id = res.document._id;
-          console.log(viewData.customerCompany._id);
+          
           alert_success(
             `Thành công`,
             `Công ty ${companyName}  đã được tạo thành công.`
@@ -206,7 +206,7 @@ export default {
         const rs = await http_getOne(Company_KH, _id);
         data.modelValue = rs.name;
         viewData.customerCompany._id = _id;
-        console.log(viewData.customerCompany._id);
+        
       }
     };
 
@@ -230,7 +230,7 @@ export default {
 
     // handle create customer
     const create = async (event) => {
-      console.log("starting");
+   
       event.preventDefault();
       let isCheck = false;
       refresh();
@@ -260,15 +260,9 @@ export default {
           viewData.customerInfo.customerTypesId
         );
 
-        console.log("avatar", viewData.customerInfo.avatar);
-        console.log("name", viewData.customerInfo.name);
-        console.log("birthday", viewData.customerInfo.birthday);
-        console.log("phone", viewData.customerInfo.phone);
-        console.log("email", viewData.customerInfo.email);
-        console.log("customerTypesId", viewData.customerInfo.customerTypesId);
-        console.log(formData);
+        
         const res = await http_create(Customer, formData);
-        console.log(res);
+
         if (res.error) {
           alert_error(`Lổi`, res.msg);
         } else {
@@ -282,7 +276,7 @@ export default {
           };
 
           const customerWork = await http_create(Customer_Work, object);
-          console.log(customerWork);
+          
           if (customerWork.error) {
             alert_error(`Lổi`, customerWork.msg);
           } else {

@@ -3,7 +3,7 @@ const nodemailer = require("nodemailer");
 const path = require("path");
 
 exports.sendEmail = async (req, res, next) => {
-  console.log("Nội dung mail:", req.body);
+  
   try {
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -21,7 +21,7 @@ exports.sendEmail = async (req, res, next) => {
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log("Email sent:", info.messageId);
+   
     res.send({ msg: "Thành công" });
   } catch (error) {
     console.error("Error sending email:", error);
@@ -68,10 +68,7 @@ exports.sendEmailReport = async (req, res, next) => {
 
 exports.sendEmailMutilFile = async (req, res, next) => {
   const { mail, title, content } = req.body;
-  // console.log("mail", mail, typeof mail);
-  // console.log("title", title, typeof title);
-  // console.log("content", content, typeof content);
-  console.log("Req file", req.body);
+
   try {
     const attachments = req.files.map((file) => ({
       filename: file.originalname,

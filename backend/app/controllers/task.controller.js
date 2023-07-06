@@ -43,7 +43,6 @@ const getDecrypt = (name) => {
 };
 
 exports.create = async (req, res, next) => {
-  console.log(req.body);
   if (Object.keys(req.body).length >= 7) {
     const {
       start_date,
@@ -73,59 +72,48 @@ exports.create = async (req, res, next) => {
     try {
       const status_tasks = await Status_Task.findAll();
       var count = 0;
-      console.log("chieu dai", status_tasks.length);
+     
       if (status_tasks.length > 0) {
-        console.log("vaooooooooooo");
+       
         for (let value of status_tasks) {
-          // console.log("status task hahaha ", value.dataValues.name);
+          
           value.dataValues.name = getDecrypt(value.dataValues.name);
-          console.log("name", value.dataValues.name);
-          console.log(
-            "name ahhahahaha",
-            value.dataValues.name,
-            value.dataValues.name == "chưa chăm sóc"
-          );
+          
           if (value.dataValues.name == "chưa chăm sóc") {
-            console.log("kiem tra", value.dataValues.name);
+           
             StatusTaskId = value.dataValues._id;
-            console.log("id status_task hahaahha", StatusTaskId);
+           
             count = 0;
             break;
           } else {
             count = 1;
           }
         }
-        console.log("count kkkkkkk", count);
+      
         if (count != 0) {
           const status_task = await Status_Task.create({
             name: "chưa chăm sóc",
           });
           StatusTaskId = status_task._id;
-          console.log("status_task", status_task);
+         
         }
-        console.log("id status_task hahaahha", StatusTaskId);
-        // console.log("status task", statusId);
+       
       } else {
         const status_task = await Status_Task.create({
           name: "chưa chăm sóc",
         });
         StatusTaskId = status_task._id;
-        console.log("status_task", status_task);
+       
       }
 
       const evaluates = await Evaluate.findAll();
-      console.log("chieu dai", evaluates.length);
+     
       if (evaluates.length > 0) {
-        console.log("dooooooooo");
+    
         var a = 0;
         for (let value of evaluates) {
           value.dataValues.star = getDecrypt(value.dataValues.star);
-          console.log("star rrrrr", value.dataValues.star);
-          console.log(
-            "star ahhahahaha",
-            value.dataValues.star,
-            value.dataValues.stare == "1 sao"
-          );
+          
           if (value.dataValues.star == "1 sao") {
             EvaluateId = value.dataValues._id;
             a = 0;
@@ -134,15 +122,14 @@ exports.create = async (req, res, next) => {
             a = 1;
           }
         }
-        console.log("a", a);
+       
         if (a != 0) {
           const evaluate = await Evaluate.create({
             star: "1 sao",
           });
           EvaluateId = evaluate._id;
         }
-        console.log("id evaluate hahaahha", EvaluateId);
-        console.log("evaluate", EvaluateId);
+      
       } else {
         const evaluate = await Evaluate.create({
           star: "1 sao",
@@ -161,8 +148,7 @@ exports.create = async (req, res, next) => {
         StatusTaskId: StatusTaskId,
         EvaluateId: EvaluateId,
       });
-      // console.log("id", leaderId);
-      // console.log("id", document._id);
+    
       const comment = await Comment.create({
         content: "Chưa có đánh giá nào",
         TaskId: document._id,
@@ -178,13 +164,12 @@ exports.create = async (req, res, next) => {
           _id: document.cycleId,
         },
       });
-      console.log("login id", req.body.loginId);
-      console.log("user", user);
+     
       user.dataValues.name = getDecrypt(user.dataValues.name);
       user.dataValues.birthday = getDecrypt(user.dataValues.birthday);
       user.dataValues.phone = getDecrypt(user.dataValues.phone);
       const userInfo = `Họ tên:${user.dataValues.name}, Ngày sinh: ${user.dataValues.birthday}, SĐT: ${user.dataValues.phone}, Id nhân viên: ${req.body.loginId}`;
-      console.log("userinfo", userInfo);
+     
       const formattedDateTime = this.dateTime();
       const contentLog = `Thêm phân công ngày bắt đầu ${start_date} và ngày kết thúc ${end_date} với chu kỳ ${cycleLog.name}`;
       const logCreateTask = await Log.create({
@@ -284,9 +269,7 @@ exports.findAll = async (req, res, next) => {
       ],
     });
 
-    ////////////////////////////////////////////
-    // Thêm employeeTask vào documents.EmployeesList
-    // console.log("Document:", documents.length);
+  
 
     for (let i = 0; i < documents.length; i++) {
       var employees = await Employee_Task.findAll({
@@ -295,8 +278,7 @@ exports.findAll = async (req, res, next) => {
         },
       });
 
-      // console.log("Employesss", employees);
-      // console.log("Tất cả employee của 1 task", employees.length);
+    
       documents[i].dataValues["EmployeesList"] = employees;
     }
     /////////////////////////////////////////////////
@@ -311,7 +293,7 @@ exports.findAll = async (req, res, next) => {
 
 exports.findOne = async (req, res, next) => {
   try {
-    console.log("id", req.params.id);
+   
     const documents = await Task.findOne({
       where: {
         _id: req.params.id,
@@ -371,15 +353,15 @@ exports.findOne = async (req, res, next) => {
     documents.dataValues["Employees"] = [];
     var i;
     for (i = 0; i < employee1.length; i++) {
-      console.log("EID:", employee1[i].dataValues.EmployeeId);
+     
       const employee = await Employee.findOne({
         where: { _id: employee1[i].dataValues.EmployeeId },
       });
-      // console.log("id position",employee.dataValues)
+      
       const position = await Position.findOne({
         where: { _id: employee.dataValues.postionId },
       });
-      //   console.log("id position",employee.dataValues)
+    
       const unit = await Unit.findOne({
         where: { _id: employee.dataValues.unitId },
       });
@@ -389,10 +371,7 @@ exports.findOne = async (req, res, next) => {
       const center = await Center_VNPTHG.findOne({
         where: { _id: department.dataValues.centerVNPTHGId },
       });
-      // console.log("position:", unit);
-      // console.log("dep:", department);
-      // console.log("center:", center);
-      // console.log("nhân viên:", employee.dataValues);
+    
       employee.dataValues.name = getDecrypt(employee.dataValues.name);
       employee.dataValues.phone = getDecrypt(employee.dataValues.phone);
       employee.dataValues.email = getDecrypt(employee.dataValues.email);
@@ -427,7 +406,7 @@ exports.deleteOne = async (req, res, next) => {
         },
       ],
     });
-    // console.log("11Task", task.dataValues);
+  
     const documents = await Task.destroy({
       where: {
         _id: req.params.id,
@@ -439,18 +418,17 @@ exports.deleteOne = async (req, res, next) => {
         _id: task.dataValues.leaderId,
       },
     });
-    console.log("user", user);
+  
     user.dataValues.name = getDecrypt(user.dataValues.name);
     user.dataValues.birthday = getDecrypt(user.dataValues.birthday);
     user.dataValues.phone = getDecrypt(user.dataValues.phone);
     task.dataValues.start_date = getDecrypt(task.dataValues.start_date);
     task.dataValues.end_date = getDecrypt(task.dataValues.end_date);
     const userInfo = `${user.dataValues.name} ${user.dataValues.birthday} ${user.dataValues.phone} ${task.dataValues.leaderId}`;
-    // console.log("userinfo", userInfo);
+  
     const formattedDateTime = this.dateTime();
     const contentLog = `Xóa phân công ngày bắt đầu ${task.dataValues.start_date} và ngày kết thúc ${task.dataValues.end_date}`;
-    // console.log("content", contentLog),
-    //   console.log("date time", formattedDateTime);
+   
     const logDelTask = await Log.create({
       created_at: formattedDateTime,
       created_user: userInfo,
@@ -466,60 +444,17 @@ exports.deleteOne = async (req, res, next) => {
   }
 };
 
-// exports.deleteOne = async (req, res, next) => {
-//   try {
-//     const taskDel = await Task.findOne({
-//       where:{
-//         _id: req.params.id,
-//       },
-//     });
-//     const documents = await Task.destroy({
-//       where: {
-//         _id: req.params.id,
-//       },
-//     });
-//     console.log("taskDel", taskDel);
-//     const user = await Employee.findOne({
-//       where: {
-//         _id: taskDel.dataValues.leaderId,
-//       }
-//     });
-//     console.log("user",user);
-//     user.dataValues.name = getDecrypt(user.dataValues.name);
-//     user.dataValues.birthday = getDecrypt(user.dataValues.birthday);
-//     user.dataValues.phone = getDecrypt(user.dataValues.phone);
-//     taskDel.dataValues.start_date = getDecrypt(taskDel.dataValues.start_date);
-//     taskDel.dataValues.end_date = getDecrypt(taskDel.dataValues.end_date);
-//     const userInfo = `${user.dataValues.name} ${user.dataValues.birthday} ${user.dataValues.phone} ${taskDel.dataValues.leaderId}`
-//     console.log("userinfo",userInfo);
-//     const formattedDateTime = this.dateTime();
-//     const contentLog = `Xóa phân công ngày bắt đầu ${taskDel.dataValues.start_date} và ngày kết thúc ${taskDel.dataValues.end_date}`
-//     console.log("content", contentLog),
-//     console.log("date time", formattedDateTime);
-//     const logDelTask = await Log.create({
-//       created_at: formattedDateTime,
-//       created_user: userInfo,
-//       content: contentLog,
-//     });
-//     return res.send(`Đã xóa phân công`);
-//   } catch (error) {
-//     return next(createError(400, "Lỗi không xóa được phân công !"));
-//   }
-// };
-
 exports.deleteAll = async (req, res, next) => {};
 
 exports.update = async (req, res, next) => {
-  // console.log("update", req.body);
-  // console.log("coo", req.body.fb);
-  // console.log("coo", req.body.changeStatus);
+
   if (req.body.changeStatus) {
     var EditStatusTask;
     const statustask = await Status_Task.findAll();
     var c = 0;
     for (let value of statustask) {
       value.dataValues.name = getDecrypt(value.dataValues.name);
-      // console.log("name", value.dataValues.name);
+      
       if (value.dataValues.name == "đang chăm sóc") {
         c = 0;
         EditStatusTask = value.dataValues._id;
@@ -533,7 +468,7 @@ exports.update = async (req, res, next) => {
         name: "đang chăm sóc",
       });
       EditStatusTask = statustask1._id;
-      // console.log("status_task", EditStatusTask);
+      
     }
 
     const document = await Task.update(
@@ -547,7 +482,7 @@ exports.update = async (req, res, next) => {
       msg: "Dữ liệu đã được thay đổi thành công.",
     });
   } else if (req.body.fb == true) {
-    // console.log("dooooooooooooo");
+ 
     try {
       let tasks1 = [
         await Task.findOne({
@@ -581,7 +516,7 @@ exports.update = async (req, res, next) => {
           },
           { where: { TaskId: req.params.id }, returning: true }
         );
-        console.log("abchg");
+        
         const task = await Task.update(
           {
             EvaluateId: req.body.EvaluateId,
@@ -592,7 +527,7 @@ exports.update = async (req, res, next) => {
           }
         );
 
-        // console.log("ne ne ne");
+       
         return res.send({
           error: false,
           msg: "Dữ liệu đã được thay đổi thành công.",
@@ -607,7 +542,7 @@ exports.update = async (req, res, next) => {
       return next(createError(400, "Error update"));
     }
   } else {
-    // console.log("ELSE:");
+ 
     const {
       start_date,
       end_date,
@@ -619,9 +554,7 @@ exports.update = async (req, res, next) => {
       StatusTaskId,
       EvaluateId,
     } = req.body;
-    // console.log("Body:", req.body);
-    // console.log("StatusTaskID:", req.body.StatusTaskId);
-
+  
     try {
       let tasks = [
         await Task.findOne({
@@ -650,10 +583,10 @@ exports.update = async (req, res, next) => {
         );
       });
       if (tasks.length == 0) {
-        // console.log("Start");
+     
         let document = {};
         if (req.body.note == null) {
-          // console.log("note underfine");
+         
           document = await Task.update(
             {
               start_date: req.body.start_date,
@@ -669,7 +602,7 @@ exports.update = async (req, res, next) => {
             { where: { _id: req.params.id }, returning: true }
           );
         } else if (req.body.note != null) {
-          // console.log("note khác underfine");
+        
           document = await Task.update(
             {
               start_date: req.body.start_date,
@@ -686,8 +619,6 @@ exports.update = async (req, res, next) => {
           );
         }
 
-        // console.log(document);
-        // console.log("id", req.params.id);
         const comment = await Comment.update(
           {
             content: req.body.Comment.content,
@@ -695,13 +626,13 @@ exports.update = async (req, res, next) => {
           { where: { TaskId: req.params.id }, returning: true }
         );
 
-        // console.log("login id", req.body.loginId);
+      
         const user = await Employee.findOne({
           where: {
             _id: req.body.loginId,
           },
         });
-        // console.log("user", user);
+       
         user.dataValues.name = getDecrypt(user.dataValues.name);
         user.dataValues.birthday = getDecrypt(user.dataValues.birthday);
         user.dataValues.phone = getDecrypt(user.dataValues.phone);

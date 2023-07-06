@@ -85,7 +85,7 @@ export default {
       }
     };
     const createPT = async () => {
-      console.log("chay");
+    
       const content = await alert_input_text(`Thêm loại quyền`);
       if (content.length > 0) {
         const result = await http_create(Permission_Types, {
@@ -110,7 +110,7 @@ export default {
         `Xoá loại quyền`,
         `Bạn có chắc chắn muốn xoá loại quyền ${value.name} không ?`
       );
-      console.log(isConfirmed);
+
       if (isConfirmed == true) {
         const result = await http_deleteOne(Permission_Types, value._id);
         alert_success(
@@ -127,11 +127,11 @@ export default {
         _id: "other",
         name: "khác",
       });
-      console.log('permissionTypesList');
+      
       if (value.length > 0) {
         data.permissionTypesList.documents = data.permissionTypesList.documents.filter(
           (value1, index1) => {
-            console.log(value1.name);
+          
             return value1.name.includes(value);
           }
         )

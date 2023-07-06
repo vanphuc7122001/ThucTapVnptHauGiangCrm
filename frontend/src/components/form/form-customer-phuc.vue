@@ -175,13 +175,13 @@ export default {
       ...props.item,
     });
 
-    console.log(viewData.birthdate);
+    
     const tagView = props.view;
     const checkView = computed(() => {
       return props.view ? true : false;
     });
 
-    console.log(tagView);
+   
 
     return {
       checkView,

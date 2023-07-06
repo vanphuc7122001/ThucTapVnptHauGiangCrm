@@ -19,7 +19,6 @@
       const selectedOption = ref("week");
   
       watch([selectedOption], ([newValue1, oldValue1]) => {
-        console.log("Dropdown value changed:", newValue1);
         emit("option", newValue1);
       });
   

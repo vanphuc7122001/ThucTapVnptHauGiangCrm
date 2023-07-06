@@ -118,7 +118,7 @@ export default {
       showView: false,
     });
     const toString = computed(() => {
-      console.log("Starting search");
+  
       return data.items.map((value, index) => {
         return [value.name].join("").toLocaleLowerCase();
       });
@@ -233,14 +233,14 @@ export default {
 
     const deleteOne = async (_id) => {
       const event = await http_getOne(Event, _id);
-      console.log("deleting", event);
+
       const isConfirmed = await alert_delete(
         `Xoá sự kiện`,
         `Bạn có chắc chắn muốn xoá sự kiện ${event.name} lúc ${formatDateTime_2(
           event.time_duration
         )} không ?`
       );
-      console.log(isConfirmed);
+  
       if (isConfirmed == true) {
         const result = await http_deleteOne(Event, _id);
         alert_success(
@@ -268,7 +268,7 @@ export default {
           <th>Địa điểm</th>
         </tr>
       </thead> <tbody>`;
-        console.log("deleteArray", deleteArray[0].Customer);
+        
         for (let value of deleteArray) {
           contentAlert += `<tr>
           <td>${value.name}</td>
@@ -304,7 +304,7 @@ export default {
     };
 
     const edit = async (editValue) => {
-      console.log(editValue);
+    
       editValue.time_duration = [editValue.start_time, editValue.end_time].join(
         " to "
       );
@@ -318,7 +318,7 @@ export default {
     };
 
     const view = async (item) => {
-      console.log("view", item);
+     
       await refresh();
       item.start_time = item.time_duration.split(" to ")[0].toUpperCase();
       item.end_time = item.time_duration.split(" to ")[1].toUpperCase();
@@ -354,15 +354,13 @@ export default {
         value.checked = false;
         value.totalCustomer = value.Customers.length;
       }
-      console.log(data.items);
+
 
       // filter
       if (data.startTimeValue.length > 0) {
         if (data.endTimeValue.length == 0) {
           data.items = data.items.filter((value, index) => {
-            console.log(
-              value.start_time == data.startTimeValue.toLocaleLowerCase()
-            );
+            
             return value.start_time == data.startTimeValue.toLocaleLowerCase();
           });
         } else {
@@ -377,7 +375,7 @@ export default {
         }
       } else if (data.endTimeValue.length > 0) {
         data.items = data.items.filter((value, index) => {
-          console.log(value.end_time == data.endTimeValue.toLocaleLowerCase());
+          
           return value.end_time == data.endTimeValue.toLocaleLowerCase();
         });
       }
@@ -390,17 +388,11 @@ export default {
         data.items[i].Customers = events[i].Customers;
         // data.items[i].checked = false;
       }
-      console.log("events[0].Customers", events[0].Customers);
-      // for (const value of data.items) {
-      //   value.time_duration_format = formatDateTime(value.time_duration);
-      // }
-      // for (let value of data.items) {
-      //   value.totalCustomer = value.Customers.length;
-      // }
+     
     };
 
     const handleSelectAll = (value) => {
-      console.log("cccc", value);
+    
       if (value == false) {
         for (let value1 of data.items) {
           value1.checked = true;
@@ -413,7 +405,7 @@ export default {
     };
 
     const delete_a = async (objectData) => {
-      console.log("delete_a", objectData);
+      // console.log("delete_a", objectData);
     };
 
     // handle http methods
@@ -421,7 +413,7 @@ export default {
     // Hàm callback được gọi trước khi component được mount (load)
     onBeforeMount(async () => {
       refresh();
-      console.log(data.items);
+    
     });
 
     return {
@@ -482,7 +474,7 @@ export default {
             :entryValue="data.startTimeValue"
             @update:entryValue="
               (value) => (
-                console.log('value', value),
+              
                 (data.startTimeValue = value),
                 (data.currentPage = 1),
                 refresh()
@@ -500,7 +492,7 @@ export default {
             :entryValue="data.endTimeValue"
             @update:entryValue="
               (value) => (
-                console.log('value', value),
+            
                 (data.endTimeValue = value),
                 refresh()
               )
@@ -553,7 +545,7 @@ export default {
           :entryValue="data.searchText"
           @choseSearch="
             async (value) => (
-              console.log('search ........'),
+              
               (data.choseSearch = value),
               (data.currentPage = 1)
             )

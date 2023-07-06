@@ -92,7 +92,6 @@ export default {
         let isSuccess = false;
         for (let value of props.habitAdd) {
           const result = await http_create(Habit, value);
-          console.log("result", result);
           if (result.error) {
             alert_error(
               `Thêm thói quên`,
@@ -141,16 +140,14 @@ export default {
       ].join(" to ");
       const result = await http_create(Event, props.eventAdd);
       let isSuccess = false;
-      console.log("result", result);
+
       if (!result.error) {
-        console.log("ghghsjkhdjskhhsjh");
-        console.log(props.item._id);
-        console.log(result.document._id);
+    
         let result1 = await http_create(Customer_Event, {
           customerId: props.item.Customer._id,
           eventId: result.document._id,
         });
-        console.log(result1);
+        
         if (result1.error == true) {
           alert_success(
             `Thêm sự kiện`,
@@ -196,14 +193,14 @@ export default {
       }
     };
     watch(habitValue, () => {
-      console.log("hdjghjdhjs");
+
       refresh();
     });
     onBeforeMount(async () => {
       refresh();
     });
     const handleClick = () => {
-      console.log("cccccccccccccccccccccccccccccccccccccc");
+      // console.log("cccccccccccccccccccccccccccccccccccccc");
     };
     const selectRef = ref(null);
 

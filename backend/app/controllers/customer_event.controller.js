@@ -9,7 +9,7 @@ const { v4: uuidv4 } = require("uuid");
 const { sequelize } = require("../config/index");
 
 exports.create = async (req, res, next) => {
-  console.log(req.body);
+ 
   if (Object.keys(req.body).length === 2) {
     const { customerId, eventId } = req.body;
     const permissions = await Customer_Event.findAll();

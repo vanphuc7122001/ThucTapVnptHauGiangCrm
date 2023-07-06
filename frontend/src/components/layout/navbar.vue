@@ -53,7 +53,7 @@ export default {
 
     // const emit = inject('emit');
     const updateMenuResponsive = () => {
-      console.log("starting");
+   
       ctx.emit("updateMenuResponsive", "true");
     };
     const hasNotification = ref(false);
@@ -197,12 +197,12 @@ export default {
     onMounted(async () => {
       const _idEmployee = sessionStorage.getItem("employeeId");
       data.Notice = await notificationService.get(_idEmployee);
-      console.log("Tên thông báo", data.Notice);
+      
       count.value = 0;
       for (const value of data.Notice.documents) {
         if (value.isRead == false) {
           count.value++;
-          console.log("count value", count.value);
+          
         }
       }
       // alert_info(`Chi Tiết Thông Báo`, `aca`)

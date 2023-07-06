@@ -80,15 +80,12 @@ export default {
         for (let value1 of data.pTList) {
           for (let value of value1.Permissions) {
             // console.log('Value', isStringFound(value._id));
-            console.log("Value checked", value.checked);
             if (value.checked == true && !isStringFound(value._id)) {
-              console.log("before create");
               let result = await http_create(Role_Permission, {
                 RoleId: props.item._id,
                 PermissionId: value._id,
               });
 
-              console.log("result", result);
               if (result.error == true) {
                 alert_error(
                   `Tạo quyền`,
@@ -223,7 +220,7 @@ export default {
                           value1.checked = !value1.checked;
                         }
 
-                        console.log('Value1: ' + value1.checked);
+
                       }
                     "
                   />&emsp;{{ value1.name }}

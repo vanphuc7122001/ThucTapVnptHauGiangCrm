@@ -73,7 +73,7 @@ exports.deleteAll = async (req, res, next) => {};
 
 exports.update = async (req, res, next) => {
   const { id } = req.params;
-  console.log(id);
+
   try {
     const document = await Company_KH.update(
       {
@@ -86,7 +86,7 @@ exports.update = async (req, res, next) => {
       }
     );
 
-    console.log(document);
+ 
     return res.status(200).json({
       msg: document[0]
         ? "Sửa dử liệu thành công"

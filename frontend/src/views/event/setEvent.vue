@@ -85,7 +85,7 @@ export default {
               customerId: value.Customer._id,
               eventId: props.item._id,
             });
-            console.log("result", result);
+            
             if (result.error == true) {
               alert_error(
                 `Áp dụng sự kiện`,
@@ -117,41 +117,11 @@ export default {
         console.log(error);
       }
     };
-    // const create = async () => {
-    //   try {
-    //     let isFlase = false;
-    //     for (let value of data.customerList) {
-    //       // console.log(value.Customer._id)
-    //       // console.log(props.item._id);
-    //       const result = await http_create(Customer_Event, {
-    //         customerId: value.Customer._id,
-    //         eventId: props.item._id,
-    //       });
-    //       if (result.error) {
-    //         isFlase = false;
-    //         alert_error(
-    //           `Áp đụng sự kiện`,
-    //           `Đã áp dụng sự kiện ${props.item.name} với khách hàng ${value.Customer.name}`
-    //         );
-    //         break;
-    //       } else {
-    //         isFlase = true;
-    //       }
-    //     }
-    //     if (isFlase) {
-    //       alert_success(
-    //         `Áp dụng sự kiện`,
-    //         `Đã áp dụng sự kiện cho các khách hàng thành công.`
-    //       );
-    //     }
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // };
+    
     const isStringFound = (_id) => {
       return data.customer_eventList.some((item) => {
         if (item.CustomerId.toString() == _id && item.EventId == props.item._id) {
-          console.log("item", item);
+         
           data.customerId = item.CustomerId;
           data.eventId = item.EventId;
           data.customer_eventId = data.customerId + data.eventId;

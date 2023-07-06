@@ -75,11 +75,10 @@ export default {
     watch(
       () => props.resetData,
       async (newValue, oldValue) => {
-        console.log("Thay đổi", newValue);
+  
         await refresh();
 
-        // const data1 = await Position.getAll();
-        console.log("DT1:", cycles.cycle);
+    
       },
       { immediate: true }
       //có props
@@ -113,7 +112,7 @@ export default {
             props.item.Status_App.name = res.document.name;
             await refresh();
             ctx.emit("newStatus", status_apps.status_app);
-            console.log("ne", res.document.name);
+           
             selectedOptionStatus.value = res.document._id;
           }
           return true;
@@ -129,7 +128,7 @@ export default {
         `Xoá trạng thái`,
         `Bạn có chắc chắn muốn xoá trạng thái ${statusapp.name} không ?`
       );
-      console.log(isConfirmed);
+   
       if (isConfirmed == true) {
         const result = await http_deleteOne(StatusApp, _id);
         alert_success(
@@ -140,17 +139,16 @@ export default {
       }
     };
     const search = async (value) => {
-      console.log("a", value, status_apps.status_app);
+      
       await refresh();
       status_apps.status_app = status_apps.status_app.filter((value1, index) => {
-        console.log(value1, value);
+        
         return value1.name.includes(value) || value.length == 0;
       });
-      console.log("searchSlect", value.length);
+     
     };
     const edit = () => {
-      // props.item.StatusAppId = selectedOptionStatus.value;
-      // console.log(props.item.StatusAppId, "đq", selectedOptionStatus.value);
+      
       ctx.emit("edit", props.item);
     };
 

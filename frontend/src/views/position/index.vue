@@ -55,7 +55,7 @@ export default {
 
     // computed
     const toString = computed(() => {
-      console.log("Starting search");
+    
       return data.items.map((value, index) => {
         return [value.name].join("").toLocaleLowerCase();
       });
@@ -96,22 +96,22 @@ export default {
 
     // methods
     const create = () => {
-      console.log("creating");
+      // console.log("creating");
     };
     const update = (item) => {
-      console.log("updating", item);
+      // console.log("updating", item);
     };
     const deleteOne = (_id) => {
-      console.log("deleting", _id);
+      // console.log("deleting", _id);
     };
     const edit = () => {
-      console.log("edit");
+      // console.log("edit");
     };
 
     const router = useRouter();
 
     const view = (_id) => {
-      console.log("view", _id);
+      // console.log("view", _id);
       router.push({ name: "Event.view", params: { id: _id } });
     };
 

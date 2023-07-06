@@ -43,10 +43,7 @@ export default {
     watch(
       () => props.resetData,
       async (newValue, oldValue) => {
-        console.log("Thay đổi", newValue);
         await refresh_add();
-        // const data1 = await Position.getAll();
-        // console.log("DT1:", data1);
       },
       { immediate: true }
       //có props
@@ -103,7 +100,7 @@ export default {
         mail: data.item.email,
       });
 
-      console.log("NDMail:", dataMail);
+
 
       data.item.unitId = selectedOptionUnit.value;
       data.item.postionId = selectedOptionPosition.value;
@@ -111,10 +108,10 @@ export default {
       data.item.checkUser = true;
       const account = await http_create(Account, data.item);
       if (account.user_name == true) {
-        console.log("item", data.item);
+
         const result = await http_create(Employee, data.item);
         data.item.checkUser = false;
-        console.log("result", result);
+  
         if (!result.error) {
           data.item.EmployeeId = result.document._id;
           const account = await http_create(Account, data.item);
@@ -184,7 +181,7 @@ export default {
     const positions = reactive({ position: [] });
     let selectedOptionPosition = ref("Chức vụ");
     watch(selectedOptionPosition, async (newValue, oldValue) => {
-      console.log("New Position:", newValue);
+
       // Alert add center
       if (newValue == "other") {
         const showSweetAlert = async () => {
@@ -224,7 +221,7 @@ export default {
     const centers = reactive({ center: [] });
     let selectedOptionCenter = ref("0");
     watch(selectedOptionCenter, async (newValue, oldValue) => {
-      console.log("selectedOptionCenter", selectedOptionCenter.value);
+      
       departments.department = await departmentsServices.findAllDepOfACenter(
         newValue
       );
@@ -318,9 +315,7 @@ export default {
           });
 
           if (formValues) {
-            // Xử lý giá trị selectedOption và giá trị inputValue
-            // console.log("Selected Option:", formValues.selectedOption);
-            // console.log("Input Value:", formValues.inputValue);
+       
             const document = await departmentsServices.create({
               centerVNPTHGId: formValues.selectedOption,
               name: formValues.inputValue,
@@ -354,7 +349,7 @@ export default {
     });
     let selectedOptionUnit = ref("Đơn vị");
     watch(selectedOptionUnit, async (newValue, oldValue) => {
-      console.log("New Unit:", newValue);
+
       if (newValue == "other") {
         const showSweetAlert = async () => {
           const { value: formValues } = await Swal.fire({
@@ -439,14 +434,6 @@ export default {
           });
 
           if (formValues) {
-            // Xử lý giá trị selectedOption và giá trị inputValue
-            console.log(
-              "Selected Option Center:",
-              formValues.selectedOptionCenter
-            );
-            console.log("Selected Option dep:", formValues.selectedOptionDep);
-
-            console.log("Input Value:", formValues.inputValue);
             const document = await unitsServices.create({
               departmentId: formValues.selectedOptionDep,
               name: formValues.inputValue,
@@ -478,7 +465,6 @@ export default {
 
     const refresh_add = async () => {
       positions.position = await Position.getAll();
-      console.log("DT2:", positions.position);
       positions.position.push({ _id: "other", name: "khác" });
       centers.center = await CenterServices.getAll();
       centers.center.push({ _id: "other", name: "khác" });
@@ -491,23 +477,23 @@ export default {
         selectedOptionDepartment.value
       );
       units.unit.push({ _id: "other", name: "khác" });
-      console.log("DEP:", departments.department);
+  
     };
     const onDeletePosition = async (value) => {
-      console.log("Value delete:", value);
+
       const result = await alert_delete("Bạn muốn xóa chức vụ", value.name);
-      console.log("result", result, value);
+
       if (result) {
-        console.log("abbbbba");
+
         const a = await Position.delete(value._id);
-        console.log(a);
+
         alert_success("Bạn đã xóa trung tâm", value.name);
         await refresh_add();
         ctx.emit("newPosition", positions.position);
       }
     };
     const onDeleteCenter = async (value) => {
-      console.log("Value delete:", value);
+   
       const result = await alert_delete("Bạn muốn xóa", value.name);
       if (result) {
         await CenterServices.delete(value._id);
@@ -517,7 +503,7 @@ export default {
       }
     };
     const onDeleteDep = async (value) => {
-      console.log("Value delete:", value);
+     
       const result = await alert_delete("Bạn muốn xóa", value.name);
       if (result) {
         await departmentsServices.deleteOne(value._id);
@@ -527,7 +513,7 @@ export default {
       }
     };
     const onDeleteUnit = async (value) => {
-      console.log("Value delete:", value);
+     
       const result = await alert_delete("Bạn muốn xóa", value.name);
       if (result) {
         await unitsServices.deleteOne(value._id);
@@ -537,7 +523,7 @@ export default {
       }
     };
     const closeModal = async () => {
-      console.log("close modal");
+     
       showModal.value = false;
       ctx.emit("refresh", false);
     };
@@ -727,13 +713,11 @@ export default {
                           await refresh_add(),
                           (positions.position = positions.position.filter(
                             (value1, index) => {
-                              console.log(value1, value);
                               return (
                                 value1.name.includes(value) || value.length == 0
                               );
                             }
-                          )),
-                          console.log('searchSlect', value.length)
+                          ))
                         )
                       "
                       @delete="(value) => onDeletePosition(value)"
@@ -761,13 +745,11 @@ export default {
                           await refresh_add(),
                           (centers.center = centers.center.filter(
                             (value1, index) => {
-                              console.log(value1, value);
                               return (
                                 value1.name.includes(value) || value.length == 0
                               );
                             }
-                          )),
-                          console.log('searchSlect', value.length)
+                          ))
                         )
                       "
                       @delete="(value) => onDeleteCenter(value)"
@@ -794,13 +776,11 @@ export default {
                         await refresh_add(),
                         (departments.department = departments.department.filter(
                           (value1, index) => {
-                            console.log(value1, value);
                             return (
                               value1.name.includes(value) || value.length == 0
                             );
                           }
-                        )),
-                        console.log('searchSlect', value.length)
+                        ))
                       )
                     "
                     @delete="(value) => onDeleteDep(value)"
@@ -822,12 +802,10 @@ export default {
                       async (value) => (
                         await refresh_add(),
                         (units.unit = units.unit.filter((value1, index) => {
-                          console.log(value1, value);
                           return (
                             value1.name.includes(value) || value.length == 0
                           );
-                        })),
-                        console.log('searchSlect', value.length)
+                        }))
                       )
                     "
                     @delete="(value) => onDeleteUnit(value)"
@@ -888,13 +866,11 @@ export default {
                         await refresh_add(),
                         (positions.position = positions.position.filter(
                           (value1, index) => {
-                            console.log(value1, value);
                             return (
                               value1.name.includes(value) || value.length == 0
                             );
                           }
-                        )),
-                        console.log('searchSlect', value.length)
+                        ))
                       )
                     "
                     @chose="

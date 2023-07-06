@@ -78,7 +78,7 @@ export default {
     },
   },
   setup(props, ntx) {
-    console.log(props.items);
+    
     const defaultCustomerType = "Thường";
     return {
       defaultCustomerType,

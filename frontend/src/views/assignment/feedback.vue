@@ -35,11 +35,10 @@ export default {
     watch(
       () => props.resetData,
       async (newValue, oldValue) => {
-        console.log("Thay đổi", newValue);
+        
         await refresh();
 
-        // const data1 = await Position.getAll();
-        console.log("DT1:", cycles.cycle);
+   
       },
       { immediate: true }
       //có props
@@ -64,15 +63,14 @@ export default {
           name: value.star,
         };
       });
-      console.log("evaluate", evaluates.evaluate);
+      
     };
 
     const handleFeedback = async () => {
-      console.log("hello");
-      console.log("id Task dang chon:", props.item._id, props.item);
+     
       props.item.fb = true;
       const result = await http_update(Task, props.item._id, props.item);
-      console.log("ne", result);
+
       if (!result.error) {
         alert_success(`Sửa đánh giá`, `${result.msg}`);
         await refresh();
@@ -100,7 +98,7 @@ export default {
           });
 
           if (evaluate) {
-            console.log(evaluate);
+           
             const res = await http_create(Evaluate, { star: evaluate });
             if (res.error) {
               alert_warning(`Đã tồn tại đánh giá `, `${evaluate}`);
@@ -110,7 +108,7 @@ export default {
             props.item.Evaluate.star = res.document.star;
             await refresh();
             ctx.emit("newStatus", evaluates.evaluate);
-            console.log("ne", res.document.star);
+         
             selectedOptionEvaluate.value = res.document._id;
           }
           return true;
@@ -123,12 +121,12 @@ export default {
 
     const deleteEvaluate = async (_id) => {
       const evaluate = await http_getOne(Evaluate, _id);
-      console.log("deleting", evaluate);
+  
       const isConfirmed = await alert_delete(
         `Xoá đánh giá`,
         `Bạn có chắc chắn muốn xoá đánh giá ${evaluate.star} không ?`
       );
-      console.log(isConfirmed);
+    
       if (isConfirmed == true) {
         const result = await http_deleteOne(Evaluate, _id);
         alert_success(
@@ -139,13 +137,13 @@ export default {
       }
     };
     const search = async (value) => {
-      console.log("a", value, evaluates.evaluate);
+     
       await refresh();
       evaluates.evaluate = evaluates.evaluate.filter((value1, index) => {
-        console.log(value1, value);
+        
         return value1.name.includes(value) || value.length == 0;
       });
-      console.log("searchSlect", value.length);
+      
     };
 
     onBeforeMount(() => {

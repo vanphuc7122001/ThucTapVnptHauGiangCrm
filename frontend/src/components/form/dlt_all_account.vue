@@ -148,7 +148,6 @@ export default {
 
     // computed
     const toString = computed(() => {
-      console.log("Starting search");
       return props.items.map((value, index) => {
         return [value.fullname].join("").toLocaleLowerCase();
       });
@@ -179,7 +178,6 @@ export default {
       } else data.numberOfPages = setNumberOfPages.value;
       data.startRow = (data.currentPage - 1) * data.entryValue + 1;
       data.endRow = data.currentPage * data.entryValue;
-      console.log(data);
       return filtered.value.filter((item, index) => {
         return (
           index + 1 > (data.currentPage - 1) * data.entryValue &&
@@ -204,7 +202,7 @@ export default {
     });
 
     const dltall = () =>{
-      console.log("delete all");
+      // console.log("delete all");
     }
     return {
       data,

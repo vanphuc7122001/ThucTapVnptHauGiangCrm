@@ -139,7 +139,7 @@
           :entryValue="data.searchText"
           @choseSearch="
             async (value) => (
-              console.log('search ........'),
+              
               (data.choseSearch = value),
               (data.currentPage = 1)
             )
@@ -409,7 +409,7 @@ export default {
       const cusWork = await http_getAll(Customer_Work);
       const tasks = await http_getAll(Task);
 
-      console.log("List tasks: ", tasks);
+  
       data.lengthCustomer = cusWork.documents.length;
       data.items = cusWork.documents.filter((cusWork) => {
         const taskCusCared = cusWork.Customer.Tasks.filter((task) => {
@@ -726,7 +726,7 @@ export default {
       };
 
       data.viewCareCus = item.Customer.Tasks.map((value) => {
-        console.log("Value:", value);
+        
         return {
           start_date: formatDate(value.start_date),
           end_date: formatDate(value.end_date),

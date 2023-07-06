@@ -222,7 +222,7 @@ export default {
       data.showActiveAdd = true;
     };
     const toString = computed(() => {
-      console.log("Starting search");
+
       if (data.choseSearch == "name") {
         return data.items.map((value, index) => {
           return [value.name].join("").toLocaleLowerCase();
@@ -355,7 +355,7 @@ export default {
       //***thay đổi
       for (let value of data.items) {
         for (let array of arrayCheck.data) {
-          console.log("arrayid==value_id", array._id == value._id);
+         
           if (array._id == value._id) {
             value.checked = true;
             break;
@@ -375,7 +375,7 @@ export default {
     };
 
     const edit = async (editValue) => {
-      console.log("Edit:", editValue);
+
       const result = await http_update(Employee, editValue._id, editValue);
       if (!result.error) {
         alert_success(`Sửa nhân viên`, `${result.msg}`);
@@ -443,7 +443,7 @@ export default {
       }
       for (let value of data.items) {
         for (let array of arrayCheck.data) {
-          console.log("arrayid==value_id", array._id == value._id);
+        
           if (array._id == value._id) {
             value.checked = true;
             break;
@@ -451,7 +451,7 @@ export default {
           value.checked = false;
         }
       }
-      console.log("items:", data.items);
+      
     });
     const updateEntryValuePosition = (value) => {
       entryValuePosition.value = value;
@@ -471,40 +471,30 @@ export default {
       //Lấy tất cả nhân viên
       data.items = await http_getAll(Employee);
       //Lấy tất cả phòng của 1 trung tâm
-      console.log("newValueCenter:", newValue);
+    
       data.department = await departmentsServices.findAllDepOfACenter(newValue);
-      console.log("dataDepartment:", data.department);
+     
       data.department = data.department.map((value, index) => {
         return {
           ...value,
           value: value._id,
         };
       });
-      // console.log("start1", data.department[0]._id);
+ 
       data.unit = [];
-      //Lấy tất cả tổ của 1 trung tâm
-      // for (let value of data.department) {
-      //   console.log("id", value._id);
-      //   var newUnit = await unitsServices.findAllUnitsOfADep(value._id);
-      //   for (let value of newUnit) {
-      //     console.log("new:", value);
-      //     data.unit.push(value);
-      //   }
-      //   // console.log("start2", data.unit);
-      // }
-      console.log("start2");
+  
       data.unit = data.unit.map((value, index) => {
         return {
           ...value,
           value: value._id,
         };
       });
-      console.log("start3");
+
 
       //Lọc
       // 1. có chức vụ và trung tâm
       if (entryValueCenter.value != "" && entryValuePosition.value != "") {
-        console.log("cả 2");
+
         data.items = data.items.filter((value, index) => {
           return (
             value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value &&
@@ -514,7 +504,7 @@ export default {
       }
       //2.  chỉ có trung tâm
       else {
-        console.log("1");
+       
         data.items = data.items.filter((value, index) => {
           return (
             value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value
@@ -527,7 +517,7 @@ export default {
       }
       for (let value of data.items) {
         for (let array of arrayCheck.data) {
-          console.log("arrayid==value_id", array._id == value._id);
+          
           if (array._id == value._id) {
             value.checked = true;
             break;
@@ -535,8 +525,7 @@ export default {
           value.checked = false;
         }
       }
-      console.log("items:", data.items);
-      console.log("Array:", arrayCheck.data);
+
     });
     //UpdateEntryValueCenter
     const updateEntryValueCenter = (value) => {
@@ -592,7 +581,7 @@ export default {
       }
       for (let value of data.items) {
         for (let array of arrayCheck.data) {
-          console.log("arrayid==value_id", array._id == value._id);
+         
           if (array._id == value._id) {
             value.checked = true;
             break;
@@ -600,7 +589,7 @@ export default {
           value.checked = false;
         }
       }
-      console.log("items:", data.items);
+ 
     });
     const updateEntryValueDepartment = (value) => {
       entryValueDepartment.value = value;
@@ -632,7 +621,7 @@ export default {
       }
       //2. có trung tâm, phòng, tổ
       else {
-        console.log("2");
+  
         data.items = data.items.filter((value, index) => {
           return (
             value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value &&
@@ -648,7 +637,7 @@ export default {
       }
       for (let value of data.items) {
         for (let array of arrayCheck.data) {
-          console.log("arrayid==value_id", array._id == value._id);
+          
           if (array._id == value._id) {
             value.checked = true;
             break;
@@ -656,7 +645,7 @@ export default {
           value.checked = false;
         }
       }
-      console.log("items:", data.items);
+     
     });
 
     const updateEntryValueUnit = (value) => {
@@ -683,31 +672,31 @@ export default {
           }
         }
       }
-      console.log("arrayCheck:", arrayCheck.data);
+   
     };
     const handleSelectOne = (id, item) => {
       if (item.checked == false) {
         arrayCheck.data.push(item);
       } else {
         arrayCheck.data = arrayCheck.data.filter((value, index) => {
-          console.log(value._id != id);
+       
           return value._id != id;
         });
       }
       data.selectAll[0].checked = false;
-      console.log("arrayCheckOne:", arrayCheck.data, item.checked);
+     
     };
 
     // HANDLE DELETE
     const handleDelete = async (id, item) => {
-      console.log("h", id, item);
+    
       const isConfirmed = await alert_delete(
         "Xóa",
         `Bạn có chắc là xóa nhân viên <span style="color: blue;"> ${item.name} </span> không!!`
       );
       if (isConfirmed) {
         const rsEmployee = await http_deleteOne(Employee, id);
-        console.log(rsEmployee);
+       
         if (rsEmployee.error) {
           alert_error("Lỗi ", rsEmployee.msg);
         } else {
@@ -717,7 +706,7 @@ export default {
       }
     };
     const deleteMany = async () => {
-      console.log("delete many");
+     
       try {
         //Mảng nhân viên sẽ xóa
         // const deleteArray = data.items.filter((value, index) => {
@@ -739,7 +728,7 @@ export default {
           </tr>
         </thead> <tbody>`;
         for (let value of arrayCheck.data) {
-          console.log(value);
+          
           contentAlert += `<tr>
             <td>${value.name}</td>
             <td>${value.Position.name}</td>
@@ -829,14 +818,14 @@ export default {
       const count = data.items.filter(
         (element) => element.checked === true
       ).length;
-      console.log("c", count);
+
       if (count > 0) {
         mail.value = true;
       } else {
         mail.value = false;
         alert_warning("Bạn chưa chọn nhân viên", "");
       }
-      console.log(mail.value);
+  
     };
     const sendEmail = async (value) => {
       const dataMail = reactive({ title: "", content: "", mail: "" });
@@ -862,7 +851,7 @@ export default {
       }).then((result) => {
         /* Read more about handling dismissals below */
         if (result.dismiss === Swal.DismissReason.timer) {
-          console.log("I was closed by the timer");
+         
         }
       });
 
@@ -871,7 +860,7 @@ export default {
           try {
             dataMail.mail = arrayCheck.data[i].email;
             await mailService.sendmail(dataMail);
-            console.log("Email sent successfully.");
+            
           } catch (error) {
             console.error("Error sending email:", error);
           }
@@ -1059,7 +1048,7 @@ export default {
           :entryValue="data.searchText"
           @choseSearch="
             async (value) => (
-              console.log('search ........'),
+              
               (data.choseSearch = value),
               (data.currentPage = 1)
             )

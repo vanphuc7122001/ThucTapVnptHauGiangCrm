@@ -98,7 +98,6 @@ export default {
       uni_name: "",
     });
     const getLevel = (event) => {
-      console.log(event.target.value);
       newData.lev_id = event.target.value;
     };
     const validate = () => {
@@ -118,7 +117,7 @@ export default {
     };
     const save = async () => {
       if (validate().value) {
-        console.log("save:", newData);
+    
         ntx.emit("addorupdate", newData);
         selectValue.value = "";
       } else {

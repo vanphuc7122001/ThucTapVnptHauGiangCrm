@@ -566,7 +566,7 @@ export default {
     const view = async (item) => {
       // console.log("Before view", item.Customer._id);
       const rs = await http_getOne(Customer, item.Customer._id);
-      console.log("rs", rs.documents);
+      
       data.viewCareCus = rs.documents.Tasks.map((value) => {
         return {
           name: item.Customer.name,

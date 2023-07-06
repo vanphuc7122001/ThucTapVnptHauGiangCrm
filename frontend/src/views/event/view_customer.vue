@@ -160,8 +160,7 @@ export default {
       data.items = data.items.filter((value, index) => {
         return (
           props.customer_event.some((value1, index1) => {
-            // console.log("value1._id", value1._id);
-            // console.log("value.Customer._id", value.Customer._id);
+           
             return value1._id.toString() == value.Customer._id;
           }) == true
         );
@@ -469,7 +468,7 @@ export default {
           <th>Số điện thoại</th>
         </tr>
       </thead> <tbody>`;
-        console.log("deleteArray", deleteArray[0].Customer);
+      
         for (let value of deleteArray) {
           // console.log(value.Customer);
           contentAlert += `<tr>
@@ -698,7 +697,7 @@ export default {
           :entryValue="data.searchText"
           @choseSearch="
             async (value) => (
-              console.log('search ........'),
+          
               (data.choseSearch = value),
               (data.currentPage = 1)
             )

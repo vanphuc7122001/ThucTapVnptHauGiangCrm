@@ -78,7 +78,7 @@ export default {
   },
   setup(ctx) {
     const res = isSetAssignement();
-    console.log("Giao việc", res);
+    
     const data = reactive({
       employeeList: [],
       items: [
@@ -301,16 +301,16 @@ export default {
       entryValueStatusTask.value = value;
     };
     const updateEntryValueCycle = (value) => {
-      console.log("lên đây");
+      
       entryValueCycle.value = value;
-      console.log("giá trị cycle", entryValueCycle.value);
+      
     };
     const updateEntryValueEval = (value) => {
       entryValueEval.value = value;
     };
     // //watch lọc
     watch(entryValueCycle, async (newValue, oldValue) => {
-      console.log("hhhh", newValue);
+  
       if (newValue == "") {
         await refresh();
         return;
@@ -326,7 +326,7 @@ export default {
         enddateValue.value != "" &&
         entryValueEval.value != ""
       ) {
-        console.log("trúc");
+       
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -464,9 +464,9 @@ export default {
           );
         });
       } else {
-        console.log("hhhttttt:", newValue);
+        
         data.items = data.items.filter((value, index) => {
-          console.log("giá trị đang lọc", value.cycleId);
+         
           return value.Cycle._id == entryValueCycle.value;
         });
       }
@@ -474,7 +474,7 @@ export default {
         value.checked = false;
       }
       // 2*****
-      // console.log("Data items tasks:", data.items);
+    
       var employees = reactive({ data: {} });
       for (let value of data.items) {
         value.count = value.EmployeesList.length;
@@ -504,7 +504,7 @@ export default {
         enddateValue.value != "" &&
         entryValueEval.value != ""
       ) {
-        console.log("hello");
+        
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -519,7 +519,7 @@ export default {
         startdateValue.value != "" &&
         enddateValue.value != ""
       ) {
-        console.log("hello");
+        
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -559,7 +559,7 @@ export default {
         enddateValue.value != "" &&
         entryValueEval.value != ""
       ) {
-        console.log("hello");
+        
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
@@ -577,7 +577,7 @@ export default {
           );
         });
       } else if (entryValueCycle.value != "" && entryValueEval.value != "") {
-        console.log("hello");
+       
         data.items = data.items.filter((value, index) => {
           return (
             value.cycleId == entryValueCycle.value &&
@@ -586,7 +586,7 @@ export default {
           );
         });
       } else if (startdateValue.value != "" && entryValueEval.value != "") {
-        console.log("hello");
+        
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
@@ -595,7 +595,7 @@ export default {
           );
         });
       } else if (enddateValue.value != "" && entryValueEval.value != "") {
-        console.log("hello");
+        
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
@@ -641,7 +641,7 @@ export default {
           );
         });
       } else if (entryValueEval.value != "") {
-        console.log("hello");
+        
         data.items = data.items.filter((value, index) => {
           return (
             value.Status_Task._id == entryValueStatusTask.value &&
@@ -650,7 +650,7 @@ export default {
         });
       } else {
         data.items = data.items.filter((value, index) => {
-          // console.log('name', value.Status_Task.status)
+         
           return value.Status_Task._id == entryValueStatusTask.value;
         });
       }
@@ -658,7 +658,7 @@ export default {
         value.checked = false;
       }
       // 2*****
-      // console.log("Data items tasks:", data.items);
+     
       var employees = reactive({ data: {} });
       for (let value of data.items) {
         value.count = value.EmployeesList.length;
@@ -673,7 +673,7 @@ export default {
     });
 
     watch(startdateValue, async (newValue, oldValue) => {
-      console.log("start date", newValue);
+    
       if (newValue == "") {
         await refresh();
         return;
@@ -813,11 +813,7 @@ export default {
           );
         });
       } else if (enddateValue.value != "") {
-        console.log("1", new Date(value.start_date));
-        console.log("2", new Date(startdateValue.value));
-
-        console.log("3", new Date(value.end_date));
-        console.log("4", new Date(enddateValue.value));
+        
 
         data.items = data.items.filter((value, index) => {
           return (
@@ -838,13 +834,13 @@ export default {
         value.checked = false;
       }
       // 2*****
-      // console.log("Data items tasks:", data.items);
+     
       var employees = reactive({ data: {} });
       for (let value of data.items) {
         value.count = value.EmployeesList.length;
 
         for (let value1 of arrayCheck.data) {
-          // value.count = employees.Employees.length;
+        
           if (value._id == value1._id) {
             value.checked = true;
           }
@@ -854,7 +850,7 @@ export default {
     });
 
     watch(enddateValue, async (newValue, oldValue) => {
-      console.log("end date", newValue);
+      
       if (newValue == "") {
         await refresh();
         return;
@@ -1019,13 +1015,13 @@ export default {
         value.checked = false;
       }
       // 2*****
-      // console.log("Data items tasks:", data.items);
+      
       var employees = reactive({ data: {} });
       for (let value of data.items) {
         value.count = value.EmployeesList.length;
 
         for (let value1 of arrayCheck.data) {
-          // value.count = employees.Employees.length;
+         
           if (value._id == value1._id) {
             value.checked = true;
           }
@@ -1035,7 +1031,7 @@ export default {
     });
 
     watch(entryValueEval, async (newValue, oldValue) => {
-      console.log("end date", newValue);
+    
       if (newValue == "") {
         await refresh();
         return;
@@ -1189,7 +1185,7 @@ export default {
           );
         });
       } else {
-        console.log("day ne", entryValueEval.value);
+       
         data.items = data.items.filter((value, index) => {
           return value.Evaluate._id == entryValueEval.value;
         });
@@ -1198,13 +1194,13 @@ export default {
         value.checked = false;
       }
       // 2*****
-      // console.log("Data items tasks:", data.items);
+      
       var employees = reactive({ data: {} });
       for (let value of data.items) {
         value.count = value.EmployeesList.length;
 
         for (let value1 of arrayCheck.data) {
-          // value.count = employees.Employees.length;
+          
           if (value._id == value1._id) {
             value.checked = true;
           }
@@ -1215,7 +1211,7 @@ export default {
 
     // computedconst
     const toString = computed(() => {
-      console.log("Starting search");
+     
       if (data.choseSearch == "nameCus") {
         return data.items.map((value, index) => {
           return [value.Customer.name].join("").toLocaleLowerCase();
@@ -1283,15 +1279,15 @@ export default {
         alert_warning("Lưu ý", "Phân công chưa được giao cho nhân viên");
         return;
       }
-      console.log("Id:", value, "Object:", value1);
+      
       router.push({ name: "Task.appointment", params: { id: `${value}` } });
     };
     const showFeedback = () => {
-      console.log("day ne");
+     
       data.showFeedback = false;
       for (let value of data.items) {
         if (value.checked == true) {
-          console.log("item", value);
+          
           data.taskEmployee = value;
           data.showFeedback = true;
           break;
@@ -1302,7 +1298,7 @@ export default {
       }
     };
     const showTask_Employee = () => {
-      console.log("11ArrayCheck Index:", arrayCheck.data[0]);
+    
       data.showTask_Employee = false;
       if (arrayCheck.data.length > 0) {
         data.taskEmployee = arrayCheck.data[0];
@@ -1321,32 +1317,27 @@ export default {
       var string = parts[1];
       switch (string) {
         case "ngày":
-          console.log(` chu kỳ ${number} ngày`);
+          
           coming_day = coming_day.add(number, "days");
-          // console.log("Ngày kết thúc:", coming_day.format("YYYY-MM-DD"));
           break;
         case "tuần":
-          console.log(` chu kỳ ${number} tuần`);
+          
           coming_day = coming_day.add(number * 7, "days");
-          // console.log("Ngày kết thúc:", coming_day.format("YYYY-MM-DD"));
           break;
         case "tháng":
-          console.log(`chu kỳ ${number} tháng`);
+        
           coming_day = coming_day.add(number, "months");
-          // console.log("Ngày kết thúc:", coming_day.format("YYYY-MM-DD"));
           break;
         case "quý":
-          console.log(` chu kỳ ${number} quý`);
+          
           coming_day = coming_day.add(number * 3, "months");
-          // console.log("Ngày kết thúc:", coming_day.format("YYYY-MM-DD"));
           break;
         case "năm":
-          console.log(` chu kỳ ${number} năm`);
+     
           coming_day = coming_day.add(number, "years");
-          // console.log("Ngày kết thúc:", coming_day.format("YYYY-MM-DD"));
           break;
         default:
-          console.log("Chu kỳ không hợp lệ");
+     
           break;
       }
 
@@ -1381,17 +1372,16 @@ export default {
         data.renewValue.start_date
       );
 
-      console.log("ngay bat dau moi", data.renewValue);
+      
       // const renewTask = await http_create(Task, data.renewValue);
     };
     const renewTask = async (value) => {
       data.resetRenew = false;
-      console.log("lalala", value);
+  
       value.loginId = sessionStorage.getItem("employeeId");
       const renewTask = await http_create(Task, value);
       if (!renewTask.error) {
-        // console.log("task new", renewTask);
-        console.log("id task new", value.EmployeesList.length);
+        
 
         const dataTaskEm = reactive({ TaskId: " ", EmployeeId: " " });
         dataTaskEm.TaskId = renewTask.document._id;
@@ -1431,7 +1421,7 @@ export default {
           //////////////////////////////
         }
         const task = await http_getOne(Task, value._id);
-        console.log("task", task);
+      
         alert_success(
           `Tạo mới phân công theo chu kỳ chăm sóc`,
           `Phân công khách hàng "${task.Customer.name}" đã được tạo thành công.`
@@ -1468,8 +1458,7 @@ export default {
     };
 
     const create = async () => {
-      //await refresh();
-      console.log("new task");
+ 
       data.items = await http_getAll(Task);
       await refresh();
     };
@@ -1484,12 +1473,10 @@ export default {
       }
     };
     const edit = async (editValue) => {
-      // editValue["StatusTaskId"] = editValue.Status_Task._id;
-      console.log("edit", editValue);
-      console.log("Id:", editValue._id);
+     
       editValue.loginId = sessionStorage.getItem("employeeId");
       const result = await http_update(Task, editValue._id, editValue);
-      console.log("ne", result);
+ 
       // thêm phân công khi có sự thay đổi status thành Đã chăm sóc
       if (!result.error) {
         alert_success(`Sửa phân công`, `${result.msg}`);
@@ -1502,20 +1489,15 @@ export default {
     const router = useRouter();
 
     const view = async (id) => {
-      console.log(id);
+
       data.viewValue = await http_getOne(Task, id);
 
       data.viewValue.Customer.birthday = formatDate(data.viewValue.Customer.birthday);
       data.viewValue.start_date = formatDate(data.viewValue.start_date);
       data.viewValue.end_date = formatDate(data.viewValue.end_date);
-      // data.viewValue.Appointments.date_time = formatDateTime(
-      //   data.viewValue.Appointments.date_time
-      // );
       for (const value of data.viewValue.Appointments) {
         value.date_time_format = formatDateTime(value.date_time.toUpperCase());
       }
-      console.log(data.viewValue);
-      // router.push({ name: "Assignment.view", params: { id: _id } });
     };
     const star = async () => {
       await refresh();
@@ -1540,10 +1522,8 @@ export default {
           }
         }
       }
-      console.log("arrayCheck:", arrayCheck.data);
     };
     const handlSelectOne = (id, item) => {
-      console.log(id, item);
       if (item.checked == false) {
         arrayCheck.data.push(item);
       } else {
@@ -1552,12 +1532,10 @@ export default {
         });
       }
       data.selectAll[0].checked = false;
-      console.log("arrayCheckOne:", arrayCheck.data);
     };
 
     // HANDLE DELETE
     const handleDelete = async (id, item) => {
-      console.log("h", id, item);
       const isConfirmed = await alert_delete(
         "Xóa",
         `Bạn có chắc là xóa phân công khách hàng
@@ -1567,7 +1545,6 @@ export default {
       );
       if (isConfirmed) {
         const rsTask = await http_deleteOne(Task, id);
-        console.log(rsTask);
         if (rsTask.error) {
           alert_error("Lỗi ", rsTask.msg);
         } else {
@@ -1580,7 +1557,6 @@ export default {
       }
     };
     const deleteMany = async () => {
-      console.log("delete many");
       try {
         //Mảng nhân viên sẽ xóa
         // const deleteArray = data.items.filter((value, index) => {
@@ -1607,7 +1583,7 @@ export default {
             value.end_date_format = formatDate(value.end_date);
             value.start_date_format = formatDate(value.start_date);
           }
-          console.log(value);
+
           contentAlert += `<tr>
             <td>${value.Customer.name}</td>
             <td>${value.start_date_format}</td>
@@ -1656,20 +1632,20 @@ export default {
       cycles.cycle = await http_getAll(Cycle);
       data.cus = await http_getAll(Customer);
       data.cus = data.cus.documents;
-      // console.log("aaa", data.cus);
+
       data.employee = await http_getAll(Employee);
       data.items = await http_getAll(Task);
       for (let value of data.items) {
         value.checked = false;
       }
       // 2*****
-      // console.log("Data items tasks:", data.items);
+
       var employees = reactive({ data: {} });
       for (let value of data.items) {
         value.count = value.EmployeesList.length;
 
         for (let value1 of arrayCheck.data) {
-          // value.count = employees.Employees.length;
+          
           if (value._id == value1._id) {
             value.checked = true;
           }
@@ -1680,7 +1656,7 @@ export default {
           value.note = "không có";
         } else value.note = value.note;
       }
-      // console.log("Data items tasks:", data.items);
+      
       for (const value of data.items) {
         value.end_date_format = formatDate(value.end_date);
         value.start_date_format = formatDate(value.start_date);
@@ -1704,7 +1680,7 @@ export default {
           name: value.star,
         };
       });
-      // console.log("evaluate", evaluates.evaluate);
+  
       data.selectAll[0].checked = false;
 
       data.items = data.items.map((item) => {
@@ -1724,11 +1700,11 @@ export default {
         };
       });
 
-      console.log("Data items", data.items);
+      
     };
 
     const giaoviec = async () => {
-      // console.log("giao việc");
+     
       await refresh();
     };
     // handle http methods
@@ -1742,14 +1718,9 @@ export default {
     // Hàm callback được gọi trước khi component được mount (load)
     onBeforeMount(async () => {
       const res = await http_getAll(Employee);
-      // data.employeeList = res.flatMap( (item) => item)
-      // res.map( (item) => {
-      //   console.log('Value' , item);
-      // })
-      console.log("Data employee list: ", res);
+     
       data.employeeList = res;
-      // const result = findEmployeeByName("triệu lệ dĩnh");
-      // console.log("result: ", result);
+  
       await refresh();
     });
 
@@ -1910,7 +1881,7 @@ export default {
           :entryValue="data.searchText"
           @choseSearch="
             async (value) => (
-              console.log('search ........'),
+             
               (data.choseSearch = value),
               (data.currentPage = 1)
             )

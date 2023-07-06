@@ -92,7 +92,7 @@ export default {
 
     // computed
     const toString = computed(() => {
-      console.log("Starting search");
+
       return data.items.map((value, index) => {
         return [value.name].join("").toLocaleLowerCase();
       });
@@ -164,12 +164,12 @@ export default {
     };
     const deleteOne = async (_id) => {
       const habit = await http_getOne(Habit, _id);
-      console.log("deleting", habit);
+    
       const isConfirmed = await alert_delete(
         `Xoá thói quen`,
         `Bạn có chắc chắn muốn xoá thói quen ${habit.name} không ?`
       );
-      console.log(isConfirmed);
+      
       if (isConfirmed == true) {
         const result = await http_deleteOne(Habit, _id);
         alert_success(
@@ -180,7 +180,7 @@ export default {
       }
     };
     const edit = async (editValue) => {
-      console.log(editValue);
+      
       const result = await http_update(Habit, editValue._id, editValue);
       if (!result.error) {
         alert_success(`Sửa sự kiện`, `${result.msg}`);
@@ -192,7 +192,7 @@ export default {
 
     const router = useRouter();
     const view = (item) => {
-      console.log("view", item);
+   
       data.viewValue = item;
       data.showView = true;
       // router.push({ name: "Event.view", params: { id: _id } });
@@ -240,15 +240,9 @@ export default {
       for (var i = 0; i < habits.length; i++) {
         data.items[i].totalCustomer = habits[i].Customers.length;
         data.items[i].Customers = habits[i].Customers;
-        // data.items[i].checked = false;
+     
       }
-      console.log("habits[0].Customers", habits[0].Customers);
-      // for (const value of data.items) {
-      //   value.time_duration_format = formatDateTime(value.time_duration);
-      // }
-      // for (let value of data.items) {
-      //   value.totalCustomer = value.Customers.length;
-      // }
+      
     };
 
     const refresh = async () => {
@@ -260,7 +254,7 @@ export default {
     };
 
     const handleSelectAll = (value) => {
-      console.log("cccc", value);
+
       if (value == false) {
         for (let value1 of data.items) {
           value1.checked = true;
@@ -291,7 +285,7 @@ export default {
           <th>Tên thói quen</th>
         </tr>
       </thead> <tbody>`;
-        console.log("deleteArray", deleteArray[0].Customer);
+      
         for (let value of deleteArray) {
           contentAlert += `<tr>
           <td>${value.name}</td>
@@ -418,7 +412,7 @@ export default {
           :entryValue="data.searchText"
           @choseSearch="
             async (value) => (
-              console.log('search ........'),
+              
               (data.choseSearch = value),
               (data.currentPage = 1)
             )

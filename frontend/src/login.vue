@@ -122,7 +122,7 @@ export default {
         let permissionList = response.data.document.Role.Permissions;
         permissionList = permissionList.map((value) => value.name);
 
-        console.log("Permission granted", permissionList);
+       
 
         sessionStorage.setItem("token", response.data.token);
 

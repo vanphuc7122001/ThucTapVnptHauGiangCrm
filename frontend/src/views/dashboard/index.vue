@@ -75,10 +75,8 @@ export default {
     });
     var uniqueTasks = {};
     const toString = computed(() => {
-      console.log("Starting search", data.choseSearch);
       if (data.choseSearch == "name") {
         return data.items.map((value, index) => {
-          console.log("name:", value.customer.name);
           return [value.customer.name].join("").toLocaleLowerCase();
         });
       } else if (data.choseSearch == "email") {
@@ -226,32 +224,26 @@ export default {
       var string = parts[1];
       switch (string) {
         case "ngày":
-          console.log(` chu kỳ ${number} ngày`);
           coming_day = coming_day.add(number, "days");
-          // console.log("Ngày kết thúc:", coming_day.format("YYYY-MM-DD"));
           break;
         case "tuần":
-          console.log(` chu kỳ ${number} tuần`);
+          
           coming_day = coming_day.add(number * 7, "days");
-          // console.log("Ngày kết thúc:", coming_day.format("YYYY-MM-DD"));
           break;
         case "tháng":
-          console.log(`chu kỳ ${number} tháng`);
+          
           coming_day = coming_day.add(number, "months");
-          // console.log("Ngày kết thúc:", coming_day.format("YYYY-MM-DD"));
           break;
         case "quý":
-          console.log(` chu kỳ ${number} quý`);
+          
           coming_day = coming_day.add(number * 3, "months");
-          // console.log("Ngày kết thúc:", coming_day.format("YYYY-MM-DD"));
           break;
         case "năm":
-          console.log(` chu kỳ ${number} năm`);
+          
           coming_day = coming_day.add(number, "years");
-          // console.log("Ngày kết thúc:", coming_day.format("YYYY-MM-DD"));
           break;
         default:
-          console.log("Chu kỳ không hợp lệ");
+         
           break;
       }
 
@@ -263,7 +255,6 @@ export default {
       data.items = [];
       data.customerCycle = await http_getAll(Task);
       // Mảng nhiệm vụ ban đầu
-      console.log("Ban đầu:", data.customerCycle);
       // Đối tượng để lưu trữ nhiệm vụ duy nhất theo từng khách hàng
       uniqueTasks = {};
 
@@ -307,7 +298,7 @@ export default {
           };
         }
       });
-      // console.log("ABC:", data.customerCycle);
+  
 
       data.customerCycle = data.customerCycle.filter((item) => {
         return item.start_date_new >= start && item.start_date_new <= end;
@@ -327,7 +318,7 @@ export default {
         data.items.push(cus);
       }
       data.customerCare = data.items.length;
-      console.log("Data items:", data.items);
+  
     };
     // khởi tạo biểu đồ khi thay đổi lựa chọn tuần, ...
     const initChart = async (start, end) => {
@@ -339,7 +330,6 @@ export default {
           (item.end_date >= start && item.end_date <= end)
         );
       });
-      console.log(data.task);
       for (let i = 0; i < data.statusTask.length; i++) {
         var count = 0;
         chartOptionsAppointment1.labels[i] = data.statusTask[i].name;
@@ -383,7 +373,6 @@ export default {
     const show = async (nameChart, cycle) => {
       if (nameChart == "customer") {
         await refresh();
-        console.log("show chart customer");
         for (let i = 0; i < data.customerType.documents.length; i++) {
           chartOptionsCustomerType.labels[i] = data.customerType.documents[i].name;
           chartSeriesCustomerType.value[i] = 0;
@@ -410,7 +399,6 @@ export default {
         // var dataCycle = await http_getOne(Cycle, cycle);
         switch (cycle) {
           case "tuần": {
-            console.log("weak+appointment");
             const week = getCurrentWeekDays();
             const firstDayOfWeek = week[0];
             const lastDayOfWeek = week[week.length - 1];
@@ -418,15 +406,11 @@ export default {
             break;
           }
           case "tháng": {
-            console.log("month+appointment");
             const currentMonthDates = getCurrentMonthDates();
-            console.log("Ngày bắt đầu của tháng:", currentMonthDates.start);
-            console.log("Ngày kết thúc của tháng:", currentMonthDates.end);
             initChart(currentMonthDates.start, currentMonthDates.end);
             break;
           }
           case "quý": {
-            console.log("aquarter+appointment");
             const currentQuarterDates = reactive({ data: {} });
             currentQuarterDates.data = getCurrentQuarterDates();
             initChart(currentQuarterDates.data.start, currentQuarterDates.data.end);
@@ -436,51 +420,39 @@ export default {
             initChart(getCurrentYearDates.start, getCurrentYearDates.end);
           }
         }
-        console.log("chart appointment:", chartSeriesAppointment.data);
       } else if (nameChart == "customerCycle") {
         switch (cycle) {
           case "tuần": {
-            console.log("weak+customerCycle");
             const week = getCurrentWeekDays();
             const firstDayOfWeek = week[0];
             const lastDayOfWeek = week[week.length - 1];
             await initCustomer(firstDayOfWeek, lastDayOfWeek);
-            console.log("Customer cycle:", data.customerCycle);
             break;
           }
           case "tháng": {
-            console.log("month+appointment");
             const currentMonthDates = getCurrentMonthDates();
-            console.log("Ngày bắt đầu của tháng:", currentMonthDates.start);
-            console.log("Ngày kết thúc của tháng:", currentMonthDates.end);
             await initCustomer(currentMonthDates.start, currentMonthDates.end);
-            console.log("Customer cycle:", data.customerCycle);
             break;
           }
           case "quý": {
-            console.log("aquarter+appointment");
             const currentQuarterDates = reactive({ data: {} });
             currentQuarterDates.data = getCurrentQuarterDates();
             await initCustomer(
               currentQuarterDates.data.start,
               currentQuarterDates.data.end
             );
-            console.log("Customer cycle quý:", data.customerCycle);
             break;
           }
           case "năm": {
             const getCurrentYearDates = getCurrentYear();
             await initCustomer(getCurrentYearDates.start, getCurrentYearDates.end);
-            console.log("Customer cycle:", data.customerCycle);
             break;
           }
           default: {
-            console.log("weak+customerCycle");
             const week = getCurrentWeekDays();
             const firstDayOfWeek = week[0];
             const lastDayOfWeek = week[week.length - 1];
             await initCustomer(firstDayOfWeek, lastDayOfWeek);
-            console.log("Customer cycle:", data.customerCycle);
             break;
           }
         }
@@ -569,12 +541,10 @@ export default {
     };
     // watch selectOptionCycle
     watch(selectedOptionCycle, (newValue, oldValue) => {
-      console.log("Dropdown value changed cycles:", newValue);
       show(showchart.value, newValue);
     });
     //Watch chart
     watch(showchart, (newValue, oldValue) => {
-      console.log("namechart:", showchart.value);
       show(showchart.value, selectedOptionCycle.value);
     });
     onMounted(async () => {
@@ -582,12 +552,10 @@ export default {
       const week = getCurrentWeekDays();
       const firstDayOfWeek = week[0];
       const lastDayOfWeek = week[week.length - 1];
-      console.log("7 ngày", firstDayOfWeek, lastDayOfWeek);
       //1****
       data.items = [];
       data.customerCycle = await http_getAll(Task);
       // Mảng nhiệm vụ ban đầu
-      console.log("Ban đầu:", data.customerCycle);
       // Đối tượng để lưu trữ nhiệm vụ duy nhất theo từng khách hàng
       uniqueTasks = {};
 
@@ -631,7 +599,6 @@ export default {
           };
         }
       });
-      // console.log("ABC:", data.customerCycle);
 
       data.customerCycle = data.customerCycle.filter((item) => {
         return (
@@ -653,8 +620,6 @@ export default {
         data.items.push(cus);
       }
       data.customerCare = data.items.length;
-      console.log("Data items:", data.items);
-      console.log("length:", data.customerCare, data.items);
       //
       data.progress = 0;
       data.task = data.task.filter((value, index) => {
@@ -690,7 +655,6 @@ export default {
           (item.end_date >= firstDayOfWeek && item.end_date <= lastDayOfWeek)
         );
       });
-      console.log(data.task);
       for (let i = 0; i < data.statusTask.length; i++) {
         var count = 0;
         chartOptionsAppointment1.labels[i] = data.statusTask[i].name;
@@ -718,12 +682,12 @@ export default {
         data.progress = (data.progress / data.task.length) * 100;
         data.progress = data.progress.toFixed(2);
       }
-      console.log("progress:", data.progress);
+
     });
 
     //3****
     watch(takeCare, (newValue, oldValue) => {
-      console.log("takecare", newValue);
+      // console.log("takecare", newValue);
     });
     return {
       data,
@@ -821,7 +785,6 @@ export default {
           :entryValue="data.searchText"
           @choseSearch="
             async (value) => (
-              console.log('search ........'),
               (data.choseSearch = value),
               (data.currentPage = 1)
             )
@@ -863,10 +826,8 @@ export default {
             async (value) => (
               await refresh(),
               (data.cycle = data.cycle.filter((value1, index) => {
-                console.log(value1, value);
                 return value1.name.includes(value) || value.length == 0;
-              })),
-              console.log('searchSlect', value.length)
+              }))
             )
           "
           @chose="
@@ -981,7 +942,6 @@ export default {
         "
         @appointment="
           (value, value1) => {
-            console.log('v', value, 'v1:', value1)((data.addValue = value));
             data.activeEdit = value1;
           }
         "

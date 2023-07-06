@@ -134,7 +134,7 @@
           :entryValue="data.searchText"
           @choseSearch="
             async (value) => (
-              console.log('search ........'),
+              
               (data.choseSearch = value),
               (data.currentPage = 1)
             )
@@ -435,7 +435,7 @@ export default {
 
     // computed
     const toString = computed(() => {
-      console.log("Starting search");
+      
       if (data.choseSearch == "name") {
         return data.items.map((value, index) => {
           return [value.name].join("").toLocaleLowerCase();
@@ -494,7 +494,7 @@ export default {
 
     // methods
     const update = (item) => {
-      console.log("updating", item);
+      // console.log("updating", item);
     };
 
     const handleUpdateSearchText = (value) => {
@@ -542,7 +542,7 @@ export default {
     };
 
     const view = (item) => {
-      console.log("Item", item);
+  
       data.viewValue = {
         ...item,
       };

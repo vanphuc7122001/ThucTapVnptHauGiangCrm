@@ -64,7 +64,7 @@ export default {
   },
   setup(ctx) {
     const rs = isReadAppointment()
-    console.log('Rs',rs);
+    
     const data = reactive({
       items: [
         {
@@ -160,7 +160,7 @@ export default {
     const arrayCheck = reactive({ data: [] });
     // computed
     const toString = computed(() => {
-      console.log("Starting search");
+     
       if (data.choseSearch == "status") {
         return data.items.map((value, index) => {
           return [value.Status_App.name].join("").toLocaleLowerCase();
@@ -224,7 +224,7 @@ export default {
         return;
       } else {
         data.items = data.items.filter((value, index) => {
-          // console.log('name', value.Status_Task.status)
+          
           return value.Status_App._id == entryValueStatus.value;
         });
       }
@@ -241,7 +241,7 @@ export default {
       }
       for (let value of data.items) {
         for (let array of arrayCheck.data) {
-          console.log("arrayid==value_id", array._id == value._id);
+          
           if (array._id == value._id) {
             value.checked = true;
             break;
@@ -254,8 +254,7 @@ export default {
 
     // // methods
     const create = async () => {
-      //await refresh();
-      console.log("new task");
+      
       await refresh();
     };
 
@@ -270,17 +269,12 @@ export default {
     };
 
     const edit = async (editValue) => {
-      // const status_appId = reactive({ status_appID: "" });
-      // status_appId.status_appID = editValue;
-
-      // newData.data = editValue;
-      // newData.data.StatusAppId = newData.data.StatusAppId.value;
-      // console.log("newData:", newData.data);
+      
       data.resetDataEdit = false;
-      console.log("EDIT:", editValue);
+   
       editValue.loginId = sessionStorage.getItem("employeeId");
       const result = await http_update(Appointment, editValue._id, editValue);
-      console.log("ne", result);
+    
       if (!result.error) {
         alert_success(`Sửa lịch hẹn`, `${result.msg}`);
         refresh();
@@ -295,7 +289,7 @@ export default {
       data.task = await http_getOne(Task, params);
       data.customer = data.customer.Customer.name;
       data.items = await Appointment.findAllAppointment(params);
-      console.log("Dl", data.task);
+      
       status_apps.status_app = await http_getAll(Status_App);
 
       for (let value of data.items) {
@@ -303,11 +297,7 @@ export default {
           value.note = "không có";
         } else value.note = value.note;
       }
-      // data.items = await data.items.Appointments;
-      // console.log("lich hen", data.items.Status_App._id);
-      // for (let value of data.items) {
-      //   value.checked = false;
-      // }
+      
       for (const value of data.items) {
         value.date_time_format = formatDateTime(value.date_time);
       }
@@ -329,7 +319,7 @@ export default {
       }
       for (let value of data.items) {
         for (let array of arrayCheck.data) {
-          console.log("arrayid==value_id", array._id == value._id);
+          
           if (array._id == value._id) {
             value.checked = true;
             break;
@@ -356,23 +346,23 @@ export default {
           }
         }
       }
-      console.log("arrayCheck:", arrayCheck.data);
+     
     };
     const handleSelectOne = (id, item) => {
       if (item.checked == false) {
         arrayCheck.data.push(item);
       } else {
         arrayCheck.data = arrayCheck.data.filter((value, index) => {
-          console.log(value._id != id);
+      
           return value._id != id;
         });
       }
-      console.log("ArrayCheckOne:", arrayCheck.data, item.checked);
+      
       data.selectAll[0].checked = false;
     };
 
     const handleDelete = async (id, item) => {
-      console.log("D id & item:", id, item);
+      
       const isConfirmed = await alert_delete(
         "Xóa",
         `Bạn có chắc là xóa lịch hẹn ${item.date_time_format} không!!`
@@ -383,7 +373,7 @@ export default {
         loginId.id = id;
         // 1***** xem thay đổi Appoiment cho phù hợp
         const rsAppointment = await Appointment.deleteOne(id, loginId);
-        console.log(rsAppointment);
+        
         if (rsAppointment.error) {
           alert_error("Lỗi ", rsAppointment.msg);
         } else {
@@ -400,7 +390,7 @@ export default {
     };
     //XÓA NHIỀU
     const deleteMany = async () => {
-      console.log("delete many");
+      
       try {
         //Mảng lịch hẹn sẽ xóa
         if (arrayCheck.data.length == 0) {
@@ -424,7 +414,7 @@ export default {
           for (const value of data.items) {
             value.date_time_format = formatDateTime(value.date_time);
           }
-          console.log(value);
+          
           contentAlert += `<tr>
             <td>${value.date_time_format}</td>
             <td>${value.content}</td>
@@ -567,7 +557,7 @@ export default {
           :entryValue="data.searchText"
           @choseSearch="
             async (value) => (
-              console.log('search ........'),
+              
               (data.choseSearch = value),
               (data.currentPage = 1)
             )

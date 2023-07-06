@@ -36,17 +36,7 @@ exports.create = async (req, res, next) => {
       msg: `Vui lòng nhập đủ thông tin.`,
     });
   }
-  // try {
-  //     const document = await Cycle.create({
-  //         name: req.body.name,
-  //     });
-  //     return res.send(document);
-  // } catch (error) {
-  //     console.log(error);
-  //     return next(
-  //         createError(400, 'Error creating Cycle !')
-  //     )
-  // }
+
 };
 
 exports.findAll = async (req, res, next) => {

@@ -54,11 +54,10 @@ export default {
     watch(
       () => props.resetData,
       async (newValue, oldValue) => {
-        console.log("Thay đổi", newValue);
+        
         await refresh();
 
-        // const data1 = await Position.getAll();
-        console.log("DT1:", cycles.cycle);
+        
       },
       { immediate: true }
       //có props
@@ -107,7 +106,7 @@ export default {
             props.item.Status_Task.name = res.document.name;
             await refresh();
             ctx.emit("newStatus", statustasks.statustask);
-            console.log("ne", res.document.name);
+          
             selectedOptionStatus.value = res.document._id;
           }
           return true;
@@ -115,19 +114,19 @@ export default {
         showSweetAlert();
         selectedOptionStatus.value = 0;
       }
-      console.log("THAYDOI:", selectedOptionStatus.value);
+      
       props.item.StatusTaskId = selectedOptionStatus.value;
       selectedOptionStatus.value = "";
     });
 
     const deleteStatusTask = async (_id) => {
       const status_task = await http_getOne(StatusTask, _id);
-      console.log("deleting", status_task);
+      
       const isConfirmed = await alert_delete(
         `Xoá trạng thái`,
         `Bạn có chắc chắn muốn xoá trạng thái ${status_task.name} không ?`
       );
-      console.log(isConfirmed);
+      
       if (isConfirmed == true) {
         const result = await http_deleteOne(StatusTask, _id);
         alert_success(
@@ -138,15 +137,15 @@ export default {
       }
     };
     const search = async (value) => {
-      console.log("a", value, statustasks.statustask);
+      
       await refresh();
       statustasks.statustask = statustasks.statustask.filter(
         (value1, index) => {
-          console.log(value1, value);
+          
           return value1.name.includes(value) || value.length == 0;
         }
       );
-      console.log("searchSlect", value.length);
+     
     };
 
     const cycles = reactive({ cycle: [] });
@@ -178,7 +177,7 @@ export default {
             props.item.Cycle.name = res.document.name;
             await refresh();
             ctx.emit("newCycle", cycles.cycle);
-            console.log("ne", res.document.name);
+            
             selectedOptionCycle.value = res.document._id;
             // name.value = document.document.name;
           }
@@ -192,12 +191,12 @@ export default {
 
     const deleteCycle = async (_id) => {
       const cycle = await http_getOne(Cycle, _id);
-      console.log("deleting", cycle);
+      
       const isConfirmed = await alert_delete(
         `Xoá chu kỳ`,
         `Bạn có chắc chắn muốn xoá chu kỳ ${cycle.name} không ?`
       );
-      console.log(isConfirmed);
+     
       if (isConfirmed == true) {
         const result = await http_deleteOne(Cycle, _id);
         alert_success(
@@ -208,13 +207,13 @@ export default {
       }
     };
     const searchCycle = async (value) => {
-      console.log("a", value, cycles.cycle);
+      
       await refresh();
       cycles.cycle = cycles.cycle.filter((value1, index) => {
-        console.log(value1, value);
+        
         return value1.name.includes(value) || value.length == 0;
       });
-      console.log("searchSlect", value.length);
+ 
     };
 
     const refresh = async () => {

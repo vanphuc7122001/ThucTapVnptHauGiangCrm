@@ -139,14 +139,13 @@ exports.deleteAll = async (req, res, next) => {
 };
 
 exports.update = async (req, res, next) => {
-  console.log("UNITS:", req.body, req.params);
   try {
     let unit = await Unit.findOne({
       where: {
         _id: req.params.id,
       },
     });
-    console.log("Units", unit);
+ 
     if (
       unit.name !== req.body.name ||
       unit.departmentId !== req.body.departmentId

@@ -117,7 +117,7 @@ io.on("connection", (socket) => {
               let temp = 0;
               for (let value of events) {
                 value.time_duration = value.time_duration.split(" to ")[0];
-                console.log("Value time_duration: ", value.time_duration);
+                
 
                 var time_duration = new Date(value.time_duration);
 
@@ -131,7 +131,7 @@ io.on("connection", (socket) => {
                 var thang = ngayHienTai.getMonth() + 1; // Tháng bắt đầu từ 0, nên cộng thêm 1
                 var nam = ngayHienTai.getFullYear();
                 var current = ngay + "/" + thang + "/" + nam;
-                console.log("Time eventttttttttttttttttt", timeEvent);
+                
                 if (value.name == "sinh nhật" && timeEvent == current) {
                   temp++;
                   ////// có sự kiện r thì thêm khách hàng dô
@@ -292,7 +292,7 @@ io.on("connection", (socket) => {
             let temp = 0;
             for (let value of events) {
               value.time_duration = value.time_duration.split(" to ")[0];
-              console.log("Value time_duration: ", value.time_duration);
+             
               var time_duration = new Date(value.time_duration);
               var ngay = time_duration.getDate();
               var thang = time_duration.getMonth() + 1; // Tháng bắt đầu từ 0, nên cộng thêm 1
@@ -304,7 +304,7 @@ io.on("connection", (socket) => {
               var thang = ngayHienTai.getMonth() + 1; // Tháng bắt đầu từ 0, nên cộng thêm 1
               var nam = ngayHienTai.getFullYear();
               var current = ngay + "/" + thang + "/" + nam;
-              console.log("Time eventttttttttttttttttt", timeEvent);
+              
               if (value.name == "sinh nhật" && timeEvent == current) {
                 temp++;
                 ////// có sự kiện r thì thêm khách hàng dô
@@ -397,8 +397,7 @@ io.on("connection", (socket) => {
           };
 
           const info = await transporter.sendMail(mailOptions);
-          console.log("Email sent:", info.messageId);
-          console.log("Thành công 2");
+         
           io.emit("notiTask");
         }
       }

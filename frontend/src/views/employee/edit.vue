@@ -77,7 +77,7 @@ export default {
     const positions = reactive({ position: [] });
     const selectedOptionPosition = ref("Chức vụ");
     watch(selectedOptionPosition, async (newValue, oldValue) => {
-      console.log("New Position:", newValue);
+
       if (newValue == 0) return;
       if (newValue == "other") {
         const showSweetAlert = async () => {
@@ -113,13 +113,11 @@ export default {
         selectedOptionPosition.value = 0;
       }
       props.item.postionId = selectedOptionPosition.value;
-      console.log("P:", props.item.postionId);
     });
     //CENTERS
     const centers = reactive({ center: [] });
     const selectedOptionCenter = ref("");
     watch(selectedOptionCenter, async (newValue, oldValue) => {
-      console.log("center:", newValue);
       departments.department = await departmentsServices.findAllDepOfACenter(
         newValue
       );
@@ -249,7 +247,7 @@ export default {
     });
     const selectedOptionUnit = ref("Đơn vị");
     watch(selectedOptionUnit, async (newValue, oldValue) => {
-      console.log("New Unit:", newValue);
+
       if (newValue == "") return;
       if (newValue == "other") {
         const showSweetAlert = async () => {
@@ -335,14 +333,7 @@ export default {
           });
 
           if (formValues) {
-            // Xử lý giá trị selectedOption và giá trị inputValue
-            console.log(
-              "Selected Option Center:",
-              formValues.selectedOptionCenter
-            );
-            console.log("Selected Option dep:", formValues.selectedOptionDep);
-
-            console.log("Input Value:", formValues.inputValue);
+           
             const document = await unitsServices.create({
               departmentId: formValues.selectedOptionDep,
               name: formValues.inputValue,
@@ -359,7 +350,6 @@ export default {
             ctx.emit("newUnit", units.unit);
             selectedOptionUnit.value = document.document._id;
             props.Unit.name = document.document.name;
-            console.log("U:", props.unitId);
           }
         };
 
@@ -372,7 +362,6 @@ export default {
       );
       units.unit.push({ _id: "other", name: "khác" });
       props.item.unitId = selectedOptionUnit.value;
-      console.log("U:", props.item.unitId);
     });
 
     const refresh_add = async () => {
@@ -390,7 +379,7 @@ export default {
       units.unit.push({ _id: "other", name: "khác" });
     };
     const onDeletePosition = async (value) => {
-      console.log("Value delete:", value);
+
       const result = await alert_delete("Bạn muốn xóa", value.name);
       if (result) {
         await Position.delete(value._id);
@@ -400,7 +389,7 @@ export default {
       }
     };
     const onDeleteCenter = async (value) => {
-      console.log("Value delete:", value);
+
       const result = await alert_delete("Bạn muốn xóa", value.name);
       if (result) {
         await CenterServices.delete(value._id);
@@ -410,7 +399,7 @@ export default {
       }
     };
     const onDeleteDep = async (value) => {
-      console.log("Value delete:", value);
+   
       const result = await alert_delete("Bạn muốn xóa", value.name);
       if (result) {
         await departmentsServices.deleteOne(value._id);
@@ -420,7 +409,7 @@ export default {
       }
     };
     const onDeleteUnit = async (value) => {
-      console.log("Value delete:", value);
+
       const result = await alert_delete("Bạn muốn xóa", value.name);
       if (result) {
         await unitsServices.deleteOne(value._id);
@@ -441,13 +430,13 @@ export default {
     const showModal = ref(false);
 
     const closeModal = async () => {
-      console.log("close modal");
+
       showModal.value = false;
       ctx.emit("refresh", false);
     };
 
     onMounted(async () => {
-      console.log("Mouted flag:", props.flag);
+    
       await refresh_add();
     });
     return {
@@ -618,13 +607,13 @@ export default {
                           await refresh_add(),
                           (positions.position = positions.position.filter(
                             (value1, index) => {
-                              console.log(value1, value);
+                         
                               return (
                                 value1.name.includes(value) || value.length == 0
                               );
                             }
-                          )),
-                          console.log('searchSlect', value.length)
+                          ))
+          
                         )
                       "
                       @delete="(value) => onDeletePosition(value)"
@@ -652,13 +641,12 @@ export default {
                           await refresh_add(),
                           (centers.center = centers.center.filter(
                             (value1, index) => {
-                              console.log(value1, value);
+                     
                               return (
                                 value1.name.includes(value) || value.length == 0
                               );
                             }
-                          )),
-                          console.log('searchSlect', value.length)
+                          ))
                         )
                       "
                       @delete="(value) => onDeleteCenter(value)"
@@ -686,13 +674,13 @@ export default {
                         await refresh_add(),
                         (departments.department = departments.department.filter(
                           (value1, index) => {
-                            console.log(value1, value);
+                       
                             return (
                               value1.name.includes(value) || value.length == 0
                             );
                           }
-                        )),
-                        console.log('searchSlect', value.length)
+                        ))
+                     
                       )
                     "
                     @delete="(value) => onDeleteDep(value)"
@@ -714,12 +702,12 @@ export default {
                       async (value) => (
                         await refresh_add(),
                         (units.unit = units.unit.filter((value1, index) => {
-                          console.log(value1, value);
+               
                           return (
                             value1.name.includes(value) || value.length == 0
                           );
-                        })),
-                        console.log('searchSlect', value.length)
+                        }))
+                       
                       )
                     "
                     @delete="(value) => onDeleteUnit(value)"

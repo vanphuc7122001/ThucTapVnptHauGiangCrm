@@ -97,7 +97,7 @@ export default {
 
     // computed
     const toString = computed(() => {
-      console.log("Starting search");
+      
       if (data.choseSearch == "name") {
         return data.itemEm.map((value, index) => {
           return [value.name].join("").toLocaleLowerCase();
@@ -213,7 +213,7 @@ export default {
       }
       for (let value of data.itemEm) {
         for (let array of arrayCheck.data) {
-          console.log("arrayid==value_id", array._id == value._id);
+          
           if (array._id == value._id) {
             value.checked = true;
             break;
@@ -221,7 +221,7 @@ export default {
           value.checked = false;
         }
       }
-      console.log("items:", data.itemEm);
+      
     });
     const updateEntryValuePosition = (value) => {
       entryValuePosition.value = value;
@@ -239,41 +239,30 @@ export default {
       //Lấy tất cả nhân viên
       data.itemEm = await http_getAll(Employee);
       //Lấy tất cả phòng của 1 trung tâm
-      console.log("newValueCenter:", newValue);
+      
       data.department = await departmentsServices.findAllDepOfACenter(newValue);
-      console.log("dataDepartment:", data.department);
+      
       data.department = data.department.map((value, index) => {
         return {
           ...value,
           value: value._id,
         };
       });
-      // console.log("start1", data.department[0]._id);
+   
       data.unit = [];
-      //Lấy tất cả tổ của 1 trung tâm
-      // for (let value of data.department) {
-      //   console.log("id", value._id);
-
-      //   var newUnit = await unitsServices.findAllUnitsOfADep(value._id);
-      //   for (let value of newUnit) {
-      //     console.log("new:", value);
-      //     data.unit.push(value);
-      //   }
-      //   // console.log("start2", data.unit);
-      // }
-      console.log("start2");
+      
       data.unit = data.unit.map((value, index) => {
         return {
           ...value,
           value: value._id,
         };
       });
-      console.log("start3");
+     
 
       //Lọc
       // 1. có chức vụ và trung tâm
       if (entryValueCenter.value != "" && entryValuePosition.value != "") {
-        console.log("cả 2");
+   
         data.itemEm = data.itemEm.filter((value, index) => {
           return (
             value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value &&
@@ -283,7 +272,7 @@ export default {
       }
       //2.  chỉ có trung tâm
       else {
-        console.log("1");
+       
         data.itemEm = data.itemEm.filter((value, index) => {
           return value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value;
         });
@@ -294,7 +283,7 @@ export default {
       }
       for (let value of data.itemEm) {
         for (let array of arrayCheck.data) {
-          console.log("arrayid==value_id", array._id == value._id);
+          
           if (array._id == value._id) {
             value.checked = true;
             break;
@@ -302,8 +291,7 @@ export default {
           value.checked = false;
         }
       }
-      console.log("items:", data.itemEm);
-      console.log("Array:", arrayCheck.data);
+     
     });
     //UpdateEntryValueCenter
     const updateEntryValueCenter = (value) => {
@@ -357,7 +345,7 @@ export default {
       }
       for (let value of data.itemEm) {
         for (let array of arrayCheck.data) {
-          console.log("arrayid==value_id", array._id == value._id);
+          
           if (array._id == value._id) {
             value.checked = true;
             break;
@@ -365,7 +353,7 @@ export default {
           value.checked = false;
         }
       }
-      console.log("items:", data.itemEm);
+      
     });
     const updateEntryValueDepartment = (value) => {
       entryValueDepartment.value = value;
@@ -395,7 +383,7 @@ export default {
       }
       //2. có trung tâm, phòng, tổ
       else {
-        console.log("2");
+    
         data.itemEm = data.itemEm.filter((value, index) => {
           return (
             value.Unit.Department.Center_VNPTHG._id == entryValueCenter.value &&
@@ -411,7 +399,7 @@ export default {
       }
       for (let value of data.itemEm) {
         for (let array of arrayCheck.data) {
-          console.log("arrayid==value_id", array._id == value._id);
+         
           if (array._id == value._id) {
             value.checked = true;
             break;
@@ -419,7 +407,7 @@ export default {
           value.checked = false;
         }
       }
-      console.log("items:", data.itemEm);
+      
     });
 
     const updateEntryValueUnit = (value) => {
@@ -444,8 +432,7 @@ export default {
       D.data = array.data.filter((value) => arrayCheck.data.includes(value));
       D.data = [...new Set(D.data)];
       E.data = arrayCheck.data.filter((value) => !D.data.includes(value));
-      // console.log("C:", C.data, C.data.length);
-      // console.log("đã giao trước:", array.data, array.data.length);
+      
       if (C.data.length != 0) {
         for (let j = 0; j < C.data.length; j++) {
           const dataDel = reactive({
@@ -463,7 +450,7 @@ export default {
               _id: _idEmployee,
               name: _nameEmployee,
             };
-            console.log("ggg", _idEmployee, "hhh", dataDel.data.EmployeeId);
+           
             const TaskCus = await http_getOne(Task, dataDel.data.TaskId);
             const notiAssignment = reactive({
               title: "Huỷ giao việc",
@@ -483,7 +470,7 @@ export default {
             notiAssignment.idRecipient = C.data[j]._id;
             // const result1 = await http_create(Notification, notiAssignment);
             socket.emit("cancleAssign", notiAssignment);
-            console.log("giao viec", notiAssignment);
+            
             socket.emit("assignmentTask");
           }
         }
@@ -499,7 +486,7 @@ export default {
               name: _nameEmployee,
             };
             const TaskCus = await http_getOne(Task, dataTaskEm.TaskId);
-            console.log("Khach hang dươc phan cong", TaskCus.Customer.name);
+            
             const notiAssignment = reactive({
               title: "Phân công mới",
               content: `đã phân công khách hàng "${TaskCus.Customer.name}" cho bạn`,
@@ -516,9 +503,9 @@ export default {
             }
             notiAssignment.recipient = E.data[i].name;
             notiAssignment.idRecipient = E.data[i]._id;
-            // const result1 = await http_create(Notification, notiAssignment);
+           
             socket.emit("Assign", notiAssignment);
-            console.log("giao viec", notiAssignment);
+            
             socket.emit("assignmentTask");
           }
         }
@@ -541,8 +528,7 @@ export default {
       const newData = reactive({ TaskId: " ", EmployeeId: " " });
       newData.TaskId = props.item._id;
       newData.EmployeeId = sessionStorage.getItem("employeeId");
-      console.log("leaderId:", newData.EmployeeId);
-      console.log("taskid:", newData.TaskId);
+      
       try {
         const result = await http_create(EmployeeTask, newData);
 
@@ -565,7 +551,7 @@ export default {
               name: _nameEmployee,
             };
             const TaskCus = await http_getOne(Task, newData.TaskId);
-            console.log("Khach hang dươc phan cong", TaskCus.Customer.name);
+            
             const notiAssignment = reactive({
               title: "Nhận việc thành công",
               content: `Khách hàng "${TaskCus.Customer.name}" đã được phân công cho bạn`,
@@ -606,10 +592,10 @@ export default {
           }
         }
       }
-      console.log("arrayCheck:", arrayCheck.data);
+     
     };
     const handlSelectOne = (id, item) => {
-      console.log(id, item);
+  
       if (item.checked == false) {
         arrayCheck.data.push(item);
       } else {
@@ -618,25 +604,23 @@ export default {
         });
       }
       data.selectAll[0].checked = false;
-      console.log("arrayCheckOne:", arrayCheck.data);
+     
     };
 
     const array = reactive({ data: [] });
     const refresh = async () => {
-      // data.cycleSelect = [...rs];
-      console.log("REFRESH");
+    
       data.itemEm = await http_getAll(Employee);
       for (let i = 0; i < data.itemEm.length; i++) {
         data.itemEm[i].checked = false;
       }
-      console.log("ds nv", data.itemEm);
+     
       // ***
       arrayCheck.data = [];
       array.data = [];
       const employeeTask = reactive({ data: [] });
       employeeTask.data = await http_getOne(Task, props.item._id);
-      console.log("list", employeeTask.data);
-
+  
       for (let i = 0; i < data.itemEm.length; i++) {
         for (let j = 0; j < employeeTask.data.Employees.length; j++) {
           if (data.itemEm[i]._id == employeeTask.data.Employees[j]._id) {
@@ -646,7 +630,7 @@ export default {
           }
         }
       }
-      console.log("check:", data.itemEm);
+      
 
       data.position = await http_getAll(Position);
 
@@ -696,20 +680,11 @@ export default {
       entryValueDepartment.value = "";
       entryNameUnit.value = "Tổ";
       entryValueUnit.value = "";
-      // for (let value of data.itemEm) {
-      //   for (let array of arrayCheck.data) {
-      //     console.log("arrayid==value_id", array._id == value._id);
-      //     if (array._id == value._id) {
-      //       value.checked = true;
-      //       break;
-      //     }
-      //     value.checked = false;
-      //   }
-      // }
+   
       data.selectAll[0].checked = false;
     };
     const closeModal = async () => {
-      console.log("close modal");
+     
 
       await refresh();
       showModal.value = false;
@@ -718,7 +693,7 @@ export default {
       await refresh();
     });
     watchEffect(async () => {
-      console.log("111TĐ:", props.item._id);
+      
       await refresh();
     });
 

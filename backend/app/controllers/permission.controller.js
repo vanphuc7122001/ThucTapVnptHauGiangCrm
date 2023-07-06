@@ -142,7 +142,6 @@ exports.deleteAll = async (req, res, next) => {
 //   }
 // };
 exports.update = async (req, res, next) => {
-  console.log("Update", req.body);
   const { name } = req.body;
   // Kiểm tra xem dữ liệu cần thiết có bị thiếu không
   if (!name) {

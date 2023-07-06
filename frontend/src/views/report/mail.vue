@@ -31,7 +31,7 @@ export default {
       }
       
       const response = await MailService.sendMailMultiple(formData);
-      console.log('response', response);
+      
       if (response.error) {
         alert_error("Gửi mail thất bại", "");
       } else {

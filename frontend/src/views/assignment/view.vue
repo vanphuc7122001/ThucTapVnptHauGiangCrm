@@ -108,10 +108,6 @@ export default {
 
       if (formValues) {
         // Xử lý giá trị selectedOption và giá trị inputValue
-        console.log("Selected Option Center:", formValues.selectedOptionCenter);
-        console.log("Selected Option dep:", formValues.selectedOptionDep);
-
-        console.log("Input Value:", formValues.inputValue);
         const document = await unitsServices.create({
           departmentId: formValues.selectedOptionDep,
           name: formValues.inputValue,

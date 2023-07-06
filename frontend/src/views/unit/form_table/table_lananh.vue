@@ -33,7 +33,7 @@ export default {
   setup(props, ntx) {
     const router = useRouter();
     const get = (data) => {
-      console.log("id get:", data);
+ 
       ntx.emit("update", data);
     };
     const onDelete = (data) => {

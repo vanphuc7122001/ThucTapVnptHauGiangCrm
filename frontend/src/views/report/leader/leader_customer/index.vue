@@ -134,7 +134,7 @@
           :entryValue="data.searchText"
           @choseSearch="
             async (value) => (
-              console.log('search ........'),
+             
               (data.choseSearch = value),
               (data.currentPage = 1)
             )
@@ -414,7 +414,7 @@ export default {
         );
       });
 
-      console.log('unique customer', data.items);
+  
 
       data.items = data.items.map((item) => {
         return {
@@ -427,19 +427,19 @@ export default {
         };
       });
 
-      console.log("Data items: ", data.items);
+     
     };
 
     
 
     onBeforeMount(async () => {
       await reFresh();
-      console.log('data items lenght',data.items.length);
+     
     });
 
     // computed
     const toString = computed(() => {
-      console.log("Starting search");
+   
       if (data.choseSearch == "name") {
         return data.items.map((value, index) => {
           return [value.nameCustomer].join("").toLocaleLowerCase();
@@ -479,14 +479,13 @@ export default {
     });
     const setPages = computed(() => {
       if (data.items.length > 0) {
-        console.log('Data item index', data.items.length);
-        console.log('Data items setpages', data.items);
+        
         if (setNumberOfPages.value == 0 || data.entryValue == "All") {
           data.entryValue = data.items.length;
           data.numberOfPages = 1;
         } else data.numberOfPages = setNumberOfPages.value;
         data.startRow = (data.currentPage - 1) * data.entryValue + 1;
-        console.log('Total row',data.startRow);
+        
         data.endRow = data.currentPage * data.entryValue;
         return filtered.value.filter((item, index) => {
           return (
@@ -544,7 +543,7 @@ export default {
     };
 
     const view = async (item) => {
-      // console.log("View: ", item.Customer._id);
+      
       const res = await http_getOne(Customer, item.Customer._id);
 
       data.viewCareCus = res.documents.Tasks.map((value) => {

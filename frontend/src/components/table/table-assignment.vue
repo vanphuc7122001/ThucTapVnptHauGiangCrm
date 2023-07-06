@@ -46,7 +46,7 @@ export default {
     const selectRef = ref(null);
 
     const handleClickOutside = (event) => {
-      console.log("handleClickOutside");
+  
       if (!selectRef.value.contains(event.target)) {
         data._showAction = -1;
       }

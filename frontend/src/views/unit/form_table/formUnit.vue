@@ -50,7 +50,7 @@ export default{
         }
         const save=()=>{
             if(validdate()){
-                console.log("Unit Props",unit);
+                
                 emit ("AddOrUpdate", unit);
                 return;
             }}

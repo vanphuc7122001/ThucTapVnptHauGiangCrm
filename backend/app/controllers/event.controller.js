@@ -8,7 +8,7 @@ exports.create = async (req, res, next) => {
   // console.log(req.body);
   // console.log('cc');
   if (Object.keys(req.body).length === 6) {
-    console.log('cc');
+
     const { content, time_duration, name, place } = req.body;
     const events = await Event.findAll();
     for (let value of events) {
@@ -104,7 +104,7 @@ exports.deleteAll = async (req, res, next) => {
 };
 
 exports.update = async (req, res, next) => {
-  console.log("update", req.body);
+ 
   const { content, time_duration, name, place } = req.body;
   try {
     let events = [

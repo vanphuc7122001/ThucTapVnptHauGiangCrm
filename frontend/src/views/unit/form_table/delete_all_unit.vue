@@ -32,7 +32,7 @@ export default {
 
     // computed
     const toString = computed(() => {
-      console.log("Starting search");
+      
       return props.items.map((value, index) => {
         return [value.uni_name].join("").toLocaleLowerCase();
       });

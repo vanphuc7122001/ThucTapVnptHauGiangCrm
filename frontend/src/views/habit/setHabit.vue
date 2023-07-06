@@ -79,22 +79,21 @@ export default {
     });
     const create = async () => {
       try {
-        console.log("strategy");
+      
         let isSuccess = false;
-        console.log("data.customerList", data.customerList);
+       
         for (let value of data.customerList) {
-          console.log("value.checked ", value.checked == true);
-          console.log(isStringFound(value.Customer._id));
+       
           if (
             value.checked == true &&
             isStringFound(value.Customer._id) == false
           ) {
-            console.log("ccc");
+           
             let result = await http_create(Customer_Habit, {
               customerId: value.Customer._id,
               habitId: props.item._id,
             });
-            console.log("result", result);
+           
             if (result.error == true) {
               alert_error(
                 `Thêm khách hàng cùng thói quen`,
@@ -104,7 +103,7 @@ export default {
               isSuccess = true;
             }
           } else if (value.checked == false) {
-            console.log("dddd");
+           
             if (isStringFound(value.Customer._id)) {
               await Customer_Habit.update(data.customer_habitId, {
                 HabitId: data.habitId,
@@ -133,7 +132,7 @@ export default {
           item.CustomerId.toString() == _id &&
           item.HabitId == props.item._id
         ) {
-          console.log("item", item);
+          
           data.customerId = item.CustomerId;
           data.habitId = item.HabitId;
           data.customer_habitId = data.customerId + data.habitId;
